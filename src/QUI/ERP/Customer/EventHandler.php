@@ -46,4 +46,20 @@ class EventHandler
         $Config->setValue('customer', 'groupId', $Customer->getId());
         $Config->save();
     }
+
+    /**
+     * event : on admin header loaded
+     */
+    public static function onAdminLoadFooter()
+    {
+        if (!defined('ADMIN') || !ADMIN) {
+            return;
+        }
+
+        $Package = QUI::getPackageManager()->getInstalledPackage('quiqqer/customer');
+        $Config  = $Package->getConfig();
+        $groupId = $Config->getValue('customer', 'groupId');
+
+        echo '<script>var QUIQQER_CUSTOMER_GROUP = ' . $groupId . '</script>';
+    }
 }
