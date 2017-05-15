@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<locales>
+
+    <groups name="quiqqer/customer" datatype="php,js">
+        <locale name="package.title">
+            <de><![CDATA[QUIQQER - ERP - Kunden]]></de>
+            <en><![CDATA[QUIQQER - ERP - Customer]]></en>
+        </locale>
+
+        <locale name="window.erp.title">
+            <de><![CDATA[Shop]]></de>
+            <en><![CDATA[Shop]]></en>
+        </locale>
+        <locale name="window.erp.customer.title">
+            <de><![CDATA[Kunden]]></de>
+            <en><![CDATA[Customer]]></en>
+        </locale>
+        <locale name="window.erp.customer.title">
+            <de><![CDATA[Kunden]]></de>
+            <en><![CDATA[Customer]]></en>
+        </locale>
+        <locale name="customer.settings.title">
+            <de><![CDATA[Kunden]]></de>
+            <en><![CDATA[Customer]]></en>
+        </locale>
+        <locale name="customer.settings.groupId">
+            <de><![CDATA[Kundengruppe]]></de>
+            <en><![CDATA[Customer group]]></en>
+        </locale>
+        <locale name="customer.group.name">
+            <de><![CDATA[Kunden]]></de>
+            <en><![CDATA[Customers]]></en>
+        </locale>
+
+        <locale name="exception.customer.group.not.exists">
+            <de><![CDATA[Kundengruppe existiert nicht.]]></de>
+            <en><![CDATA[Customer group does not exist.]]></en>
+        </locale>
+    </groups>
+
+</locales>
