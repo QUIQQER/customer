@@ -11,21 +11,25 @@
             <de><![CDATA[Shop]]></de>
             <en><![CDATA[Shop]]></en>
         </locale>
-        <locale name="window.erp.employee.title">
+        <locale name="window.erp.customer.title">
             <de><![CDATA[Kunden]]></de>
             <en><![CDATA[Customer]]></en>
         </locale>
-        <locale name="window.erp.employee.title">
+        <locale name="window.erp.customer.title">
             <de><![CDATA[Kunden]]></de>
             <en><![CDATA[Customer]]></en>
         </locale>
-        <locale name="employee.settings.title">
+        <locale name="customer.settings.title">
             <de><![CDATA[Kunden]]></de>
             <en><![CDATA[Customer]]></en>
         </locale>
-        <locale name="employee.settings.groupId">
+        <locale name="customer.settings.groupId">
             <de><![CDATA[Kundengruppe]]></de>
             <en><![CDATA[Customer group]]></en>
+        </locale>
+        <locale name="customer.group.name">
+            <de><![CDATA[Kunden]]></de>
+            <en><![CDATA[Customers]]></en>
         </locale>
 
         <locale name="exception.customer.group.not.exists">

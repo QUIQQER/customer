@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiqqer>
+
+    <settings>
+        <config>
+            <section name="customer">
+                <conf name="groupId">
+                    <type><![CDATA[integer]]></type>
+                </conf>
+            </section>
+        </config>
+
+        <window name="ERP">
+            <title>
+                <locale group="quiqqer/customer" var="window.erp.title"/>
+            </title>
+            <params>
+                <icon>fa fa-sun-o</icon>
+            </params>
+
+            <categories>
+                <category name="customer" index="5">
+                    <text>
+                        <locale group="quiqqer/customer" var="window.erp.customer.title"/>
+                    </text>
+                    <icon>fa fa-group</icon>
+
+                    <settings title="customer" name="customer">
+                        <title>
+                            <locale group="quiqqer/customer" var="customer.settings.title"/>
+                        </title>
+
+                        <input conf="customer.groupId"
+                               data-qui="controls/groups/Select"
+                               data-qui-options-max="1"
+                        >
+                            <text>
+                                <locale group="quiqqer/customer" var="customer.settings.groupId"/>
+                            </text>
+                        </input>
+
+                    </settings>
+                </category>
+            </categories>
+
+        </window>
+    </settings>
+
+</quiqqer>

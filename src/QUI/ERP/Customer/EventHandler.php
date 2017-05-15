@@ -30,7 +30,7 @@ class EventHandler
 
         // create customer group
         $Config  = $Package->getConfig();
-        $groupId = $Config->getValue('general', 'groupId');
+        $groupId = $Config->getValue('customer', 'groupId');
 
         if (!empty($groupId)) {
             return;
@@ -43,7 +43,7 @@ class EventHandler
             QUI::getUsers()->getSystemUser()
         );
 
-        $Config->setValue('general', 'groupId', $Customer->getId());
+        $Config->setValue('customer', 'groupId', $Customer->getId());
         $Config->save();
     }
 }
