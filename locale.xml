@@ -38,4 +38,26 @@
         </locale>
     </groups>
 
+    <groups name="quiqqer/customer" datatype="php">
+        <locale name="customer.create.category.details">
+            <de><![CDATA[Stammdaten]]></de>
+            <en><![CDATA[Master data]]></en>
+        </locale>
+        <locale name="customer.create.category.address">
+            <de><![CDATA[Adresse]]></de>
+            <en><![CDATA[Address]]></en>
+        </locale>
+    </groups>
+
+    <groups name="quiqqer/customer" datatype="js">
+        <locale name="window.customer.creation.title">
+            <de><![CDATA[Neuen Kunden anlegen]]></de>
+            <en><![CDATA[Create new customer]]></en>
+        </locale>
+        <locale name="window.customer.creation.button.submit">
+            <de><![CDATA[Kunden anlegen]]></de>
+            <en><![CDATA[Create customer]]></en>
+        </locale>
+    </groups>
+
 </locales>
