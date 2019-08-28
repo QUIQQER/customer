@@ -29,22 +29,28 @@ class EventHandler
         }
 
         // create customer group
-        $Config  = $Package->getConfig();
-        $groupId = $Config->getValue('customer', 'groupId');
+        try {
+            $Config  = $Package->getConfig();
+            $groupId = $Config->getValue('customer', 'groupId');
 
-        if (!empty($groupId)) {
-            return;
+            if (!empty($groupId)) {
+                return;
+            }
+
+            $Root = QUI::getGroups()->firstChild();
+
+            $Customer = $Root->createChild(
+                QUI::getLocale()->get('quiqqer/customer', 'customer.group.name'),
+                QUI::getUsers()->getSystemUser()
+            );
+
+            $Config->setValue('customer', 'groupId', $Customer->getId());
+            $Config->save();
+
+            $Customer->activate();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
         }
-
-        $Root = QUI::getGroups()->firstChild();
-
-        $Customer = $Root->createChild(
-            QUI::getLocale()->get('quiqqer/customer', 'customer.group.name'),
-            QUI::getUsers()->getSystemUser()
-        );
-
-        $Config->setValue('customer', 'groupId', $Customer->getId());
-        $Config->save();
     }
 
     /**
@@ -56,10 +62,14 @@ class EventHandler
             return;
         }
 
-        $Package = QUI::getPackageManager()->getInstalledPackage('quiqqer/customer');
-        $Config  = $Package->getConfig();
-        $groupId = $Config->getValue('customer', 'groupId');
+        try {
+            $Package = QUI::getPackageManager()->getInstalledPackage('quiqqer/customer');
+            $Config  = $Package->getConfig();
+            $groupId = $Config->getValue('customer', 'groupId');
 
-        echo '<script>var QUIQQER_CUSTOMER_GROUP = ' . $groupId . '</script>';
+            echo '<script>var QUIQQER_CUSTOMER_GROUP = '.$groupId.'</script>';
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
     }
 }
