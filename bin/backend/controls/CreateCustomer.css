@@ -1,0 +1,28 @@
+/** categories
+ =================================================== */
+
+.quiqqer-customer-create-customer-categories {
+    float: left;
+    padding-right: 20px;
+    width: 200px;
+}
+
+.quiqqer-customer-create-customer-categories button {
+    border-bottom: 1px solid #999999;
+    border-radius: 0;
+    box-shadow: none;
+    text-align: left;
+    width: 100%;
+}
+
+.quiqqer-customer-create-customer-categories button:last-child {
+    border-bottom: none;
+}
+
+/** content
+ =================================================== */
+
+.quiqqer-customer-create-customer-content {
+    float: left;
+    width: calc(100% - 200px);
+}

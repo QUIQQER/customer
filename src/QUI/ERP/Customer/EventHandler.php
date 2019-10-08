@@ -29,21 +29,47 @@ class EventHandler
         }
 
         // create customer group
-        $Config  = $Package->getConfig();
-        $groupId = $Config->getValue('customer', 'groupId');
+        try {
+            $Config  = $Package->getConfig();
+            $groupId = $Config->getValue('customer', 'groupId');
 
-        if (!empty($groupId)) {
+            if (!empty($groupId)) {
+                return;
+            }
+
+            $Root = QUI::getGroups()->firstChild();
+
+            $Customer = $Root->createChild(
+                QUI::getLocale()->get('quiqqer/customer', 'customer.group.name'),
+                QUI::getUsers()->getSystemUser()
+            );
+
+            $Config->setValue('customer', 'groupId', $Customer->getId());
+            $Config->save();
+
+            $Customer->activate();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
+    }
+
+    /**
+     * event : on admin header loaded
+     */
+    public static function onAdminLoadFooter()
+    {
+        if (!defined('ADMIN') || !ADMIN) {
             return;
         }
 
-        $Root = QUI::getGroups()->firstChild();
+        try {
+            $Package = QUI::getPackageManager()->getInstalledPackage('quiqqer/customer');
+            $Config  = $Package->getConfig();
+            $groupId = $Config->getValue('customer', 'groupId');
 
-        $Customer = $Root->createChild(
-            QUI::getLocale()->get('quiqqer/customer', 'customer.group.name'),
-            QUI::getUsers()->getSystemUser()
-        );
-
-        $Config->setValue('customer', 'groupId', $Customer->getId());
-        $Config->save();
+            echo '<script>var QUIQQER_CUSTOMER_GROUP = '.$groupId.'</script>';
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
     }
 }
