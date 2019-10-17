@@ -147,8 +147,31 @@ class Search extends Singleton
         );
 
         $result = [];
+        $Groups = QUI::getGroups();
 
         foreach ($data as $entry) {
+            $entry['usergroup'] = \trim($entry['usergroup'], ',');
+            $entry['usergroup'] = \explode(',', $entry['usergroup']);
+            $entry['usergroup'] = \array_map(function ($groupId) {
+                return (int)$groupId;
+            }, $entry['usergroup']);
+
+            $groups = \array_map(function ($groupId) use ($Groups) {
+                try {
+                    $Group = $Groups->get($groupId);
+
+                    return $Group->getName();
+                } catch (QUI\Exception $Exception) {
+                }
+
+                return '';
+            }, $entry['usergroup']);
+
+            \sort($groups);
+            $groups = \implode(', ', $groups);
+            $groups = \str_replace(',,', '', $groups);
+            $groups = \trim($groups, ',');
+
             $result[] = [
                 'id'        => (int)$entry['id'],
                 'status'    => !!$entry['active'],
@@ -156,8 +179,10 @@ class Search extends Singleton
                 'firstname' => $entry['firstname'],
                 'lastname'  => $entry['lastname'],
                 'email'     => $entry['email'],
-                'usergroup' => $entry['usergroup'],
-                'regdate'   => $DateFormatterLong->format($entry['regdate'])
+                'regdate'   => $DateFormatterLong->format($entry['regdate']),
+
+                'usergroup_display' => $groups,
+                'usergroup'         => $entry['usergroup']
             ];
         }
 
@@ -199,7 +224,8 @@ class Search extends Singleton
             if ($this->onlyCustomer) {
                 try {
                     $customerGroup = Customers::getInstance()->getCustomerGroupId();
-                    $where         = " WHERE usergroup LIKE '%,{$customerGroup},%'";
+                    $where         = " WHERE usergroup LIKE ' %,{
+                $customerGroup},%'";
                 } catch (QUI\Exception $Exception) {
                     QUI\System\Log::addError($Exception->getMessage());
                 }
@@ -236,7 +262,7 @@ class Search extends Singleton
                 $where[]       = 'usergroup LIKE :customerId';
 
                 $binds['customerId'] = [
-                    'value' => '%,'.$customerGroup.',%',
+                    'value' => ' %,'.$customerGroup.',%',
                     'type'  => \PDO::PARAM_STR
                 ];
             } catch (QUI\Exception $Exception) {
@@ -292,16 +318,16 @@ class Search extends Singleton
 
         if (!empty($this->search)) {
             $where[] = '(
-                id LIKE :search OR
-                username LIKE :search OR
-                email LIKE :search OR
-                firstname LIKE :search OR
-                lastname LIKE :search OR
-                company LIKE :search
+            id LIKE :search OR
+                     username LIKE :search OR
+                                    email LIKE :search OR
+                                                firstname LIKE :search OR
+                                                                lastname LIKE :search OR
+                                                                               company LIKE :search
             )';
 
             $binds['search'] = [
-                'value' => '%'.$this->search.'%',
+                'value' => ' % '.$this->search.' % ',
                 'type'  => \PDO::PARAM_STR
             ];
         }

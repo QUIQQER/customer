@@ -7,6 +7,9 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
     'qui/QUI',
     'qui/controls/Control',
     'qui/controls/buttons/Switch',
+    'qui/controls/contextmenu/Menu',
+    'qui/controls/contextmenu/Item',
+    'package/quiqqer/customer/bin/backend/Handler',
     'controls/grid/Grid',
     'Mustache',
     'Locale',
@@ -15,7 +18,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
     'text!package/quiqqer/customer/bin/backend/controls/Administration.html',
     'css!package/quiqqer/customer/bin/backend/controls/Administration.css'
 
-], function (QUI, QUIControl, QUISwitch, Grid, Mustache, QUILocale, QUIAjax, template) {
+], function (QUI, QUIControl, QUISwitch, ContextMenu, ContextMenuItem, CustomerHandler,
+             Grid, Mustache, QUILocale, QUIAjax, template) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -28,6 +32,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
         Binds: [
             '$onInject',
             '$editComplete',
+            '$gridDblClick',
             'refresh'
         ],
 
@@ -42,6 +47,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             this.$SearchContainer = null;
             this.$SearchInput     = null;
+            this.$customerGroup   = null;
 
             this.$GroupSwitch   = null;
             this.$GridContainer = null;
@@ -132,9 +138,14 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     className: editable ? 'clickable' : ''
                 }, {
                     header   : QUILocale.get('quiqqer/quiqqer', 'group'),
+                    dataIndex: 'usergroup_display',
+                    dataType : 'string',
+                    width    : 150,
+                    className: 'clickable'
+                }, {
                     dataIndex: 'usergroup',
-                    dataType : 'integer',
-                    width    : 150
+                    dataType : 'string',
+                    hidden   : true
                 }, {
                     header   : QUILocale.get('quiqqer/quiqqer', 'c_date'),
                     dataIndex: 'regdate',
@@ -161,7 +172,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             // Events
             this.$Grid.addEvents({
                 // onClick   : this.$gridClick,
-                // onDblClick: this.$gridDblClick,
+                onDblClick  : this.$gridDblClick,
                 // onBlur    : this.$gridBlur,
                 editComplete: this.$editComplete,
                 refresh     : this.refresh
@@ -170,8 +181,20 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             return this.$Elm;
         },
 
+        /**
+         * event: on inject
+         */
         $onInject: function () {
-            this.refresh();
+            var self = this;
+
+            this.$Grid.disable();
+
+            CustomerHandler.getCustomerGroupId().then(function (customerGroup) {
+                self.$customerGroup = customerGroup;
+                self.refresh().then(function () {
+                    self.$Grid.enable();
+                });
+            });
         },
 
         /**
@@ -212,29 +235,32 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             this.fireEvent('refreshBegin', [this]);
 
-            QUIAjax.get('package_quiqqer_customer_ajax_backend_search', function (result) {
-                var onChange = function (Switch) {
-                    var userStatus = Switch.getStatus();
-                    var userId     = Switch.getAttribute('userId');
+            return new Promise(function (resolve) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_search', function (result) {
+                    var onChange = function (Switch) {
+                        var userStatus = Switch.getStatus();
+                        var userId     = Switch.getAttribute('userId');
 
-                    self.$setStatus(userId, userStatus);
-                };
+                        self.$setStatus(userId, userStatus);
+                    };
 
-                for (var i = 0, len = result.data.length; i < len; i++) {
-                    result.data[i].status = new QUISwitch({
-                        status: result.data[i].status,
-                        userId: result.data[i].id,
-                        events: {
-                            onChange: onChange
-                        }
-                    });
-                }
+                    for (var i = 0, len = result.data.length; i < len; i++) {
+                        result.data[i].status = new QUISwitch({
+                            status: result.data[i].status,
+                            userId: result.data[i].id,
+                            events: {
+                                onChange: onChange
+                            }
+                        });
+                    }
 
-                self.$Grid.setData(result);
-                self.fireEvent('refreshEnd', [self]);
-            }, {
-                package: 'quiqqer/customer',
-                params : JSON.encode(params)
+                    self.$Grid.setData(result);
+                    self.fireEvent('refreshEnd', [self]);
+                    resolve();
+                }, {
+                    package: 'quiqqer/customer',
+                    params : JSON.encode(params)
+                });
             });
         },
 
@@ -298,6 +324,115 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     })
                 });
             });
+        },
+
+        /**
+         *
+         * @param userId
+         */
+        $addToCustomer: function (userId) {
+            this.$Grid.disable();
+
+            CustomerHandler.addToCustomer(userId).then(function () {
+                this.refresh();
+                this.$Grid.enable();
+            }.bind(this));
+        },
+
+        /**
+         *
+         * @param userId
+         */
+        $removeFromCustomer: function (userId) {
+            this.$Grid.disable();
+
+            CustomerHandler.removeFromCustomer(userId).then(function () {
+                this.refresh();
+                this.$Grid.enable();
+            }.bind(this));
+        },
+
+        /**
+         * event: on dbl click at grid
+         *
+         * @param {object} data - cell data
+         */
+        $gridDblClick: function (data) {
+            if (typeof data === 'undefined' && typeof data.cell === 'undefined') {
+                return;
+            }
+
+            if (data.cell.get('data-index') === 'usergroup_display') {
+                var self     = this,
+                    Cell     = data.cell,
+                    position = Cell.getPosition(),
+                    rowData  = this.$Grid.getDataByRow(data.row);
+
+                var Menu = new ContextMenu({
+                    events: {
+                        onBlur: function () {
+                            Menu.hide();
+                            Menu.destroy();
+                        }
+                    }
+                });
+
+                if (rowData.usergroup.indexOf(this.$customerGroup) === -1) {
+                    Menu.appendChild(
+                        new ContextMenuItem({
+                            icon  : 'fa fa-user-o',
+                            text  : QUILocale.get(lg, 'administration.contextMenu.add.to.customer'),
+                            events: {
+                                onClick: function () {
+                                    self.$addToCustomer(rowData.id);
+                                }
+                            }
+                        })
+                    );
+                } else {
+                    Menu.appendChild(
+                        new ContextMenuItem({
+                            icon  : 'fa fa-user-o',
+                            text  : QUILocale.get(lg, 'administration.contextMenu.remove.from.customer'),
+                            events: {
+                                onClick: function () {
+                                    self.$removeFromCustomer(rowData.id);
+                                }
+                            }
+                        })
+                    );
+                }
+
+                Menu.appendChild(
+                    new ContextMenuItem({
+                        icon  : 'fa fa-users',
+                        text  : QUILocale.get(lg, 'administration.contextMenu.groups'),
+                        events: {
+                            onClick: function () {
+
+                            }
+                        }
+                    })
+                );
+
+                Menu.appendChild(
+                    new ContextMenuItem({
+                        icon  : 'fa fa-user',
+                        text  : QUILocale.get(lg, 'administration.contextMenu.user'),
+                        events: {
+                            onClick: function () {
+
+                            }
+                        }
+                    })
+                );
+
+                Menu.inject(document.body);
+                Menu.setPosition(position.x, position.y + 30);
+                Menu.setTitle(rowData.id);
+                Menu.show();
+                Menu.focus();
+            }
         }
     });
 });

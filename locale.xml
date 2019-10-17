@@ -75,6 +75,23 @@
             <de><![CDATA[Nur die Kundengruppe durchsuchen]]></de>
             <en><![CDATA[Search the customer group only]]></en>
         </locale>
+
+        <locale name="administration.contextMenu.add.to.customer">
+            <de><![CDATA[Zur Kundengruppe hinzufügen]]></de>
+            <en><![CDATA[Add to customer group]]></en>
+        </locale>
+        <locale name="administration.contextMenu.remove.from.customer">
+            <de><![CDATA[Von Kundengruppe entfernen]]></de>
+            <en><![CDATA[Remove from customer group]]></en>
+        </locale>
+        <locale name="administration.contextMenu.groups">
+            <de><![CDATA[Gruppen des Benutzers verwalten]]></de>
+            <en><![CDATA[Manage Groups of the user]]></en>
+        </locale>
+        <locale name="administration.contextMenu.user">
+            <de><![CDATA[Benutzer verwalten]]></de>
+            <en><![CDATA[Manage user]]></en>
+        </locale>
     </groups>
 
 </locales>

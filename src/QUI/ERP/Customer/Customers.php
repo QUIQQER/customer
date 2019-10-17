@@ -60,4 +60,58 @@ class Customers extends Singleton
 
         return $this->Group;
     }
+
+    /**
+     * Add a user to the customer group
+     *
+     * @param {string|bool} $userId
+     *
+     * @throws QUI\Exception
+     * @throws QUI\Users\Exception
+     */
+    public function addUserToCustomerGroup($userId)
+    {
+        $customerGroup = null;
+
+        try {
+            $customerGroup = $this->getCustomerGroupId();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addError($Exception->getMessage());
+        }
+
+        if (!$customerGroup) {
+            return;
+        }
+
+        $User = QUI::getUsers()->get((int)$userId);
+        $User->addToGroup($customerGroup);
+        $User->save();
+    }
+
+    /**
+     * Remve a user from the customer group
+     *
+     * @param {string|bool} $userId
+     *
+     * @throws QUI\Exception
+     * @throws QUI\Users\Exception
+     */
+    public function removeUserFromCustomerGroup($userId)
+    {
+        $customerGroup = null;
+
+        try {
+            $customerGroup = $this->getCustomerGroupId();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addError($Exception->getMessage());
+        }
+
+        if (!$customerGroup) {
+            return;
+        }
+
+        $User = QUI::getUsers()->get((int)$userId);
+        $User->removeGroup($customerGroup);
+        $User->save();
+    }
 }
