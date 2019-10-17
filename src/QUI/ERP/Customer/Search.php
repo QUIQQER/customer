@@ -224,8 +224,7 @@ class Search extends Singleton
             if ($this->onlyCustomer) {
                 try {
                     $customerGroup = Customers::getInstance()->getCustomerGroupId();
-                    $where         = " WHERE usergroup LIKE ' %,{
-                $customerGroup},%'";
+                    $where         = " WHERE usergroup LIKE '%,{$customerGroup},%'";
                 } catch (QUI\Exception $Exception) {
                     QUI\System\Log::addError($Exception->getMessage());
                 }
@@ -318,12 +317,12 @@ class Search extends Singleton
 
         if (!empty($this->search)) {
             $where[] = '(
-            id LIKE :search OR
-                     username LIKE :search OR
-                                    email LIKE :search OR
-                                                firstname LIKE :search OR
-                                                                lastname LIKE :search OR
-                                                                               company LIKE :search
+                id LIKE :search OR
+                username LIKE :search OR
+                email LIKE :search OR
+                firstname LIKE :search OR
+                lastname LIKE :search OR
+                company LIKE :search
             )';
 
             $binds['search'] = [

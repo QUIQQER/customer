@@ -32,7 +32,7 @@ class Customers extends Singleton
     {
         $Package = QUI::getPackage('quiqqer/customer');
         $Config  = $Package->getConfig();
-        $groupId = $Config->getValue('customer', 'groupId');
+        $groupId = (int)\trim($Config->getValue('customer', 'groupId'));
 
         if (empty($groupId)) {
             throw new Exception([
