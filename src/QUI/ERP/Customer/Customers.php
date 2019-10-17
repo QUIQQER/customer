@@ -23,29 +23,40 @@ class Customers extends Singleton
     protected $Group = null;
 
     /**
-     * Return the customer group
+     * @return int
      *
-     * @return QUI\Groups\Group
      * @throws Exception
+     * @throws QUI\Exception
      */
-    public function getCustomerGroup()
+    public function getCustomerGroupId()
     {
-        if ($this->Group !== null) {
-            return $this->Group;
-        }
-
         $Package = QUI::getPackage('quiqqer/customer');
         $Config  = $Package->getConfig();
         $groupId = $Config->getValue('customer', 'groupId');
 
         if (empty($groupId)) {
-            throw new Exception(array(
+            throw new Exception([
                 'quiqqer/customer',
                 'exception.customer.group.not.exists'
-            ));
+            ]);
         }
 
-        $this->Group = QUI::getGroups()->get($groupId);
+        return (int)$groupId;
+    }
+
+    /**
+     * Return the customer group
+     *
+     * @return QUI\Groups\Group
+     *
+     * @throws Exception
+     * @throws QUI\Exception
+     */
+    public function getCustomerGroup()
+    {
+        if ($this->Group === null) {
+            $this->Group = QUI::getGroups()->get($this->getCustomerGroupId());
+        }
 
         return $this->Group;
     }

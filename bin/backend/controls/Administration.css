@@ -14,6 +14,10 @@
     width: 100%;
 }
 
+.quiqqer-customer-administration-search [name="filter"] {
+    margin-right: 10px;
+}
+
 .quiqqer-customer-administration-search [name="search"] {
     float: left;
     width: 280px;

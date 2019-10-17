@@ -25,6 +25,12 @@ QUI::$Ajax->registerFunction(
             $Search->setFilter('search', $params['search']);
         }
 
+        if (isset($params['onlyCustomer']) && $params['onlyCustomer']) {
+            $Search->searchOnlyInCustomer();
+        } else {
+            $Search->searchInAllGroups();
+        }
+
         // limit
         $start = 0;
         $count = 50;

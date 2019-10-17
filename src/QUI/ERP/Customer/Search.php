@@ -34,6 +34,13 @@ class Search extends Singleton
     protected $search = null;
 
     /**
+     * search flag for: search only in customer
+     *
+     * @var bool
+     */
+    protected $onlyCustomer = true;
+
+    /**
      * @var array
      */
     protected $limit = [0, 20];
@@ -187,9 +194,20 @@ class Search extends Singleton
 
 
         if (empty($this->filter) && empty($this->search)) {
+            $where = '';
+
+            if ($this->onlyCustomer) {
+                try {
+                    $customerGroup = Customers::getInstance()->getCustomerGroupId();
+                    $where         = " WHERE usergroup LIKE '%,{$customerGroup},%'";
+                } catch (QUI\Exception $Exception) {
+                    QUI\System\Log::addError($Exception->getMessage());
+                }
+            }
+
             if ($count) {
                 return [
-                    'query' => " SELECT COUNT(id) AS count FROM {$table}",
+                    'query' => " SELECT COUNT(id) AS count FROM {$table} {$where}",
                     'binds' => []
                 ];
             }
@@ -198,6 +216,7 @@ class Search extends Singleton
                 'query' => "
                     SELECT *
                     FROM {$table}
+                    {$where}
                     ORDER BY {$order}
                     {$limit}
                 ",
@@ -210,6 +229,20 @@ class Search extends Singleton
 
         // filter
         $fc = 0;
+
+        if ($this->onlyCustomer) {
+            try {
+                $customerGroup = Customers::getInstance()->getCustomerGroupId();
+                $where[]       = 'usergroup LIKE :customerId';
+
+                $binds['customerId'] = [
+                    'value' => '%,'.$customerGroup.',%',
+                    'type'  => \PDO::PARAM_STR
+                ];
+            } catch (QUI\Exception $Exception) {
+                QUI\System\Log::addError($Exception->getMessage());
+            }
+        }
 
         foreach ($this->filter as $filter) {
             $bind = ':filter'.$fc;
@@ -398,6 +431,22 @@ class Search extends Singleton
     public function clearFilter()
     {
         $this->filter = [];
+    }
+
+    /**
+     * set the flag for searching only in the customer group
+     */
+    public function searchOnlyInCustomer()
+    {
+        $this->onlyCustomer = true;
+    }
+
+    /**
+     * set the flag for searching in all groups
+     */
+    public function searchInAllGroups()
+    {
+        $this->onlyCustomer = false;
     }
 
     //endregion

@@ -206,7 +206,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 sortBy       : options.sortBy,
                 sortOn       : options.sortOn,
                 customerGroup: customerGroup,
-                search       : this.$SearchInput.value
+                search       : this.$SearchInput.value,
+                onlyCustomer : this.$GroupSwitch.getStatus() ? 1 : 0
             };
 
             this.fireEvent('refreshBegin', [this]);
