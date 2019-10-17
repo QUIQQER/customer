@@ -1,0 +1,35 @@
+.quiqqer-customer-administration {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/** header / search / filter
+ =============================== */
+
+.quiqqer-customer-administration-search {
+    background: #e1e4e9;
+    clear: both;
+    padding: 20px;
+    width: 100%;
+}
+
+.quiqqer-customer-administration-search [name="search"] {
+    float: left;
+    width: 280px;
+}
+
+.quiqqer-customer-administration-search [name="submit"] {
+    border: none;
+}
+
+/** grid / result
+ =============================== */
+
+.quiqqer-customer-administration-grid {
+    clear: both;
+    flex-grow: 1;
+    overflow: hidden;
+    padding: 20px;
+    width: 100%;
+}
