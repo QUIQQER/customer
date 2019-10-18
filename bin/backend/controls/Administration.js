@@ -327,6 +327,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
         },
 
         /**
+         * add the user to the customer group
          *
          * @param userId
          */
@@ -340,6 +341,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
         },
 
         /**
+         * remove the user to the customer group
          *
          * @param userId
          */
@@ -350,6 +352,26 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 this.refresh();
                 this.$Grid.enable();
             }.bind(this));
+        },
+
+        /**
+         * opens the user group edit window
+         *
+         * @param userId
+         */
+        $editUserGroups: function (userId) {
+            var self = this;
+
+            require([
+                'package/quiqqer/customer/bin/backend/controls/users/UserGroupsWindow'
+            ], function (Window) {
+                new Window({
+                    userId: userId,
+                    events: {
+                        onSubmit: self.refresh
+                    }
+                }).open();
+            });
         },
 
         /**
@@ -409,7 +431,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                         text  : QUILocale.get(lg, 'administration.contextMenu.groups'),
                         events: {
                             onClick: function () {
-
+                                self.$editUserGroups(rowData.id);
                             }
                         }
                     })

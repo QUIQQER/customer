@@ -92,6 +92,11 @@
             <de><![CDATA[Benutzer verwalten]]></de>
             <en><![CDATA[Manage user]]></en>
         </locale>
+
+        <locale name="user.group.window.title">
+            <de><![CDATA[Gruppen von [username] bearbeiten]]></de>
+            <en><![CDATA[Edit groups of [username]]]></en>
+        </locale>
     </groups>
 
 </locales>
