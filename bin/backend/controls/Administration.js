@@ -394,12 +394,35 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
         },
 
         /**
+         * Opens the Customer
+         *
+         * @param userId
+         */
+        $openCustomer: function (userId) {
+            require([
+                'package/quiqqer/customer/bin/backend/controls/CustomerPanel',
+                'utils/Panels'
+            ], function (Panel, PanelUtils) {
+                PanelUtils.openPanelInTasks(
+                    new Panel({
+                        userId: userId
+                    })
+                );
+            });
+        },
+
+        /**
          * event: on dbl click at grid
          *
          * @param {object} data - cell data
          */
         $gridDblClick: function (data) {
             if (typeof data === 'undefined' && typeof data.cell === 'undefined') {
+                return;
+            }
+
+            if (data.cell.get('data-index') === 'id') {
+                this.$openCustomer(data.row.id);
                 return;
             }
 
@@ -462,7 +485,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                         text  : QUILocale.get(lg, 'administration.contextMenu.user'),
                         events: {
                             onClick: function () {
-
+                                self.$openCustomer(rowData.id);
                             }
                         }
                     })
