@@ -1,13 +1,12 @@
 <div class="quiqqer-customer-administration-filter">
-
 </div>
 <div class="quiqqer-customer-administration-search">
-    <form>
+    <form name="customer-search">
         <button class="qui-button" name="filter">
             <span class="fa fa-filter"></span>
         </button>
 
-        <label>
+        <label style="display: inline-block">
             <input type="text"
                    name="search"
                    placeholder="{{searchPlaceholder}}"
@@ -18,6 +17,56 @@
                    class="qui-button"
             />
         </label>
+
+        <div class="quiqqer-customer-administration-search-filter" style="display: none">
+            <section class="quiqqer-customer-administration-search-filter-checks">
+                <span class="title">Felder bei der Suche beachten</span>
+
+                <label>
+                    <input type="checkbox" name="userId"/>
+                    <span>Benutzer-ID</span>
+                </label>
+
+                <label>
+                    <input type="checkbox" name="username"/>
+                    <span>Benutzername</span>
+                </label>
+
+                <label>
+                    <input type="checkbox" name="firstname"/>
+                    <span>Vorname</span>
+                </label>
+
+                <label>
+                    <input type="checkbox" name="lastname"/>
+                    <span>Nachname</span>
+                </label>
+
+                <label>
+                    <input type="checkbox" name="email"/>
+                    <span>E-Mail</span>
+                </label>
+
+                <label>
+                    <input type="checkbox" name="group"/>
+                    <span>Gruppe</span>
+                </label>
+            </section>
+
+            <section class="quiqqer-customer-administration-search-filter-specs">
+                <span class="title">Erstellungsdatum</span>
+
+                <label>
+                    <span>von</span>
+                    <input type="date" name="registration-from"/>
+                </label>
+
+                <label>
+                    <span>bis</span>
+                    <input type="date" name="registration-to"/>
+                </label>
+            </section>
+        </div>
     </form>
 </div>
 <div class="quiqqer-customer-administration-grid"></div>

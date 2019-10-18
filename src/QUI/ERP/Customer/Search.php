@@ -218,6 +218,46 @@ class Search extends Singleton
         }
 
 
+        // filter checks
+        $filterList = [
+            'userId',
+            'username',
+            'firstname',
+            'lastname',
+            'email',
+            'usergroup'
+        ];
+
+        $searchFilters = [];
+
+        $filterReset = function () use ($filterList) {
+            foreach ($filterList as $filter) {
+                if (isset($this->filter[$filter]) && $this->filter[$filter]) {
+                    return false;
+                }
+            }
+
+            return true;
+        };
+
+        if ($filterReset()) {
+            foreach ($filterList as $filter) {
+                if (isset($this->filter[$filter])) {
+                    unset($this->filter[$filter]);
+                }
+            }
+
+            $searchFilters = $filterList;
+        } else {
+            foreach ($filterList as $filter) {
+                if (isset($this->filter[$filter]) && $this->filter[$filter]) {
+                    $searchFilters[] = $filter;
+                }
+            }
+        }
+
+
+        // create query
         if (empty($this->filter) && empty($this->search)) {
             $where = '';
 
@@ -261,7 +301,7 @@ class Search extends Singleton
                 $where[]       = 'usergroup LIKE :customerId';
 
                 $binds['customerId'] = [
-                    'value' => ' %,'.$customerGroup.',%',
+                    'value' => '%,'.$customerGroup.',%',
                     'type'  => \PDO::PARAM_STR
                 ];
             } catch (QUI\Exception $Exception) {
@@ -269,64 +309,92 @@ class Search extends Singleton
             }
         }
 
-        foreach ($this->filter as $filter) {
-            $bind = ':filter'.$fc;
-            $flr  = $filter['filter'];
 
-            switch ($flr) {
-                case 'regdate_from':
-                    $where[] = 'regdate >= '.$bind;
-                    break;
+        // create filter mysql
+        foreach ($this->filter as $filter => $value) {
+            if (empty($value)) {
+                continue;
+            }
 
-                case 'regdate_to':
-                    $where[] = 'regdate <= '.$bind;
-                    break;
+            $bind = 'filter'.$fc;
 
+            if ($filter === 'regdate_from') {
+                $where[] = 'regdate >= :'.$bind;
+
+                $binds[$bind] = [
+                    'value' => (int)\strtotime($value),
+                    'type'  => \PDO::PARAM_INT
+                ];
+                continue;
+            }
+
+            if ($filter === 'regdate_to') {
+                $where[] = 'regdate <= :'.$bind;
+
+                $binds[$bind] = [
+                    'value' => (int)\strtotime($value),
+                    'type'  => \PDO::PARAM_INT
+                ];
+                continue;
+            }
+
+            switch ($filter) {
                 case 'lastvisit_from':
-                    $where[] = 'lastvisit >= '.$bind;
+                    $where[] = 'lastvisit >= :'.$bind;
                     break;
 
                 case 'lastvisit_to':
-                    $where[] = 'lastvisit <= '.$bind;
+                    $where[] = 'lastvisit <= :'.$bind;
                     break;
 
                 case 'lastedit_from':
-                    $where[] = 'lastedit >= '.$bind;
+                    $where[] = 'lastedit >= :'.$bind;
                     break;
 
                 case 'lastedit_to':
-                    $where[] = 'lastedit <= '.$bind;
+                    $where[] = 'lastedit <= :'.$bind;
                     break;
 
                 case 'expire_from':
-                    $where[] = 'expire >= '.$bind;
+                    $where[] = 'expire >= :'.$bind;
                     break;
 
                 case 'expire_to':
-                    $where[] = 'expire <= '.$bind;
+                    $where[] = 'expire <= :'.$bind;
                     break;
+
+                default:
+                    continue 2;
             }
 
             $binds[$bind] = [
-                'value' => $filter['value'],
+                'value' => $value,
                 'type'  => \PDO::PARAM_STR
             ];
 
             $fc++;
         }
 
+
         if (!empty($this->search)) {
-            $where[] = '(
-                id LIKE :search OR
-                username LIKE :search OR
-                email LIKE :search OR
-                firstname LIKE :search OR
-                lastname LIKE :search OR
-                company LIKE :search
-            )';
+            $searchWhere = [];
+
+            foreach ($searchFilters as $filter) {
+                if ($filter === 'userId') {
+                    $filter = 'id';
+                }
+
+                if ($filter === 'group') {
+                    $filter = 'usergroup';
+                }
+
+                $searchWhere[] = $filter.' LIKE :search';
+            }
+
+            $where[] = '('.\implode(' OR ', $searchWhere).')';
 
             $binds['search'] = [
-                'value' => ' % '.$this->search.' % ',
+                'value' => '%'.$this->search.'%',
                 'type'  => \PDO::PARAM_STR
             ];
         }
@@ -340,7 +408,7 @@ class Search extends Singleton
         if ($count) {
             return [
                 "query" => "
-                    SELECT COUNT(*) AS count
+                    SELECT COUNT(id) AS count
                     FROM {$table}
                     {$whereQuery}
                 ",
@@ -443,10 +511,28 @@ class Search extends Singleton
             return;
         }
 
+        if ($filter === 'userId') {
+            $this->filter['userId'] = $value;
+
+            return;
+        }
+
+        if ($filter === 'group') {
+            $this->filter['usergroup'] = $value;
+
+            return;
+        }
+
+        if ($filter === 'regdate_from' || $filter === 'regdate_to') {
+            $this->filter[$filter] = $value;
+
+            return;
+        }
+
         $keys = \array_flip($this->getAllowedFields());
 
-        if (!\is_array($value)) {
-            $value = [$value];
+        if (isset($keys[$filter])) {
+            $this->filter[$filter] = $value;
         }
     }
 

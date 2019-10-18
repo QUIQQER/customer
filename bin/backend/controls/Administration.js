@@ -33,7 +33,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             '$onInject',
             '$editComplete',
             '$gridDblClick',
-            'refresh'
+            'refresh',
+            'toggleFilter'
         ],
 
         options: {
@@ -47,6 +48,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             this.$SearchContainer = null;
             this.$SearchInput     = null;
+            this.$FilterButton    = null;
             this.$customerGroup   = null;
 
             this.$GroupSwitch   = null;
@@ -75,10 +77,16 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             this.$SearchContainer = this.$Elm.getElement('.quiqqer-customer-administration-search');
             this.$GridContainer   = this.$Elm.getElement('.quiqqer-customer-administration-grid');
             this.$SearchInput     = this.$Elm.getElement('[name="search"]');
+            this.$FilterButton    = this.$Elm.getElement('button[name="filter"]');
 
             this.$SearchContainer.getElement('form').addEvent('submit', function (event) {
                 event.stop();
                 self.refresh();
+            });
+
+            this.$FilterButton.addEvent('click', function (event) {
+                event.stop();
+                self.toggleFilter();
             });
 
             this.$GroupSwitch = new QUISwitch({
@@ -221,7 +229,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
         refresh: function () {
             var self          = this,
                 customerGroup = this.$GroupSwitch.getStatus(),
-                options       = this.$Grid.options;
+                options       = this.$Grid.options,
+                Form          = this.$SearchContainer.getElement('form');
 
             var params = {
                 perPage      : options.perPage || 50,
@@ -230,7 +239,17 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 sortOn       : options.sortOn,
                 customerGroup: customerGroup,
                 search       : this.$SearchInput.value,
-                onlyCustomer : this.$GroupSwitch.getStatus() ? 1 : 0
+                onlyCustomer : this.$GroupSwitch.getStatus() ? 1 : 0,
+                filter       : {
+                    userId      : Form.elements.userId.checked ? 1 : 0,
+                    username    : Form.elements.username.checked ? 1 : 0,
+                    firstname   : Form.elements.firstname.checked ? 1 : 0,
+                    lastname    : Form.elements.lastname.checked ? 1 : 0,
+                    email       : Form.elements.email.checked ? 1 : 0,
+                    group       : Form.elements.group.checked ? 1 : 0,
+                    regdate_from: Form.elements['registration-from'].value,
+                    regdate_to  : Form.elements['registration-to'].value
+                }
             };
 
             this.fireEvent('refreshBegin', [this]);
@@ -455,6 +474,88 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 Menu.show();
                 Menu.focus();
             }
+        },
+
+        //region filter
+
+        /**
+         * Toggle the filter
+         */
+        toggleFilter: function () {
+            var FilterContainer = this.getElm().getElement('.quiqqer-customer-administration-search-filter');
+
+            if (FilterContainer.getStyle('display') === 'none') {
+                this.openFilter();
+            } else {
+                this.closeFilter();
+            }
+        },
+
+        /**
+         * Open the filter
+         */
+        openFilter: function () {
+            var self            = this,
+                FilterContainer = this.getElm().getElement('.quiqqer-customer-administration-search-filter');
+
+            FilterContainer.setStyle('position', 'absolute');
+            FilterContainer.setStyle('opacity', 0);
+            FilterContainer.setStyle('overflow', 'hidden');
+
+            // reset
+            FilterContainer.setStyle('display', null);
+            FilterContainer.setStyle('height', null);
+            FilterContainer.setStyle('paddingBottom', null);
+            FilterContainer.setStyle('paddingTop', null);
+
+            var height = FilterContainer.getSize().y;
+
+            FilterContainer.setStyle('height', 0);
+            FilterContainer.setStyle('paddingBottom', 0);
+            FilterContainer.setStyle('paddingTop', 0);
+            FilterContainer.setStyle('position', null);
+
+            moofx(FilterContainer).animate({
+                height       : height,
+                marginTop    : 20,
+                opacity      : 1,
+                paddingBottom: 10,
+                paddingTop   : 10
+            }, {
+                duration: 300,
+                callback: function () {
+                    self.resize();
+                }
+            });
+        },
+
+        /**
+         * Close the filter
+         */
+        closeFilter: function () {
+            var self            = this,
+                FilterContainer = this.getElm().getElement('.quiqqer-customer-administration-search-filter');
+
+            moofx(FilterContainer).animate({
+                height       : 0,
+                marginTop    : 0,
+                opacity      : 1,
+                paddingBottom: 0,
+                paddingTop   : 0
+            }, {
+                duration: 300,
+                callback: function () {
+                    FilterContainer.setStyle('display', 'none');
+
+                    FilterContainer.setStyle('height', null);
+                    FilterContainer.setStyle('paddingBottom', null);
+                    FilterContainer.setStyle('paddingTop', null);
+
+                    self.resize();
+                }
+            });
         }
+
+        //enregion
     });
 });
