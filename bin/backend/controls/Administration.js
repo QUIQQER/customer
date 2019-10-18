@@ -399,8 +399,13 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          * @param userId
          */
         $openCustomer: function (userId) {
+            console.log(userId);
+            if (!userId) {
+                return;
+            }
+
             require([
-                'package/quiqqer/customer/bin/backend/controls/CustomerPanel',
+                'package/quiqqer/customer/bin/backend/controls/customer/Panel',
                 'utils/Panels'
             ], function (Panel, PanelUtils) {
                 PanelUtils.openPanelInTasks(
@@ -421,16 +426,17 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 return;
             }
 
+            var rowData = this.$Grid.getDataByRow(data.row);
+
             if (data.cell.get('data-index') === 'id') {
-                this.$openCustomer(data.row.id);
+                this.$openCustomer(rowData.id);
                 return;
             }
 
             if (data.cell.get('data-index') === 'usergroup_display') {
                 var self     = this,
                     Cell     = data.cell,
-                    position = Cell.getPosition(),
-                    rowData  = this.$Grid.getDataByRow(data.row);
+                    position = Cell.getPosition();
 
                 var Menu = new ContextMenu({
                     events: {

@@ -97,6 +97,11 @@
             <de><![CDATA[Gruppen von [username] bearbeiten]]></de>
             <en><![CDATA[Edit groups of [username]]]></en>
         </locale>
+
+        <locale name="customer.panel.title">
+            <de><![CDATA[Benutzer / Kunde: [user] - [username]]]></de>
+            <en><![CDATA[User / Customer: [user] - [username]]]></en>
+        </locale>
     </groups>
 
 </locales>
