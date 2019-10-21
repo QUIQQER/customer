@@ -102,6 +102,26 @@
             <de><![CDATA[Benutzer / Kunde: [user] - [username]]]></de>
             <en><![CDATA[User / Customer: [user] - [username]]]></en>
         </locale>
+        <locale name="customer.panel,information.details">
+            <de><![CDATA[Details]]></de>
+            <en><![CDATA[Details]]></en>
+        </locale>
+        <locale name="customer.panel,information.address">
+            <de><![CDATA[Adresse]]></de>
+            <en><![CDATA[Address]]></en>
+        </locale>
+        <locale name="customer.panel,information.erp.addresses">
+            <de><![CDATA[ERP Adressen]]></de>
+            <en><![CDATA[ERP addresses]]></en>
+        </locale>
+        <locale name="customer.panel,information.invoice.address">
+            <de><![CDATA[Rechnungsadresse]]></de>
+            <en><![CDATA[Invoice address]]></en>
+        </locale>
+        <locale name="customer.panel,information.delivery.address">
+            <de><![CDATA[Lieferadresse]]></de>
+            <en><![CDATA[Delivery address]]></en>
+        </locale>
     </groups>
 
 </locales>
