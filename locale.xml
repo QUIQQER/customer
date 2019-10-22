@@ -122,6 +122,11 @@
             <de><![CDATA[Lieferadresse]]></de>
             <en><![CDATA[Delivery address]]></en>
         </locale>
+
+        <locale name="address.edit.window.title">
+            <de><![CDATA[Adresse #[id] von [firstname] [lastname] bearbeiten]]></de>
+            <en><![CDATA[Edit address #[id] from [firstname] [lastname]]]></en>
+        </locale>
     </groups>
 
 </locales>

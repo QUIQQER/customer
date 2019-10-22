@@ -29,7 +29,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             '$onShow',
             '$onSaveClick',
             '$onDeleteClick',
-            '$onStatusChangeClick'
+            '$onStatusChangeClick',
+            '$clickEditAddress'
         ],
 
         options: {
@@ -147,7 +148,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             });
         },
 
-        //region categories
+        //region information
 
         /**
          * opens the user information
@@ -177,8 +178,89 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             var InvoiceAddress  = self.getContent().getElement('[name="invoice-address"]');
             var DeliveryAddress = self.getContent().getElement('[name="delivery-address"]');
 
+            var onChange = function (event) {
+                var Target = event.target;
+                var Button = Target.getNext('button');
+
+                if (Target.value === '') {
+                    Button.set('disabled', true);
+                } else {
+                    Button.set('disabled', false);
+                }
+            };
+
+            DefaultAddress.addEvent('change', onChange);
+            InvoiceAddress.addEvent('change', onChange);
+            DeliveryAddress.addEvent('change', onChange);
+
+            DefaultAddress.getNext('button').addEvent('click', this.$clickEditAddress);
+            InvoiceAddress.getNext('button').addEvent('click', this.$clickEditAddress);
+            DeliveryAddress.getNext('button').addEvent('click', this.$clickEditAddress);
+
+            return self.refreshAddressLists();
+        },
+
+        /**
+         * Edit an address
+         * - opens the edit address window
+         *
+         * @param addressId
+         * @return {Promise}
+         */
+        editAddress: function (addressId) {
+            var self = this;
+
+            require([
+                'package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow'
+            ], function (AddressEditWindow) {
+                new AddressEditWindow({
+                    addressId: addressId,
+                    events   : {
+                        onSubmit: function () {
+                            self.Loader.show();
+
+                            self.$User.$addresses = false; // workaround for refresh
+                            self.refreshAddressLists().then(function () {
+                                self.Loader.hide();
+                            });
+                        }
+                    }
+                }).open();
+            });
+        },
+
+        /**
+         * Refresh the address lists
+         *
+         * @return {Promise}
+         */
+        refreshAddressLists: function () {
+            var self            = this;
+            var DefaultAddress  = this.getContent().getElement('[name="default-address"]');
+            var InvoiceAddress  = this.getContent().getElement('[name="invoice-address"]');
+            var DeliveryAddress = this.getContent().getElement('[name="delivery-address"]');
+
             // set addresses
-            return self.$User.getAddressList().then(function (addressList) {
+            return this.$User.getAddressList().then(function (addressList) {
+                DefaultAddress.innerHTML  = '';
+                InvoiceAddress.innerHTML  = '';
+                DeliveryAddress.innerHTML = '';
+
+                new Element('option', {
+                    html : '',
+                    value: ''
+                }).inject(DefaultAddress);
+
+                new Element('option', {
+                    html : '',
+                    value: ''
+                }).inject(InvoiceAddress);
+
+                new Element('option', {
+                    html : '',
+                    value: ''
+                }).inject(DeliveryAddress);
+
                 for (var i = 0, len = addressList.length; i < len; i++) {
                     new Element('option', {
                         html : addressList[i].text,
@@ -196,7 +278,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     }).inject(DeliveryAddress);
                 }
 
-
                 var attributes      = self.$User.getAttributes(),
                     address         = parseInt(attributes.address),
                     invoiceAddress  = parseInt(attributes['quiqqer.erp.address']),
@@ -204,17 +285,18 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                 if (address) {
                     DefaultAddress.value = address;
+                    DefaultAddress.getNext('button').set('disabled', false);
                 }
 
                 if (invoiceAddress) {
                     InvoiceAddress.value = invoiceAddress;
+                    InvoiceAddress.getNext('button').set('disabled', false);
                 }
 
                 if (deliveryAddress) {
                     DeliveryAddress.value = deliveryAddress;
+                    DeliveryAddress.getNext('button').set('disabled', false);
                 }
-
-                console.log(attributes);
             });
         },
 
@@ -222,14 +304,44 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
         //region button actions
 
+        /**
+         * Address edit click
+         *
+         * @param event
+         */
+        $clickEditAddress: function (event) {
+            var Target = event.target;
+
+            if (Target.nodeName !== 'BUTTON') {
+                Target = Target.getParent('button');
+            }
+
+            var Select = Target.getPrevious();
+
+            if (Select.value === '') {
+                return;
+            }
+
+            this.editAddress(parseInt(Select.value));
+        },
+
+        /**
+         *
+         */
         $onSaveClick: function () {
 
         },
 
+        /**
+         *
+         */
         $onDeleteClick: function () {
 
         },
 
+        /**
+         *
+         */
         $onStatusChangeClick: function () {
 
         }
