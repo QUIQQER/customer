@@ -7,6 +7,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'qui/QUI',
     'qui/controls/desktop/Panel',
     'qui/controls/buttons/ButtonSwitch',
+    'qui/controls/windows/Confirm',
     'qui/utils/Form',
     'Users',
     'Locale',
@@ -15,7 +16,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.Information.html',
     'css!package/quiqqer/customer/bin/backend/controls/customer/Panel.css'
 
-], function (QUI, QUIPanel, QUIButtonSwitch, FormUtils, Users, QUILocale, Mustache, templateInformation) {
+], function (QUI, QUIPanel, QUIButtonSwitch, QUIConfirm, FormUtils, Users, QUILocale, Mustache, templateInformation) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -27,12 +28,15 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
         Binds: [
             '$onCreate',
+            '$onDestroy',
             '$onShow',
             '$onSaveClick',
             '$onDeleteClick',
             '$onStatusChangeClick',
             '$clickEditAddress',
-            '$openCategory'
+            '$openCategory',
+            '$onUserDelete',
+            '$onUserRefresh'
         ],
 
         options: {
@@ -43,14 +47,26 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         initialize: function (parent) {
             this.parent(parent);
 
-            this.$User = null;
-
+            this.$User               = null;
             this.$userInitAttributes = null;
 
             this.addEvents({
-                onCreate: this.$onCreate,
-                onShow  : this.$onShow
+                onCreate : this.$onCreate,
+                onDestroy: this.$onDestroy,
+                onShow   : this.$onShow
             });
+
+            Users.addEvent('onDelete', this.$onUserDelete);
+            Users.addEvent('onSwitchStatus', this.$onUserRefresh);
+        },
+
+        /**
+         * the panel on destroy event
+         * remove the binded events
+         */
+        $onDestroy: function () {
+            Users.removeEvent('switchStatus', this.$onUserRefresh);
+            Users.removeEvent('delete', this.$onUserDelete);
         },
 
         //region actions
@@ -136,18 +152,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 }
             });
 
-            // load API
+            // @todo load API
 
-            this.addCategory({
-                name  : 'test',
-                text  : 'test',
-                icon  : 'fa fa-file',
-                events: {
-                    onActive: function () {
-                        self.$openCategory('test');
-                    }
-                }
-            });
         },
 
         /**
@@ -194,7 +200,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     Status.on();
                     Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isActivate'));
                 }
-                
+
                 if (!self.$ActiveCat) {
                     self.getCategory('information').click();
                 }
@@ -495,14 +501,96 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * event: on delete click
          */
         $onDeleteClick: function () {
+            var uid = this.$User.getId();
 
+            new QUIConfirm({
+                name       : 'DeleteUser',
+                icon       : 'fa fa-trash-o',
+                texticon   : 'fa fa-trash-o',
+                title      : QUILocale.get('quiqqer/quiqqer', 'users.user.window.delete.title'),
+                text       : QUILocale.get('quiqqer/quiqqer', 'users.user.window.delete.text', {
+                    userid  : this.$User.getId(),
+                    username: this.$User.getName()
+                }),
+                information: QUILocale.get('quiqqer/quiqqer', 'users.user.window.delete.information'),
+                maxWidth   : 600,
+                maxHeight  : 400,
+                autoclose  : false,
+                events     : {
+                    onSubmit: function (Win) {
+                        Win.Loader.show();
+                        Users.deleteUsers([uid]).then(function () {
+                            Win.close();
+                        });
+                    }
+                }
+            }).open();
         },
 
         /**
-         * event: status change click
+         * event: button status on / off change
+         *
+         * @param {Object} Button - qui/controls/buttons/ButtonSwitch
          */
-        $onStatusChangeClick: function () {
+        $onStatusChangeClick: function (Button) {
+            var self         = this,
+                buttonStatus = Button.getStatus(),
+                userStatus   = this.$User.isActive();
 
+            if (buttonStatus === userStatus || userStatus === -1) {
+                return;
+            }
+
+            this.Loader.show();
+
+            var Prom;
+
+            if (buttonStatus) {
+                Prom = this.$User.activate();
+            } else {
+                Prom = this.$User.deactivate();
+            }
+
+            Prom.then(function () {
+                self.Loader.hide();
+            });
+        },
+
+        //endregion
+
+        //region user events
+
+        /**
+         * event on user delete
+         *
+         * @param {Object} Users - qui/classes/users/Manager
+         * @param {Array} uids - user ids, which are deleted
+         */
+        $onUserDelete: function (Users, uids) {
+            var uid = this.getUser().getId();
+
+            for (var i = 0, len = uids.length; i < len; i++) {
+                if (parseInt(uid) === parseInt(uids[i])) {
+                    this.destroy();
+                    break;
+                }
+            }
+        },
+
+        /**
+         * event: on user refresh
+         * -> refresh the data in the panel
+         */
+        $onUserRefresh: function () {
+            var Status = this.getButtons('status');
+
+            if (this.$User.isActive()) {
+                Status.setSilentOn();
+                Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isActivate'));
+            } else {
+                Status.setSilentOff();
+                Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isDeactivate'));
+            }
         }
 
         //endregion

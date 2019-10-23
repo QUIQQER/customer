@@ -399,7 +399,6 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          * @param userId
          */
         $openCustomer: function (userId) {
-            console.log(userId);
             if (!userId) {
                 return;
             }
