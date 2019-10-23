@@ -9,17 +9,20 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
     'qui/controls/buttons/Switch',
     'qui/controls/contextmenu/Menu',
     'qui/controls/contextmenu/Item',
+    'qui/controls/windows/Prompt',
     'package/quiqqer/customer/bin/backend/Handler',
     'controls/grid/Grid',
     'Mustache',
     'Locale',
     'Ajax',
+    'Users',
+    'Permissions',
 
     'text!package/quiqqer/customer/bin/backend/controls/Administration.html',
     'css!package/quiqqer/customer/bin/backend/controls/Administration.css'
 
-], function (QUI, QUIControl, QUISwitch, ContextMenu, ContextMenuItem, CustomerHandler,
-             Grid, Mustache, QUILocale, QUIAjax, template) {
+], function (QUI, QUIControl, QUISwitch, ContextMenu, ContextMenuItem, QUIPrompt, CustomerHandler,
+             Grid, Mustache, QUILocale, QUIAjax, Users, Permissions, template) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -40,7 +43,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
         options: {
             page    : 1,
             perPage : 50,
-            editable: true
+            editable: true,
+            add     : true
         },
 
         initialize: function (options) {
@@ -49,6 +53,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             this.$SearchContainer = null;
             this.$SearchInput     = null;
             this.$FilterButton    = null;
+            this.$AddButton       = null;
             this.$customerGroup   = null;
 
             this.$GroupSwitch   = null;
@@ -78,6 +83,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             this.$GridContainer   = this.$Elm.getElement('.quiqqer-customer-administration-grid');
             this.$SearchInput     = this.$Elm.getElement('[name="search"]');
             this.$FilterButton    = this.$Elm.getElement('button[name="filter"]');
+            this.$AddButton       = this.$Elm.getElement('button[name="add"]');
 
             this.$SearchContainer.getElement('form').addEvent('submit', function (event) {
                 event.stop();
@@ -88,6 +94,15 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 event.stop();
                 self.toggleFilter();
             });
+
+            this.$AddButton.addEvent('click', function (event) {
+                event.stop();
+                self.openAddWindow();
+            });
+
+            if (!this.getAttribute('add')) {
+                this.$AddButton.setStyle('display', 'none');
+            }
 
             this.$GroupSwitch = new QUISwitch({
                 events: {
@@ -502,6 +517,78 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 Menu.show();
                 Menu.focus();
             }
+        },
+
+        openAddWindow: function () {
+            var self = this;
+
+            new QUIPrompt({
+                name       : 'CreateUser',
+                title      : QUILocale.get('quiqqer/quiqqer', 'users.panel.create.window.title'),
+                icon       : 'fa fa-user',
+                titleicon  : false,
+                text       : QUILocale.get('quiqqer/quiqqer', 'users.panel.create.window.text'),
+                information: QUILocale.get('quiqqer/quiqqer', 'users.panel.create.window.information'),
+
+                maxWidth : 600,
+                maxHeight: 400,
+
+                check: function (Win) {
+                    Win.Loader.show();
+
+                    Users.existsUsername(Win.getValue(), function (result) {
+                        // Benutzer existiert schon
+                        if (result === true) {
+                            QUI.getMessageHandler(function (MH) {
+                                MH.addAttention(
+                                    QUILocale.get('quiqqer/quiqqer', 'exception.create.user.exists')
+                                );
+                            });
+
+                            Win.Loader.hide();
+                            return;
+                        }
+
+                        Win.fireEvent('onUserCreated', [Win.getValue(), Win]);
+                        Win.close();
+                    });
+
+                    return false;
+                },
+
+                events: {
+                    onOpen: function (Win) {
+                        Win.getContent()
+                           .getElement('.qui-windows-prompt-information')
+                           .setStyle('paddingBottom', 20);
+
+                        Win.Loader.show();
+
+                        Permissions.hasPermission('quiqqer.admin.users.create').then(function (hasPermission) {
+                            if (!hasPermission) {
+                                QUI.getMessageHandler().then(function (MH) {
+                                    MH.addError(
+                                        QUILocale.get('quiqqer/system', 'exception.no.permission')
+                                    );
+                                });
+
+                                Win.close();
+                            }
+
+                            Win.Loader.hide();
+                        });
+                    },
+
+                    onUserCreated: function (value) {
+                        Users.createUser(value, function (userId) {
+                            CustomerHandler.addToCustomer(userId).then(function () {
+                                self.$openCustomer(userId);
+                                self.refresh();
+                            });
+                        });
+                    }
+                }
+            }).open();
         },
 
         //region filter

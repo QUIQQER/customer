@@ -19,6 +19,10 @@
     width: calc(100% - 100px);
 }
 
+.quiqqer-customer-administration-search [name="add"] {
+    margin-right: 10px;
+}
+
 .quiqqer-customer-administration-search [name="filter"] {
     margin-right: 10px;
 }

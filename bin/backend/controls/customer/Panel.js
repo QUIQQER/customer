@@ -567,7 +567,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @param {Array} uids - user ids, which are deleted
          */
         $onUserDelete: function (Users, uids) {
-            var uid = this.getUser().getId();
+            var uid = this.$User.getId();
 
             for (var i = 0, len = uids.length; i < len; i++) {
                 if (parseInt(uid) === parseInt(uids[i])) {
