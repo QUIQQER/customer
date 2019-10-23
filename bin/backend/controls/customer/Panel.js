@@ -7,6 +7,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'qui/QUI',
     'qui/controls/desktop/Panel',
     'qui/controls/buttons/ButtonSwitch',
+    'qui/utils/Form',
     'Users',
     'Locale',
     'Mustache',
@@ -14,7 +15,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.Information.html',
     'css!package/quiqqer/customer/bin/backend/controls/customer/Panel.css'
 
-], function (QUI, QUIPanel, QUIButtonSwitch, Users, QUILocale, Mustache, templateInformation) {
+], function (QUI, QUIPanel, QUIButtonSwitch, FormUtils, Users, QUILocale, Mustache, templateInformation) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -30,7 +31,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             '$onSaveClick',
             '$onDeleteClick',
             '$onStatusChangeClick',
-            '$clickEditAddress'
+            '$clickEditAddress',
+            '$openCategory'
         ],
 
         options: {
@@ -43,16 +45,47 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
             this.$User = null;
 
+            this.$userInitAttributes = null;
+
             this.addEvents({
                 onCreate: this.$onCreate,
                 onShow  : this.$onShow
             });
         },
 
+        //region actions
+
+        /**
+         * alias for update
+         *
+         * @return {Promise}
+         */
+        save: function () {
+            return this.update();
+        },
+
+        /**
+         * Saves / Update the user
+         */
+        update: function () {
+            var self = this;
+
+            this.Loader.show();
+            this.$categoryUnload();
+
+            return this.$User.save().then(function () {
+                self.Loader.show();
+            });
+        },
+
+        //endregion
+
         /**
          * event: on create
          */
         $onCreate: function () {
+            var self = this;
+
             this.getElm().addClass('quiqqer-customer-panel');
 
             this.addButton({
@@ -93,9 +126,27 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             });
 
             this.addCategory({
-                name: 'information',
-                text: QUILocale.get('quiqqer/quiqqer', 'information'),
-                icon: 'fa fa-file'
+                name  : 'information',
+                text  : QUILocale.get('quiqqer/quiqqer', 'information'),
+                icon  : 'fa fa-file',
+                events: {
+                    onActive: function () {
+                        self.$openCategory('information');
+                    }
+                }
+            });
+
+            // load API
+
+            this.addCategory({
+                name  : 'test',
+                text  : 'test',
+                icon  : 'fa fa-file',
+                events: {
+                    onActive: function () {
+                        self.$openCategory('test');
+                    }
+                }
             });
         },
 
@@ -116,7 +167,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             Loaded.then(function (User) {
                 var Status = self.getButtons('status');
 
-                self.$User = User;
+                self.$User               = User;
+                self.$userInitAttributes = User.getAttributes();
+
                 self.setAttribute('title', QUILocale.get(lg, 'customer.panel.title', {
                     username: User.getUsername(),
                     user    : User.getName()
@@ -141,9 +194,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     Status.on();
                     Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isActivate'));
                 }
+                
+                if (!self.$ActiveCat) {
+                    self.getCategory('information').click();
+                }
 
-
-                self.$openInformation();
                 self.Loader.hide();
             });
         },
@@ -175,8 +230,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             Form.elements.email.value    = this.$User.getAttribute('email');
 
             var DefaultAddress  = self.getContent().getElement('[name="default-address"]');
-            var InvoiceAddress  = self.getContent().getElement('[name="invoice-address"]');
-            var DeliveryAddress = self.getContent().getElement('[name="delivery-address"]');
+            var InvoiceAddress  = this.getContent().getElement('[name="quiqqer.erp.address"]');
+            var DeliveryAddress = this.getContent().getElement('[name="quiqqer.delivery.address"]');
 
             var onChange = function (event) {
                 var Target = event.target;
@@ -237,8 +292,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         refreshAddressLists: function () {
             var self            = this;
             var DefaultAddress  = this.getContent().getElement('[name="default-address"]');
-            var InvoiceAddress  = this.getContent().getElement('[name="invoice-address"]');
-            var DeliveryAddress = this.getContent().getElement('[name="delivery-address"]');
+            var InvoiceAddress  = this.getContent().getElement('[name="quiqqer.erp.address"]');
+            var DeliveryAddress = this.getContent().getElement('[name="quiqqer.delivery.address"]');
 
             // set addresses
             return this.$User.getAddressList().then(function (addressList) {
@@ -302,10 +357,111 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
         //endregion
 
+        //region category stuff
+
+        /**
+         * Opens a category panel
+         *
+         * @param {String} category - name of the category
+         */
+        $openCategory: function (category) {
+            var self = this;
+
+            this.$categoryUnload();
+
+            this.$hideCategory().then(function () {
+                if (category === 'information') {
+                    return self.$openInformation();
+                }
+            }).then(function () {
+                self.$showCategory();
+            });
+        },
+
+        /**
+         * set the form data to the user
+         */
+        $categoryUnload: function () {
+            var Content = this.getContent(),
+                Form    = Content.getElement('form');
+
+            var data = FormUtils.getFormData(Form);
+
+            if (typeof data.id !== 'undefined') {
+                delete data.id;
+            }
+
+            this.$User.setAttributes(data);
+        },
+
+        /**
+         * hide category
+         *
+         * @return {Promise}
+         */
+        $hideCategory: function () {
+            var Content = this.getContent(),
+                Form    = Content.getElement('form');
+
+            return new Promise(function (resolve) {
+                if (!Form) {
+                    resolve();
+                    return;
+                }
+
+                Form.setStyle('position', 'relative');
+
+                moofx(Form).animate({
+                    opacity: 0,
+                    top    : -50
+                }, {
+                    duration: 250,
+                    callback: function () {
+                        Content.setStyle('opacity', 0);
+                        Form.destroy();
+                        resolve();
+                    }
+                });
+            });
+        },
+
+        /**
+         * show category
+         *
+         * @return {Promise}
+         */
+        $showCategory: function () {
+            var Content = this.getContent(),
+                Form    = Content.getElement('form');
+
+            return new Promise(function (resolve) {
+                if (!Form) {
+                    resolve();
+                    return;
+                }
+
+                Form.setStyle('position', 'relative');
+                Form.setStyle('top', -50);
+                Form.setStyle('opacity', 0);
+
+                Content.setStyle('opacity', 1);
+
+                moofx(Form).animate({
+                    opacity: 1,
+                    top    : 0
+                }, {
+                    duration: 250,
+                    callback: resolve
+                });
+            });
+        },
+
+        //endregion
+
         //region button actions
 
         /**
-         * Address edit click
+         * event: on address edit click
          *
          * @param event
          */
@@ -326,21 +482,24 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         },
 
         /**
-         *
+         * event: on save click
          */
         $onSaveClick: function () {
-
+            this.Loader.show();
+            this.update().then(function () {
+                this.Loader.hide();
+            }.bind(this));
         },
 
         /**
-         *
+         * event: on delete click
          */
         $onDeleteClick: function () {
 
         },
 
         /**
-         *
+         * event: status change click
          */
         $onStatusChangeClick: function () {
 
