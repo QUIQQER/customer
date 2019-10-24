@@ -269,7 +269,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             Form.elements.username.value = this.$User.getUsername();
             Form.elements.email.value    = this.$User.getAttribute('email');
 
-            var DefaultAddress  = self.getContent().getElement('[name="default-address"]');
+            var DefaultAddress  = self.getContent().getElement('[name="address"]');
             var InvoiceAddress  = this.getContent().getElement('[name="quiqqer.erp.address"]');
             var DeliveryAddress = this.getContent().getElement('[name="quiqqer.delivery.address"]');
 
@@ -349,7 +349,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.$User.$addresses = false; // workaround for refresh
 
             var self            = this;
-            var DefaultAddress  = this.getContent().getElement('[name="default-address"]');
+            var DefaultAddress  = this.getContent().getElement('[name="address"]');
             var InvoiceAddress  = this.getContent().getElement('[name="quiqqer.erp.address"]');
             var DeliveryAddress = this.getContent().getElement('[name="quiqqer.delivery.address"]');
 
