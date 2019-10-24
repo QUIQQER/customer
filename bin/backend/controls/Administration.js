@@ -34,6 +34,9 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
         Binds: [
             '$onInject',
+            '$onDestroy',
+            '$onUserRefresh',
+            '$onUserChange',
             '$editComplete',
             '$gridDblClick',
             'refresh',
@@ -61,7 +64,15 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             this.$Grid          = null;
 
             this.addEvents({
-                onInject: this.$onInject
+                onInject : this.$onInject,
+                onDestroy: this.$onDestroy
+            });
+
+            Users.addEvents({
+                onSwitchStatus: this.$onUserChange,
+                onDelete      : this.$onUserChange,
+                onRefresh     : this.$onUserRefresh,
+                onSave        : this.$onUserRefresh
             });
         },
 
@@ -218,6 +229,56 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 self.refresh().then(function () {
                     self.$Grid.enable();
                 });
+            });
+        },
+
+        /**
+         * event: on user change
+         */
+        $onUserRefresh: function () {
+            this.refresh();
+        },
+
+        /**
+         * event: on user status change
+         *
+         * @param Users
+         * @param ids
+         */
+        $onUserChange: function (Users, ids) {
+            var i, len;
+            var data = this.$Grid.getData();
+
+            if (typeOf(ids) === 'array') {
+                var tmp = {};
+
+                for (i = 0, len = ids.length; i < len; i++) {
+                    tmp[ids[i]] = true;
+                }
+
+                ids = tmp;
+            }
+
+            for (i = 0, len = data.length; i < len; i++) {
+                if (typeof ids[data[i].id] === 'undefined') {
+                    continue;
+                }
+
+                // use is in list, refresh
+                this.refresh();
+                break;
+            }
+        },
+
+        /**
+         * event: on control destroy
+         */
+        $onDestroy: function () {
+            Users.removeEvents({
+                onSwitchStatus: this.$onUserChange,
+                onDelete      : this.$onUserChange,
+                onRefresh     : this.$onUserRefresh,
+                onSave        : this.$onUserRefresh
             });
         },
 

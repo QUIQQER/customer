@@ -32,14 +32,19 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationPanel', [
             });
 
             this.addEvents({
-                onInject: this.$onInject,
-                onResize: function () {
+                onInject : this.$onInject,
+                onResize : function () {
                     if (this.$Administration) {
                         this.$Administration.resize();
                     }
 
                     this.Loader.hide();
-                }
+                }.bind(this),
+                onDestroy: function () {
+                    if (this.$Administration) {
+                        this.$Administration.destroy();
+                    }
+                }.bind(this)
             });
         },
 
