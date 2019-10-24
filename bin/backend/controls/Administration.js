@@ -95,6 +95,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 self.toggleFilter();
             });
 
+            this.$AddButton.set('title', QUILocale.get(lg, 'customer.window.create.title'));
             this.$AddButton.addEvent('click', function (event) {
                 event.stop();
                 self.openAddWindow();
@@ -528,14 +529,16 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             new QUIPrompt({
                 name       : 'CreateUser',
-                title      : QUILocale.get('quiqqer/quiqqer', 'users.panel.create.window.title'),
+                title      : QUILocale.get(lg, 'customer.window.create.title'),
                 icon       : 'fa fa-user',
                 titleicon  : false,
-                text       : QUILocale.get('quiqqer/quiqqer', 'users.panel.create.window.text'),
-                information: QUILocale.get('quiqqer/quiqqer', 'users.panel.create.window.information'),
-
-                maxWidth : 600,
-                maxHeight: 400,
+                information: QUILocale.get(lg, 'customer.window.create.information'),
+                ok_button  : {
+                    text     : QUILocale.get(lg, 'customer.window.create.button'),
+                    textimage: 'fa fa-check'
+                },
+                maxWidth   : 600,
+                maxHeight  : 300,
 
                 check: function (Win) {
                     Win.Loader.show();

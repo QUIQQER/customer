@@ -127,6 +127,25 @@
             <de><![CDATA[Adresse #[id] von [firstname] [lastname] bearbeiten]]></de>
             <en><![CDATA[Edit address #[id] from [firstname] [lastname]]]></en>
         </locale>
+
+        <locale name="customer.window.create.title">
+            <de><![CDATA[Neuen Kunden anlegen]]></de>
+            <en><![CDATA[Create new customer]]></en>
+        </locale>
+        <locale name="customer.window.create.button">
+            <de><![CDATA[Kunden anlegen]]></de>
+            <en><![CDATA[Create customer]]></en>
+        </locale>
+        <locale name="customer.window.create.information" html="true">
+            <de><![CDATA[
+            Bitte lege einen Benutzernamen für den neuen Kunden an.
+            Der Benutzer wird direkt der Kundengruppe zugeordnet und kann nach dem Anlegen bearbeitet werden.
+            ]]></de>
+            <en><![CDATA[
+            Please create a username for the new customer.
+            The user is assigned directly to the customer group and can be edited after creation.
+            ]]></en>
+        </locale>
     </groups>
 
 </locales>
