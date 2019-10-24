@@ -276,7 +276,13 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                         var userStatus = Switch.getStatus();
                         var userId     = Switch.getAttribute('userId');
 
-                        self.$setStatus(userId, userStatus);
+                        self.$setStatus(userId, userStatus).catch(function () {
+                            if (userStatus) {
+                                Switch.setSilentOff();
+                            } else {
+                                Switch.setSilentOn();
+                            }
+                        });
                     };
 
                     for (var i = 0, len = result.data.length; i < len; i++) {
@@ -349,7 +355,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             this.$Grid.disable();
 
-            return new Promise(function (resolve) {
+            return new Promise(function (resolve, reject) {
                 QUIAjax.post('ajax_users_save', function () {
                     self.$Grid.enable();
                     resolve();
@@ -357,7 +363,11 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     uid       : userId,
                     attributes: JSON.encode({
                         active: status
-                    })
+                    }),
+                    onError   : function (err) {
+                        self.$Grid.enable();
+                        reject(err);
+                    }
                 });
             });
         },
