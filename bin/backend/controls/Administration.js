@@ -299,6 +299,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
         },
 
         /**
+         * event: grid edit complete
          *
          * @param data
          */
@@ -519,6 +520,9 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             }
         },
 
+        /**
+         * opens the add customer window
+         */
         openAddWindow: function () {
             var self = this;
 

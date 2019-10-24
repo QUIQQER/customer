@@ -45,6 +45,22 @@ QUI::$Ajax->registerFunction(
 
         $Search->limit($start, $count);
 
+        // order / sort
+        $sortOn = 'username';
+        $sortBy = 'ASC';
+
+        if (isset($params['sortOn'])) {
+            $sortOn = $params['sortOn'];
+        }
+
+        if (isset($params['sortBy'])) {
+            $sortBy = $params['sortBy'];
+        }
+
+        if (isset($params['sortOn'])) {
+            $Search->order($sortOn.' '.$sortBy);
+        }
+
 
         // exec
         return $Search->searchForGrid();
