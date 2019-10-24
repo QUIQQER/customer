@@ -11,12 +11,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'qui/utils/Form',
     'Users',
     'Locale',
+    'Ajax',
     'Mustache',
 
     'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.Information.html',
     'css!package/quiqqer/customer/bin/backend/controls/customer/Panel.css'
 
-], function (QUI, QUIPanel, QUIButtonSwitch, QUIConfirm, FormUtils, Users, QUILocale, Mustache, templateInformation) {
+], function (QUI, QUIPanel, QUIButtonSwitch, QUIConfirm, FormUtils, Users, QUILocale, QUIAjax, Mustache, templateInformation) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -90,7 +91,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.$categoryUnload();
 
             return this.$User.save().then(function () {
-                self.Loader.show();
+                self.Loader.hide();
+            }).catch(function () {
+                self.Loader.hide();
             });
         },
 
@@ -151,6 +154,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     }
                 }
             });
+
+            this.getContent().setStyle('opacity', 0);
 
             // @todo load API
 
@@ -227,10 +232,39 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 textDeliveryAddress : QUILocale.get(lg, 'customer.panel,information.delivery.address')
             }));
 
-            // set data
             var self = this,
                 Form = this.getContent().getElement('form');
 
+            // add address
+            this.getContent()
+                .getElement('[name="create-address"]')
+                .addEvent('click', function (event) {
+                    event.stop();
+
+                    var Button = event.target;
+
+                    if (Button.nodeName !== 'button') {
+                        Button = Button.getParent('button');
+                    }
+
+                    Button.set('disabled', true);
+
+                    var Icon = Button.getElement('.fa');
+
+                    Icon.removeClass('fa-plus');
+                    Icon.addClass('fa-spinner fa-spin');
+
+                    self.createAddress().then(function (addressId) {
+                        self.refreshAddressLists();
+                        self.editAddress(addressId);
+
+                        Button.set('disabled', false);
+                        Icon.addClass('fa-plus');
+                        Icon.removeClass('fa-spinner fa-spin');
+                    });
+                });
+
+            // set data
             Form.elements.userId.value   = this.$User.getId();
             Form.elements.username.value = this.$User.getUsername();
             Form.elements.email.value    = this.$User.getAttribute('email');
@@ -280,7 +314,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                         onSubmit: function () {
                             self.Loader.show();
 
-                            self.$User.$addresses = false; // workaround for refresh
                             self.refreshAddressLists().then(function () {
                                 self.Loader.hide();
                             });
@@ -291,11 +324,30 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         },
 
         /**
+         * Create a new address for this user
+         *
+         * @return {Promise}
+         */
+        createAddress: function () {
+            var self = this;
+
+            return new Promise(function (resolve) {
+                QUIAjax.post('ajax_users_address_save', resolve, {
+                    uid : self.$User.getId(),
+                    aid : 0,
+                    data: '[]'
+                });
+            });
+        },
+
+        /**
          * Refresh the address lists
          *
          * @return {Promise}
          */
         refreshAddressLists: function () {
+            this.$User.$addresses = false; // workaround for refresh
+
             var self            = this;
             var DefaultAddress  = this.getContent().getElement('[name="default-address"]');
             var InvoiceAddress  = this.getContent().getElement('[name="quiqqer.erp.address"]');

@@ -7,3 +7,10 @@
     padding-top: 17px;
 }
 
+.quiqqer-customer-address-add {
+    padding-top: 0 !important;
+}
+
+.quiqqer-customer-address-add > div {
+    justify-content: flex-end;
+}
