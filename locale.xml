@@ -146,6 +146,11 @@
             The user is assigned directly to the customer group and can be edited after creation.
             ]]></en>
         </locale>
+
+        <locale name="quiqqer.customer.panel.addresses">
+            <de><![CDATA[Adressenverwaltung]]></de>
+            <en><![CDATA[Address management]]></en>
+        </locale>
     </groups>
 
 </locales>

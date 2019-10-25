@@ -36,6 +36,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             '$onStatusChangeClick',
             '$clickEditAddress',
             '$openCategory',
+            '$openAddressManagement',
             '$onUserDelete',
             '$onUserRefresh'
         ],
@@ -151,6 +152,17 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 events: {
                     onActive: function () {
                         self.$openCategory('information');
+                    }
+                }
+            });
+
+            this.addCategory({
+                name  : 'addresses',
+                text  : QUILocale.get(lg, 'quiqqer.customer.panel.addresses'),
+                icon  : 'fa fa-address-card-o',
+                events: {
+                    onActive: function () {
+                        self.$openCategory('addresses');
                     }
                 }
             });
@@ -415,6 +427,33 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
         //endregion
 
+        //region address
+
+        /**
+         * open the address management
+         *
+         * @return {Promise}
+         */
+        $openAddressManagement: function () {
+            var self = this;
+
+            this.getContent().set('html', '');
+
+            return new Promise(function (resolve) {
+                require(['package/quiqqer/customer/bin/backend/controls/customer/AddressGrid'], function (AddressGrid) {
+                    var Instance = new AddressGrid({
+                        userId: self.getAttribute('userId')
+                    }).inject(self.getContent());
+
+                    Instance.resize();
+
+                    resolve();
+                });
+            });
+        },
+
+        //endregion
+
         //region category stuff
 
         /**
@@ -430,6 +469,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.$hideCategory().then(function () {
                 if (category === 'information') {
                     return self.$openInformation();
+                }
+
+                if (category === 'addresses') {
+                    return self.$openAddressManagement();
                 }
             }).then(function () {
                 self.$showCategory();
@@ -460,6 +503,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         $hideCategory: function () {
             var Content = this.getContent(),
                 Form    = Content.getElement('form');
+
+            if (!Form) {
+                Form = Content.getFirst();
+            }
 
             return new Promise(function (resolve) {
                 if (!Form) {
@@ -492,12 +539,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             var Content = this.getContent(),
                 Form    = Content.getElement('form');
 
-            return new Promise(function (resolve) {
-                if (!Form) {
-                    resolve();
-                    return;
-                }
+            if (!Form) {
+                Form = Content.getFirst();
+            }
 
+            return new Promise(function (resolve) {
                 Form.setStyle('position', 'relative');
                 Form.setStyle('top', -50);
                 Form.setStyle('opacity', 0);
