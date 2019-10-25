@@ -25,6 +25,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
             '$onInject',
             '$onGridClick',
             '$editComplete',
+            '$clickDelete',
             'refresh'
         ],
 
@@ -160,9 +161,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
                     textimage: 'fa fa-remove',
                     disabled : true,
                     events   : {
-                        onClick: function () {
-
-                        }
+                        onClick: this.$clickDelete
                     }
                 }],
                 editable      : true,
@@ -299,6 +298,19 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
                     })
                 });
             });
+        },
+
+        /**
+         * event: on click at delete address
+         */
+        $clickDelete: function () {
+            var selected = this.$Grid.getSelectedData();
+            var ids      = selected.map(function (entry) {
+                return entry.id;
+            });
+
+            console.log(selected);
+            console.log(ids);
         }
 
         //endregion
