@@ -6,6 +6,10 @@
             <de><![CDATA[QUIQQER - ERP - Kunden]]></de>
             <en><![CDATA[QUIQQER - ERP - Customer]]></en>
         </locale>
+        <locale name="package.description">
+            <de><![CDATA[]]></de>
+            <en><![CDATA[]]></en>
+        </locale>
 
         <locale name="window.erp.title">
             <de><![CDATA[Shop]]></de>
