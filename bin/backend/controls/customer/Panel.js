@@ -492,7 +492,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 return new Promise(function (resolve) {
                     QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getCategory', function (result) {
                         self.getContent().set('html', '<form>' + result + '</form>');
-                        resolve();
+
+                        QUI.parse(self.getContent()).then(resolve);
                     }, {
                         'package': 'quiqqer/customer',
                         category : category
