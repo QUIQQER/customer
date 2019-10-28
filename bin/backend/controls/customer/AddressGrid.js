@@ -24,8 +24,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
         Binds: [
             '$onInject',
             '$onGridClick',
+            '$onGridDblClick',
             '$editComplete',
             '$clickDelete',
+            '$clickCreate',
+            '$clickEdit',
             'refresh'
         ],
 
@@ -139,9 +142,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
                     text     : QUILocale.get(lgQUIQQER, 'users.user.address.table.btn.add'),
                     textimage: 'fa fa-plus',
                     events   : {
-                        onClick: function () {
-
-                        }
+                        onClick: this.$clickCreate
                     }
                 }, {
                     type: 'separator'
@@ -151,14 +152,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
                     textimage: 'fa fa-edit',
                     disabled : true,
                     events   : {
-                        onClick: function () {
-
-                        }
+                        onClick: this.$clickEdit
                     }
                 }, {
                     name     : 'delete',
                     text     : QUILocale.get(lgQUIQQER, 'users.user.address.table.btn.delete'),
-                    textimage: 'fa fa-remove',
+                    textimage: 'fa fa-trash',
                     disabled : true,
                     events   : {
                         onClick: this.$clickDelete
@@ -171,7 +170,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
             this.$Grid.addEvents({
                 onClick       : this.$onGridClick,
                 onRefresh     : this.refresh,
-                onEditComplete: this.$editComplete
+                onEditComplete: this.$editComplete,
+                onDblClick    : this.$onGridDblClick
             });
 
             // this.$Grid.setWidth(size.x - 60);
@@ -219,6 +219,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
             var self = this;
 
             this.$Grid.disable();
+            this.$User.$addresses = false;
 
             return this.$User.getAddressList().then(function (addressList) {
                 self.$Grid.setData({
@@ -227,6 +228,34 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
 
                 self.$Grid.enable();
                 self.$onGridClick();
+            });
+        },
+
+        /**
+         * Edit an address
+         *
+         * @param addressId
+         */
+        editAddress: function (addressId) {
+            var self = this;
+
+            this.$Grid.disable();
+
+            require([
+                'package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow'
+            ], function (AddressEditWindow) {
+                new AddressEditWindow({
+                    addressId: addressId,
+                    events   : {
+                        onClose : function () {
+                            self.$Grid.enable();
+                        },
+                        onSubmit: function () {
+                            self.$Grid.enable();
+                            self.refresh();
+                        }
+                    }
+                }).open();
             });
         },
 
@@ -239,19 +268,40 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
             var buttons = this.$Grid.getButtons(),
                 sels    = this.$Grid.getSelectedIndices();
 
-            if (!sels || !sels.length) {
+            buttons.each(function (Btn) {
+                if (Btn.getAttribute('name') !== 'add') {
+                    Btn.disable();
+                }
+            });
+
+            if (sels.length === 1) {
                 buttons.each(function (Btn) {
-                    if (Btn.getAttribute('name') !== 'add') {
-                        Btn.disable();
-                    }
+                    Btn.enable();
                 });
 
                 return;
             }
 
-            buttons.each(function (Btn) {
-                Btn.enable();
-            });
+            if (sels.length > 1) {
+                buttons.each(function (Btn) {
+                    if (Btn.getAttribute('name') !== 'delete') {
+                        Btn.enable();
+                    }
+                });
+            }
+        },
+
+        /**
+         * event: on dbl click
+         *
+         * @param event
+         */
+        $onGridDblClick: function (event) {
+            if (event.cell.get('data-index') !== 'id') {
+                return;
+            }
+
+            this.editAddress(this.$Grid.getSelectedData()[0].id);
         },
 
         /**
@@ -273,7 +323,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
                     rowData[attribute] = data.input.value;
                     break;
             }
-
 
             this.$Grid.disable();
 
@@ -304,13 +353,49 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
          * event: on click at delete address
          */
         $clickDelete: function () {
+            var self     = this;
             var selected = this.$Grid.getSelectedData();
             var ids      = selected.map(function (entry) {
                 return entry.id;
             });
 
-            console.log(selected);
-            console.log(ids);
+            require([
+                'package/quiqqer/customer/bin/backend/controls/customer/AddressDeleteWindow'
+            ], function (AddressDeleteWindow) {
+                new AddressDeleteWindow({
+                    addressId: ids,
+                    events   : {
+                        onSubmit: function () {
+                            self.refresh();
+                        }
+                    }
+                }).open();
+            });
+        },
+
+        /**
+         * event: on click at create address
+         */
+        $clickCreate: function () {
+            this.$Grid.disable();
+
+            var self = this;
+
+            QUIAjax.post('ajax_users_address_save', function () {
+                self.refresh();
+                self.$Grid.enable();
+            }, {
+                uid : self.$User.getId(),
+                aid : 0,
+                data: '[]'
+            });
+        },
+
+        /**
+         * event: on click at edit address
+         */
+        $clickEdit: function () {
+            this.editAddress(this.$Grid.getSelectedData()[0].id);
         }
 
         //endregion

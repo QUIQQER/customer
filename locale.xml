@@ -151,6 +151,27 @@
             <de><![CDATA[Adressenverwaltung]]></de>
             <en><![CDATA[Address management]]></en>
         </locale>
+
+        <locale name="customer.address.delete.title">
+            <de><![CDATA[Adresse löschen]]></de>
+            <en><![CDATA[Delete address]]></en>
+        </locale>
+        <locale name="customer.address.delete.text">
+            <de><![CDATA[Adresse löschen]]></de>
+            <en><![CDATA[Delete address]]></en>
+        </locale>
+        <locale name="customer.address.delete.information" html="true">
+            <de><![CDATA[
+            Folgende Adressen werden gelöscht:<br />
+            [addressIds]
+            Die Adressen werden unwiderruflich gelöscht.
+            ]]></de>
+            <en><![CDATA[
+            The following addresses will be deleted:<br />
+            [addressIds]
+            The addresses are irrevocably deleted.
+            ]]></en>
+        </locale>
     </groups>
 
 </locales>
