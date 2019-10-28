@@ -6,6 +6,10 @@
             <de><![CDATA[QUIQQER - ERP - Kunden]]></de>
             <en><![CDATA[QUIQQER - ERP - Customer]]></en>
         </locale>
+        <locale name="package.description">
+            <de><![CDATA[]]></de>
+            <en><![CDATA[]]></en>
+        </locale>
 
         <locale name="window.erp.title">
             <de><![CDATA[Shop]]></de>
@@ -47,6 +51,10 @@
             <de><![CDATA[Adresse]]></de>
             <en><![CDATA[Address]]></en>
         </locale>
+        <locale name="menu.erp.customer.title">
+            <de><![CDATA[Kunden]]></de>
+            <en><![CDATA[Customer]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/customer" datatype="js">
@@ -57,6 +65,116 @@
         <locale name="window.customer.creation.button.submit">
             <de><![CDATA[Kunden anlegen]]></de>
             <en><![CDATA[Create customer]]></en>
+        </locale>
+        <locale name="panel.title">
+            <de><![CDATA[Kunden]]></de>
+            <en><![CDATA[Customer]]></en>
+        </locale>
+
+        <locale name="panel.search.placeholder">
+            <de><![CDATA[Kunden durchsuchen...]]></de>
+            <en><![CDATA[Search customer...]]></en>
+        </locale>
+        <locale name="panel.search.switch.customer.group">
+            <de><![CDATA[Nur die Kundengruppe durchsuchen]]></de>
+            <en><![CDATA[Search the customer group only]]></en>
+        </locale>
+
+        <locale name="administration.contextMenu.add.to.customer">
+            <de><![CDATA[Zur Kundengruppe hinzufügen]]></de>
+            <en><![CDATA[Add to customer group]]></en>
+        </locale>
+        <locale name="administration.contextMenu.remove.from.customer">
+            <de><![CDATA[Von Kundengruppe entfernen]]></de>
+            <en><![CDATA[Remove from customer group]]></en>
+        </locale>
+        <locale name="administration.contextMenu.groups">
+            <de><![CDATA[Gruppen des Benutzers verwalten]]></de>
+            <en><![CDATA[Manage Groups of the user]]></en>
+        </locale>
+        <locale name="administration.contextMenu.user">
+            <de><![CDATA[Benutzer verwalten]]></de>
+            <en><![CDATA[Manage user]]></en>
+        </locale>
+
+        <locale name="user.group.window.title">
+            <de><![CDATA[Gruppen von [username] bearbeiten]]></de>
+            <en><![CDATA[Edit groups of [username]]]></en>
+        </locale>
+
+        <locale name="customer.panel.title">
+            <de><![CDATA[Benutzer / Kunde: [user] - [username]]]></de>
+            <en><![CDATA[User / Customer: [user] - [username]]]></en>
+        </locale>
+        <locale name="customer.panel,information.details">
+            <de><![CDATA[Details]]></de>
+            <en><![CDATA[Details]]></en>
+        </locale>
+        <locale name="customer.panel,information.address">
+            <de><![CDATA[Adresse]]></de>
+            <en><![CDATA[Address]]></en>
+        </locale>
+        <locale name="customer.panel,information.erp.addresses">
+            <de><![CDATA[ERP Adressen]]></de>
+            <en><![CDATA[ERP addresses]]></en>
+        </locale>
+        <locale name="customer.panel,information.invoice.address">
+            <de><![CDATA[Rechnungsadresse]]></de>
+            <en><![CDATA[Invoice address]]></en>
+        </locale>
+        <locale name="customer.panel,information.delivery.address">
+            <de><![CDATA[Lieferadresse]]></de>
+            <en><![CDATA[Delivery address]]></en>
+        </locale>
+
+        <locale name="address.edit.window.title">
+            <de><![CDATA[Adresse #[id] von [firstname] [lastname] bearbeiten]]></de>
+            <en><![CDATA[Edit address #[id] from [firstname] [lastname]]]></en>
+        </locale>
+
+        <locale name="customer.window.create.title">
+            <de><![CDATA[Neuen Kunden anlegen]]></de>
+            <en><![CDATA[Create new customer]]></en>
+        </locale>
+        <locale name="customer.window.create.button">
+            <de><![CDATA[Kunden anlegen]]></de>
+            <en><![CDATA[Create customer]]></en>
+        </locale>
+        <locale name="customer.window.create.information" html="true">
+            <de><![CDATA[
+            Bitte lege einen Benutzernamen für den neuen Kunden an.
+            Der Benutzer wird direkt der Kundengruppe zugeordnet und kann nach dem Anlegen bearbeitet werden.
+            ]]></de>
+            <en><![CDATA[
+            Please create a username for the new customer.
+            The user is assigned directly to the customer group and can be edited after creation.
+            ]]></en>
+        </locale>
+
+        <locale name="quiqqer.customer.panel.addresses">
+            <de><![CDATA[Adressenverwaltung]]></de>
+            <en><![CDATA[Address management]]></en>
+        </locale>
+
+        <locale name="customer.address.delete.title">
+            <de><![CDATA[Adresse löschen]]></de>
+            <en><![CDATA[Delete address]]></en>
+        </locale>
+        <locale name="customer.address.delete.text">
+            <de><![CDATA[Adresse löschen]]></de>
+            <en><![CDATA[Delete address]]></en>
+        </locale>
+        <locale name="customer.address.delete.information" html="true">
+            <de><![CDATA[
+            Folgende Adressen werden gelöscht:<br />
+            [addressIds]
+            Die Adressen werden unwiderruflich gelöscht.
+            ]]></de>
+            <en><![CDATA[
+            The following addresses will be deleted:<br />
+            [addressIds]
+            The addresses are irrevocably deleted.
+            ]]></en>
         </locale>
     </groups>
 

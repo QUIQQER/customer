@@ -1,0 +1,131 @@
+<form name="customer-information">
+    <table class="data-table data-table-flexbox">
+        <thead>
+        <tr>
+            <th>
+                {{detailsTitle}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textUserId}}
+                    </span>
+                    <input type="text" name="userId" value="" disabled="disabled" class="field-container-field">
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textUsername}}
+                    </span>
+                    <input type="text" name="username" value="" class="field-container-field">
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textEmail}}
+                    </span>
+                    <input type="text" name="email" value="" class="field-container-field">
+                </label>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="data-table data-table-flexbox">
+        <thead>
+        <tr>
+            <th>
+                {{titleAddress}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <select name="address" class="field-container-field">
+                        <option value=""></option>
+                    </select>
+                    <button type="button"
+                            class="qui-button"
+                            style="width: 50px;"
+                            disabled
+                    >
+                        <span class="fa fa-edit"></span>
+                    </button>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td class="quiqqer-customer-address-add">
+                <div class="field-container">
+                    <button class="qui-button" name="create-address">
+                        <span class="fa fa-plus"></span>
+                        <span>Neue Addresse anlegen</span>
+                    </button>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="data-table data-table-flexbox">
+        <thead>
+        <tr>
+            <th>
+                {{titleDeliveryAddress}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textInvoiceAddress}}
+                    </span>
+                    <select name="quiqqer.erp.address" class="field-container-field">
+                        <option value=""></option>
+                    </select>
+                    <button type="button"
+                            class="qui-button"
+                            style="width: 50px;"
+                            disabled
+                    >
+                        <span class="fa fa-edit"></span>
+                    </button>
+                </label>
+            </td>
+        </tr>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textDeliveryAddress}}
+                    </span>
+                    <select name="quiqqer.delivery.address" class="field-container-field">
+                        <option value=""></option>
+                    </select>
+                    <button type="button"
+                            class="qui-button"
+                            style="width: 50px;"
+                            disabled
+                    >
+                        <span class="fa fa-edit"></span>
+                    </button>
+                </label>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</form>

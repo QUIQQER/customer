@@ -1,0 +1,87 @@
+.quiqqer-customer-administration {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/** header / search / filter
+ =============================== */
+
+.quiqqer-customer-administration-search {
+    background: #e1e4e9;
+    clear: both;
+    padding: 20px;
+    width: 100%;
+}
+
+.quiqqer-customer-administration-search [name="customer-search"] {
+    float: left;
+    width: calc(100% - 100px);
+}
+
+.quiqqer-customer-administration-search [name="add"] {
+    margin-right: 10px;
+}
+
+.quiqqer-customer-administration-search [name="filter"] {
+    margin-right: 10px;
+}
+
+.quiqqer-customer-administration-search [name="search"] {
+    float: left;
+    width: 280px;
+}
+
+.quiqqer-customer-administration-search [name="submit"] {
+    border: none;
+}
+
+.quiqqer-customer-administration-search-filter {
+    background: #eff0f3;
+    clear: both;
+    display: block;
+    margin-top: 20px;
+    padding: 10px;
+    width: 100%;
+}
+
+.quiqqer-customer-administration-search-filter section {
+    display: inline-block;
+    width: 100%;
+}
+
+.quiqqer-customer-administration-search-filter input {
+    padding: 2px;
+    font-size: 12px;
+}
+
+.quiqqer-customer-administration-search-filter .title {
+    display: inline-block;
+    padding-bottom: 5px;
+    width: 100%;
+}
+
+.quiqqer-customer-administration-search-filter section + section {
+    margin-top: 20px;
+}
+
+.quiqqer-customer-administration-search-filter-checks label {
+    float: left;
+    width: 25%;
+}
+
+.quiqqer-customer-administration-search-filter-specs label {
+    float: left;
+    width: 25%;
+}
+
+/** grid / result
+ =============================== */
+
+.quiqqer-customer-administration-grid {
+    clear: both;
+    flex-grow: 1;
+    overflow: hidden;
+    padding: 20px;
+    width: 100%;
+}

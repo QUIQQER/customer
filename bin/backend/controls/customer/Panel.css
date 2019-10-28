@@ -1,0 +1,16 @@
+.quiqqer-customer-panel .qui-panel-buttons .qui-button-switch {
+    box-shadow: none !important;
+    -webkit-box-shadow: none !important;
+}
+
+.quiqqer-customer-panel .qui-panel-buttons .qui-button-switch-switch {
+    padding-top: 17px;
+}
+
+.quiqqer-customer-address-add {
+    padding-top: 0 !important;
+}
+
+.quiqqer-customer-address-add > div {
+    justify-content: flex-end;
+}

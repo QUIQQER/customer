@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu>
+
+    <item parent="/apps/"
+          name="customer"
+          require="package/quiqqer/customer/bin/backend/controls/AdministrationPanel"
+          icon="fa fa-user-o"
+    >
+        <locale group="quiqqer/customer" var="menu.erp.customer.title"/>
+    </item>
+
+</menu>
