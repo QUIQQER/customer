@@ -381,7 +381,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
 
             var self = this;
 
-            QUIAjax.post('ajax_users_address_save', function () {
+            QUIAjax.post('ajax_users_address_save', function (addressId) {
+                self.editAddress(addressId);
                 self.refresh();
                 self.$Grid.enable();
             }, {
