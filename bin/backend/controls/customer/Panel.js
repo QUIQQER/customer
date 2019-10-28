@@ -38,7 +38,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             '$openCategory',
             '$openAddressManagement',
             '$onUserDelete',
-            '$onUserRefresh'
+            '$onUserRefresh',
+            '$onCustomerCategoryActive'
         ],
 
         options: {
@@ -169,8 +170,20 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
             this.getContent().setStyle('opacity', 0);
 
-            // @todo load API
+            QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getCategories', function (result) {
+                var categories = result.categories;
 
+                for (var i = 0, len = categories.length; i < len; i++) {
+                    categories[i].events = {
+                        onActive: self.$onCustomerCategoryActive
+                    };
+
+                    self.addCategory(categories[i]);
+                }
+
+            }, {
+                package: 'quiqqer/customer'
+            });
         },
 
         /**
@@ -474,6 +487,17 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 if (category === 'addresses') {
                     return self.$openAddressManagement();
                 }
+
+                // load customer category
+                return new Promise(function (resolve) {
+                    QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getCategory', function (result) {
+                        self.getContent().set('html', '<form>' + result + '</form>');
+                        resolve();
+                    }, {
+                        'package': 'quiqqer/customer',
+                        category : category
+                    });
+                });
             }).then(function () {
                 self.$showCategory();
             });
@@ -558,6 +582,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     callback: resolve
                 });
             });
+        },
+
+        /**
+         *
+         * @param Category
+         */
+        $onCustomerCategoryActive: function (Category) {
+            this.$openCategory(Category.getAttribute('name'));
         },
 
         //endregion
