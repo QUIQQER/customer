@@ -2,4 +2,5 @@
 <events>
     <event on="onPackageSetup" fire="\QUI\ERP\Customer\EventHandler::onPackageSetup"/>
     <event on="onAdminLoadFooter" fire="\QUI\ERP\Customer\EventHandler::onAdminLoadFooter"/>
+    <event on="onUserExtraAttributes" fire="\QUI\ERP\Customer\EventHandler::onUserExtraAttributes"/>
 </events>

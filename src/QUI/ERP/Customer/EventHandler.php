@@ -72,4 +72,93 @@ class EventHandler
             QUI\System\Log::writeException($Exception);
         }
     }
+
+    /**
+     * Extend user with customer.xml attributes
+     *
+     * @param QUI\Users\User $User
+     * @param array $attributes
+     */
+    public static function onUserExtraAttributes(QUI\Users\User $User, &$attributes)
+    {
+        $cache = 'quiqqer/package/quiqqer/customer';
+
+        try {
+            $customerAttr = QUI\Cache\Manager::get($cache);
+        } catch (QUI\Exception $Exception) {
+            $customerAttr = [];
+
+            $list = QUI::getPackageManager()->getInstalled();
+
+            foreach ($list as $entry) {
+                $plugin  = $entry['name'];
+                $userXml = OPT_DIR.$plugin.'/customer.xml';
+
+                if (!\file_exists($userXml)) {
+                    continue;
+                }
+
+                $customerAttr = \array_merge(
+                    $customerAttr,
+                    self::readAttributesFromUserXML($userXml)
+                );
+            }
+        }
+
+        $attributes = \array_merge($attributes, $customerAttr);
+    }
+
+
+    /**
+     * Read an user.xml and return the attributes,
+     * if some extra attributes defined
+     *
+     * @param string $file
+     *
+     * @return array
+     */
+    protected static function readAttributesFromUserXML($file)
+    {
+        $cache = 'quiqqer/package/customer/user-extra-attributes/'.\md5($file);
+
+        try {
+            return QUI\Cache\Manager::get($cache);
+        } catch (QUI\Exception $Exception) {
+        }
+
+        $Dom  = QUI\Utils\Text\XML::getDomFromXml($file);
+        $Attr = $Dom->getElementsByTagName('attributes');
+
+        if (!$Attr->length) {
+            return [];
+        }
+
+        /* @var $Attributes \DOMElement */
+        $Attributes = $Attr->item(0);
+        $list       = $Attributes->getElementsByTagName('attribute');
+
+        if (!$list->length) {
+            return [];
+        }
+
+        $attributes = [];
+
+        for ($c = 0; $c < $list->length; $c++) {
+            $Attribute = $list->item($c);
+
+            if ($Attribute->nodeName == '#text') {
+                continue;
+            }
+
+            $attributes[] = [
+                'name'    => \trim($Attribute->nodeValue),
+                'encrypt' => !!$Attribute->getAttribute('encrypt')
+            ];
+        }
+
+        QUI\Cache\Manager::set($cache, $attributes);
+
+        return $attributes;
+    }
+
 }
