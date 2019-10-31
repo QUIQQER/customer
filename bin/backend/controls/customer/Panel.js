@@ -121,18 +121,18 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.addButton({
                 type: 'separator'
             });
-
-            this.addButton(
-                new QUIButtonSwitch({
-                    name    : 'status',
-                    text    : QUILocale.get('quiqqer/quiqqer', 'isActivate'),
-                    status  : true,
-                    disabled: true,
-                    events  : {
-                        onChange: this.$onStatusChangeClick
-                    }
-                })
-            );
+            //
+            // this.addButton(
+            //     new QUIButtonSwitch({
+            //         name    : 'status',
+            //         text    : QUILocale.get('quiqqer/quiqqer', 'isActivate'),
+            //         status  : true,
+            //         disabled: true,
+            //         events  : {
+            //             onChange: this.$onStatusChangeClick
+            //         }
+            //     })
+            // );
 
             this.addButton({
                 name  : 'userDelete',
@@ -148,11 +148,33 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
             this.addCategory({
                 name  : 'information',
-                text  : QUILocale.get('quiqqer/quiqqer', 'information'),
+                text  : QUILocale.get(lg, 'quiqqer.customer.panel.general'),
                 icon  : 'fa fa-file',
                 events: {
                     onActive: function () {
                         self.$openCategory('information');
+                    }
+                }
+            });
+
+            this.addCategory({
+                name  : 'userInformation',
+                text  : QUILocale.get(lg, 'quiqqer.customer.panel.userInformation'),
+                icon  : 'fa fa-user',
+                events: {
+                    onActive: function () {
+
+                    }
+                }
+            });
+
+            this.addCategory({
+                name  : 'userProperty',
+                text  : QUILocale.get(lg, 'quiqqer.customer.panel.userProperty'),
+                icon  : 'fa fa-user',
+                events: {
+                    onActive: function () {
+
                     }
                 }
             });
@@ -164,6 +186,17 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 events: {
                     onActive: function () {
                         self.$openCategory('addresses');
+                    }
+                }
+            });
+
+            this.addCategory({
+                name  : 'comments',
+                text  : QUILocale.get(lg, 'quiqqer.customer.panel.comments'),
+                icon  : 'fa fa-comments',
+                events: {
+                    onActive: function () {
+
                     }
                 }
             });
@@ -180,7 +213,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                     self.addCategory(categories[i]);
                 }
-
             }, {
                 package: 'quiqqer/customer'
             });
@@ -201,7 +233,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             }
 
             Loaded.then(function (User) {
-                var Status = self.getButtons('status');
+                // var Status = self.getButtons('status');
 
                 self.$User               = User;
                 self.$userInitAttributes = User.getAttributes();
@@ -215,21 +247,21 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                 // active status
                 if (User.isActive() === -1) {
-                    Status.setSilentOff();
-                    Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isDeactivate'));
-                    Status.disable();
+                    // Status.setSilentOff();
+                    // Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isDeactivate'));
+                    // Status.disable();
                     return;
                 }
 
-                Status.enable();
-
-                if (!User.isActive()) {
-                    Status.off();
-                    Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isDeactivate'));
-                } else {
-                    Status.on();
-                    Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isActivate'));
-                }
+                // Status.enable();
+                //
+                // if (!User.isActive()) {
+                //     Status.off();
+                //     Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isDeactivate'));
+                // } else {
+                //     Status.on();
+                //     Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isActivate'));
+                // }
 
                 if (!self.$ActiveCat) {
                     self.getCategory('information').click();
@@ -246,78 +278,34 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          */
         $openInformation: function () {
             this.getContent().set('html', Mustache.render(templateInformation, {
-                detailsTitle: QUILocale.get(lg, 'customer.panel,information.details'),
-                textUserId  : QUILocale.get('quiqqer/quiqqer', 'user_id'),
-                textUsername: QUILocale.get('quiqqer/quiqqer', 'username'),
-                textEmail   : QUILocale.get('quiqqer/quiqqer', 'email'),
+                detailsTitle      : QUILocale.get(lg, 'customer.panel,information.details'),
+                textUserId        : QUILocale.get('quiqqer/quiqqer', 'user_id'),
+                textCustomerId    : QUILocale.get(lg, 'customerId'),
+                textSalutation    : QUILocale.get('quiqqer/quiqqer', 'salutation'),
+                titleAddress      : QUILocale.get('quiqqer/quiqqer', 'address'),
+                textStreet        : QUILocale.get('quiqqer/quiqqer', 'street'),
+                textCountryZipCity: QUILocale.get(lg, 'customer.panel,information.countryZipCity'),
+                textCountry       : QUILocale.get('quiqqer/quiqqer', 'country'),
+                textZip           : QUILocale.get('quiqqer/quiqqer', 'zip'),
+                textCity          : QUILocale.get('quiqqer/quiqqer', 'city'),
 
-                titleAddress        : QUILocale.get('quiqqer/quiqqer', 'address'),
-                titleDeliveryAddress: QUILocale.get(lg, 'customer.panel,information.erp.addresses'),
-                textInvoiceAddress  : QUILocale.get(lg, 'customer.panel,information.invoice.address'),
-                textDeliveryAddress : QUILocale.get(lg, 'customer.panel,information.delivery.address')
+                titleAllocation: QUILocale.get(lg, 'customer.panel,information.allocation'),
+                textGroup      : QUILocale.get(lg, 'customer.panel,information.group'),
+                textGroups     : QUILocale.get(lg, 'customer.panel,information.groups')
             }));
 
             var self = this,
                 Form = this.getContent().getElement('form');
 
-            // add address
-            this.getContent()
-                .getElement('[name="create-address"]')
-                .addEvent('click', function (event) {
-                    event.stop();
-
-                    var Button = event.target;
-
-                    if (Button.nodeName !== 'button') {
-                        Button = Button.getParent('button');
-                    }
-
-                    Button.set('disabled', true);
-
-                    var Icon = Button.getElement('.fa');
-
-                    Icon.removeClass('fa-plus');
-                    Icon.addClass('fa-spinner fa-spin');
-
-                    self.createAddress().then(function (addressId) {
-                        self.refreshAddressLists();
-                        self.editAddress(addressId);
-
-                        Button.set('disabled', false);
-                        Icon.addClass('fa-plus');
-                        Icon.removeClass('fa-spinner fa-spin');
-                    });
-                });
 
             // set data
-            Form.elements.userId.value   = this.$User.getId();
-            Form.elements.username.value = this.$User.getUsername();
-            Form.elements.email.value    = this.$User.getAttribute('email');
+            Form.elements.userId.value = this.$User.getId();
 
-            var DefaultAddress  = self.getContent().getElement('[name="address"]');
-            var InvoiceAddress  = this.getContent().getElement('[name="quiqqer.erp.address"]');
-            var DeliveryAddress = this.getContent().getElement('[name="quiqqer.delivery.address"]');
+            if (this.$User.getAttribute('customerId')) {
+                Form.elements.customerId.value = this.$User.getAttribute('customerId');
+            }
 
-            var onChange = function (event) {
-                var Target = event.target;
-                var Button = Target.getNext('button');
-
-                if (Target.value === '') {
-                    Button.set('disabled', true);
-                } else {
-                    Button.set('disabled', false);
-                }
-            };
-
-            DefaultAddress.addEvent('change', onChange);
-            InvoiceAddress.addEvent('change', onChange);
-            DeliveryAddress.addEvent('change', onChange);
-
-            DefaultAddress.getNext('button').addEvent('click', this.$clickEditAddress);
-            InvoiceAddress.getNext('button').addEvent('click', this.$clickEditAddress);
-            DeliveryAddress.getNext('button').addEvent('click', this.$clickEditAddress);
-
-            return self.refreshAddressLists();
+            return QUI.parse(this.getContent());
         },
 
         /**

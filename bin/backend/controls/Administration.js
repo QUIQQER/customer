@@ -553,7 +553,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             var rowData = this.$Grid.getDataByRow(data.row);
 
-            if (data.cell.get('data-index') === 'id') {
+            if (data.cell.get('data-index') === 'customerId') {
                 this.$openCustomer(rowData.id);
                 return;
             }

@@ -131,6 +131,22 @@
             <de><![CDATA[Lieferadresse]]></de>
             <en><![CDATA[Delivery address]]></en>
         </locale>
+        <locale name="customer.panel,information.countryZipCity">
+            <de><![CDATA[Land / Plz / Ort]]></de>
+            <en><![CDATA[Country / Zip / City]]></en>
+        </locale>
+        <locale name="customer.panel,information.allocation">
+            <de><![CDATA[Zuweisung]]></de>
+            <en><![CDATA[Allocation]]></en>
+        </locale>
+        <locale name="customer.panel,information.group">
+            <de><![CDATA[Hauptgruppe]]></de>
+            <en><![CDATA[Main group]]></en>
+        </locale>
+        <locale name="customer.panel,information.groups">
+            <de><![CDATA[Gruppen]]></de>
+            <en><![CDATA[Groups]]></en>
+        </locale>
 
         <locale name="address.edit.window.title">
             <de><![CDATA[Adresse #[id] von [firstname] [lastname] bearbeiten]]></de>
@@ -156,9 +172,25 @@
             ]]></en>
         </locale>
 
+        <locale name="quiqqer.customer.panel.general">
+            <de><![CDATA[Allgemein]]></de>
+            <en><![CDATA[General]]></en>
+        </locale>
+        <locale name="quiqqer.customer.panel.userInformation">
+            <de><![CDATA[Erweitert]]></de>
+            <en><![CDATA[Extended]]></en>
+        </locale>
+        <locale name="quiqqer.customer.panel.userProperty">
+            <de><![CDATA[Benutzereigenschaften]]></de>
+            <en><![CDATA[User properties]]></en>
+        </locale>
         <locale name="quiqqer.customer.panel.addresses">
-            <de><![CDATA[Adressenverwaltung]]></de>
-            <en><![CDATA[Address management]]></en>
+            <de><![CDATA[Adressen + Ansprechpartner]]></de>
+            <en><![CDATA[Addresses + Contact persons]]></en>
+        </locale>
+        <locale name="quiqqer.customer.panel.comments">
+            <de><![CDATA[Kommentare]]></de>
+            <en><![CDATA[Comments]]></en>
         </locale>
 
         <locale name="customer.address.delete.title">
