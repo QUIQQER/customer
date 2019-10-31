@@ -40,6 +40,11 @@
             <de><![CDATA[Kundengruppe existiert nicht.]]></de>
             <en><![CDATA[Customer group does not exist.]]></en>
         </locale>
+
+        <locale name="customerId">
+            <de><![CDATA[Kunden-Nr]]></de>
+            <en><![CDATA[Customer no.]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/customer" datatype="php">

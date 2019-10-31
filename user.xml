@@ -2,5 +2,6 @@
 <user>
     <attributes>
         <attribute>gender</attribute>
+        <attribute>customerId</attribute>
     </attributes>
 </user>
