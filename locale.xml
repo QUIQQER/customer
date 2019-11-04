@@ -159,6 +159,10 @@
             <de><![CDATA[Webseite]]></de>
             <en><![CDATA[Homepage]]></en>
         </locale>
+        <locale name="customer.panel,information.paymentTerm">
+            <de><![CDATA[Standard Zahlungsziel]]></de>
+            <en><![CDATA[Default term of payment]]></en>
+        </locale>
 
         <locale name="customer.panel,information.comments">
             <de><![CDATA[Kommentare]]></de>

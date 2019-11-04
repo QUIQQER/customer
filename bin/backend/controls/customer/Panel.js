@@ -303,11 +303,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 titleCommunication: QUILocale.get(lg, 'customer.panel,information.communication'),
                 titleComments     : QUILocale.get(lg, 'customer.panel,information.comments'),
 
-                titleExtra  : QUILocale.get(lg, 'customer.panel,information.extra'),
-                textMail    : QUILocale.get('quiqqer/quiqqer', 'email'),
-                textTel     : QUILocale.get('quiqqer/quiqqer', 'tel'),
-                textFax     : QUILocale.get('quiqqer/quiqqer', 'fax'),
-                textInternet: QUILocale.get(lg, 'customer.panel,information.extra.homepage')
+                titleExtra     : QUILocale.get(lg, 'customer.panel,information.extra'),
+                textPaymentTerm: QUILocale.get(lg, 'customer.panel,information.paymentTerm'),
+                textMail       : QUILocale.get('quiqqer/quiqqer', 'email'),
+                textTel        : QUILocale.get('quiqqer/quiqqer', 'tel'),
+                textFax        : QUILocale.get('quiqqer/quiqqer', 'fax'),
+                textInternet   : QUILocale.get(lg, 'customer.panel,information.extra.homepage')
             }));
 
             var self = this,
@@ -320,8 +321,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             if (this.$User.getAttribute('customerId')) {
                 Form.elements.customerId.value = this.$User.getAttribute('customerId');
             }
-
-            console.log(this.$User.getAttributes());
 
             // groups
             Form.elements.groups.value     = this.$User.getAttribute('usergroup');
@@ -356,27 +355,124 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 Form.elements['address-country'].value    = address.country;
 
                 try {
+                    var CBody = self.getElm().getElement('.customer-information-communication-body');
                     var phone = JSON.decode(address.phone);
 
-                    var getByType = function (type) {
-                        for (var i = 0, len = phone.length; i < len; i++) {
-                            if (phone[i].type === type) {
-                                return phone[i].no;
-                            }
+                    if (self.$User.getAttribute('address-communication')) {
+                        phone = self.$User.getAttribute('address-communication');
+                    }
+
+                    var i, len, Row;
+
+                    var rows   = [],
+                        tel    = false,
+                        fax    = false,
+                        mobile = false;
+
+                    for (i = 0, len = phone.length; i < len; i++) {
+                        Row = new Element('tr', {
+                            'data-type': phone[i].type,
+                            html       : '<td>' +
+                                '<label class="field-container">' +
+                                '   <span class="field-container-item">' + QUILocale.get('quiqqer/quiqqer', phone[i].type) + '</span>' +
+                                '   <input name="address-communication" class="field-container-field"/>' +
+                                '</label>' +
+                                '</td>'
+                        });
+
+                        Row.getElement('input').set('value', phone[i].no);
+                        Row.getElement('input').set('data-type', phone[i].type);
+
+                        switch (phone[i].type) {
+                            case 'tel':
+                                tel = true;
+                                break;
+                            case 'fax':
+                                fax = true;
+                                break;
+                            case 'mobile':
+                                mobile = true;
+                                break;
                         }
 
-                        return '';
-                    };
+                        rows.push(Row);
+                    }
 
-                    Form.elements['address-tel'].value    = getByType('tel');
-                    Form.elements['address-fax'].value    = getByType('fax');
-                    Form.elements['address-mobile'].value = getByType('mobile');
+                    if (tel === false) {
+                        rows.push(
+                            new Element('tr', {
+                                'data-type': 'tel',
+                                html       : '<td>' +
+                                    '<label class="field-container">' +
+                                    '   <span class="field-container-item">' + QUILocale.get('quiqqer/quiqqer', 'tel') + '</span>' +
+                                    '   <input name="address-communication" data-type="tel" class="field-container-field"/>' +
+                                    '</label>' +
+                                    '</td>'
+                            })
+                        );
+                    }
+
+                    if (fax === false) {
+                        rows.push(
+                            new Element('tr', {
+                                'data-type': 'fax',
+                                html       : '<td>' +
+                                    '<label class="field-container">' +
+                                    '   <span class="field-container-item">' + QUILocale.get('quiqqer/quiqqer', 'fax') + '</span>' +
+                                    '   <input name="address-communication" data-type="fax" class="field-container-field"/>' +
+                                    '</label>' +
+                                    '</td>'
+                            })
+                        );
+                    }
+
+                    if (mobile === false) {
+                        rows.push(
+                            new Element('tr', {
+                                'data-type': 'mobile',
+                                html       : '<td>' +
+                                    '<label class="field-container">' +
+                                    '   <span class="field-container-item">' + QUILocale.get('quiqqer/quiqqer', 'mobile') + '</span>' +
+                                    '   <input name="address-communication" data-type="mobile" class="field-container-field"/>' +
+                                    '</label>' +
+                                    '</td>'
+                            })
+                        );
+                    }
+
+                    rows.sort(function (a, b) {
+                        return a.get('data-type').localeCompare(b.get('data-type')) * -1;
+                    });
+
+                    rows.forEach(function (R) {
+                        R.inject(CBody);
+                    });
                 } catch (e) {
                 }
 
-                console.log(address);
-
                 return QUI.parse(self.getContent());
+            }).then(function () {
+                return self.getComments();
+            }).then(function (comments) {
+
+                console.log(comments);
+
+            });
+        },
+
+        /**
+         * return all comments for the user
+         *
+         * @return {Promise}
+         */
+        getComments: function () {
+            var self = this;
+
+            return new Promise(function (resolve) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getComments', resolve, {
+                    'package': 'quiqqer/customer',
+                    uid      : self.$User.getId()
+                });
             });
         },
 
@@ -590,10 +686,24 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             var Content = this.getContent(),
                 Form    = Content.getElement('form');
 
+            if (!Form) {
+                return;
+            }
+
             var data = FormUtils.getFormData(Form);
+            var com  = Form.getElements('[name="address-communication"]');
 
             if (typeof data.id !== 'undefined') {
                 delete data.id;
+            }
+
+            if (com.length) {
+                data['address-communication'] = com.map(function (entry) {
+                    return {
+                        type: entry.get('data-type'),
+                        no  : entry.get('value')
+                    };
+                });
             }
 
             this.$User.setAttributes(data);
