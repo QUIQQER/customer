@@ -105,6 +105,80 @@
         <thead>
         <tr>
             <th>
+                {{titleExtra}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textPaymentTerm}}
+                    </span>
+                    <input name="payment-term" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="data-table data-table-flexbox">
+        <thead>
+        <tr>
+            <th>
+                {{titleCommunication}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textMail}}
+                    </span>
+                    <input type="email" name="address-mail" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textTel}}
+                    </span>
+                    <input type="tel" name="address-tel" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textFax}}
+                    </span>
+                    <input type="tel" name="address-fax" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textInternet}}
+                    </span>
+                    <input name="address-internet" placeholder="www.url.com" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="data-table data-table-flexbox">
+        <thead>
+        <tr>
+            <th>
                 {{titleAllocation}}
             </th>
         </tr>
@@ -137,6 +211,23 @@
                            data-qui="controls/groups/Select"
                     />
                 </label>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="data-table data-table-flexbox">
+        <thead>
+        <tr>
+            <th>
+                {{titleComments}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <div class="comments"></div>
             </td>
         </tr>
         </tbody>

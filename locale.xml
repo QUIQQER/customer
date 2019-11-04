@@ -147,6 +147,23 @@
             <de><![CDATA[Gruppen]]></de>
             <en><![CDATA[Groups]]></en>
         </locale>
+        <locale name="customer.panel,information.communication">
+            <de><![CDATA[Kommunikation]]></de>
+            <en><![CDATA[Communication]]></en>
+        </locale>
+        <locale name="customer.panel,information.extra">
+            <de><![CDATA[Extra]]></de>
+            <en><![CDATA[Extra]]></en>
+        </locale>
+        <locale name="customer.panel,information.extra.homepage">
+            <de><![CDATA[Webseite]]></de>
+            <en><![CDATA[Homepage]]></en>
+        </locale>
+
+        <locale name="customer.panel,information.comments">
+            <de><![CDATA[Kommentare]]></de>
+            <en><![CDATA[Comments]]></en>
+        </locale>
 
         <locale name="address.edit.window.title">
             <de><![CDATA[Adresse #[id] von [firstname] [lastname] bearbeiten]]></de>

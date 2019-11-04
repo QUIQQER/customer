@@ -161,6 +161,51 @@ class Customers extends Singleton
             }
         }
 
+        // tel, fax, mobile
+        if (isset($attributes['address-tel'])
+            || isset($attributes['address-mobile'])
+            || isset($attributes['address-fax'])
+        ) {
+            $Address->clearPhone();
+
+            if (!empty($attributes['address-tel'])) {
+                $Address->addPhone([
+                    'no'   => $attributes['address-tel'],
+                    'type' => 'tel'
+                ]);
+
+                unset($attributes['address-tel']);
+            }
+
+
+            if (!empty($attributes['address-mobile'])) {
+                $Address->addPhone([
+                    'no'   => $attributes['address-mobile'],
+                    'type' => 'mobile'
+                ]);
+
+                unset($attributes['address-mobile']);
+            }
+
+
+            if (!empty($attributes['address-fax'])) {
+                $Address->addPhone([
+                    'no'   => $attributes['address-fax'],
+                    'type' => 'tel'
+                ]);
+
+                unset($attributes['address-fax']);
+            }
+        }
+
+        // mail
+        if (!empty($attributes['address-mail'])) {
+            $Address->clearMail();
+            $Address->addMail($attributes['address-mail']);
+            unset($attributes['address-mail']);
+        }
+
+
         $Address->save();
 
 

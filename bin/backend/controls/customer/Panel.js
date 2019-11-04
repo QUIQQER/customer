@@ -297,10 +297,17 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 textCountry       : QUILocale.get('quiqqer/quiqqer', 'country'),
                 textZip           : QUILocale.get('quiqqer/quiqqer', 'zip'),
                 textCity          : QUILocale.get('quiqqer/quiqqer', 'city'),
+                titleAllocation   : QUILocale.get(lg, 'customer.panel,information.allocation'),
+                textGroup         : QUILocale.get(lg, 'customer.panel,information.group'),
+                textGroups        : QUILocale.get(lg, 'customer.panel,information.groups'),
+                titleCommunication: QUILocale.get(lg, 'customer.panel,information.communication'),
+                titleComments     : QUILocale.get(lg, 'customer.panel,information.comments'),
 
-                titleAllocation: QUILocale.get(lg, 'customer.panel,information.allocation'),
-                textGroup      : QUILocale.get(lg, 'customer.panel,information.group'),
-                textGroups     : QUILocale.get(lg, 'customer.panel,information.groups')
+                titleExtra  : QUILocale.get(lg, 'customer.panel,information.extra'),
+                textMail    : QUILocale.get('quiqqer/quiqqer', 'email'),
+                textTel     : QUILocale.get('quiqqer/quiqqer', 'tel'),
+                textFax     : QUILocale.get('quiqqer/quiqqer', 'fax'),
+                textInternet: QUILocale.get(lg, 'customer.panel,information.extra.homepage')
             }));
 
             var self = this,
@@ -340,7 +347,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                 return self.getAddress(address);
             }).then(function (address) {
-                console.log(address);
                 Form.elements['address-salutation'].value = address.salutation;
                 Form.elements['address-firstname'].value  = address.firstname;
                 Form.elements['address-lastname'].value   = address.lastname;
@@ -348,6 +354,27 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 Form.elements['address-street_no'].value  = address.street_no;
                 Form.elements['address-zip'].value        = address.zip;
                 Form.elements['address-country'].value    = address.country;
+
+                try {
+                    var phone = JSON.decode(address.phone);
+
+                    var getByType = function (type) {
+                        for (var i = 0, len = phone.length; i < len; i++) {
+                            if (phone[i].type === type) {
+                                return phone[i].no;
+                            }
+                        }
+
+                        return '';
+                    };
+
+                    Form.elements['address-tel'].value    = getByType('tel');
+                    Form.elements['address-fax'].value    = getByType('fax');
+                    Form.elements['address-mobile'].value = getByType('mobile');
+                } catch (e) {
+                }
+
+                console.log(address);
 
                 return QUI.parse(self.getContent());
             });
