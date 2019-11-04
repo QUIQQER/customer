@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<permissions>
+
+    <permission name="quiqqer.customer.create" type="bool">
+        <defaultvalue>1</defaultvalue>
+    </permission>
+    <permission name="quiqqer.customer.edit" type="bool">
+        <defaultvalue>1</defaultvalue>
+    </permission>
+    <permission name="quiqqer.customer.view" type="bool">
+        <defaultvalue>1</defaultvalue>
+    </permission>
+    <permission name="quiqqer.customer.editComments" type="bool">
+        <defaultvalue>1</defaultvalue>
+    </permission>
+
+</permissions>

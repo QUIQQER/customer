@@ -114,4 +114,78 @@ class Customers extends Singleton
         $User->removeGroup($customerGroup);
         $User->save();
     }
+
+    /**
+     * @param $userId
+     * @param array $attributes
+     *
+     * @throws QUI\Exception
+     */
+    public function setAttributesToCustomer($userId, array $attributes)
+    {
+        $User = QUI::getUsers()->get($userId);
+
+        // defaults
+        $defaults = ['customerId'];
+
+        foreach ($defaults as $entry) {
+            if (isset($attributes[$entry])) {
+                $User->setAttribute($entry, $attributes[$entry]);
+            }
+        }
+
+        // address
+        try {
+            $Address = $User->getStandardAddress();
+        } catch (QUI\Exception $Exception) {
+            // create one
+            $Address = $User->addAddress([]);
+        }
+
+        $addressAttributes = [
+            'salutation',
+            'firstname',
+            'lastname',
+            'company',
+
+            'street_no',
+            'zip',
+            'city',
+            'country'
+        ];
+
+        foreach ($addressAttributes as $addressAttribute) {
+            if (isset($attributes['address-'.$addressAttribute])) {
+                $Address->setAttribute($addressAttribute, $attributes['address-'.$addressAttribute]);
+                unset($attributes['address-'.$addressAttribute]);
+            }
+        }
+
+        $Address->save();
+
+
+        // group
+        $groups = [];
+
+        if (isset($attributes['group'])) {
+            $groups[] = (int)$attributes['group'];
+            $User->setAttribute('mainGroup', (int)$attributes['group']);
+        } elseif (isset($attributes['group']) && $attributes['group'] === null) {
+            $User->setAttribute('mainGroup', false);
+        }
+
+        if (isset($attributes['groups'])) {
+            if (\strpos($attributes['groups'], ',') !== false) {
+                $attributes['groups'] = \explode(',', $attributes['groups']);
+            }
+
+            $groups = \array_merge($groups, $attributes['groups']);
+        }
+
+        if (!empty($groups)) {
+            $User->setGroups($groups);
+        }
+
+        $User->save();
+    }
 }

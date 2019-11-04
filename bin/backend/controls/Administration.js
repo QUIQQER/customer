@@ -787,6 +787,6 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             });
         }
 
-        //enregion
+        //endregion
     });
 });

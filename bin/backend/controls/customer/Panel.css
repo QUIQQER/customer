@@ -14,3 +14,7 @@
 .quiqqer-customer-address-add > div {
     justify-content: flex-end;
 }
+
+.quiqqer-customer-address-select [name="address-country"] {
+    width: 30%;
+}

@@ -54,9 +54,9 @@
             <td>
                 <label class="field-container">
                     <span class="field-container-item">
-                        {{textStreet}}
+                        {{textFirstname}}
                     </span>
-                    <input name="address-street_no" class="field-container-field"/>
+                    <input name="address-firstname" class="field-container-field"/>
                 </label>
             </td>
         </tr>
@@ -64,9 +64,33 @@
             <td>
                 <label class="field-container">
                     <span class="field-container-item">
+                        {{textLastname}}
+                    </span>
+                    <input name="address-lastname" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textStreet}}
+                    </span>
+                    <input name="address-street_no" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
                         {{textCountryZipCity}}
                     </span>
-                    <select type="text" name="address-country" class="field-container-field">
+                    <select type="text"
+                            name="address-country"
+                            class="field-container-field"
+                    >
                         <option value="" disabled selected>{{textCountry}}</option>
                     </select>
                     <input name="address-zip" class="field-container-field" placeholder="{{textZip}}"/>
@@ -92,7 +116,12 @@
                     <span class="field-container-item">
                         {{textGroup}}
                     </span>
-                    <input name="group" type="hidden" class="field-container-field" data-qui="controls/groups/Input"/>
+                    <input name="group"
+                           type="hidden"
+                           class="field-container-field"
+                           data-qui="controls/groups/Select"
+                           data-qui-options-max="1"
+                    />
                 </label>
             </td>
         </tr>
@@ -102,7 +131,11 @@
                     <span class="field-container-item">
                         {{textGroups}}
                     </span>
-                    <input name="groups" type="hidden" class="field-container-field" data-qui="controls/groups/Input"/>
+                    <input name="groups"
+                           type="hidden"
+                           class="field-container-field"
+                           data-qui="controls/groups/Select"
+                    />
                 </label>
             </td>
         </tr>

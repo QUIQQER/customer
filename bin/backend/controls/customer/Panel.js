@@ -8,6 +8,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'qui/controls/desktop/Panel',
     'qui/controls/buttons/ButtonSwitch',
     'qui/controls/windows/Confirm',
+    'package/quiqqer/countries/bin/Countries',
     'qui/utils/Form',
     'Users',
     'Locale',
@@ -17,7 +18,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.Information.html',
     'css!package/quiqqer/customer/bin/backend/controls/customer/Panel.css'
 
-], function (QUI, QUIPanel, QUIButtonSwitch, QUIConfirm, FormUtils, Users, QUILocale, QUIAjax, Mustache, templateInformation) {
+], function (QUI, QUIPanel, QUIButtonSwitch, QUIConfirm, Countries,
+             FormUtils, Users, QUILocale, QUIAjax, Mustache, templateInformation) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -92,9 +94,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.Loader.show();
             this.$categoryUnload();
 
-            return this.$User.save().then(function () {
-                self.Loader.hide();
-            }).catch(function () {
+            return new Promise(function (resolve) {
+                QUIAjax.post('package_quiqqer_customer_ajax_backend_customer_save', resolve, {
+                    'package': 'quiqqer/customer',
+                    userId   : self.$User.getId(),
+                    data     : JSON.encode(self.$User.getAttributes()),
+                    onError  : resolve
+                });
+            }).then(function () {
                 self.Loader.hide();
             });
         },
@@ -282,6 +289,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 textUserId        : QUILocale.get('quiqqer/quiqqer', 'user_id'),
                 textCustomerId    : QUILocale.get(lg, 'customerId'),
                 textSalutation    : QUILocale.get('quiqqer/quiqqer', 'salutation'),
+                textFirstname     : QUILocale.get('quiqqer/quiqqer', 'firstname'),
+                textLastname      : QUILocale.get('quiqqer/quiqqer', 'lastname'),
                 titleAddress      : QUILocale.get('quiqqer/quiqqer', 'address'),
                 textStreet        : QUILocale.get('quiqqer/quiqqer', 'street'),
                 textCountryZipCity: QUILocale.get(lg, 'customer.panel,information.countryZipCity'),
@@ -305,7 +314,43 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 Form.elements.customerId.value = this.$User.getAttribute('customerId');
             }
 
-            return QUI.parse(this.getContent());
+            console.log(this.$User.getAttributes());
+
+            // groups
+            Form.elements.groups.value     = this.$User.getAttribute('usergroup');
+            Form.elements.group.value      = this.$User.getAttribute('mainGroup');
+            Form.elements.customerId.value = this.$User.getAttribute('customerId');
+
+            // address
+            var address = parseInt(this.$User.getAttribute('address'));
+
+            return Countries.getCountries().then(function (countries) {
+                var CountrySelect = Form.elements['address-country'];
+
+                for (var code in countries) {
+                    if (!countries.hasOwnProperty(code)) {
+                        continue;
+                    }
+
+                    new Element('option', {
+                        value: code,
+                        html : countries[code]
+                    }).inject(CountrySelect);
+                }
+
+                return self.getAddress(address);
+            }).then(function (address) {
+                console.log(address);
+                Form.elements['address-salutation'].value = address.salutation;
+                Form.elements['address-firstname'].value  = address.firstname;
+                Form.elements['address-lastname'].value   = address.lastname;
+                // Form.elements['address-company'].value    = address.country;
+                Form.elements['address-street_no'].value  = address.street_no;
+                Form.elements['address-zip'].value        = address.zip;
+                Form.elements['address-country'].value    = address.country;
+
+                return QUI.parse(self.getContent());
+            });
         },
 
         /**
@@ -429,6 +474,25 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         //endregion
 
         //region address
+
+        /**
+         *
+         * @param {Integer} addressId
+         * @return {Promise}
+         */
+        getAddress: function (addressId) {
+            addressId = parseInt(addressId);
+
+            return this.$User.getAddressList().then(function (addressList) {
+                for (var i = 0, len = addressList.length; i < len; i++) {
+                    if (parseInt(addressList[i].id) === addressId) {
+                        return addressList[i];
+                    }
+                }
+
+                return false;
+            });
+        },
 
         /**
          * open the address management

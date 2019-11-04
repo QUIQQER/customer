@@ -8,6 +8,7 @@ namespace QUI\ERP\Customer;
 
 use QUI;
 use QUI\Package\Package;
+use QUI\Users\Manager;
 
 /**
  * Class EventHandler
@@ -159,5 +160,40 @@ class EventHandler
         QUI\Cache\Manager::set($cache, $attributes);
 
         return $attributes;
+    }
+
+    /**
+     * @param QUI\Users\User $User
+     */
+    public static function onUserSaveEnd(QUI\Users\User $User)
+    {
+        $attributes = $User->getAttributes();
+        $data       = [];
+
+        if (isset($attributes['mainGroup'])) {
+            try {
+                $mainGroup = (int)$attributes['mainGroup'];
+                QUI::getGroups()->get($mainGroup);
+
+                $data['mainGroup'] = $mainGroup;
+            } catch (QUI\Exception $Exception) {
+                QUI\System\Log::addDebug($Exception->getMessage());
+            }
+        }
+
+        if (isset($attributes['customerId'])) {
+            $data['customerId'] = $attributes['customerId'];
+        }
+
+        // saving
+        try {
+            QUI::getDataBase()->update(
+                Manager::table(),
+                $data,
+                ['id' => $User->getId()]
+            );
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addDebug($Exception->getMessage());
+        }
     }
 }
