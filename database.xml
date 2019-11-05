@@ -4,6 +4,7 @@
         <table name="users">
             <field type="VARCHAR(255) NULL">customerId</field>
             <field type="VARCHAR(255) NULL">mainGroup</field>
+            <field type="text NULL">comments</field>
         </table>
     </global>
 </database>

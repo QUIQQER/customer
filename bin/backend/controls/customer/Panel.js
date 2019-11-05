@@ -450,13 +450,27 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 } catch (e) {
                 }
 
+                // load comments
+                self.getComments().then(function (comments) {
+                    require(['package/quiqqer/erp/bin/backend/controls/Comments'], function (Comments) {
+                        var Container = self.getContent().getElement('.comments');
+
+                        if (!Container) {
+                            return;
+                        }
+
+                        Container.set('html', '');
+
+                        // limit 5
+                        comments = comments.slice(0, 5);
+
+                        var Control = new Comments();
+                        Control.inject(Container);
+                        Control.unserialize(comments);
+                    });
+                });
+
                 return QUI.parse(self.getContent());
-            }).then(function () {
-                return self.getComments();
-            }).then(function (comments) {
-
-                console.log(comments);
-
             });
         },
 
