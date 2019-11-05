@@ -126,13 +126,7 @@ class Customers extends Singleton
         $User = QUI::getUsers()->get($userId);
 
         // defaults
-        $defaults = ['customerId'];
-
-        foreach ($defaults as $entry) {
-            if (isset($attributes[$entry])) {
-                $User->setAttribute($entry, $attributes[$entry]);
-            }
-        }
+        $User->setAttributes($attributes);
 
         // address
         try {

@@ -234,6 +234,40 @@
             The addresses are irrevocably deleted.
             ]]></en>
         </locale>
+
+        <locale name="customer.user.information.title">
+            <de><![CDATA[Benutzerinformationen]]></de>
+            <en><![CDATA[User information]]></en>
+        </locale>
+        <locale name="customer.user.information.USt">
+            <de><![CDATA[Umsatzsteuer-ID]]></de>
+            <en><![CDATA[VAT ID]]></en>
+        </locale>
+        <locale name="customer.user.information.textBruttoNetto">
+            <de><![CDATA[Preis-Berechnungsgrundlage]]></de>
+            <en><![CDATA[Price calculation basis]]></en>
+        </locale>
+        <locale name="customer.user.information.taxInformation">
+            <de><![CDATA[Steuerinformation]]></de>
+            <en><![CDATA[Tax information]]></en>
+        </locale>
+        <locale name="customer.user.information.discount">
+            <de><![CDATA[Standard Rabatt]]></de>
+            <en><![CDATA[Default discount]]></en>
+        </locale>
+        <locale name="customer.user.information.discount.description">
+            <de><![CDATA[
+            Dieser Rabatt wird im Backend direkt auf Artikel angewendet wenn eine Rechnung angelegt wird.
+            ]]></de>
+            <en><![CDATA[
+            This discount is applied directly to items in the backend when an invoice is created.
+            ]]></en>
+        </locale>
+
+        <locale name="customer.user.information.general">
+            <de><![CDATA[Allgemeine Benutzerinformationen]]></de>
+            <en><![CDATA[General user information]]></en>
+        </locale>
     </groups>
 
 </locales>

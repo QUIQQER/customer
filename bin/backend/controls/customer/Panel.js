@@ -170,7 +170,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 icon  : 'fa fa-user',
                 events: {
                     onActive: function () {
-
+                        self.$openCategory('userInformation');
                     }
                 }
             });
@@ -181,7 +181,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 icon  : 'fa fa-user',
                 events: {
                     onActive: function () {
-
+                        self.$openCategory('userProperty');
                     }
                 }
             });
@@ -203,7 +203,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 icon  : 'fa fa-comments',
                 events: {
                     onActive: function () {
-
+                        self.$openCategory('comments');
                     }
                 }
             });
@@ -461,7 +461,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                         Container.set('html', '');
 
-                        // limit 5
+                        comments = comments.reverse();
                         comments = comments.slice(0, 5);
 
                         var Control = new Comments();
@@ -659,6 +659,76 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         //region category stuff
 
         /**
+         * open the comments
+         *
+         * @return {Promise}
+         */
+        $openComments: function () {
+            var self = this;
+
+            this.getContent().set('html', '');
+
+            return new Promise(function (resolve) {
+                require(['package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments'], function (Comments) {
+                    new Comments({
+                        userId: self.getAttribute('userId'),
+                        events: {
+                            onLoad: resolve
+                        }
+                    }).inject(self.getContent());
+                });
+            });
+        },
+
+        /**
+         * open the user information
+         *
+         * @return {Promise}
+         */
+        $openUserInformation: function () {
+            var self = this;
+
+            this.getContent().set('html', '');
+
+            return new Promise(function (resolve) {
+                require([
+                    'package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInformation'
+                ], function (UserInformation) {
+                    new UserInformation({
+                        userId: self.getAttribute('userId'),
+                        events: {
+                            onLoad: resolve
+                        }
+                    }).inject(self.getContent());
+                });
+            });
+        },
+
+        /**
+         * open the user properties
+         *
+         * @return {Promise}
+         */
+        $openUserProperty: function () {
+            var self = this;
+
+            this.getContent().set('html', '');
+
+            return new Promise(function (resolve) {
+                require([
+                    'package/quiqqer/customer/bin/backend/controls/customer/Panel.UserProperties'
+                ], function (UserProperties) {
+                    new UserProperties({
+                        userId: self.getAttribute('userId'),
+                        events: {
+                            onLoad: resolve
+                        }
+                    }).inject(self.getContent());
+                });
+            });
+        },
+
+        /**
          * Opens a category panel
          *
          * @param {String} category - name of the category
@@ -666,6 +736,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         $openCategory: function (category) {
             var self = this;
 
+            this.Loader.show();
             this.$categoryUnload();
 
             this.$hideCategory().then(function () {
@@ -675,6 +746,18 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                 if (category === 'addresses') {
                     return self.$openAddressManagement();
+                }
+
+                if (category === 'comments') {
+                    return self.$openComments();
+                }
+
+                if (category === 'userInformation') {
+                    return self.$openUserInformation();
+                }
+
+                if (category === 'userProperty') {
+                    return self.$openUserProperty();
                 }
 
                 // load customer category
@@ -689,7 +772,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     });
                 });
             }).then(function () {
-                self.$showCategory();
+                return self.$showCategory();
+            }).then(function () {
+                self.Loader.hide();
             });
         },
 
