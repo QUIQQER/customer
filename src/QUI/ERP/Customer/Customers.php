@@ -45,6 +45,23 @@ class Customers extends Singleton
     }
 
     /**
+     * Returns whether the customer can log in to the system or not
+     *
+     * @return bool
+     */
+    public function getCustomerLoginFlag()
+    {
+        try {
+            $Package = QUI::getPackage('quiqqer/customer');
+            $Config  = $Package->getConfig();
+        } catch (QUI\Exception $Exception) {
+            return false;
+        }
+
+        return (bool)$Config->getValue('customer', 'customerLogin');
+    }
+
+    /**
      * Return the customer group
      *
      * @return QUI\Groups\Group

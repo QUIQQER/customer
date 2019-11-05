@@ -1,0 +1,57 @@
+<form name="customer-user-information">
+    <table class="data-table data-table-flexbox">
+        <thead>
+        <tr>
+            <th>
+                {{title}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textStatus}}
+                    </span>
+                    <span class="field-container-field">
+                        <input type="checkbox" name="status" disabled/>
+                    </span>
+                </label>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="data-table data-table-flexbox">
+        <thead>
+        <tr>
+            <th>
+                {{titlePassword}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textPassword1}}
+                    </span>
+                    <input type="password" name="password1" class="field-container-field" disabled/>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textPassword2}}
+                    </span>
+                    <input type="password" name="password2" class="field-container-field" disabled/>
+                </label>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</form>

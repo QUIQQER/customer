@@ -60,6 +60,19 @@
             <de><![CDATA[Kunden]]></de>
             <en><![CDATA[Customer]]></en>
         </locale>
+
+        <locale name="customer.settings.customerLogin">
+            <de><![CDATA[Kundenlogin]]></de>
+            <en><![CDATA[Customer login]]></en>
+        </locale>
+        <locale name="customer.settings.customerLogin.description">
+            <de><![CDATA[
+            Kunden dürfen sich am System anmelden. Wenn der Kunde aktiv ist, kann er sich somit am System einloggen.
+            ]]></de>
+            <en><![CDATA[
+            Customers may log on to the system. If the customer is active, he or she can log on to the system.
+            ]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/customer" datatype="js">
@@ -267,6 +280,30 @@
         <locale name="customer.user.information.general">
             <de><![CDATA[Allgemeine Benutzerinformationen]]></de>
             <en><![CDATA[General user information]]></en>
+        </locale>
+
+        <locale name="customer.user.properties.title">
+            <de><![CDATA[Benutzereigenschaften]]></de>
+            <en><![CDATA[User propterties]]></en>
+        </locale>
+        <locale name="customer.user.properties.status">
+            <de><![CDATA[Kann sich anmelden]]></de>
+            <en><![CDATA[Can log in]]></en>
+        </locale>
+        <locale name="customer.user.properties.password.title">
+            <de><![CDATA[Passwort]]></de>
+            <en><![CDATA[Password]]></en>
+        </locale>
+
+        <locale name="message.customer.cant.log.in">
+            <de><![CDATA[
+            Das System ist so eingestellt das Kunden sich nicht am System anmelden können.
+            Daher kann der Status eines Kunde und das Login Passwort nicht geändert werden.
+            ]]></de>
+            <en><![CDATA[
+            The system is configured that customers cannot log in to the system.
+            Therefore the status of a customer and the login password cannot be changed.
+            ]]></en>
         </locale>
     </groups>
 
