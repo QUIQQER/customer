@@ -298,6 +298,10 @@
             <de><![CDATA[Allgemeine Benutzerinformationen]]></de>
             <en><![CDATA[General user information]]></en>
         </locale>
+        <locale name="customer.user.information.textCompanyNo">
+            <de><![CDATA[Unternehmens-Identifikationsnummer]]></de>
+            <en><![CDATA[Company identification number]]></en>
+        </locale>
 
         <locale name="customer.user.properties.title">
             <de><![CDATA[Benutzereigenschaften]]></de>

@@ -52,6 +52,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
                 textUSt        : QUILocale.get(lg, 'customer.user.information.USt'),
                 textBruttoNetto: QUILocale.get(lg, 'customer.user.information.textBruttoNetto'),
                 textTaxInfo    : QUILocale.get(lg, 'customer.user.information.taxInformation'),
+                textCompanyNo  : QUILocale.get(lg, 'customer.user.information.textCompanyNo'),
 
                 titleGeneral    : QUILocale.get(lg, 'customer.user.information.general'),
                 textLanguage    : QUILocale.get('quiqqer/quiqqer', 'language'),
@@ -73,6 +74,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
             Form.elements['quiqqer.erp.isNettoUser'].value = User.getAttribute('quiqqer.erp.isNettoUser');
             Form.elements['quiqqer.erp.euVatId'].value     = User.getAttribute('quiqqer.erp.euVatId');
             Form.elements['quiqqer.erp.discount'].value    = User.getAttribute('quiqqer.erp.discount');
+
+            Form.elements['quiqqer.erp.company.identification.number'].value = User.getAttribute('quiqqer.erp.company.identification.number');
 
             Promise.all([
                 this.getTaxByUser(),
