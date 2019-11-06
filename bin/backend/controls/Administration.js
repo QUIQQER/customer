@@ -10,6 +10,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
     'qui/controls/contextmenu/Menu',
     'qui/controls/contextmenu/Item',
     'qui/controls/windows/Prompt',
+    'qui/controls/windows/Confirm',
+
     'package/quiqqer/customer/bin/backend/Handler',
     'controls/grid/Grid',
     'Mustache',
@@ -21,8 +23,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
     'text!package/quiqqer/customer/bin/backend/controls/Administration.html',
     'css!package/quiqqer/customer/bin/backend/controls/Administration.css'
 
-], function (QUI, QUIControl, QUISwitch, ContextMenu, ContextMenuItem, QUIPrompt, CustomerHandler,
-             Grid, Mustache, QUILocale, QUIAjax, Users, Permissions, template) {
+], function (QUI, QUIControl, QUISwitch, ContextMenu, ContextMenuItem, QUIPrompt, QUIConfirm,
+             CustomerHandler, Grid, Mustache, QUILocale, QUIAjax, Users, Permissions, template) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -39,8 +41,10 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             '$onUserChange',
             '$editComplete',
             '$gridDblClick',
+            '$gridClick',
             'refresh',
-            'toggleFilter'
+            'toggleFilter',
+            'openDeleteWindow'
         ],
 
         options: {
@@ -142,10 +146,22 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             this.$Grid = new Grid(this.$Container, {
                 buttons: [{
+                    name     : 'add',
                     textimage: 'fa fa-plus',
                     text     : QUILocale.get(lg, 'customer.window.create.title'),
                     events   : {
                         onClick: self.openAddWindow
+                    }
+                }, {
+                    name     : 'delete',
+                    textimage: 'fa fa-trash',
+                    text     : QUILocale.get(lg, 'customer.window.delete.title'),
+                    disabled : true,
+                    styles   : {
+                        'float': 'right'
+                    },
+                    events   : {
+                        onClick: self.openDeleteWindow
                     }
                 }],
 
@@ -222,7 +238,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             // Events
             this.$Grid.addEvents({
-                // onClick   : this.$gridClick,
+                onClick     : this.$gridClick,
                 onDblClick  : this.$gridDblClick,
                 // onBlur    : this.$gridBlur,
                 editComplete: this.$editComplete,
@@ -631,6 +647,22 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
         },
 
         /**
+         * event: on grid click
+         */
+        $gridClick: function () {
+            var selected = this.$Grid.getSelectedData();
+            var Delete   = this.$Grid.getButtons().filter(function (Btn) {
+                return Btn.getAttribute('name') === 'delete';
+            })[0];
+
+            Delete.disable();
+
+            if (selected.length === 1) {
+                Delete.enable();
+            }
+        },
+
+        /**
          * opens the add customer window
          */
         openAddWindow: function () {
@@ -701,6 +733,38 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                                 self.$openCustomer(userId);
                                 self.refresh();
                             });
+                        });
+                    }
+                }
+            }).open();
+        },
+
+        /**
+         * opens the customer delete window
+         */
+        openDeleteWindow: function () {
+            var self = this;
+
+            new QUIConfirm({
+                title      : QUILocale.get(lg, 'customer.window.delete.title'),
+                text       : QUILocale.get(lg, 'customer.window.delete.text'),
+                information: QUILocale.get(lg, 'customer.window.delete.information'),
+                icon       : 'fa fa-trash',
+                texticon   : 'fa fa-trash',
+                maxHeight  : 400,
+                maxWidth   : 600,
+                autoclose  : false,
+                events     : {
+                    onSubmit: function (Win) {
+                        Win.Loader.show();
+
+                        var selected = self.$Grid.getSelectedData().map(function (entry) {
+                            return entry.id;
+                        });
+
+                        Users.deleteUsers(selected).then(function () {
+                            Win.close();
+                            self.refresh();
                         });
                     }
                 }

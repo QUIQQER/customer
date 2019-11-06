@@ -206,6 +206,23 @@
             ]]></en>
         </locale>
 
+        <locale name="customer.window.delete.title">
+            <de><![CDATA[Kunde löschen]]></de>
+            <en><![CDATA[Delete customer]]></en>
+        </locale>
+        <locale name="customer.window.delete.text">
+            <de><![CDATA[Möchtest du den Kunden wirklich löschen?]]></de>
+            <en><![CDATA[Do you really want to delete the customer?]]></en>
+        </locale>
+        <locale name="customer.window.delete.information">
+            <de><![CDATA[
+                Der Kunde / Benutzer wird unwiderruflich gelöscht und kann nicht wieder hergestellt werden.
+            ]]></de>
+            <en><![CDATA[
+            The customer / user is irrevocably deleted and cannot be restored.
+            ]]></en>
+        </locale>
+
         <locale name="quiqqer.customer.panel.general">
             <de><![CDATA[Allgemein]]></de>
             <en><![CDATA[General]]></en>
