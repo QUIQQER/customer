@@ -35,12 +35,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             '$onShow',
             '$onSaveClick',
             '$onDeleteClick',
-            '$onStatusChangeClick',
             '$clickEditAddress',
             '$openCategory',
             '$openAddressManagement',
             '$onUserDelete',
-            '$onUserRefresh',
             '$onCustomerCategoryActive'
         ],
 
@@ -62,7 +60,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             });
 
             Users.addEvent('onDelete', this.$onUserDelete);
-            Users.addEvent('onSwitchStatus', this.$onUserRefresh);
         },
 
         /**
@@ -70,7 +67,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * remove the binded events
          */
         $onDestroy: function () {
-            Users.removeEvent('switchStatus', this.$onUserRefresh);
             Users.removeEvent('delete', this.$onUserDelete);
         },
 
@@ -124,22 +120,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     onClick: this.$onSaveClick
                 }
             });
-
-            this.addButton({
-                type: 'separator'
-            });
-            //
-            // this.addButton(
-            //     new QUIButtonSwitch({
-            //         name    : 'status',
-            //         text    : QUILocale.get('quiqqer/quiqqer', 'isActivate'),
-            //         status  : true,
-            //         disabled: true,
-            //         events  : {
-            //             onChange: this.$onStatusChangeClick
-            //         }
-            //     })
-            // );
 
             this.addButton({
                 name  : 'userDelete',
@@ -240,8 +220,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             }
 
             Loaded.then(function (User) {
-                // var Status = self.getButtons('status');
-
                 self.$User               = User;
                 self.$userInitAttributes = User.getAttributes();
 
@@ -251,24 +229,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 }));
 
                 self.refresh();
-
-                // active status
-                if (User.isActive() === -1) {
-                    // Status.setSilentOff();
-                    // Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isDeactivate'));
-                    // Status.disable();
-                    return;
-                }
-
-                // Status.enable();
-                //
-                // if (!User.isActive()) {
-                //     Status.off();
-                //     Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isDeactivate'));
-                // } else {
-                //     Status.on();
-                //     Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isActivate'));
-                // }
 
                 if (!self.$ActiveCat) {
                     self.getCategory('information').click();
@@ -946,35 +906,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             }).open();
         },
 
-        /**
-         * event: button status on / off change
-         *
-         * @param {Object} Button - qui/controls/buttons/ButtonSwitch
-         */
-        $onStatusChangeClick: function (Button) {
-            var self         = this,
-                buttonStatus = Button.getStatus(),
-                userStatus   = this.$User.isActive();
-
-            if (buttonStatus === userStatus || userStatus === -1) {
-                return;
-            }
-
-            this.Loader.show();
-
-            var Prom;
-
-            if (buttonStatus) {
-                Prom = this.$User.activate();
-            } else {
-                Prom = this.$User.deactivate();
-            }
-
-            Prom.then(function () {
-                self.Loader.hide();
-            });
-        },
-
         //endregion
 
         //region user events
@@ -993,22 +924,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     this.destroy();
                     break;
                 }
-            }
-        },
-
-        /**
-         * event: on user refresh
-         * -> refresh the data in the panel
-         */
-        $onUserRefresh: function () {
-            var Status = this.getButtons('status');
-
-            if (this.$User.isActive()) {
-                Status.setSilentOn();
-                Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isActivate'));
-            } else {
-                Status.setSilentOff();
-                Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isDeactivate'));
             }
         }
 
