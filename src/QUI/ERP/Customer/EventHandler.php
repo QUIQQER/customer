@@ -185,6 +185,16 @@ class EventHandler
             $data['customerId'] = $attributes['customerId'];
         }
 
+        // comments
+        if ($User->getAttribute('comments')) {
+            $comments = $User->getAttribute('comments');
+            $json     = \json_decode($comments, true);
+
+            if (\is_array($json)) {
+                $data['comments'] = $comments;
+            }
+        }
+
         // saving
         try {
             QUI::getDataBase()->update(

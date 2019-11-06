@@ -290,6 +290,10 @@
             <de><![CDATA[Kann sich anmelden]]></de>
             <en><![CDATA[Can log in]]></en>
         </locale>
+        <locale name="customer.user.properties.status.description">
+            <de><![CDATA[Der Kunde wird aktiviert und kann sich somit am System anmelden.]]></de>
+            <en><![CDATA[The customer will be activated and can log in to the system.]]></en>
+        </locale>
         <locale name="customer.user.properties.password.title">
             <de><![CDATA[Passwort]]></de>
             <en><![CDATA[Password]]></en>

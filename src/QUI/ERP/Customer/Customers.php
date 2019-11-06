@@ -218,4 +218,43 @@ class Customers extends Singleton
 
         $User->save();
     }
+
+    //region comments
+
+    /**
+     * Add a comment to the customer user comments
+     *
+     * @param QUI\Users\User $User
+     * @param string $comment - comment message
+     *
+     * @throws QUI\Exception
+     */
+    public function addCommentToUser(QUI\Users\User $User, $comment)
+    {
+        $Comments = $this->getUserComments($User);
+        $Comments->addComment($comment);
+
+        $User->setAttribute('comments', $Comments->serialize());
+        $User->save();
+    }
+
+    /**
+     * @param QUI\Users\User $User
+     * @return QUI\ERP\Comments
+     */
+    public function getUserComments(QUI\Users\User $User)
+    {
+        $comments = $User->getAttribute('comments');
+        $comments = \json_decode($comments, true);
+
+        if ($comments) {
+            $Comments = new QUI\ERP\Comments($comments);
+        } else {
+            $Comments = new QUI\ERP\Comments($comments);
+        }
+        
+        return $Comments;
+    }
+
+    //endregion
 }

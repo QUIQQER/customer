@@ -47,8 +47,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
             this.$Elm = this.parent();
 
             this.$Elm.set('html', Mustache.render(template, {
-                title        : QUILocale.get(lg, 'customer.user.properties.title'),
-                textStatus   : QUILocale.get(lg, 'customer.user.properties.status'),
+                title                : QUILocale.get(lg, 'customer.user.properties.title'),
+                textStatus           : QUILocale.get(lg, 'customer.user.properties.status'),
+                textStatusDescription: QUILocale.get(lg, 'customer.user.properties.status.description'),
+
                 titlePassword: QUILocale.get(lg, 'customer.user.properties.password.title'),
                 textPassword1: QUILocale.get(lg, 'customer.user.properties.password.title'),
                 textPassword2: QUILocale.get(lg, 'customer.user.properties.password.title')
