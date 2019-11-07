@@ -385,6 +385,11 @@
             As long as both passwords are not identical, the password will not be adopted.
             ]]></en>
         </locale>
+
+        <locale name="customer.user.information.info">
+            <de><![CDATA[Kunden Systeminformationen]]></de>
+            <en><![CDATA[Customer System Information]]></en>
+        </locale>
     </groups>
 
 </locales>

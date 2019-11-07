@@ -7,13 +7,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
     'qui/QUI',
     'qui/controls/Control',
     'qui/controls/windows/Confirm',
+    'Users',
     'Ajax',
     'Locale',
     'Mustache',
 
     'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.UserProperties.html'
 
-], function (QUI, QUIControl, QUIConfirm, QUIAjax, QUILocale, Mustache, template) {
+], function (QUI, QUIControl, QUIConfirm, Users, QUIAjax, QUILocale, Mustache, template) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -57,7 +58,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
                 textPassword2: QUILocale.get(lg, 'customer.user.properties.password.2'),
 
                 textSendMail      : QUILocale.get(lg, 'customer.user.information.discount.passwordMail'),
-                textSendMailButton: QUILocale.get(lg, 'customer.user.information.discount.passwordMail.button')
+                textSendMailButton: QUILocale.get(lg, 'customer.user.information.discount.passwordMail.button'),
+
+                titleInfo  : QUILocale.get(lg, 'customer.user.information.info'),
+                userCreated: QUILocale.get('quiqqer/quiqqer', 'c_date'),
+                userEdited : QUILocale.get('quiqqer/quiqqer', 'e_date'),
+                lastLogin  : QUILocale.get('quiqqer/quiqqer', 'user.panel.lastLogin')
             }));
 
             return this.$Elm;
@@ -85,9 +91,34 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
                     return;
                 }
 
+                var User = Users.get(self.getAttribute('userId'));
+
                 Form.elements.status.set('disabled', false);
                 Form.elements.password1.set('disabled', false);
                 Form.elements.password2.set('disabled', false);
+
+                // dates & informations
+                var lastEdit  = parseInt(User.getAttribute('lastvisit'));
+                var Formatter = QUILocale.getDateTimeFormatter();
+                var LastEdit  = new window.Date(lastEdit * 1000);
+
+                Form.elements.lastLogin.value = Formatter.format(LastEdit);
+
+                if (parseInt(User.getAttribute('regdate'))) {
+                    Form.elements.c_date.value = Formatter.format(
+                        new window.Date(User.getAttribute('regdate'))
+                    );
+                } else {
+                    Form.elements.c_date.value = '---';
+                }
+
+                if (parseInt(User.getAttribute('lastedit'))) {
+                    Form.elements.e_date.value = Formatter.format(
+                        new window.Date(User.getAttribute('lastedit'))
+                    );
+                } else {
+                    Form.elements.e_date.value = '---';
+                }
 
                 Form.elements.password1.addEvent('blur', function () {
                     if (Form.elements.password1.value !== Form.elements.password2.value) {
