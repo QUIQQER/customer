@@ -57,7 +57,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
                 titleGeneral    : QUILocale.get(lg, 'customer.user.information.general'),
                 textLanguage    : QUILocale.get('quiqqer/quiqqer', 'language'),
                 textDiscount    : QUILocale.get(lg, 'customer.user.information.discount'),
-                textDiscountDesc: QUILocale.get(lg, 'customer.user.information.discount.description')
+                textDiscountDesc: QUILocale.get(lg, 'customer.user.information.discount.description'),
+
+                textSendMail      : QUILocale.get(lg, 'customer.user.information.discount.passwordMail'),
+                textSendMailButton: QUILocale.get(lg, 'customer.user.information.discount.passwordMail.button')
             }));
 
             return this.$Elm;
@@ -119,7 +122,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
         },
 
         /**
-         * Return the available languages
+         * return the available languages
+         *
          * @return {Promise}
          */
         getLanguages: function () {

@@ -6,13 +6,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
 
     'qui/QUI',
     'qui/controls/Control',
+    'qui/controls/windows/Confirm',
     'Ajax',
     'Locale',
     'Mustache',
 
     'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.UserProperties.html'
 
-], function (QUI, QUIControl, QUIAjax, QUILocale, Mustache, template) {
+], function (QUI, QUIControl, QUIConfirm, QUIAjax, QUILocale, Mustache, template) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -52,8 +53,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
                 textStatusDescription: QUILocale.get(lg, 'customer.user.properties.status.description'),
 
                 titlePassword: QUILocale.get(lg, 'customer.user.properties.password.title'),
-                textPassword1: QUILocale.get(lg, 'customer.user.properties.password.title'),
-                textPassword2: QUILocale.get(lg, 'customer.user.properties.password.title')
+                textPassword1: QUILocale.get(lg, 'customer.user.properties.password.1'),
+                textPassword2: QUILocale.get(lg, 'customer.user.properties.password.2'),
+
+                textSendMail      : QUILocale.get(lg, 'customer.user.information.discount.passwordMail'),
+                textSendMailButton: QUILocale.get(lg, 'customer.user.information.discount.passwordMail.button')
             }));
 
             return this.$Elm;
@@ -85,10 +89,46 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
                 Form.elements.password1.set('disabled', false);
                 Form.elements.password2.set('disabled', false);
 
+                Form.elements.passwordMail.addEvent('click', function (event) {
+                    event.stop();
+                    self.passwordResetMail();
+                });
+
                 self.fireEvent('load', [self]);
             }, {
                 'package': 'quiqqer/customer'
             });
+        },
+
+        /**
+         * password reset confirmation window
+         * -> send a password reset mail to the user
+         */
+        passwordResetMail: function () {
+            var self = this;
+
+            new QUIConfirm({
+                icon       : 'fa fa-envelope',
+                texticon   : 'fa fa-envelope',
+                title      : QUILocale.get(lg, 'password.mail.window.title'),
+                text       : QUILocale.get(lg, 'password.mail.window.text'),
+                information: QUILocale.get(lg, 'password.mail.window.information'),
+                maxHeight  : 300,
+                maxWidth   : 600,
+                autoclose  : false,
+                events     : {
+                    onSubmit: function (Win) {
+                        Win.Loader.show();
+
+                        QUIAjax.post('package_quiqqer_customer_ajax_backend_customer_passwordMail', function () {
+                            Win.close();
+                        }, {
+                            'package': 'quiqqer/customer',
+                            userId   : self.getAttribute('userId')
+                        });
+                    }
+                }
+            }).open();
         }
     });
 });

@@ -45,6 +45,11 @@
             <de><![CDATA[Kunden-Nr]]></de>
             <en><![CDATA[Customer no.]]></en>
         </locale>
+
+        <locale name="message.customer.password.mail.send">
+            <de><![CDATA[Die E-Mail wurde erfolgreich an den Kunden gesendet.]]></de>
+            <en><![CDATA[The e-mail was successfully sent to the customer.]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/customer" datatype="php">
@@ -318,6 +323,41 @@
         <locale name="customer.user.properties.password.title">
             <de><![CDATA[Passwort]]></de>
             <en><![CDATA[Password]]></en>
+        </locale>
+        <locale name="customer.user.properties.password.1">
+            <de><![CDATA[Neues Passwort]]></de>
+            <en><![CDATA[New password]]></en>
+        </locale>
+        <locale name="customer.user.properties.password.2">
+            <de><![CDATA[Passwort wiederhohlen]]></de>
+            <en><![CDATA[Repeat password]]></en>
+        </locale>
+        <locale name="customer.user.information.discount.passwordMail">
+            <de><![CDATA[Passwort E-Mail]]></de>
+            <en><![CDATA[Password E-mail]]></en>
+        </locale>
+        <locale name="customer.user.information.discount.passwordMail.button">
+            <de><![CDATA[Passwort zurück setzen E-Mail an Kunde senden]]></de>
+            <en><![CDATA[Reset password Send e-mail to customer]]></en>
+        </locale>
+
+        <locale name="password.mail.window.title">
+            <de><![CDATA[Passwort zurücksetzen E-Mail]]></de>
+            <en><![CDATA[Reset password E-mail]]></en>
+        </locale>
+        <locale name="password.mail.window.text">
+            <de><![CDATA[Passwort zurücksetzen E-Mail]]></de>
+            <en><![CDATA[Reset password E-mail]]></en>
+        </locale>
+        <locale name="password.mail.window.information">
+            <de><![CDATA[
+            Dem Kunde wird eine Passwort zurücksetzen E-Mail gesendet. Somit ist es dem Kunden möglich ein eigenes Passwort zu wählen.
+            Das aktuelle Passwort hat somit keine Gültigkeit mehr.
+            ]]></de>
+            <en><![CDATA[
+            The customer will get a password reset email. Thus it is possible for the customer to choose his own password.
+            The current password is no longer valid.
+            ]]></en>
         </locale>
 
         <locale name="message.customer.cant.log.in">
