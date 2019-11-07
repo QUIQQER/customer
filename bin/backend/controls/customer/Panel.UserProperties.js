@@ -89,6 +89,23 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
                 Form.elements.password1.set('disabled', false);
                 Form.elements.password2.set('disabled', false);
 
+                Form.elements.password1.addEvent('blur', function () {
+                    if (Form.elements.password1.value !== Form.elements.password2.value) {
+                        Form.elements.password2.focus();
+                    }
+                });
+
+                Form.elements.password2.addEvent('blur', function () {
+                    if (Form.elements.password1.value !== Form.elements.password2.value) {
+                        QUI.getMessageHandler().then(function (MH) {
+                            MH.addError(
+                                QUILocale.get(lg, 'message.passwords.incorrect'),
+                                Form.elements.password2
+                            );
+                        });
+                    }
+                });
+
                 Form.elements.passwordMail.addEvent('click', function (event) {
                     event.stop();
                     self.passwordResetMail();
@@ -116,6 +133,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
                 maxHeight  : 300,
                 maxWidth   : 600,
                 autoclose  : false,
+                ok_button  : {
+                    text     : QUILocale.get(lg, 'password.mail.window.submit'),
+                    textimage: 'fa fa-envelope'
+                },
                 events     : {
                     onSubmit: function (Win) {
                         Win.Loader.show();

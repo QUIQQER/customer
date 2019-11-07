@@ -359,6 +359,10 @@
             The current password is no longer valid.
             ]]></en>
         </locale>
+        <locale name="password.mail.window.submit">
+            <de><![CDATA[E-Mail senden]]></de>
+            <en><![CDATA[Send E-mail]]></en>
+        </locale>
 
         <locale name="message.customer.cant.log.in">
             <de><![CDATA[
@@ -368,6 +372,17 @@
             <en><![CDATA[
             The system is configured that customers cannot log in to the system.
             Therefore the status of a customer and the login password cannot be changed.
+            ]]></en>
+        </locale>
+
+        <locale name="message.passwords.incorrect">
+            <de><![CDATA[
+            Beide Passwörter sind nicht identisch.
+            Solange beide Passwörter nicht identisch sind, wird das Passwort nicht übernommen.
+            ]]></de>
+            <en><![CDATA[
+            Both passwords are not identical.
+            As long as both passwords are not identical, the password will not be adopted.
             ]]></en>
         </locale>
     </groups>

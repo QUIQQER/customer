@@ -142,6 +142,15 @@ class Customers extends Singleton
     {
         $User = QUI::getUsers()->get($userId);
 
+        if (!empty($attributes['password1'])
+            && !empty($attributes['password2'])
+            && $attributes['password1'] === $attributes['password2']) {
+            $User->setPassword($attributes['password1']);
+
+            unset($attributes['password1']);
+            unset($attributes['password2']);
+        }
+
         // defaults
         $User->setAttributes($attributes);
 
@@ -252,7 +261,7 @@ class Customers extends Singleton
         } else {
             $Comments = new QUI\ERP\Comments($comments);
         }
-        
+
         return $Comments;
     }
 
