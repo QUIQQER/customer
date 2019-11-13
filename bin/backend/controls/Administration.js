@@ -668,75 +668,82 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
         openAddWindow: function () {
             var self = this;
 
-            new QUIPrompt({
-                name       : 'CreateUser',
-                title      : QUILocale.get(lg, 'customer.window.create.title'),
-                icon       : 'fa fa-user',
-                titleicon  : false,
-                information: QUILocale.get(lg, 'customer.window.create.information'),
-                ok_button  : {
-                    text     : QUILocale.get(lg, 'customer.window.create.button'),
-                    textimage: 'fa fa-check'
-                },
-                maxWidth   : 600,
-                maxHeight  : 300,
+            require([
+                'package/quiqqer/customer/bin/backend/controls/create/CustomerWindow'
+            ], function (CustomerWindow) {
+                new CustomerWindow().open();
+            });
 
-                check: function (Win) {
-                    Win.Loader.show();
-
-                    Users.existsUsername(Win.getValue(), function (result) {
-                        // Benutzer existiert schon
-                        if (result === true) {
-                            QUI.getMessageHandler(function (MH) {
-                                MH.addAttention(
-                                    QUILocale.get('quiqqer/quiqqer', 'exception.create.user.exists')
-                                );
-                            });
-
-                            Win.Loader.hide();
-                            return;
-                        }
-
-                        Win.fireEvent('onUserCreated', [Win.getValue(), Win]);
-                        Win.close();
-                    });
-
-                    return false;
-                },
-
-                events: {
-                    onOpen: function (Win) {
-                        Win.getContent()
-                           .getElement('.qui-windows-prompt-information')
-                           .setStyle('paddingBottom', 20);
-
-                        Win.Loader.show();
-
-                        Permissions.hasPermission('quiqqer.admin.users.create').then(function (hasPermission) {
-                            if (!hasPermission) {
-                                QUI.getMessageHandler().then(function (MH) {
-                                    MH.addError(
-                                        QUILocale.get('quiqqer/system', 'exception.no.permission')
-                                    );
-                                });
-
-                                Win.close();
-                            }
-
-                            Win.Loader.hide();
-                        });
-                    },
-
-                    onUserCreated: function (value) {
-                        Users.createUser(value, function (userId) {
-                            CustomerHandler.addToCustomer(userId).then(function () {
-                                self.$openCustomer(userId);
-                                self.refresh();
-                            });
-                        });
-                    }
-                }
-            }).open();
+            //
+            // new QUIPrompt({
+            //     name       : 'CreateUser',
+            //     title      : QUILocale.get(lg, 'customer.window.create.title'),
+            //     icon       : 'fa fa-user',
+            //     titleicon  : false,
+            //     information: QUILocale.get(lg, 'customer.window.create.information'),
+            //     ok_button  : {
+            //         text     : QUILocale.get(lg, 'customer.window.create.button'),
+            //         textimage: 'fa fa-check'
+            //     },
+            //     maxWidth   : 600,
+            //     maxHeight  : 300,
+            //
+            //     check: function (Win) {
+            //         Win.Loader.show();
+            //
+            //         Users.existsUsername(Win.getValue(), function (result) {
+            //             // Benutzer existiert schon
+            //             if (result === true) {
+            //                 QUI.getMessageHandler(function (MH) {
+            //                     MH.addAttention(
+            //                         QUILocale.get('quiqqer/quiqqer', 'exception.create.user.exists')
+            //                     );
+            //                 });
+            //
+            //                 Win.Loader.hide();
+            //                 return;
+            //             }
+            //
+            //             Win.fireEvent('onUserCreated', [Win.getValue(), Win]);
+            //             Win.close();
+            //         });
+            //
+            //         return false;
+            //     },
+            //
+            //     events: {
+            //         onOpen: function (Win) {
+            //             Win.getContent()
+            //                .getElement('.qui-windows-prompt-information')
+            //                .setStyle('paddingBottom', 20);
+            //
+            //             Win.Loader.show();
+            //
+            //             Permissions.hasPermission('quiqqer.admin.users.create').then(function (hasPermission) {
+            //                 if (!hasPermission) {
+            //                     QUI.getMessageHandler().then(function (MH) {
+            //                         MH.addError(
+            //                             QUILocale.get('quiqqer/system', 'exception.no.permission')
+            //                         );
+            //                     });
+            //
+            //                     Win.close();
+            //                 }
+            //
+            //                 Win.Loader.hide();
+            //             });
+            //         },
+            //
+            //         onUserCreated: function (value) {
+            //             Users.createUser(value, function (userId) {
+            //                 CustomerHandler.addToCustomer(userId).then(function () {
+            //                     self.$openCustomer(userId);
+            //                     self.refresh();
+            //                 });
+            //             });
+            //         }
+            //     }
+            // }).open();
         },
 
         /**

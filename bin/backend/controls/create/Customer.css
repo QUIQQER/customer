@@ -1,0 +1,48 @@
+.quiqqer-customer-create {
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.quiqqer-customer-create ul {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.quiqqer-customer-create li {
+    clear: both;
+    height: 100%;
+    list-style-type: none;
+    margin: 0;
+    padding: 20px;
+    width: 100%;
+}
+
+.quiqqer-customer-create section {
+    height: 100%;
+    overflow: auto;
+}
+
+.quiqqer-customer-create-customerNo {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+}
+
+.quiqqer-customer-create-customerNo label {
+    clear: both;
+    display: block;
+    margin: 20px auto;
+    text-align: left;
+    width: 300px;
+}
+
+.quiqqer-customer-create-customerNo input {
+    clear: both;
+    width: 100%;
+}

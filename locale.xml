@@ -85,10 +85,71 @@
             <de><![CDATA[Neuen Kunden anlegen]]></de>
             <en><![CDATA[Create new customer]]></en>
         </locale>
-        <locale name="window.customer.creation.button.submit">
+        <locale name="window.customer.creation.next">
+            <de><![CDATA[Weiter]]></de>
+            <en><![CDATA[Next]]></en>
+        </locale>
+        <locale name="window.customer.creation.prev">
+            <de><![CDATA[Zurück]]></de>
+            <en><![CDATA[Previous]]></en>
+        </locale>
+        <locale name="window.customer.creation.next">
+            <de><![CDATA[Kunden]]></de>
+            <en><![CDATA[Next]]></en>
+        </locale>
+        <locale name="window.customer.creation.submit">
             <de><![CDATA[Kunden anlegen]]></de>
             <en><![CDATA[Create customer]]></en>
         </locale>
+
+        <locale name="window.customer.creation.customerNo.title">
+            <de><![CDATA[Neuen Kunden anlegen]]></de>
+            <en><![CDATA[Create new customer]]></en>
+        </locale>
+        <locale name="window.customer.creation.customerNo.inputLabel">
+            <de><![CDATA[Kundennummer]]></de>
+            <en><![CDATA[Customer number]]></en>
+        </locale>
+        <locale name="window.customer.creation.customerNo.text" html="true">
+            <de><![CDATA[
+            Bitte lege eine Kundennummer für den neuen Kunden fest.<br />
+            Diese Kundennummer ist später immer noch änderbar.
+            ]]></de>
+            <en><![CDATA[
+            Please specify a customer number for the new customer.<br />
+            This customer number can still be changed later.
+            ]]></en>
+        </locale>
+
+        <locale name="window.customer.creation.dataHeader.title">
+            <de><![CDATA[Kunden Daten]]></de>
+            <en><![CDATA[Customer data]]></en>
+        </locale>
+        <locale name="window.customer.creation.dataHeader.text" html="true">
+            <de><![CDATA[
+            Alle Daten des Kunden können auch später geändert werden.
+            ]]></de>
+            <en><![CDATA[
+            All customer data can also be changed later.
+            ]]></en>
+        </locale>
+
+        <locale name="window.customer.creation.groups.title">
+            <de><![CDATA[Kundengruppen]]></de>
+            <en><![CDATA[Customer group]]></en>
+        </locale>
+        <locale name="window.customer.creation.groups.text" html="true">
+            <de><![CDATA[
+            Einem Kunden können mehrere Kundengruppen zugeordnet werden.
+            Der Kunde wird jedoch automatisch in die Haupt-Kundengruppen hinzugefügt.
+            ]]></de>
+            <en><![CDATA[
+            Several customer groups can be assigned to one customer.
+            However, the customer is automatically added to the main customer groups.
+            ]]></en>
+        </locale>
+
+
         <locale name="panel.title">
             <de><![CDATA[Kunden]]></de>
             <en><![CDATA[Customer]]></en>
@@ -190,25 +251,6 @@
         <locale name="address.edit.window.title">
             <de><![CDATA[Adresse #[id] von [firstname] [lastname] bearbeiten]]></de>
             <en><![CDATA[Edit address #[id] from [firstname] [lastname]]]></en>
-        </locale>
-
-        <locale name="customer.window.create.title">
-            <de><![CDATA[Neuen Kunden anlegen]]></de>
-            <en><![CDATA[Create new customer]]></en>
-        </locale>
-        <locale name="customer.window.create.button">
-            <de><![CDATA[Kunden anlegen]]></de>
-            <en><![CDATA[Create customer]]></en>
-        </locale>
-        <locale name="customer.window.create.information" html="true">
-            <de><![CDATA[
-            Bitte lege einen Benutzernamen für den neuen Kunden an.
-            Der Benutzer wird direkt der Kundengruppe zugeordnet und kann nach dem Anlegen bearbeitet werden.
-            ]]></de>
-            <en><![CDATA[
-            Please create a username for the new customer.
-            The user is assigned directly to the customer group and can be edited after creation.
-            ]]></en>
         </locale>
 
         <locale name="customer.window.delete.title">
