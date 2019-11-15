@@ -6,6 +6,7 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
 
     'qui/QUI',
     'qui/controls/Control',
+    'package/quiqqer/countries/bin/Countries',
     'Locale',
     'Ajax',
     'Mustache',
@@ -14,7 +15,7 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
 
     'css!package/quiqqer/customer/bin/backend/controls/create/Customer.css'
 
-], function (QUI, QUIControl, QUILocale, QUIAjax, Mustache, template) {
+], function (QUI, QUIControl, Countries, QUILocale, QUIAjax, Mustache, template) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -135,10 +136,22 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
             var self  = this;
             var Group = this.$Elm.getElement('[name="group"]');
 
-            // @todo load countries
+            Countries.getCountries().then(function (countries) {
+                var CountrySelect = self.$Elm.getElement('[name="address-country"]');
 
+                for (var code in countries) {
+                    if (!countries.hasOwnProperty(code)) {
+                        continue;
+                    }
 
-            QUI.parse(this.$Elm).then(function () {
+                    new Element('option', {
+                        value: code,
+                        html : countries[code]
+                    }).inject(CountrySelect);
+                }
+            }).then(function () {
+                return QUI.parse(self.$Elm);
+            }).then(function () {
                 var GroupControl = QUI.Controls.getById(Group.get('data-quiid'));
 
                 GroupControl.disable();

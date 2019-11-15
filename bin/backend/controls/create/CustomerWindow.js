@@ -24,8 +24,8 @@ define('package/quiqqer/customer/bin/backend/controls/create/CustomerWindow', [
         ],
 
         options: {
-            maxHeight: 600,
-            maxWidth : 800,
+            maxHeight: 700,
+            maxWidth : 600,
             buttons  : false
         },
 

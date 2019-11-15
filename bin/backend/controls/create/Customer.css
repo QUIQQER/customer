@@ -68,11 +68,6 @@
     width: 100%;
 }
 
-.quiqqer-customer-create-customerData-container {
-    margin: 0 auto;
-    max-width: 500px;
-}
-
 .quiqqer-customer-create-customerGroups-container table,
 .quiqqer-customer-create-customerData-container table {
     margin-top: 20px;
