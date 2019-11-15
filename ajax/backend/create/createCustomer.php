@@ -16,7 +16,9 @@ QUI::$Ajax->registerFunction(
         $groups  = \json_decode($groups, true);
 
         $User = QUI\ERP\Customer\Customers::getInstance()->createCustomer(
-            $customerId, $address, $groups
+            $customerId,
+            $address,
+            $groups
         );
 
         return $User->getId();
