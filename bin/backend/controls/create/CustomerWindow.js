@@ -46,13 +46,24 @@ define('package/quiqqer/customer/bin/backend/controls/create/CustomerWindow', [
          * event: on open
          */
         $onOpen: function () {
+            var self = this;
+
             this.getContent().set('html', '');
             this.getContent().setStyle('padding', 0);
 
             new CreateCustomer({
                 events: {
                     onLoad: function () {
+                        self.Loader.hide();
+                    },
 
+                    onCreateCustomerBegin: function () {
+                        self.Loader.show();
+                    },
+
+                    onCreateCustomerEnd: function (Instance, customerId) {
+                        self.fireEvent('submit', [self, customerId]);
+                        self.close();
                     }
                 }
             }).inject(this.getContent());

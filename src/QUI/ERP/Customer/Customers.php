@@ -23,6 +23,73 @@ class Customers extends Singleton
     protected $Group = null;
 
     /**
+     * @param $customerId
+     * @param array $address
+     * @param array $groupIds
+     *
+     * @return QUI\Users\User
+     *
+     * @throws QUI\Exception
+     */
+    public function createCustomer($customerId, $address = [], $groupIds = [])
+    {
+        $User = QUI::getUsers()->createChild($customerId);
+
+        $User->setAttribute('customerId', $customerId);
+        $User->setAttribute('mainGroup', $this->getCustomerGroupId());
+        $User->save();
+
+        if (!empty($address)) {
+            try {
+                $Address = $User->getStandardAddress();
+            } catch (QUI\Exception $Exception) {
+                $Address = $User->addAddress();
+            }
+
+            $needles = [
+                'salutation',
+                'firstname',
+                'lastname',
+                'company',
+                'delivery',
+                'street_no',
+                'zip',
+                'city',
+                'country'
+            ];
+
+            foreach ($needles as $needle) {
+                if (!isset($address[$needle])) {
+                    $address[$needle] = '';
+                }
+            }
+
+            $Address->setAttribute('salutation', $address['salutation']);
+            $Address->setAttribute('firstname', $address['firstname']);
+            $Address->setAttribute('lastname', $address['lastname']);
+            $Address->setAttribute('company', $address['company']);
+            $Address->setAttribute('delivery', $address['delivery']);
+            $Address->setAttribute('street_no', $address['street_no']);
+            $Address->setAttribute('zip', $address['zip']);
+            $Address->setAttribute('city', $address['city']);
+            $Address->setAttribute('country', $address['country']);
+
+            $Address->save();
+        }
+
+        // groups
+        $this->addUserToCustomerGroup($User->getId());
+
+        foreach ($groupIds as $groupId) {
+            $User->addToGroup($groupId);
+        }
+
+        $User->save();
+
+        return $User;
+    }
+
+    /**
      * @return int
      *
      * @throws Exception

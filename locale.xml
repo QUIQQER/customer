@@ -149,6 +149,19 @@
             ]]></en>
         </locale>
 
+        <locale name="window.customer.creation.next">
+            <de><![CDATA[Weiter]]></de>
+            <en><![CDATA[Next]]></en>
+        </locale>
+        <locale name="window.customer.creation.previous">
+            <de><![CDATA[Zurück]]></de>
+            <en><![CDATA[Previous]]></en>
+        </locale>
+        <locale name="window.customer.creation.create">
+            <de><![CDATA[Kunde anlegen]]></de>
+            <en><![CDATA[Create customer]]></en>
+        </locale>
+
 
         <locale name="panel.title">
             <de><![CDATA[Kunden]]></de>
