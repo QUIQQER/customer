@@ -5,6 +5,7 @@
           name="customer"
           require="package/quiqqer/customer/bin/backend/controls/AdministrationPanel"
           icon="fa fa-user-o"
+          permission="quiqqer.customer.view"
     >
         <locale group="quiqqer/customer" var="menu.erp.customer.title"/>
     </item>

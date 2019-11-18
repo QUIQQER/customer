@@ -30,9 +30,12 @@ class Customers extends Singleton
      * @return QUI\Users\User
      *
      * @throws QUI\Exception
+     * @throws QUI\Permissions\Exception
      */
     public function createCustomer($customerId, $address = [], $groupIds = [])
     {
+        QUI\Permissions\Permission::checkPermission('quiqqer.customer.create');
+
         $User = QUI::getUsers()->createChild($customerId);
 
         $User->setAttribute('customerId', $customerId);

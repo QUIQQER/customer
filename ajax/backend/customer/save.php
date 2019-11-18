@@ -13,6 +13,8 @@ use QUI\ERP\Customer\Customers;
 QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_customer_save',
     function ($userId, $data) {
+        QUI\Permissions\Permission::checkPermission('quiqqer.customer.edit');
+
         Customers::getInstance()->setAttributesToCustomer(
             $userId,
             \json_decode($data, true)
