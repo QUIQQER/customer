@@ -95,6 +95,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
 
             this.$Comments = new Comments(comments);
             this.$Comments.inject(Section);
+            this.$Comments.addEvents({
+                onEdit: function () {
+
+                }
+            });
 
             if (typeof comments !== 'undefined') {
                 comments = comments.reverse();
@@ -106,6 +111,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
             return this.getComments().then(function (comments) {
                 comments = comments.reverse();
                 self.$Comments.unserialize(comments);
+
+                console.log(comments);
             });
         },
 

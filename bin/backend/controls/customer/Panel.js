@@ -306,6 +306,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                 return self.getAddress(address);
             }).then(function (address) {
+                if (!address) {
+                    return;
+                }
+
                 Form.elements['address-salutation'].value = address.salutation;
                 Form.elements['address-firstname'].value  = address.firstname;
                 Form.elements['address-lastname'].value   = address.lastname;
@@ -409,7 +413,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     });
                 } catch (e) {
                 }
-
+            }).then(function () {
                 // load comments
                 self.getComments().then(function (comments) {
                     require(['package/quiqqer/erp/bin/backend/controls/Comments'], function (Comments) {

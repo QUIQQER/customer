@@ -105,17 +105,25 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
                 Form.elements.lastLogin.value = Formatter.format(LastEdit);
 
                 if (parseInt(User.getAttribute('regdate'))) {
-                    Form.elements.c_date.value = Formatter.format(
-                        new window.Date(User.getAttribute('regdate'))
-                    );
+                    try {
+                        Form.elements.c_date.value = Formatter.format(
+                            new window.Date(User.getAttribute('regdate') * 1000)
+                        );
+                    } catch (e) {
+                        Form.elements.c_date.value = '---';
+                    }
                 } else {
                     Form.elements.c_date.value = '---';
                 }
 
                 if (parseInt(User.getAttribute('lastedit'))) {
-                    Form.elements.e_date.value = Formatter.format(
-                        new window.Date(User.getAttribute('lastedit'))
-                    );
+                    try {
+                        Form.elements.e_date.value = Formatter.format(
+                            new window.Date(User.getAttribute('lastedit'))
+                        );
+                    } catch (e) {
+                        Form.elements.e_date.value = '---';
+                    }
                 } else {
                     Form.elements.e_date.value = '---';
                 }

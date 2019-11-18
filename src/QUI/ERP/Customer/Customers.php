@@ -320,7 +320,13 @@ class Customers extends Singleton
     public function addCommentToUser(QUI\Users\User $User, $comment)
     {
         $Comments = $this->getUserComments($User);
-        $Comments->addComment($comment);
+
+        $Comments->addComment(
+            $comment,
+            false,
+            'quiqqer/customer',
+            'fa fa-user'
+        );
 
         $User->setAttribute('comments', $Comments->serialize());
         $User->save();
