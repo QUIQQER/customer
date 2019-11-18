@@ -38,6 +38,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
             this.$Comments         = null;
             this.$AddCommentButton = null;
 
+            this.$editComments = false;
+
             this.addEvents({
                 onInject: this.$onInject
             });
@@ -75,7 +77,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
             var self = this;
 
             Permissions.hasPermission('quiqqer.customer.editComments').then(function (editComments) {
-                if (!editComments) {
+                self.$editComments = editComments;
+
+                if (!self.$editComments) {
                     self.$AddCommentButton.disable();
                 }
 
