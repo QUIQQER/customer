@@ -333,6 +333,45 @@ class Customers extends Singleton
     }
 
     /**
+     * Edit a comment
+     *
+     * @param QUI\Users\User $User
+     * @param $commentId - id of the comment
+     * @param $commentSource - comment source
+     * @param $message - new comment message
+     *
+     * @throws QUI\Exception
+     */
+    public function editComment(
+        QUI\Users\User $User,
+        $commentId,
+        $commentSource,
+        $message
+    ) {
+        $comments = $User->getAttribute('comments');
+        $comments = \json_decode($comments, true);
+
+        foreach ($comments as $key => $comment) {
+            if (empty($comment['id']) || empty($comment['source'])) {
+                continue;
+            }
+
+            if ($comment['source'] !== $commentSource) {
+                continue;
+            }
+
+            if ($comment['id'] !== $commentId) {
+                continue;
+            }
+
+            $comments[$key]['message'] = $message;
+        }
+
+        $User->setAttribute('comments', \json_encode($comments));
+        $User->save();
+    }
+
+    /**
      * @param QUI\Users\User $User
      * @return QUI\ERP\Comments
      */

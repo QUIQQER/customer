@@ -10,10 +10,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
     'qui/controls/windows/Confirm',
     'package/quiqqer/erp/bin/backend/controls/Comments',
     'Permissions',
-    'Ajax'
+    'Ajax',
+    'Locale'
 
-], function (QUI, QUIControl, QUIButton, QUIConfirm, Comments, Permissions, QUIAjax) {
+], function (QUI, QUIControl, QUIButton, QUIConfirm, Comments, Permissions, QUIAjax, QUILocale) {
     "use strict";
+
+    var lg = 'quiqqer/customer';
 
     return new Class({
 
@@ -50,7 +53,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
 
             this.$AddCommentButton = new QUIButton({
                 textimage: 'fa fa-comment',
-                text     : 'Kommenatar hinzufügen',
+                text     : QUILocale.get(lg, 'window.add.comment.button.text'),
                 styles   : {
                     'float': 'right'
                 },
@@ -96,8 +99,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
             this.$Comments = new Comments(comments);
             this.$Comments.inject(Section);
             this.$Comments.addEvents({
-                onEdit: function () {
-
+                onEdit: function (Instance, Comment, data) {
+                    self.editComment(data.id, data.source);
                 }
             });
 
@@ -111,8 +114,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
             return this.getComments().then(function (comments) {
                 comments = comments.reverse();
                 self.$Comments.unserialize(comments);
-
-                console.log(comments);
             });
         },
 
@@ -140,7 +141,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
 
             new QUIConfirm({
                 icon     : 'fa fa-comment',
-                title    : 'Kommentar hinzufügen',
+                title    : QUILocale.get(lg, 'window.add.comment.title'),
                 maxHeight: 400,
                 maxWidth : 700,
                 autoclose: false,
@@ -169,6 +170,65 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
                         }, {
                             'package': 'quiqqer/customer',
                             userId   : self.getAttribute('userId'),
+                            comment  : comment
+                        });
+                    }
+                }
+            }).open();
+        },
+
+        /**
+         * edit a comment
+         *
+         * @param {String} commentId
+         * @param {String} source
+         */
+        editComment: function (commentId, source) {
+            var self = this;
+
+            new QUIConfirm({
+                icon     : 'fa fa-comment',
+                title    : QUILocale.get(lg, 'window.edit.comment.title'),
+                maxHeight: 400,
+                maxWidth : 700,
+                autoclose: false,
+                events   : {
+                    onOpen: function (Win) {
+                        Win.Loader.show();
+                        Win.getContent().set('html', '');
+
+                        var Textarea = new Element('textarea', {
+                            styles: {
+                                height: '98%',
+                                width : '100%'
+                            }
+                        }).inject(Win.getContent());
+
+                        QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getComment', function (comment) {
+                            Textarea.value = comment;
+                            Textarea.focus();
+                            Win.Loader.hide();
+                        }, {
+                            'package': 'quiqqer/customer',
+                            userId   : self.getAttribute('userId'),
+                            commentId: commentId,
+                            source   : source
+                        });
+                    },
+
+                    onSubmit: function (Win) {
+                        Win.Loader.show();
+
+                        var comment = Win.getContent().getElement('textarea').value;
+
+                        QUIAjax.post('package_quiqqer_customer_ajax_backend_customer_editComment', function (comments) {
+                            Win.close();
+                            self.refresh(comments);
+                        }, {
+                            'package': 'quiqqer/customer',
+                            userId   : self.getAttribute('userId'),
+                            commentId: commentId,
+                            source   : source,
                             comment  : comment
                         });
                     }

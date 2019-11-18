@@ -445,6 +445,19 @@
             <de><![CDATA[Kunden Systeminformationen]]></de>
             <en><![CDATA[Customer System Information]]></en>
         </locale>
+
+        <locale name="window.add.comment.title">
+            <de><![CDATA[Kommentar hinzufügen]]></de>
+            <en><![CDATA[Add comment]]></en>
+        </locale>
+        <locale name="window.add.comment.button.text">
+            <de><![CDATA[Kommentar hinzufügen]]></de>
+            <en><![CDATA[Add comment]]></en>
+        </locale>
+        <locale name="window.edit.comment.title">
+            <de><![CDATA[Kommentar editieren]]></de>
+            <en><![CDATA[Edit comment]]></en>
+        </locale>
     </groups>
 
 </locales>
