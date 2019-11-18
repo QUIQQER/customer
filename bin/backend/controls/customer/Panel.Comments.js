@@ -9,9 +9,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
     'qui/controls/buttons/Button',
     'qui/controls/windows/Confirm',
     'package/quiqqer/erp/bin/backend/controls/Comments',
+    'Permissions',
     'Ajax'
 
-], function (QUI, QUIControl, QUIButton, QUIConfirm, Comments, QUIAjax) {
+], function (QUI, QUIControl, QUIButton, QUIConfirm, Comments, Permissions, QUIAjax) {
     "use strict";
 
     return new Class({
@@ -31,7 +32,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
         initialize: function (options) {
             this.parent(options);
 
-            this.$Comments = null;
+            this.$Comments         = null;
+            this.$AddCommentButton = null;
 
             this.addEvents({
                 onInject: this.$onInject
@@ -46,7 +48,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
         create: function () {
             this.$Elm = this.parent();
 
-            new QUIButton({
+            this.$AddCommentButton = new QUIButton({
                 textimage: 'fa fa-comment',
                 text     : 'Kommenatar hinzufügen',
                 styles   : {
@@ -55,8 +57,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
                 events   : {
                     onClick: this.addComment
                 }
-            }).inject(this.$Elm);
+            });
 
+            this.$AddCommentButton.inject(this.$Elm);
             new Element('section').inject(this.$Elm);
 
             return this.$Elm;
@@ -66,9 +69,17 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
          * event: on inject
          */
         $onInject: function () {
-            this.refresh().then(function () {
-                this.fireEvent('load');
-            }.bind(this));
+            var self = this;
+
+            Permissions.hasPermission('quiqqer.customer.editComments').then(function (editComments) {
+                if (!editComments) {
+                    self.$AddCommentButton.disable();
+                }
+
+                return self.refresh();
+            }).then(function () {
+                self.fireEvent('load', [self]);
+            });
         },
 
         /**
