@@ -155,6 +155,10 @@ class Customers extends Singleton
      */
     public function addUserToCustomerGroup($userId)
     {
+        if (!$userId) {
+            return;
+        }
+
         $customerGroup = null;
 
         try {
@@ -168,12 +172,17 @@ class Customers extends Singleton
         }
 
         $User = QUI::getUsers()->get((int)$userId);
+
+        if ($User->isInGroup($customerGroup)) {
+            return;
+        }
+
         $User->addToGroup($customerGroup);
         $User->save();
     }
 
     /**
-     * Remve a user from the customer group
+     * Remove a user from the customer group
      *
      * @param {string|bool} $userId
      *

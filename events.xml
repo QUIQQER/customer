@@ -4,4 +4,7 @@
     <event on="onAdminLoadFooter" fire="\QUI\ERP\Customer\EventHandler::onAdminLoadFooter"/>
     <event on="onUserExtraAttributes" fire="\QUI\ERP\Customer\EventHandler::onUserExtraAttributes"/>
     <event on="onUserSaveEnd" fire="\QUI\ERP\Customer\EventHandler::onUserSaveEnd"/>
+    <event on="onQuiqqerOrderCustomerDataSaveEnd"
+           fire="\QUI\ERP\Customer\EventHandler::onQuiqqerOrderCustomerDataSaveEnd"
+    />
 </events>

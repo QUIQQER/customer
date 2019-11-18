@@ -206,4 +206,27 @@ class EventHandler
             QUI\System\Log::addDebug($Exception->getMessage());
         }
     }
+
+    /**
+     * event handling for onQuiqqerOrderCustomerDataSaveEnd
+     * - set the user to the customer group
+     *
+     * @param QUI\ERP\Order\Controls\OrderProcess\CustomerData $Step
+     */
+    public static function onQuiqqerOrderCustomerDataSaveEnd(
+        QUI\ERP\Order\Controls\OrderProcess\CustomerData $Step
+    ) {
+        $Order    = $Step->getOrder();
+        $Customer = $Order->getCustomer();
+
+        try {
+            $User = QUI::getUsers()->get($Customer->getId());
+
+            QUI\ERP\Customer\Customers::getInstance()->addUserToCustomerGroup(
+                $User->getId()
+            );
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addDebug($Exception->getMessage());
+        }
+    }
 }
