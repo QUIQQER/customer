@@ -13,6 +13,8 @@ use QUI\ERP\Customer\Customers;
 QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_customer_editComment',
     function ($userId, $commentId, $source, $comment) {
+        QUI\Permissions\Permission::checkPermission('quiqqer.customer.editComments');
+
         $User = QUI::getUsers()->get($userId);
 
         Customers::getInstance()->editComment(

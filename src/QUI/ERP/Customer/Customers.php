@@ -319,6 +319,8 @@ class Customers extends Singleton
      */
     public function addCommentToUser(QUI\Users\User $User, $comment)
     {
+        QUI\Permissions\Permission::checkPermission('quiqqer.customer.editComments');
+
         $Comments = $this->getUserComments($User);
 
         $Comments->addComment(
@@ -348,6 +350,8 @@ class Customers extends Singleton
         $commentSource,
         $message
     ) {
+        QUI\Permissions\Permission::checkPermission('quiqqer.customer.editComments');
+
         $comments = $User->getAttribute('comments');
         $comments = \json_decode($comments, true);
 
