@@ -264,6 +264,10 @@
             <de><![CDATA[Standard Zahlungsweise]]></de>
             <en><![CDATA[Standard payment]]></en>
         </locale>
+        <locale name="customer.panel.shipping.address">
+            <de><![CDATA[Versandadresse]]></de>
+            <en><![CDATA[Shipping address]]></en>
+        </locale>
 
         <locale name="address.edit.window.title">
             <de><![CDATA[Adresse #[id] von [firstname] [lastname] bearbeiten]]></de>

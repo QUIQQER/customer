@@ -260,12 +260,20 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 self.$userInitAttributes = User.getAttributes();
 
                 // check installed
-                return Packages.getPackage('quiqqer/payments').catch(function (err) {
+                return Packages.getPackage('quiqqer/payments').catch(function () {
                     return false;
                 });
             }).then(function (paymentPkg) {
                 if (paymentPkg) {
                     paymentsInstalled = true;
+                }
+
+                return Packages.getPackage('quiqqer/shipping').catch(function () {
+                    return false;
+                });
+            }).then(function (shippingPkg) {
+                if (shippingPkg) {
+                    shippingInstalled = true;
                 }
 
                 self.setAttribute('title', QUILocale.get(lg, 'customer.panel.title', {
@@ -290,23 +298,24 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          */
         $openInformation: function () {
             this.getContent().set('html', Mustache.render(templateInformation, {
-                detailsTitle      : QUILocale.get(lg, 'customer.panel,information.details'),
-                textUserId        : QUILocale.get('quiqqer/quiqqer', 'user_id'),
-                textCustomerId    : QUILocale.get(lg, 'customerId'),
-                textSalutation    : QUILocale.get('quiqqer/quiqqer', 'salutation'),
-                textFirstname     : QUILocale.get('quiqqer/quiqqer', 'firstname'),
-                textLastname      : QUILocale.get('quiqqer/quiqqer', 'lastname'),
-                titleAddress      : QUILocale.get('quiqqer/quiqqer', 'address'),
-                textStreet        : QUILocale.get('quiqqer/quiqqer', 'street'),
-                textCountryZipCity: QUILocale.get(lg, 'customer.panel,information.countryZipCity'),
-                textCountry       : QUILocale.get('quiqqer/quiqqer', 'country'),
-                textZip           : QUILocale.get('quiqqer/quiqqer', 'zip'),
-                textCity          : QUILocale.get('quiqqer/quiqqer', 'city'),
-                titleAllocation   : QUILocale.get(lg, 'customer.panel,information.allocation'),
-                textGroup         : QUILocale.get(lg, 'customer.panel,information.group'),
-                textGroups        : QUILocale.get(lg, 'customer.panel,information.groups'),
-                titleCommunication: QUILocale.get(lg, 'customer.panel,information.communication'),
-                titleComments     : QUILocale.get(lg, 'customer.panel,information.comments'),
+                detailsTitle        : QUILocale.get(lg, 'customer.panel,information.details'),
+                textUserId          : QUILocale.get('quiqqer/quiqqer', 'user_id'),
+                textCustomerId      : QUILocale.get(lg, 'customerId'),
+                textSalutation      : QUILocale.get('quiqqer/quiqqer', 'salutation'),
+                textFirstname       : QUILocale.get('quiqqer/quiqqer', 'firstname'),
+                textLastname        : QUILocale.get('quiqqer/quiqqer', 'lastname'),
+                titleAddress        : QUILocale.get('quiqqer/quiqqer', 'address'),
+                titleShippingAddress: QUILocale.get(lg, 'customer.panel.shipping.address'),
+                textStreet          : QUILocale.get('quiqqer/quiqqer', 'street'),
+                textCountryZipCity  : QUILocale.get(lg, 'customer.panel,information.countryZipCity'),
+                textCountry         : QUILocale.get('quiqqer/quiqqer', 'country'),
+                textZip             : QUILocale.get('quiqqer/quiqqer', 'zip'),
+                textCity            : QUILocale.get('quiqqer/quiqqer', 'city'),
+                titleAllocation     : QUILocale.get(lg, 'customer.panel,information.allocation'),
+                textGroup           : QUILocale.get(lg, 'customer.panel,information.group'),
+                textGroups          : QUILocale.get(lg, 'customer.panel,information.groups'),
+                titleCommunication  : QUILocale.get(lg, 'customer.panel,information.communication'),
+                titleComments       : QUILocale.get(lg, 'customer.panel,information.comments'),
 
                 titleExtra     : QUILocale.get(lg, 'customer.panel,information.extra'),
                 textPaymentTerm: QUILocale.get(lg, 'customer.panel,information.paymentTerm'),
@@ -318,6 +327,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 // payments
                 payments           : paymentsInstalled,
                 textStandardPayment: QUILocale.get(lg, 'customer.panel,information.standard.payments'),
+
+                // shipping
+                shipping: shippingInstalled
             }));
 
             var self = this,

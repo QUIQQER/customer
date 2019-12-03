@@ -101,6 +101,78 @@
         </tbody>
     </table>
 
+    {{#shipping}}
+    <table class="data-table data-table-flexbox">
+        <thead>
+        <tr>
+            <th>
+                {{titleShippingAddress}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textSalutation}}
+                    </span>
+                    <input name="address-shipping-salutation" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textFirstname}}
+                    </span>
+                    <input name="address-shipping-firstname" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textLastname}}
+                    </span>
+                    <input name="address-shipping-lastname" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textStreet}}
+                    </span>
+                    <input name="address-shipping-street_no" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textCountryZipCity}}
+                    </span>
+                    <select type="text"
+                            name="address-shipping-country"
+                            class="field-container-field"
+                    >
+                        <option value="" disabled selected>{{textCountry}}</option>
+                    </select>
+                    <input name="address-shipping-zip" class="field-container-field" placeholder="{{textZip}}"/>
+                    <input name="address-shipping-city" class="field-container-field" placeholder="{{textCity}}"/>
+                </label>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    {{/shipping}}
+
     <table class="data-table data-table-flexbox">
         <thead>
         <tr>
