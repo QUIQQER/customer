@@ -39,7 +39,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             '$openCategory',
             '$openAddressManagement',
             '$onUserDelete',
-            '$onCustomerCategoryActive'
+            '$onCustomerCategoryActive',
+            'openUser'
         ],
 
         options: {
@@ -102,6 +103,22 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             });
         },
 
+        /**
+         * open the use panel
+         */
+        openUser: function () {
+            var self = this;
+
+            require([
+                'controls/users/User',
+                'utils/Panels'
+            ], function (User, Utils) {
+                Utils.openPanelInTasks(
+                    new User(self.getAttribute('userId'))
+                );
+            });
+        },
+
         //endregion
 
         /**
@@ -112,6 +129,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
             this.getElm().addClass('quiqqer-customer-panel');
 
+            // buttons
             this.addButton({
                 name     : 'userSave',
                 text     : QUILocale.get('quiqqer/quiqqer', 'users.user.btn.save'),
@@ -133,6 +151,19 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 }
             });
 
+            this.addButton({
+                name  : 'openUser',
+                title : QUILocale.get(lg, 'quiqqer.customer.panel.openUser'),
+                icon  : 'fa fa-user',
+                events: {
+                    onClick: this.openUser
+                },
+                styles: {
+                    'float': 'right'
+                }
+            });
+
+            // categories
             this.addCategory({
                 name  : 'information',
                 text  : QUILocale.get(lg, 'quiqqer.customer.panel.general'),

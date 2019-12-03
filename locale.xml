@@ -303,6 +303,10 @@
             <de><![CDATA[Kommentare]]></de>
             <en><![CDATA[Comments]]></en>
         </locale>
+        <locale name="quiqqer.customer.panel.openUser">
+            <de><![CDATA[Benutzer direkt öffnen]]></de>
+            <en><![CDATA[Open user directly]]></en>
+        </locale>
 
         <locale name="customer.address.delete.title">
             <de><![CDATA[Adresse löschen]]></de>
