@@ -318,6 +318,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             Form.elements.group.value      = this.$User.getAttribute('mainGroup');
             Form.elements.customerId.value = this.$User.getAttribute('customerId');
 
+            Form.elements['quiqqer.erp.customer.website'].value      = this.$User.getAttribute('quiqqer.erp.customer.website');
+            Form.elements['quiqqer.erp.customer.payment.term'].value = this.$User.getAttribute('quiqqer.erp.customer.payment.term');
+
             // address
             var address = parseInt(this.$User.getAttribute('address'));
 

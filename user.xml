@@ -3,5 +3,7 @@
     <attributes>
         <attribute>customerId</attribute>
         <attribute>mainGroup</attribute>
+        <attribute>quiqqer.erp.customer.website</attribute>
+        <attribute>quiqqer.erp.customer.payment.term</attribute>
     </attributes>
 </user>
