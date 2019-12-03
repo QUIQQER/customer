@@ -260,6 +260,10 @@
             <de><![CDATA[Kommentare]]></de>
             <en><![CDATA[Comments]]></en>
         </locale>
+        <locale name="customer.panel,information.standard.payments">
+            <de><![CDATA[Standard Zahlungsweise]]></de>
+            <en><![CDATA[Standard payment]]></en>
+        </locale>
 
         <locale name="address.edit.window.title">
             <de><![CDATA[Adresse #[id] von [firstname] [lastname] bearbeiten]]></de>

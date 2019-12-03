@@ -9,20 +9,25 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'qui/controls/buttons/ButtonSwitch',
     'qui/controls/windows/Confirm',
     'package/quiqqer/countries/bin/Countries',
+    'package/quiqqer/payments/bin/backend/Payments',
     'qui/utils/Form',
     'Users',
     'Locale',
     'Ajax',
+    'Packages',
     'Mustache',
 
     'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.Information.html',
     'css!package/quiqqer/customer/bin/backend/controls/customer/Panel.css'
 
-], function (QUI, QUIPanel, QUIButtonSwitch, QUIConfirm, Countries,
-             FormUtils, Users, QUILocale, QUIAjax, Mustache, templateInformation) {
+], function (QUI, QUIPanel, QUIButtonSwitch, QUIConfirm, Countries, Payments,
+             FormUtils, Users, QUILocale, QUIAjax, Packages, Mustache, templateInformation) {
     "use strict";
 
     var lg = 'quiqqer/customer';
+
+    var paymentsInstalled = false;
+    var shippingInstalled = false;
 
     return new Class({
 
@@ -254,9 +259,18 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 self.$User               = User;
                 self.$userInitAttributes = User.getAttributes();
 
+                // check installed
+                return Packages.getPackage('quiqqer/payments').catch(function (err) {
+                    return false;
+                });
+            }).then(function (paymentPkg) {
+                if (paymentPkg) {
+                    paymentsInstalled = true;
+                }
+
                 self.setAttribute('title', QUILocale.get(lg, 'customer.panel.title', {
-                    username: User.getUsername(),
-                    user    : User.getName()
+                    username: self.$User.getUsername(),
+                    user    : self.$User.getName()
                 }));
 
                 self.refresh();
@@ -299,12 +313,15 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 textMail       : QUILocale.get('quiqqer/quiqqer', 'email'),
                 textTel        : QUILocale.get('quiqqer/quiqqer', 'tel'),
                 textFax        : QUILocale.get('quiqqer/quiqqer', 'fax'),
-                textInternet   : QUILocale.get(lg, 'customer.panel,information.extra.homepage')
+                textInternet   : QUILocale.get(lg, 'customer.panel,information.extra.homepage'),
+
+                // payments
+                payments           : paymentsInstalled,
+                textStandardPayment: QUILocale.get(lg, 'customer.panel,information.standard.payments'),
             }));
 
             var self = this,
                 Form = this.getContent().getElement('form');
-
 
             // set data
             Form.elements.userId.value = this.$User.getId();
@@ -469,6 +486,53 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 });
 
                 return QUI.parse(self.getContent());
+            }).then(function () {
+                if (paymentsInstalled === false) {
+                    return;
+                }
+
+                var PaymentSelect = self.getContent().getElement('[name="quiqqer.erp.standard.payment"]'),
+                    lang          = QUILocale.getCurrent();
+
+                if (!PaymentSelect) {
+                    return;
+                }
+
+                // standard payment
+                return new Promise(function (resolve) {
+                    PaymentSelect.set('html', '');
+
+                    new Element('option', {
+                        value: '',
+                        html : '---'
+                    }).inject(PaymentSelect);
+
+                    require([
+                        'package/quiqqer/payments/bin/backend/Payments'
+                    ], function (Payments) {
+                        Payments.getPayments().then(function (payments) {
+                            var i, len, text;
+                            for (i = 0, len = payments.length; i < len; i++) {
+                                text = '';
+
+                                if (typeof payments[i].title[lang] !== 'undefined') {
+                                    text = payments[i].title[lang];
+                                } else if (typeof payments[i].title.en === 'undefined') {
+                                    text = payments[i].title.en;
+                                }
+
+                                new Element('option', {
+                                    value: payments[i].id,
+                                    html : text
+                                }).inject(PaymentSelect);
+                            }
+
+                            if (self.$User.getAttribute('quiqqer.erp.standard.payment')) {
+                                PaymentSelect.value = self.$User.getAttribute('quiqqer.erp.standard.payment');
+                            }
+                        }).then(resolve);
+                    });
+                });
             });
         },
 

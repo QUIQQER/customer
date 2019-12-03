@@ -120,6 +120,20 @@
                 </label>
             </td>
         </tr>
+        {{#payments}}
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textStandardPayment}}
+                    </span>
+                    <select name="quiqqer.erp.standard.payment" class="field-container-field">
+                        <option value="">---</option>
+                    </select>
+                </label>
+            </td>
+        </tr>
+        {{/payments}}
         </tbody>
     </table>
 
