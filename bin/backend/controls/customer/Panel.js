@@ -367,8 +367,15 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     }).inject(CountrySelect);
                 }
 
+                if (!address) {
+                    return self.getAddressDefaultAddress();
+                }
+
                 return self.getAddress(address);
             }).then(function (address) {
+                console.log('#########');
+                console.log(address);
+
                 if (!address) {
                     return;
                 }
@@ -380,6 +387,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 Form.elements['address-street_no'].value  = address.street_no;
                 Form.elements['address-zip'].value        = address.zip;
                 Form.elements['address-country'].value    = address.country;
+                Form.elements['address-city'].value       = address.city;
 
                 try {
                     var CBody = self.getElm().getElement('.customer-information-communication-body');
@@ -702,6 +710,21 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 }
 
                 return false;
+            });
+        },
+
+        /**
+         *
+         * @return {Promise}
+         */
+        getAddressDefaultAddress: function () {
+            var self = this;
+
+            return new Promise(function (resolve) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getAddress', resolve, {
+                    'package': 'quiqqer/customer',
+                    userId   : self.$User.getId()
+                })
             });
         },
 
