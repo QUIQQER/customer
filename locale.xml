@@ -319,6 +319,14 @@
             <de><![CDATA[Benutzer direkt öffnen]]></de>
             <en><![CDATA[Open user directly]]></en>
         </locale>
+        <locale name="quiqqer.customer.panel.files">
+            <de><![CDATA[Dateien]]></de>
+            <en><![CDATA[Files]]></en>
+        </locale>
+        <locale name="customer.files.upload.button">
+            <de><![CDATA[Upload]]></de>
+            <en><![CDATA[Upload]]></en>
+        </locale>
 
         <locale name="customer.address.delete.title">
             <de><![CDATA[Adresse löschen]]></de>

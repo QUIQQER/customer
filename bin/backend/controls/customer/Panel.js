@@ -225,6 +225,17 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 }
             });
 
+            this.addCategory({
+                name  : 'files',
+                text  : QUILocale.get(lg, 'quiqqer.customer.panel.files'),
+                icon  : 'fa fa-file-text-o',
+                events: {
+                    onActive: function () {
+                        self.$openCategory('files');
+                    }
+                }
+            });
+
             this.getContent().setStyle('opacity', 0);
 
             QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getCategories', function (result) {
@@ -854,6 +865,30 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         },
 
         /**
+         * open the user files
+         *
+         * @return {Promise}
+         */
+        $openFiles: function () {
+            var self = this;
+
+            this.getContent().set('html', '');
+
+            return new Promise(function (resolve) {
+                require([
+                    'package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles'
+                ], function (UserFiles) {
+                    new UserFiles({
+                        userId: self.getAttribute('userId'),
+                        events: {
+                            onLoad: resolve
+                        }
+                    }).inject(self.getContent());
+                });
+            });
+        },
+
+        /**
          * Opens a category panel
          *
          * @param {String} category - name of the category
@@ -883,6 +918,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                 if (category === 'userProperty') {
                     return self.$openUserProperty();
+                }
+
+                if (category === 'files') {
+                    return self.$openFiles();
                 }
 
                 // load customer category
