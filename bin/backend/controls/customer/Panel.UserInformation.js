@@ -74,11 +74,19 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
             var User = Users.get(this.getAttribute('userId'));
             var Form = this.$Elm.getElement('form');
 
-            Form.elements['quiqqer.erp.isNettoUser'].value = User.getAttribute('quiqqer.erp.isNettoUser');
-            Form.elements['quiqqer.erp.euVatId'].value     = User.getAttribute('quiqqer.erp.euVatId');
-            Form.elements['quiqqer.erp.discount'].value    = User.getAttribute('quiqqer.erp.discount');
+            var checkVal = function (str) {
+                if (!str || str === 'false') {
+                    str = '';
+                }
 
-            Form.elements['quiqqer.erp.company.identification.number'].value = User.getAttribute('quiqqer.erp.company.identification.number');
+                return str;
+            };
+
+            Form.elements['quiqqer.erp.isNettoUser'].value = User.getAttribute('quiqqer.erp.isNettoUser');
+            Form.elements['quiqqer.erp.euVatId'].value     = checkVal(User.getAttribute('quiqqer.erp.euVatId'));
+            Form.elements['quiqqer.erp.discount'].value    = checkVal(User.getAttribute('quiqqer.erp.discount'));
+
+            Form.elements['quiqqer.erp.company.identification.number'].value = checkVal(User.getAttribute('quiqqer.erp.company.identification.number'));
 
             Promise.all([
                 this.getTaxByUser(),
