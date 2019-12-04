@@ -24,7 +24,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
 
         Binds: [
             '$onInject',
-            'openUpload'
+            'openUpload',
+            'openDeleteDialog'
         ],
 
         options: {
@@ -74,12 +75,28 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
                 buttons    : [{
                     name     : 'upload',
                     text     : QUILocale.get(lg, 'customer.files.upload.button'),
+                    disabled : true,
                     textimage: 'fa fa-upload',
                     events   : {
                         onClick: this.openUpload
                     }
+                }, {
+                    type: 'separator'
+                }, {
+                    name     : 'delete',
+                    text     : QUILocale.get(lgQUIQQER, 'delete'),
+                    disabled : true,
+                    textimage: 'fa fa-trash',
+                    events   : {
+                        onClick: this.openDeleteDialog
+                    }
                 }],
                 columnModel: [{
+                    header   : QUILocale.get(lgQUIQQER, 'type'),
+                    dataIndex: 'icon_node',
+                    dataType : 'node',
+                    width    : 40
+                }, {
                     header   : QUILocale.get(lgQUIQQER, 'file'),
                     dataIndex: 'basename',
                     dataType : 'string',
@@ -90,6 +107,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
                     dataType : 'string',
                     width    : 100
                 }]
+            });
+
+            this.$Grid.addEvent('click', function () {
+
             });
 
             return this.$Elm;
@@ -104,7 +125,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
             this.resize();
 
             QUIAjax.get('package_quiqqer_customer_ajax_backend_files_getList', function (list) {
-                console.log(list);
+                for (var i = 0, len = list.length; i < len; i++) {
+                    list[i].icon_node = new Element('img', {
+                        src   : list[i].icon,
+                        styles: {
+                            margin: '5px 0'
+                        }
+                    });
+                }
 
                 self.$Grid.setData({
                     data: list
@@ -121,6 +149,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
          * @todo
          */
         openUpload: function () {
+
+        },
+
+        openDeleteDialog: function () {
 
         }
     });

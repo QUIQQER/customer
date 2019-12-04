@@ -82,13 +82,16 @@ class CustomerFiles
                 $info = [
                     'basename'           => $file,
                     'filesize'           => '---',
-                    'filesize_formatted' => '---'
+                    'filesize_formatted' => '---',
+                    'extension'          => ''
                 ];
             }
 
             if ($info['filesize'] !== '---') {
                 $info['filesize_formatted'] = QUI\Utils\System\File::formatSize($info['filesize']);
             }
+
+            $info['icon'] = QUI\Projects\Media\Utils::getIconByExtension($info['extension']);
 
             $result[] = $info;
         }
@@ -98,5 +101,34 @@ class CustomerFiles
         });
 
         return $result;
+    }
+
+    /**
+     * @param string|integer $customerId
+     * @param array $files
+     *
+     * @throws QUI\Permissions\Exception
+     */
+    public static function deleteFiles($customerId, $files = [])
+    {
+        Permission::checkPermission('quiqqer.customer.fileEdit');
+
+        try {
+            $Customer = QUI::getUsers()->get($customerId);
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addDebug($Exception->getMessage());
+
+            return;
+        }
+
+        $customerDir = self::getFolderPath($Customer);
+
+        foreach ($files as $fileName) {
+            $file = $customerDir.DIRECTORY_SEPARATOR.$fileName;
+
+            if (\file_exists($file)) {
+                \unlink($file);
+            }
+        }
     }
 }
