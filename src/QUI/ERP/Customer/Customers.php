@@ -234,6 +234,47 @@ class Customers extends Singleton
         $User->setAttributes($attributes);
 
         // address
+        $this->saveAddress($User, $attributes);
+
+        // delivery Address
+        $this->saveDeliveryAddress($User, $attributes);
+
+
+        // group
+        $groups = [];
+
+        if (isset($attributes['group'])) {
+            $groups[] = (int)$attributes['group'];
+            $User->setAttribute('mainGroup', (int)$attributes['group']);
+        } elseif (isset($attributes['group']) && $attributes['group'] === null) {
+            $User->setAttribute('mainGroup', false);
+        }
+
+        if (isset($attributes['groups'])) {
+            if (\strpos($attributes['groups'], ',') !== false) {
+                $attributes['groups'] = \explode(',', $attributes['groups']);
+            }
+
+            $groups = \array_merge($groups, $attributes['groups']);
+        }
+
+        if (!empty($groups)) {
+            $User->setGroups($groups);
+        }
+
+        $User->save();
+    }
+
+    /**
+     * @param QUI\Users\User $User
+     * @param array $attributes
+     *
+     * @throws QUI\Exception
+     * @throws QUI\Permissions\Exception
+     * @throws QUI\Users\Exception
+     */
+    protected function saveAddress(QUI\Users\User $User, $attributes)
+    {
         try {
             $Address = $User->getStandardAddress();
         } catch (QUI\Exception $Exception) {
@@ -278,32 +319,64 @@ class Customers extends Singleton
             unset($attributes['address-mail']);
         }
 
+        $Address->save();
+    }
+
+    /**
+     * @param QUI\Users\User $User
+     * @param $attributes
+     * @throws QUI\Exception
+     * @throws QUI\Permissions\Exception
+     * @throws QUI\Users\Exception
+     */
+    protected function saveDeliveryAddress(QUI\Users\User $User, $attributes)
+    {
+        // check if all is empty
+        $isEmpty = true;
+
+        $addressAttributes = [
+            'salutation',
+            'firstname',
+            'lastname',
+            'company',
+
+            'street_no',
+            'zip',
+            'city',
+            'country'
+        ];
+
+        foreach ($addressAttributes as $addressAttribute) {
+            if (!empty($attributes['address-delivery-'.$addressAttribute])) {
+                $isEmpty = false;
+                break;
+            }
+        }
+
+        // dont save delivery address
+        if ($isEmpty) {
+            return;
+        }
+
+        // address save
+        try {
+            $addressId = $User->getAttribute('quiqqer.delivery.address');
+            $Address   = $User->getAddress($addressId);
+        } catch (QUI\Exception $Exception) {
+            // create one
+            $Address = $User->addAddress([]);
+
+            $User->setAttribute('quiqqer.delivery.address', $Address->getId());
+        }
+
+        foreach ($addressAttributes as $addressAttribute) {
+            if (isset($attributes['address-delivery-'.$addressAttribute])) {
+                $Address->setAttribute($addressAttribute, $attributes['address-delivery-'.$addressAttribute]);
+                unset($attributes['address-delivery-'.$addressAttribute]);
+            }
+        }
 
         $Address->save();
-
-
-        // group
-        $groups = [];
-
-        if (isset($attributes['group'])) {
-            $groups[] = (int)$attributes['group'];
-            $User->setAttribute('mainGroup', (int)$attributes['group']);
-        } elseif (isset($attributes['group']) && $attributes['group'] === null) {
-            $User->setAttribute('mainGroup', false);
-        }
-
-        if (isset($attributes['groups'])) {
-            if (\strpos($attributes['groups'], ',') !== false) {
-                $attributes['groups'] = \explode(',', $attributes['groups']);
-            }
-
-            $groups = \array_merge($groups, $attributes['groups']);
-        }
-
-        if (!empty($groups)) {
-            $User->setGroups($groups);
-        }
-
         $User->save();
     }
 

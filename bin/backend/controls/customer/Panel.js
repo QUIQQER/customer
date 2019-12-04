@@ -45,7 +45,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             '$openAddressManagement',
             '$onUserDelete',
             '$onCustomerCategoryActive',
-            'openUser'
+            'openUser',
+            'deliveryAddressToggle'
         ],
 
         options: {
@@ -298,24 +299,23 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          */
         $openInformation: function () {
             this.getContent().set('html', Mustache.render(templateInformation, {
-                detailsTitle        : QUILocale.get(lg, 'customer.panel,information.details'),
-                textUserId          : QUILocale.get('quiqqer/quiqqer', 'user_id'),
-                textCustomerId      : QUILocale.get(lg, 'customerId'),
-                textSalutation      : QUILocale.get('quiqqer/quiqqer', 'salutation'),
-                textFirstname       : QUILocale.get('quiqqer/quiqqer', 'firstname'),
-                textLastname        : QUILocale.get('quiqqer/quiqqer', 'lastname'),
-                titleAddress        : QUILocale.get('quiqqer/quiqqer', 'address'),
-                titleShippingAddress: QUILocale.get(lg, 'customer.panel.shipping.address'),
-                textStreet          : QUILocale.get('quiqqer/quiqqer', 'street'),
-                textCountryZipCity  : QUILocale.get(lg, 'customer.panel,information.countryZipCity'),
-                textCountry         : QUILocale.get('quiqqer/quiqqer', 'country'),
-                textZip             : QUILocale.get('quiqqer/quiqqer', 'zip'),
-                textCity            : QUILocale.get('quiqqer/quiqqer', 'city'),
-                titleAllocation     : QUILocale.get(lg, 'customer.panel,information.allocation'),
-                textGroup           : QUILocale.get(lg, 'customer.panel,information.group'),
-                textGroups          : QUILocale.get(lg, 'customer.panel,information.groups'),
-                titleCommunication  : QUILocale.get(lg, 'customer.panel,information.communication'),
-                titleComments       : QUILocale.get(lg, 'customer.panel,information.comments'),
+                detailsTitle      : QUILocale.get(lg, 'customer.panel,information.details'),
+                textUserId        : QUILocale.get('quiqqer/quiqqer', 'user_id'),
+                textCustomerId    : QUILocale.get(lg, 'customerId'),
+                textSalutation    : QUILocale.get('quiqqer/quiqqer', 'salutation'),
+                textFirstname     : QUILocale.get('quiqqer/quiqqer', 'firstname'),
+                textLastname      : QUILocale.get('quiqqer/quiqqer', 'lastname'),
+                titleAddress      : QUILocale.get('quiqqer/quiqqer', 'address'),
+                textStreet        : QUILocale.get('quiqqer/quiqqer', 'street'),
+                textCountryZipCity: QUILocale.get(lg, 'customer.panel,information.countryZipCity'),
+                textCountry       : QUILocale.get('quiqqer/quiqqer', 'country'),
+                textZip           : QUILocale.get('quiqqer/quiqqer', 'zip'),
+                textCity          : QUILocale.get('quiqqer/quiqqer', 'city'),
+                titleAllocation   : QUILocale.get(lg, 'customer.panel,information.allocation'),
+                textGroup         : QUILocale.get(lg, 'customer.panel,information.group'),
+                textGroups        : QUILocale.get(lg, 'customer.panel,information.groups'),
+                titleCommunication: QUILocale.get(lg, 'customer.panel,information.communication'),
+                titleComments     : QUILocale.get(lg, 'customer.panel,information.comments'),
 
                 titleExtra     : QUILocale.get(lg, 'customer.panel,information.extra'),
                 textPaymentTerm: QUILocale.get(lg, 'customer.panel,information.paymentTerm'),
@@ -329,7 +329,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 textStandardPayment: QUILocale.get(lg, 'customer.panel,information.standard.payments'),
 
                 // shipping
-                shipping: shippingInstalled
+                titleDeliveryAddress   : QUILocale.get(lg, 'customer.panel.delivery.address'),
+                shipping               : shippingInstalled,
+                textDeliveryAddressSame: QUILocale.get(lg, 'checkout.panel.delivery.option.same')
             }));
 
             var self = this,
@@ -351,10 +353,18 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             Form.elements['quiqqer.erp.customer.payment.term'].value = this.$User.getAttribute('quiqqer.erp.customer.payment.term');
 
             // address
-            var address = parseInt(this.$User.getAttribute('address'));
+            var address  = parseInt(this.$User.getAttribute('address'));
+            var delivery = this.$User.getAttribute('quiqqer.delivery.address');
+
+            if (!delivery) {
+                Form.elements['address-delivery'].checked = true;
+                Form.elements['address-delivery'].addEvent('change', this.deliveryAddressToggle);
+                this.deliveryAddressToggle();
+            }
 
             return Countries.getCountries().then(function (countries) {
-                var CountrySelect = Form.elements['address-country'];
+                var CountrySelect         = Form.elements['address-country'];
+                var CountrySelectDelivery = Form.elements['address-delivery-country'];
 
                 for (var code in countries) {
                     if (!countries.hasOwnProperty(code)) {
@@ -365,6 +375,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                         value: code,
                         html : countries[code]
                     }).inject(CountrySelect);
+
+                    if (CountrySelectDelivery) {
+                        new Element('option', {
+                            value: code,
+                            html : countries[code]
+                        }).inject(CountrySelectDelivery);
+                    }
                 }
 
                 if (!address) {
@@ -373,9 +390,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                 return self.getAddress(address);
             }).then(function (address) {
-                console.log('#########');
-                console.log(address);
-
                 if (!address) {
                     return;
                 }
@@ -383,7 +397,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 Form.elements['address-salutation'].value = address.salutation;
                 Form.elements['address-firstname'].value  = address.firstname;
                 Form.elements['address-lastname'].value   = address.lastname;
-                // Form.elements['address-company'].value    = address.country;
                 Form.elements['address-street_no'].value  = address.street_no;
                 Form.elements['address-zip'].value        = address.zip;
                 Form.elements['address-country'].value    = address.country;
@@ -484,6 +497,21 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     });
                 } catch (e) {
                 }
+            }).then(function () {
+                // delivery address
+                if (!delivery) {
+                    return;
+                }
+
+                return self.getAddress(delivery).then(function (deliveryData) {
+                    Form.elements['address-delivery-salutation'].value = deliveryData.salutation;
+                    Form.elements['address-delivery-firstname'].value  = deliveryData.firstname;
+                    Form.elements['address-delivery-lastname'].value   = deliveryData.lastname;
+                    Form.elements['address-delivery-street_no'].value  = deliveryData.street_no;
+                    Form.elements['address-delivery-zip'].value        = deliveryData.zip;
+                    Form.elements['address-delivery-country'].value    = deliveryData.country;
+                    Form.elements['address-delivery-city'].value       = deliveryData.city;
+                });
             }).then(function () {
                 // load comments
                 self.getComments().then(function (comments) {
@@ -724,7 +752,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getAddress', resolve, {
                     'package': 'quiqqer/customer',
                     userId   : self.$User.getId()
-                })
+                });
             });
         },
 
@@ -1062,6 +1090,69 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     break;
                 }
             }
+        },
+
+        //endregion
+
+        //region delivery
+
+        /**
+         * Toggle the delivery address
+         */
+        deliveryAddressToggle: function () {
+            if (!shippingInstalled) {
+                return;
+            }
+
+            var Checkbox = this.getContent().getElement('[name="address-delivery"]');
+
+            if (Checkbox.checked) {
+                this.deliveryAddressClose();
+            } else {
+                this.deliveryAddressOpen();
+            }
+        },
+
+        /**
+         * opens the delivery address
+         */
+        deliveryAddressOpen: function () {
+            if (!shippingInstalled) {
+                return;
+            }
+
+            var Table = this.getContent().getElement('.delivery-address-table');
+
+            if (!Table) {
+                return;
+            }
+
+            Table.getElements('tr').forEach(function (Row) {
+                if (Row.getElement('input') && Row.getElement('input').name !== 'address-delivery') {
+                    Row.setStyle('display', null);
+                }
+            });
+        },
+
+        /**
+         * Close the delivery address
+         */
+        deliveryAddressClose: function () {
+            if (!shippingInstalled) {
+                return;
+            }
+
+            var Table = this.getContent().getElement('.delivery-address-table');
+
+            if (!Table) {
+                return;
+            }
+
+            Table.getElements('tr').forEach(function (Row) {
+                if (Row.getElement('input') && Row.getElement('input').name !== 'address-delivery') {
+                    Row.setStyle('display', 'none');
+                }
+            });
         }
 
         //endregion
