@@ -71,8 +71,8 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
                 textAddressCity      : QUILocale.get('quiqqer/quiqqer', 'city'),
                 textAddressCountry   : QUILocale.get('quiqqer/quiqqer', 'country'),
 
-                textGroup     : QUILocale.get('quiqqer/quiqqer', 'group'),
-                textGroups    : QUILocale.get('quiqqer/quiqqer', 'groups'),
+                textGroup     : QUILocale.get(lg, 'window.customer.creation.group'),
+                textGroups    : QUILocale.get(lg, 'window.customer.creation.groups'),
                 previousButton: QUILocale.get(lg, 'window.customer.creation.previous'),
                 nextButton    : QUILocale.get(lg, 'window.customer.creation.next')
             }));

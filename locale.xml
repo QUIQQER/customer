@@ -178,6 +178,14 @@
             <de><![CDATA[Kunde anlegen]]></de>
             <en><![CDATA[Create customer]]></en>
         </locale>
+        <locale name="window.customer.creation.group">
+            <de><![CDATA[Kundengruppe]]></de>
+            <en><![CDATA[Customer group]]></en>
+        </locale>
+        <locale name="window.customer.creation.groups">
+            <de><![CDATA[Nutzergruppen]]></de>
+            <en><![CDATA[User groups]]></en>
+        </locale>
 
 
         <locale name="panel.title">
