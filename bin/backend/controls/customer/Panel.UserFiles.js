@@ -60,6 +60,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
          * @return {HTMLDivElement}
          */
         create: function () {
+            var self = this;
+
             this.$Elm = this.parent();
             this.$Elm.set('html', '');
             this.$Elm.set('data-quiid', this.getId());
@@ -113,7 +115,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
             });
 
             this.$Grid.addEvent('click', function () {
-
+                self.getPermissions().then(function (permissions) {
+                    if (permissions.fileEdit) {
+                        self.$Grid.getButton('delete').enable();
+                    }
+                });
             });
 
             return this.$Elm;
@@ -190,6 +196,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
 
             new QUIConfirm({
                 title    : QUILocale.get(lg, 'window.customer.upload.title'),
+                icon     : 'fa fa-upload',
                 maxWidth : 600,
                 maxHeight: 400,
                 autoclose: false,
@@ -236,10 +243,54 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
         },
 
         /**
-         *
+         * Open Delete Window
          */
         openDeleteDialog: function () {
+            var self     = this,
+                selected = this.$Grid.getSelectedData();
 
+            new QUIConfirm({
+                icon       : 'fa fa-trash',
+                texticon   : 'fa fa-trash',
+                title      : QUILocale.get(lg, 'window.customer.delete.title'),
+                information: QUILocale.get(lg, 'window.customer.delete.information'),
+                text       : QUILocale.get(lg, 'window.customer.delete.text'),
+                maxWidth   : 600,
+                maxHeight  : 400,
+                autoclose  : false,
+                events     : {
+                    onOpen  : function (Win) {
+                        var List = new Element('ul');
+
+                        for (var i = 0, len = selected.length; i < len; i++) {
+                            new Element('li', {
+                                html: selected[i].basename
+                            }).inject(List);
+                        }
+
+                        List.inject(
+                            Win.getContent().getElement('.information'),
+                            'after'
+                        );
+                    },
+                    onSubmit: function (Win) {
+                        Win.Loader.show();
+
+                        var files = selected.map(function (e) {
+                            return e.basename;
+                        });
+
+                        QUIAjax.post('package_quiqqer_customer_ajax_backend_files_delete', function () {
+                            Win.close();
+                            self.refresh();
+                        }, {
+                            package   : 'quiqqer/customer',
+                            files     : JSON.encode(files),
+                            customerId: self.getAttribute('userId')
+                        });
+                    }
+                }
+            }).open();
         }
     });
 });

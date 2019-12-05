@@ -106,6 +106,18 @@
             <de><![CDATA[Datei hochladen]]></de>
             <en><![CDATA[Upload file]]></en>
         </locale>
+        <locale name="window.customer.delete.title">
+            <de><![CDATA[Datei löschen]]></de>
+            <en><![CDATA[Delete file]]></en>
+        </locale>
+        <locale name="window.customer.delete.text">
+            <de><![CDATA[Möchtest Du wirklich Kunden Dateien löschen?]]></de>
+            <en><![CDATA[Do you really want to delete customer files?]]></en>
+        </locale>
+        <locale name="window.customer.delete.information">
+            <de><![CDATA[Folgende Datei werden unwiederruflich gelöscht:]]></de>
+            <en><![CDATA[The following file is irrevocably deleted:]]></en>
+        </locale>
 
         <locale name="window.customer.creation.customerNo.title">
             <de><![CDATA[Neuen Kunden anlegen]]></de>
@@ -205,8 +217,8 @@
         </locale>
 
         <locale name="customer.panel.title">
-            <de><![CDATA[Benutzer / Kunde: [user] - [username]]]></de>
-            <en><![CDATA[User / Customer: [user] - [username]]]></en>
+            <de><![CDATA[Kunde: [user] - [username]]]></de>
+            <en><![CDATA[Customer: [user] - [username]]]></en>
         </locale>
         <locale name="customer.panel,information.details">
             <de><![CDATA[Details]]></de>

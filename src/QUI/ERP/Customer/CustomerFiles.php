@@ -109,7 +109,7 @@ class CustomerFiles
      *
      * @throws QUI\Permissions\Exception
      */
-    public static function deleteFiles($customerId, $files = [])
+    public static function deleteFiles($customerId, array $files = [])
     {
         Permission::checkPermission('quiqqer.customer.fileEdit');
 
