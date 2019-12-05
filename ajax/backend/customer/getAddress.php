@@ -20,8 +20,9 @@ QUI::$Ajax->registerFunction(
             $Address = $User->addAddress();
         }
 
-        $attributes       = $Address->getAttributes();
-        $attributes['id'] = $Address->getId();
+        $attributes         = $Address->getAttributes();
+        $attributes['id']   = $Address->getId();
+        $attributes['text'] = $Address->getText();
 
         return $attributes;
     },

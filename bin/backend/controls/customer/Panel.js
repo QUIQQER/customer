@@ -57,6 +57,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         initialize: function (parent) {
             this.parent(parent);
 
+            this.setAttribute('#id', 'customer-panel-' + this.getAttribute('userId'));
+
             this.$User               = null;
             this.$userInitAttributes = null;
 
@@ -104,6 +106,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     data     : JSON.encode(self.$User.getAttributes()),
                     onError  : resolve
                 });
+            }).then(function () {
+                return self.$refreshTitle();
             }).then(function () {
                 self.Loader.hide();
             });
@@ -259,6 +263,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         $onShow: function () {
             this.Loader.show();
 
+            this.setAttribute('icon', 'fa fa-spinner fa-spin');
+            this.refresh();
+
             var self   = this;
             var User   = Users.get(this.getAttribute('userId'));
             var Loaded = Promise.resolve(User);
@@ -288,18 +295,66 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     shippingInstalled = true;
                 }
 
-                self.setAttribute('title', QUILocale.get(lg, 'customer.panel.title', {
-                    username: self.$User.getUsername(),
-                    user    : self.$User.getName()
-                }));
-
-                self.refresh();
-
+                return self.$refreshTitle();
+            }).then(function () {
                 if (!self.$ActiveCat) {
                     self.getCategory('information').click();
                 }
 
                 self.Loader.hide();
+            });
+        },
+
+        /**
+         * Refresh the panel title
+         *
+         * @return {Promise}
+         */
+        $refreshTitle: function () {
+            var self    = this;
+            var address = false;
+
+            this.setAttribute('icon', 'fa fa-spinner fa-spin');
+            this.refresh();
+
+            if (parseInt(this.$User.getAttribute('address'))) {
+                address = parseInt(this.$User.getAttribute('address'));
+            } else if (this.$User.getAttribute('quiqqer.erp.address')) {
+                address = parseInt(this.$User.getAttribute('quiqqer.erp.address'));
+            }
+
+            var GetAddress;
+
+            if (!address) {
+                GetAddress = this.getAddressDefaultAddress();
+            } else {
+                GetAddress = this.getAddress(address);
+            }
+
+            return GetAddress.then(function (addressData) {
+                var titleData = [];
+
+                if (self.$User.getUsername() === self.$User.getName()) {
+                    titleData.push(self.$User.getUsername());
+                } else {
+                    titleData.push(self.$User.getUsername());
+                    titleData.push(self.$User.getName());
+                }
+
+                if (self.$User.getAttribute('email') && self.$User.getAttribute('email') !== '') {
+                    titleData.push(self.$User.getAttribute('email'));
+                }
+
+                if (addressData && addressData.text !== ' ; ; ' && addressData.text !== '') {
+                    titleData.push(addressData.text);
+                }
+
+                self.setAttribute('icon', 'fa fa-user');
+                self.setAttribute('title', QUILocale.get(lg, 'customer.panel.title', {
+                    data: titleData.join(' - ')
+                }));
+
+                self.refresh();
             });
         },
 
@@ -348,6 +403,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             var self = this,
                 Form = this.getContent().getElement('form');
 
+            var checkVal = function (str) {
+                if (!str || str === 'false') {
+                    return '';
+                }
+
+                return str;
+            };
+
             // set data
             Form.elements.userId.value = this.$User.getId();
 
@@ -360,8 +423,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             Form.elements.group.value      = this.$User.getAttribute('mainGroup');
             Form.elements.customerId.value = this.$User.getAttribute('customerId');
 
-            Form.elements['quiqqer.erp.customer.website'].value      = this.$User.getAttribute('quiqqer.erp.customer.website');
-            Form.elements['quiqqer.erp.customer.payment.term'].value = this.$User.getAttribute('quiqqer.erp.customer.payment.term');
+            Form.elements['quiqqer.erp.customer.website'].value      = checkVal(this.$User.getAttribute('quiqqer.erp.customer.website'));
+            Form.elements['quiqqer.erp.customer.payment.term'].value = checkVal(this.$User.getAttribute('quiqqer.erp.customer.payment.term'));
 
             // address
             var address  = parseInt(this.$User.getAttribute('address'));
@@ -753,6 +816,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         },
 
         /**
+         * Return the default address
          *
          * @return {Promise}
          */

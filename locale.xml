@@ -225,8 +225,8 @@
         </locale>
 
         <locale name="customer.panel.title">
-            <de><![CDATA[Kunde: [user] - [username]]]></de>
-            <en><![CDATA[Customer: [user] - [username]]]></en>
+            <de><![CDATA[Kunde: [data]]]></de>
+            <en><![CDATA[Customer: [data]]]></en>
         </locale>
         <locale name="customer.panel,information.details">
             <de><![CDATA[Details]]></de>
