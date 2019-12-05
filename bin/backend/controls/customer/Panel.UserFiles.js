@@ -6,12 +6,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
 
     'qui/QUI',
     'qui/controls/Control',
+    'qui/controls/windows/Confirm',
     'controls/grid/Grid',
     'Ajax',
     'Locale',
     'Users'
 
-], function (QUI, QUIControl, Grid, QUIAjax, QUILocale, Users) {
+], function (QUI, QUIControl, QUIConfirm, Grid, QUIAjax, QUILocale, Users) {
     "use strict";
 
     var lg        = 'quiqqer/customer';
@@ -34,6 +35,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
 
         initialize: function (options) {
             this.parent(options);
+
+            this.$permissions = null;
 
             this.addEvents({
                 onInject: this.$onInject
@@ -120,38 +123,121 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
          * event: on inject
          */
         $onInject: function () {
+            this.resize();
+            this.refresh();
+        },
+
+        /**
+         * refresh the list
+         */
+        refresh: function () {
             var self = this;
 
-            this.resize();
-
-            QUIAjax.get('package_quiqqer_customer_ajax_backend_files_getList', function (list) {
-                for (var i = 0, len = list.length; i < len; i++) {
-                    list[i].icon_node = new Element('img', {
-                        src   : list[i].icon,
-                        styles: {
-                            margin: '5px 0'
-                        }
-                    });
+            this.getPermissions().then(function (permissions) {
+                if (permissions.fileUpload) {
+                    self.$Grid.getButton('upload').enable();
                 }
 
-                self.$Grid.setData({
-                    data: list
-                });
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_files_getList', function (list) {
+                    for (var i = 0, len = list.length; i < len; i++) {
+                        list[i].icon_node = new Element('img', {
+                            src   : list[i].icon,
+                            styles: {
+                                margin: '5px 0'
+                            }
+                        });
+                    }
 
-                self.fireEvent('load');
-            }, {
-                'package' : 'quiqqer/customer',
-                customerId: self.getAttribute('userId')
+                    self.$Grid.setData({
+                        data: list
+                    });
+
+                    self.fireEvent('load');
+                }, {
+                    'package' : 'quiqqer/customer',
+                    customerId: self.getAttribute('userId')
+                });
             });
         },
 
         /**
-         * @todo
+         * Return the file permissions
+         *
+         * @return {Promise}
          */
-        openUpload: function () {
+        getPermissions: function () {
+            var self = this;
 
+            if (self.$permissions !== null) {
+                return Promise.resolve(self.$permissions);
+            }
+
+            return new Promise(function (resolve) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_files_getPermissions', function (permissions) {
+                    self.$permissions = permissions;
+                    resolve(self.$permissions);
+                }, {
+                    package: 'quiqqer/customer'
+                });
+            });
         },
 
+        /**
+         * Open Upload Window
+         */
+        openUpload: function () {
+            var self = this;
+
+            new QUIConfirm({
+                title    : QUILocale.get(lg, 'window.customer.upload.title'),
+                maxWidth : 600,
+                maxHeight: 400,
+                autoclose: false,
+                events   : {
+                    onOpen: function (Win) {
+                        Win.getContent().set('html', '');
+                        Win.Loader.show();
+
+                        require(['controls/upload/Form'], function (Form) {
+                            self.$Form = new Form({
+                                pauseAllowed: false,
+                                contextMenu : false,
+                                events      : {
+                                    onBegin: function () {
+                                        Win.Loader.show();
+                                    },
+
+                                    onComplete: function () {
+                                        self.refresh();
+                                        Win.close();
+                                    },
+
+                                    onDragenter: function (event) {
+                                        event.stop();
+                                    }
+                                }
+                            }).inject(Win.getContent());
+
+                            self.$Form.setParam('onfinish', 'package_quiqqer_customer_ajax_backend_files_upload');
+                            self.$Form.setParam('package', 'quiqqer/customer');
+                            self.$Form.setParam('customerId', self.getAttribute('userId'));
+
+                            Win.Loader.hide();
+                        });
+                    },
+
+                    onSubmit: function () {
+                        if (self.$Form.getFiles().length) {
+                            self.$Form.submit();
+                        }
+                    }
+                }
+            }).open();
+        },
+
+        /**
+         *
+         */
         openDeleteDialog: function () {
 
         }

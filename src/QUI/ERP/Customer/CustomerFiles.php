@@ -131,4 +131,38 @@ class CustomerFiles
             }
         }
     }
+
+    /**
+     * Add a file to the customer
+     *
+     * @param $customerId
+     * @param $file
+     *
+     * @throws QUI\Exception
+     * @throws QUI\Permissions\Exception
+     */
+    public static function addFileToCustomer($customerId, $file)
+    {
+        Permission::checkPermission('quiqqer.customer.fileUpload');
+
+        if (!\file_exists($file)) {
+            throw new QUI\Exception('File not found', 404);
+        }
+
+        try {
+            $Customer = QUI::getUsers()->get($customerId);
+            $fileInfo = QUI\Utils\System\File::getInfo($file);
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addDebug($Exception->getMessage());
+
+            return;
+        }
+
+        $customerDir = self::getFolderPath($Customer);
+
+        rename(
+            $file,
+            $customerDir.DIRECTORY_SEPARATOR.$fileInfo['basename']
+        );
+    }
 }
