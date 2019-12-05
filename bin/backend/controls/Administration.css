@@ -24,7 +24,9 @@
 }
 
 .quiqqer-customer-administration-search [name="filter"] {
-    margin-right: 10px;
+    display: inline-block;
+    float: initial;
+    margin-left: 10px;
 }
 
 .quiqqer-customer-administration-search [name="search"] {
