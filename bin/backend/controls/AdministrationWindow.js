@@ -62,15 +62,23 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
                     },
 
                     onCustomerOpen: function () {
-                        console.log('onCustomerOpen');
+                        self.$Title.getElement('[name="close"]').setStyle('display', 'none');
+
+                        new Element('button', {
+                            'class': 'fa fa-angle-double-left qui-window-popup-title-close',
+                            name   : 'show-list',
+                            events : {
+                                click: function () {
+                                    self.$Title.getElement('[name="show-list"]').destroy();
+                                    self.$Title.getElement('[name="close"]').setStyle('display', null);
+                                    self.$Admin.closeCustomer();
+                                }
+                            }
+                        }).inject(self.$Title);
                     },
 
                     onCustomerOpenEnd: function () {
                         self.Loader.hide();
-                    },
-
-                    onListOpen: function () {
-
                     }
                 }
             });
@@ -84,7 +92,7 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
          */
         submit: function () {
             var ids = this.$Admin.getSelectedCustomerIds();
-console.log(ids);
+
             if (!ids.length) {
                 return;
             }

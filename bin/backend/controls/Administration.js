@@ -610,6 +610,25 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             });
         },
 
+        closeCustomer: function () {
+            if (!this.$CustomerPanel) {
+                return;
+            }
+
+            var self      = this,
+                Container = this.$CustomerPanel.getElm().getParent();
+
+            moofx(Container).animate({
+                left   : 50,
+                opacity: 0
+            }, {
+                callback: function () {
+                    self.$CustomerPanel = null;
+                    Container.destroy();
+                }
+            });
+        },
+
         /**
          * event: on dbl click at grid
          *
