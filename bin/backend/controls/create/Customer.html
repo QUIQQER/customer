@@ -1,0 +1,158 @@
+<form class="quiqqer-customer-create-container">
+    <ul>
+        <li>
+            <section class="quiqqer-customer-create-customerNo">
+                <h1>{{customerNoHeader}}</h1>
+                {{{customerNoText}}}
+
+                <label>
+                    <span>{{customerNoInputHeader}}</span>
+                    <input type="text" name="customerId"/>
+                </label>
+            </section>
+        </li>
+        <li>
+            <section class="quiqqer-customer-create-customerData">
+                <div class="quiqqer-customer-create-customerData-container">
+                    <h1>{{customerDataHeader}}</h1>
+                    {{{customerDataText}}}
+
+                    <table class="data-table data-table-flexbox">
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressCompany}}
+                                </span>
+                                    <input type="text" name="address-company" value="" class="field-container-field">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressSalutation}}
+                                </span>
+                                    <input type="text" name="address-salutation" value="" class="field-container-field">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressFirstname}}
+                                </span>
+                                    <input type="text" name="address-firstname" value="" class="field-container-field">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressLastname}}
+                                </span>
+                                    <input type="text" name="address-lastname" value="" class="field-container-field">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressStreet}}
+                                </span>
+                                    <input type="text" name="address-street_no" value="" class="field-container-field">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressZIP}}
+                                </span>
+                                    <input type="text" name="address-zip" value="" class="field-container-field">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressCity}}
+                                </span>
+                                    <input type="text" name="address-city" value="" class="field-container-field">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressCountry}}
+                                </span>
+                                    <select type="text" name="address-country" class="field-container-field">
+                                        <option value=""></option>
+                                    </select>
+                                </label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+        </li>
+        <li>
+            <section class="quiqqer-customer-create-customerGroups">
+                <div class="quiqqer-customer-create-customerGroups-container">
+                    <h1>{{customerGroupsHeader}}</h1>
+                    {{{customerGroupsText}}}
+
+                    <table class="data-table data-table-flexbox">
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                    <span class="field-container-item">
+                                        {{textGroup}}
+                                    </span>
+                                    <input type="text"
+                                           name="group"
+                                           value=""
+                                           class="field-container-field"
+                                           data-qui="controls/groups/Select"
+                                           data-qui-options-max="1"
+                                    />
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                    <span class="field-container-item">
+                                        {{textGroups}}
+                                    </span>
+                                    <input type="text"
+                                           name="groups"
+                                           value=""
+                                           class="field-container-field"
+                                           data-qui="controls/groups/Select"
+                                    />
+                                </label>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </section>
+        </li>
+    </ul>
+</form>
+<div class="quiqqer-customer-create-button">
+    <button class="qui-button" name="previous">
+        {{previousButton}}
+    </button>
+    <button class="qui-button" name="next">
+        {{nextButton}}
+    </button>
+</div>

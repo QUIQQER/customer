@@ -28,7 +28,8 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationPanel', [
 
             this.setAttributes({
                 title: QUILocale.get(lg, 'panel.title'),
-                icon : 'fa fa-user-o'
+                icon : 'fa fa-user-o',
+                name : 'customer-administration'
             });
 
             this.addEvents({

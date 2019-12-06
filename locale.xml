@@ -40,6 +40,16 @@
             <de><![CDATA[Kundengruppe existiert nicht.]]></de>
             <en><![CDATA[Customer group does not exist.]]></en>
         </locale>
+
+        <locale name="customerId">
+            <de><![CDATA[Kunden-Nr]]></de>
+            <en><![CDATA[Customer no.]]></en>
+        </locale>
+
+        <locale name="message.customer.password.mail.send">
+            <de><![CDATA[Die E-Mail wurde erfolgreich an den Kunden gesendet.]]></de>
+            <en><![CDATA[The e-mail was successfully sent to the customer.]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/customer" datatype="php">
@@ -55,6 +65,19 @@
             <de><![CDATA[Kunden]]></de>
             <en><![CDATA[Customer]]></en>
         </locale>
+
+        <locale name="customer.settings.customerLogin">
+            <de><![CDATA[Kundenlogin]]></de>
+            <en><![CDATA[Customer login]]></en>
+        </locale>
+        <locale name="customer.settings.customerLogin.description">
+            <de><![CDATA[
+            Kunden dürfen sich am System anmelden. Wenn der Kunde aktiv ist, kann er sich somit am System einloggen.
+            ]]></de>
+            <en><![CDATA[
+            Customers may log on to the system. If the customer is active, he or she can log on to the system.
+            ]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/customer" datatype="js">
@@ -62,10 +85,118 @@
             <de><![CDATA[Neuen Kunden anlegen]]></de>
             <en><![CDATA[Create new customer]]></en>
         </locale>
-        <locale name="window.customer.creation.button.submit">
+        <locale name="window.customer.creation.next">
+            <de><![CDATA[Weiter]]></de>
+            <en><![CDATA[Next]]></en>
+        </locale>
+        <locale name="window.customer.creation.prev">
+            <de><![CDATA[Zurück]]></de>
+            <en><![CDATA[Previous]]></en>
+        </locale>
+        <locale name="window.customer.creation.next">
+            <de><![CDATA[Kunden]]></de>
+            <en><![CDATA[Next]]></en>
+        </locale>
+        <locale name="window.customer.creation.submit">
             <de><![CDATA[Kunden anlegen]]></de>
             <en><![CDATA[Create customer]]></en>
         </locale>
+
+        <locale name="window.customer.upload.title">
+            <de><![CDATA[Datei hochladen]]></de>
+            <en><![CDATA[Upload file]]></en>
+        </locale>
+        <locale name="window.customer.delete.title">
+            <de><![CDATA[Datei löschen]]></de>
+            <en><![CDATA[Delete file]]></en>
+        </locale>
+        <locale name="window.customer.delete.text">
+            <de><![CDATA[Möchtest Du wirklich Kunden Dateien löschen?]]></de>
+            <en><![CDATA[Do you really want to delete customer files?]]></en>
+        </locale>
+        <locale name="window.customer.delete.information">
+            <de><![CDATA[Folgende Datei werden unwiederruflich gelöscht:]]></de>
+            <en><![CDATA[The following file is irrevocably deleted:]]></en>
+        </locale>
+
+        <locale name="window.customer.creation.customerNo.title">
+            <de><![CDATA[Neuen Kunden anlegen]]></de>
+            <en><![CDATA[Create new customer]]></en>
+        </locale>
+        <locale name="window.customer.creation.customerNo.inputLabel">
+            <de><![CDATA[Kundennummer]]></de>
+            <en><![CDATA[Customer number]]></en>
+        </locale>
+        <locale name="window.customer.creation.customerNo.text" html="true">
+            <de><![CDATA[
+            Bitte lege eine Kundennummer für den neuen Kunden fest.<br />
+            Diese Kundennummer ist später immer noch änderbar.
+            ]]></de>
+            <en><![CDATA[
+            Please specify a customer number for the new customer.<br />
+            This customer number can still be changed later.
+            ]]></en>
+        </locale>
+
+        <locale name="window.customer.creation.dataHeader.title">
+            <de><![CDATA[Kunden Daten]]></de>
+            <en><![CDATA[Customer data]]></en>
+        </locale>
+        <locale name="window.customer.creation.dataHeader.text" html="true">
+            <de><![CDATA[
+            Alle Daten des Kunden können auch später geändert werden.
+            ]]></de>
+            <en><![CDATA[
+            All customer data can also be changed later.
+            ]]></en>
+        </locale>
+
+        <locale name="window.customer.creation.groups.title">
+            <de><![CDATA[Kundengruppen]]></de>
+            <en><![CDATA[Customer group]]></en>
+        </locale>
+        <locale name="window.customer.creation.groups.text" html="true">
+            <de><![CDATA[
+            Einem Kunden können mehrere Kundengruppen zugeordnet werden.
+            Der Kunde wird jedoch automatisch in die Haupt-Kundengruppen hinzugefügt.
+            ]]></de>
+            <en><![CDATA[
+            Several customer groups can be assigned to one customer.
+            However, the customer is automatically added to the main customer groups.
+            ]]></en>
+        </locale>
+
+        <locale name="window.customer.creation.next">
+            <de><![CDATA[Weiter]]></de>
+            <en><![CDATA[Next]]></en>
+        </locale>
+        <locale name="window.customer.creation.previous">
+            <de><![CDATA[Zurück]]></de>
+            <en><![CDATA[Previous]]></en>
+        </locale>
+        <locale name="window.customer.creation.create">
+            <de><![CDATA[Kunde anlegen]]></de>
+            <en><![CDATA[Create customer]]></en>
+        </locale>
+        <locale name="window.customer.creation.group">
+            <de><![CDATA[Kundengruppe]]></de>
+            <en><![CDATA[Customer group]]></en>
+        </locale>
+        <locale name="window.customer.creation.groups">
+            <de><![CDATA[Nutzergruppen]]></de>
+            <en><![CDATA[User groups]]></en>
+        </locale>
+
+        <locale name="window.customer.select.title">
+            <de><![CDATA[Kundenauwahl]]></de>
+            <en><![CDATA[Customer selection]]></en>
+        </locale>
+        <locale name="window.customer.select.button">
+            <de><![CDATA[Kunden übernehmen]]></de>
+            <en><![CDATA[Select customer]]></en>
+        </locale>
+
+
         <locale name="panel.title">
             <de><![CDATA[Kunden]]></de>
             <en><![CDATA[Customer]]></en>
@@ -103,8 +234,8 @@
         </locale>
 
         <locale name="customer.panel.title">
-            <de><![CDATA[Benutzer / Kunde: [user] - [username]]]></de>
-            <en><![CDATA[User / Customer: [user] - [username]]]></en>
+            <de><![CDATA[Kunde: [data]]]></de>
+            <en><![CDATA[Customer: [data]]]></en>
         </locale>
         <locale name="customer.panel,information.details">
             <de><![CDATA[Details]]></de>
@@ -126,34 +257,109 @@
             <de><![CDATA[Lieferadresse]]></de>
             <en><![CDATA[Delivery address]]></en>
         </locale>
+        <locale name="customer.panel,information.countryZipCity">
+            <de><![CDATA[Land / Plz / Ort]]></de>
+            <en><![CDATA[Country / Zip / City]]></en>
+        </locale>
+        <locale name="customer.panel,information.allocation">
+            <de><![CDATA[Zuweisung]]></de>
+            <en><![CDATA[Allocation]]></en>
+        </locale>
+        <locale name="customer.panel,information.group">
+            <de><![CDATA[Hauptgruppe]]></de>
+            <en><![CDATA[Main group]]></en>
+        </locale>
+        <locale name="customer.panel,information.groups">
+            <de><![CDATA[Gruppen]]></de>
+            <en><![CDATA[Groups]]></en>
+        </locale>
+        <locale name="customer.panel,information.communication">
+            <de><![CDATA[Kommunikation]]></de>
+            <en><![CDATA[Communication]]></en>
+        </locale>
+        <locale name="customer.panel,information.extra">
+            <de><![CDATA[Extra]]></de>
+            <en><![CDATA[Extra]]></en>
+        </locale>
+        <locale name="customer.panel,information.extra.homepage">
+            <de><![CDATA[Webseite]]></de>
+            <en><![CDATA[Homepage]]></en>
+        </locale>
+        <locale name="customer.panel,information.paymentTerm">
+            <de><![CDATA[Standard Zahlungsziel]]></de>
+            <en><![CDATA[Default term of payment]]></en>
+        </locale>
+
+        <locale name="customer.panel,information.comments">
+            <de><![CDATA[Kommentare]]></de>
+            <en><![CDATA[Comments]]></en>
+        </locale>
+        <locale name="customer.panel,information.standard.payments">
+            <de><![CDATA[Standard Zahlungsweise]]></de>
+            <en><![CDATA[Standard payment]]></en>
+        </locale>
+        <locale name="customer.panel.delivery.address">
+            <de><![CDATA[Versandadresse]]></de>
+            <en><![CDATA[Shipping address]]></en>
+        </locale>
+        <locale name="checkout.panel.delivery.option.same">
+            <de><![CDATA[Gleiche Adresse wie Rechnungsadresse]]></de>
+            <en><![CDATA[Same address as billing address]]></en>
+        </locale>
 
         <locale name="address.edit.window.title">
             <de><![CDATA[Adresse #[id] von [firstname] [lastname] bearbeiten]]></de>
             <en><![CDATA[Edit address #[id] from [firstname] [lastname]]]></en>
         </locale>
 
-        <locale name="customer.window.create.title">
-            <de><![CDATA[Neuen Kunden anlegen]]></de>
-            <en><![CDATA[Create new customer]]></en>
+        <locale name="customer.window.delete.title">
+            <de><![CDATA[Kunde löschen]]></de>
+            <en><![CDATA[Delete customer]]></en>
         </locale>
-        <locale name="customer.window.create.button">
-            <de><![CDATA[Kunden anlegen]]></de>
-            <en><![CDATA[Create customer]]></en>
+        <locale name="customer.window.delete.text">
+            <de><![CDATA[Möchtest du den Kunden wirklich löschen?]]></de>
+            <en><![CDATA[Do you really want to delete the customer?]]></en>
         </locale>
-        <locale name="customer.window.create.information" html="true">
+        <locale name="customer.window.delete.information">
             <de><![CDATA[
-            Bitte lege einen Benutzernamen für den neuen Kunden an.
-            Der Benutzer wird direkt der Kundengruppe zugeordnet und kann nach dem Anlegen bearbeitet werden.
+                Der Kunde / Benutzer wird unwiderruflich gelöscht und kann nicht wieder hergestellt werden.
             ]]></de>
             <en><![CDATA[
-            Please create a username for the new customer.
-            The user is assigned directly to the customer group and can be edited after creation.
+            The customer / user is irrevocably deleted and cannot be restored.
             ]]></en>
         </locale>
 
+        <locale name="quiqqer.customer.panel.general">
+            <de><![CDATA[Allgemein]]></de>
+            <en><![CDATA[General]]></en>
+        </locale>
+        <locale name="quiqqer.customer.panel.userInformation">
+            <de><![CDATA[Erweitert]]></de>
+            <en><![CDATA[Extended]]></en>
+        </locale>
+        <locale name="quiqqer.customer.panel.userProperty">
+            <de><![CDATA[Benutzereigenschaften]]></de>
+            <en><![CDATA[User properties]]></en>
+        </locale>
         <locale name="quiqqer.customer.panel.addresses">
-            <de><![CDATA[Adressenverwaltung]]></de>
-            <en><![CDATA[Address management]]></en>
+            <de><![CDATA[Adressen + Ansprechpartner]]></de>
+            <en><![CDATA[Addresses + Contact persons]]></en>
+        </locale>
+        <locale name="quiqqer.customer.panel.comments">
+            <de><![CDATA[Kommentare]]></de>
+            <en><![CDATA[Comments]]></en>
+        </locale>
+        <locale name="quiqqer.customer.panel.openUser">
+            <de><![CDATA[Benutzer direkt öffnen]]></de>
+            <en><![CDATA[Open user directly]]></en>
+        </locale>
+        <locale name="quiqqer.customer.panel.files">
+            <de><![CDATA[Dateien]]></de>
+            <en><![CDATA[Files]]></en>
+        </locale>
+        <locale name="customer.files.upload.button">
+            <de><![CDATA[Upload]]></de>
+            <en><![CDATA[Upload]]></en>
         </locale>
 
         <locale name="customer.address.delete.title">
@@ -175,6 +381,145 @@
             [addressIds]
             The addresses are irrevocably deleted.
             ]]></en>
+        </locale>
+
+        <locale name="customer.user.information.title">
+            <de><![CDATA[Benutzerinformationen]]></de>
+            <en><![CDATA[User information]]></en>
+        </locale>
+        <locale name="customer.user.information.USt">
+            <de><![CDATA[Umsatzsteuer-ID]]></de>
+            <en><![CDATA[VAT ID]]></en>
+        </locale>
+        <locale name="customer.user.information.textBruttoNetto">
+            <de><![CDATA[Preis-Berechnungsgrundlage]]></de>
+            <en><![CDATA[Price calculation basis]]></en>
+        </locale>
+        <locale name="customer.user.information.taxInformation">
+            <de><![CDATA[Steuerinformation]]></de>
+            <en><![CDATA[Tax information]]></en>
+        </locale>
+        <locale name="customer.user.information.discount">
+            <de><![CDATA[Standard Rabatt]]></de>
+            <en><![CDATA[Default discount]]></en>
+        </locale>
+        <locale name="customer.user.information.discount.description">
+            <de><![CDATA[
+            Dieser Rabatt wird im Backend direkt auf Artikel angewendet wenn eine Rechnung angelegt wird.
+            ]]></de>
+            <en><![CDATA[
+            This discount is applied directly to items in the backend when an invoice is created.
+            ]]></en>
+        </locale>
+
+        <locale name="customer.user.information.general">
+            <de><![CDATA[Allgemeine Benutzerinformationen]]></de>
+            <en><![CDATA[General user information]]></en>
+        </locale>
+        <locale name="customer.user.information.textCompanyNo">
+            <de><![CDATA[Unternehmens-Identifikationsnummer]]></de>
+            <en><![CDATA[Company identification number]]></en>
+        </locale>
+
+        <locale name="customer.user.properties.title">
+            <de><![CDATA[Benutzereigenschaften]]></de>
+            <en><![CDATA[User propterties]]></en>
+        </locale>
+        <locale name="customer.user.properties.status">
+            <de><![CDATA[Kann sich anmelden]]></de>
+            <en><![CDATA[Can log in]]></en>
+        </locale>
+        <locale name="customer.user.properties.status.description">
+            <de><![CDATA[Der Kunde wird aktiviert und kann sich somit am System anmelden.]]></de>
+            <en><![CDATA[The customer will be activated and can log in to the system.]]></en>
+        </locale>
+        <locale name="customer.user.properties.password.title">
+            <de><![CDATA[Passwort]]></de>
+            <en><![CDATA[Password]]></en>
+        </locale>
+        <locale name="customer.user.properties.password.1">
+            <de><![CDATA[Neues Passwort]]></de>
+            <en><![CDATA[New password]]></en>
+        </locale>
+        <locale name="customer.user.properties.password.2">
+            <de><![CDATA[Passwort wiederhohlen]]></de>
+            <en><![CDATA[Repeat password]]></en>
+        </locale>
+        <locale name="customer.user.information.discount.passwordMail">
+            <de><![CDATA[Passwort E-Mail]]></de>
+            <en><![CDATA[Password E-mail]]></en>
+        </locale>
+        <locale name="customer.user.information.discount.passwordMail.button">
+            <de><![CDATA[Passwort zurück setzen E-Mail an Kunde senden]]></de>
+            <en><![CDATA[Reset password Send e-mail to customer]]></en>
+        </locale>
+
+        <locale name="password.mail.window.title">
+            <de><![CDATA[Passwort zurücksetzen E-Mail]]></de>
+            <en><![CDATA[Reset password E-mail]]></en>
+        </locale>
+        <locale name="password.mail.window.text">
+            <de><![CDATA[Passwort zurücksetzen E-Mail]]></de>
+            <en><![CDATA[Reset password E-mail]]></en>
+        </locale>
+        <locale name="password.mail.window.information">
+            <de><![CDATA[
+            Dem Kunde wird eine Passwort zurücksetzen E-Mail gesendet. Somit ist es dem Kunden möglich ein eigenes Passwort zu wählen.
+            Das aktuelle Passwort hat somit keine Gültigkeit mehr.
+            ]]></de>
+            <en><![CDATA[
+            The customer will get a password reset email. Thus it is possible for the customer to choose his own password.
+            The current password is no longer valid.
+            ]]></en>
+        </locale>
+        <locale name="password.mail.window.submit">
+            <de><![CDATA[E-Mail senden]]></de>
+            <en><![CDATA[Send E-mail]]></en>
+        </locale>
+
+        <locale name="message.customer.cant.log.in">
+            <de><![CDATA[
+            Das System ist so eingestellt das Kunden sich nicht am System anmelden können.
+            Daher kann der Status eines Kunde und das Login Passwort nicht geändert werden.
+            ]]></de>
+            <en><![CDATA[
+            The system is configured that customers cannot log in to the system.
+            Therefore the status of a customer and the login password cannot be changed.
+            ]]></en>
+        </locale>
+
+        <locale name="message.passwords.incorrect">
+            <de><![CDATA[
+            Beide Passwörter sind nicht identisch.
+            Solange beide Passwörter nicht identisch sind, wird das Passwort nicht übernommen.
+            ]]></de>
+            <en><![CDATA[
+            Both passwords are not identical.
+            As long as both passwords are not identical, the password will not be adopted.
+            ]]></en>
+        </locale>
+
+        <locale name="customer.user.information.info">
+            <de><![CDATA[Kunden Systeminformationen]]></de>
+            <en><![CDATA[Customer System Information]]></en>
+        </locale>
+
+        <locale name="window.add.comment.title">
+            <de><![CDATA[Kommentar hinzufügen]]></de>
+            <en><![CDATA[Add comment]]></en>
+        </locale>
+        <locale name="window.add.comment.button.text">
+            <de><![CDATA[Kommentar hinzufügen]]></de>
+            <en><![CDATA[Add comment]]></en>
+        </locale>
+        <locale name="window.edit.comment.title">
+            <de><![CDATA[Kommentar editieren]]></de>
+            <en><![CDATA[Edit comment]]></en>
+        </locale>
+
+        <locale name="control.users.select.search.field.placeholder">
+            <de><![CDATA[Kunden suchen ...]]></de>
+            <en><![CDATA[Search customer ...]]></en>
         </locale>
     </groups>
 

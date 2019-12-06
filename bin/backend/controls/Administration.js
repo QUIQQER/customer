@@ -1,6 +1,11 @@
 /**
  * @module package/quiqqer/customer/bin/backend/controls/Administration
  * @author www.pcsg.de (Henning Leutz)
+ *
+ * @event customerOpenBegin [self, userId]
+ * @event onCustomerOpen [self, userId, Panel]
+ * @event onCustomerOpenEnd [self, userId, Panel]
+ * @event onListOpen [self]
  */
 define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
@@ -10,6 +15,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
     'qui/controls/contextmenu/Menu',
     'qui/controls/contextmenu/Item',
     'qui/controls/windows/Prompt',
+    'qui/controls/windows/Confirm',
+
     'package/quiqqer/customer/bin/backend/Handler',
     'controls/grid/Grid',
     'Mustache',
@@ -21,8 +28,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
     'text!package/quiqqer/customer/bin/backend/controls/Administration.html',
     'css!package/quiqqer/customer/bin/backend/controls/Administration.css'
 
-], function (QUI, QUIControl, QUISwitch, ContextMenu, ContextMenuItem, QUIPrompt, CustomerHandler,
-             Grid, Mustache, QUILocale, QUIAjax, Users, Permissions, template) {
+], function (QUI, QUIControl, QUISwitch, ContextMenu, ContextMenuItem, QUIPrompt, QUIConfirm,
+             CustomerHandler, Grid, Mustache, QUILocale, QUIAjax, Users, Permissions, template) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -39,8 +46,11 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             '$onUserChange',
             '$editComplete',
             '$gridDblClick',
+            '$gridClick',
             'refresh',
-            'toggleFilter'
+            'toggleFilter',
+            'openDeleteWindow',
+            'openAddWindow'
         ],
 
         options: {
@@ -56,9 +66,9 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             this.$SearchContainer = null;
             this.$SearchInput     = null;
             this.$FilterButton    = null;
-            this.$AddButton       = null;
             this.$customerGroup   = null;
 
+            this.$CustomerPanel = null;
             this.$GroupSwitch   = null;
             this.$GridContainer = null;
             this.$Grid          = null;
@@ -93,23 +103,32 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             this.$SearchContainer = this.$Elm.getElement('.quiqqer-customer-administration-search');
             this.$GridContainer   = this.$Elm.getElement('.quiqqer-customer-administration-grid');
             this.$SearchInput     = this.$Elm.getElement('[name="search"]');
+            this.$SubmitButton    = this.$Elm.getElement('[name="submit"]');
             this.$FilterButton    = this.$Elm.getElement('button[name="filter"]');
-            this.$AddButton       = this.$Elm.getElement('button[name="add"]');
 
             this.$SearchContainer.getElement('form').addEvent('submit', function (event) {
                 event.stop();
+            });
+
+            this.$SubmitButton.addEvent('click', function () {
                 self.refresh();
+            });
+
+            this.$SearchInput.addEvent('keydown', function (event) {
+                if (event.key === 'enter') {
+                    event.stop();
+                }
+            });
+
+            this.$SearchInput.addEvent('keyup', function (event) {
+                if (event.key === 'enter') {
+                    self.refresh();
+                }
             });
 
             this.$FilterButton.addEvent('click', function (event) {
                 event.stop();
                 self.toggleFilter();
-            });
-
-            this.$AddButton.set('title', QUILocale.get(lg, 'customer.window.create.title'));
-            this.$AddButton.addEvent('click', function (event) {
-                event.stop();
-                self.openAddWindow();
             });
 
             if (!this.getAttribute('add')) {
@@ -133,14 +152,34 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             this.$Container.inject(this.$GridContainer);
 
             this.$Grid = new Grid(this.$Container, {
+                buttons: [{
+                    name     : 'add',
+                    textimage: 'fa fa-plus',
+                    text     : QUILocale.get(lg, 'customer.window.create.title'),
+                    events   : {
+                        onClick: self.openAddWindow
+                    }
+                }, {
+                    name     : 'delete',
+                    textimage: 'fa fa-trash',
+                    text     : QUILocale.get(lg, 'customer.window.delete.title'),
+                    disabled : true,
+                    styles   : {
+                        'float': 'right'
+                    },
+                    events   : {
+                        onClick: self.openDeleteWindow
+                    }
+                }],
+
                 columnModel      : [{
                     header   : QUILocale.get('quiqqer/quiqqer', 'status'),
                     dataIndex: 'status',
                     dataType : 'QUI',
                     width    : 60
                 }, {
-                    header   : QUILocale.get('quiqqer/quiqqer', 'user_id'),
-                    dataIndex: 'id',
+                    header   : QUILocale.get(lg, 'customerId'),
+                    dataIndex: 'customerId',
                     dataType : 'integer',
                     width    : 100
                 }, {
@@ -206,7 +245,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             // Events
             this.$Grid.addEvents({
-                // onClick   : this.$gridClick,
+                onClick     : this.$gridClick,
                 onDblClick  : this.$gridDblClick,
                 // onBlur    : this.$gridBlur,
                 editComplete: this.$editComplete,
@@ -230,6 +269,15 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     self.$Grid.enable();
                 });
             });
+        },
+
+        /**
+         * Is the administration in a qui window?
+         *
+         * @return {boolean}
+         */
+        isInWindow: function () {
+            return !!this.getElm().getParent('.qui-window-popup');
         },
 
         /**
@@ -280,6 +328,30 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 onRefresh     : this.$onUserRefresh,
                 onSave        : this.$onUserRefresh
             });
+        },
+
+        /**
+         * return all selected customer ids
+         *
+         * @return {Array}
+         */
+        getSelectedCustomerIds: function () {
+            if (this.$CustomerPanel) {
+                return [this.$CustomerPanel.getAttribute('userId')];
+            }
+
+            return this.$Grid.getSelectedData().map(function (entry) {
+                return parseInt(entry.id);
+            });
+        },
+
+        /**
+         * return all selected customer
+         *
+         * @return {Array}
+         */
+        getSelectedCustomer: function () {
+            return this.$Grid.getSelectedData();
         },
 
         /**
@@ -491,15 +563,72 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 return;
             }
 
+            var self = this;
+
+            this.fireEvent('customerOpenBegin', [this, userId]);
+
             require([
                 'package/quiqqer/customer/bin/backend/controls/customer/Panel',
                 'utils/Panels'
             ], function (Panel, PanelUtils) {
+                if (self.isInWindow()) {
+                    var Container = new Element('div', {
+                        'class': 'quiqqer-customer-administration-customer',
+                        styles : {
+                            left   : -50,
+                            opacity: 0
+                        }
+                    }).inject(self.getElm());
+
+                    self.$CustomerPanel = new Panel({
+                        header          : false,
+                        userId          : userId,
+                        showUserButton  : false,
+                        showDeleteButton: false
+                    }).inject(Container);
+
+                    self.fireEvent('customerOpen', [this, userId, self.$CustomerPanel]);
+
+                    moofx(Container).animate({
+                        left   : 0,
+                        opacity: 1
+                    }, {
+                        callback: function () {
+                            self.$CustomerPanel.fireEvent('show');
+                            self.fireEvent('customerOpenEnd', [this, userId, self.$CustomerPanel]);
+                        }
+                    });
+
+                    return;
+                }
+
                 PanelUtils.openPanelInTasks(
                     new Panel({
                         userId: userId
                     })
                 );
+            });
+        },
+
+        /**
+         * Close the customer panel, if a customer panel exist
+         */
+        closeCustomer: function () {
+            if (!this.$CustomerPanel) {
+                return;
+            }
+
+            var self      = this,
+                Container = this.$CustomerPanel.getElm().getParent();
+
+            moofx(Container).animate({
+                left   : 50,
+                opacity: 0
+            }, {
+                callback: function () {
+                    self.$CustomerPanel = null;
+                    Container.destroy();
+                }
             });
         },
 
@@ -515,7 +644,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             var rowData = this.$Grid.getDataByRow(data.row);
 
-            if (data.cell.get('data-index') === 'id') {
+            if (data.cell.get('data-index') === 'customerId') {
                 this.$openCustomer(rowData.id);
                 return;
             }
@@ -593,76 +722,67 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
         },
 
         /**
+         * event: on grid click
+         */
+        $gridClick: function () {
+            var selected = this.$Grid.getSelectedData();
+            var Delete   = this.$Grid.getButtons().filter(function (Btn) {
+                return Btn.getAttribute('name') === 'delete';
+            })[0];
+
+            Delete.disable();
+
+            if (selected.length === 1) {
+                Delete.enable();
+            }
+        },
+
+        /**
          * opens the add customer window
          */
         openAddWindow: function () {
             var self = this;
 
-            new QUIPrompt({
-                name       : 'CreateUser',
-                title      : QUILocale.get(lg, 'customer.window.create.title'),
-                icon       : 'fa fa-user',
-                titleicon  : false,
-                information: QUILocale.get(lg, 'customer.window.create.information'),
-                ok_button  : {
-                    text     : QUILocale.get(lg, 'customer.window.create.button'),
-                    textimage: 'fa fa-check'
-                },
-                maxWidth   : 600,
-                maxHeight  : 300,
-
-                check: function (Win) {
-                    Win.Loader.show();
-
-                    Users.existsUsername(Win.getValue(), function (result) {
-                        // Benutzer existiert schon
-                        if (result === true) {
-                            QUI.getMessageHandler(function (MH) {
-                                MH.addAttention(
-                                    QUILocale.get('quiqqer/quiqqer', 'exception.create.user.exists')
-                                );
-                            });
-
-                            Win.Loader.hide();
-                            return;
+            require([
+                'package/quiqqer/customer/bin/backend/controls/create/CustomerWindow'
+            ], function (CustomerWindow) {
+                new CustomerWindow({
+                    events: {
+                        onSubmit: function (Instance, customerId) {
+                            self.refresh();
+                            self.$openCustomer(customerId);
                         }
+                    }
+                }).open();
+            });
+        },
 
-                        Win.fireEvent('onUserCreated', [Win.getValue(), Win]);
-                        Win.close();
-                    });
+        /**
+         * opens the customer delete window
+         */
+        openDeleteWindow: function () {
+            var self = this;
 
-                    return false;
-                },
-
-                events: {
-                    onOpen: function (Win) {
-                        Win.getContent()
-                           .getElement('.qui-windows-prompt-information')
-                           .setStyle('paddingBottom', 20);
-
+            new QUIConfirm({
+                title      : QUILocale.get(lg, 'customer.window.delete.title'),
+                text       : QUILocale.get(lg, 'customer.window.delete.text'),
+                information: QUILocale.get(lg, 'customer.window.delete.information'),
+                icon       : 'fa fa-trash',
+                texticon   : 'fa fa-trash',
+                maxHeight  : 400,
+                maxWidth   : 600,
+                autoclose  : false,
+                events     : {
+                    onSubmit: function (Win) {
                         Win.Loader.show();
 
-                        Permissions.hasPermission('quiqqer.admin.users.create').then(function (hasPermission) {
-                            if (!hasPermission) {
-                                QUI.getMessageHandler().then(function (MH) {
-                                    MH.addError(
-                                        QUILocale.get('quiqqer/system', 'exception.no.permission')
-                                    );
-                                });
-
-                                Win.close();
-                            }
-
-                            Win.Loader.hide();
+                        var selected = self.$Grid.getSelectedData().map(function (entry) {
+                            return entry.id;
                         });
-                    },
 
-                    onUserCreated: function (value) {
-                        Users.createUser(value, function (userId) {
-                            CustomerHandler.addToCustomer(userId).then(function () {
-                                self.$openCustomer(userId);
-                                self.refresh();
-                            });
+                        Users.deleteUsers(selected).then(function () {
+                            Win.close();
+                            self.refresh();
                         });
                     }
                 }
@@ -749,6 +869,6 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             });
         }
 
-        //enregion
+        //endregion
     });
 });

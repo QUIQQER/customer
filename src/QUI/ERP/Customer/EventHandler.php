@@ -8,6 +8,7 @@ namespace QUI\ERP\Customer;
 
 use QUI;
 use QUI\Package\Package;
+use QUI\Users\Manager;
 
 /**
  * Class EventHandler
@@ -159,5 +160,73 @@ class EventHandler
         QUI\Cache\Manager::set($cache, $attributes);
 
         return $attributes;
+    }
+
+    /**
+     * @param QUI\Users\User $User
+     */
+    public static function onUserSaveEnd(QUI\Users\User $User)
+    {
+        $attributes = $User->getAttributes();
+        $data       = [];
+
+        if (isset($attributes['mainGroup'])) {
+            try {
+                $mainGroup = (int)$attributes['mainGroup'];
+                QUI::getGroups()->get($mainGroup);
+
+                $data['mainGroup'] = $mainGroup;
+            } catch (QUI\Exception $Exception) {
+                QUI\System\Log::addDebug($Exception->getMessage());
+            }
+        }
+
+        if (isset($attributes['customerId'])) {
+            $data['customerId'] = $attributes['customerId'];
+        }
+
+        // comments
+        if ($User->getAttribute('comments')) {
+            $comments = $User->getAttribute('comments');
+            $json     = \json_decode($comments, true);
+
+            if (\is_array($json)) {
+                $data['comments'] = $comments;
+            }
+        }
+
+        // saving
+        try {
+            QUI::getDataBase()->update(
+                Manager::table(),
+                $data,
+                ['id' => $User->getId()]
+            );
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addDebug($Exception->getMessage());
+        }
+    }
+
+    /**
+     * event handling for onQuiqqerOrderCustomerDataSaveEnd
+     * - set the user to the customer group
+     *
+     * @param QUI\ERP\Order\Controls\OrderProcess\CustomerData $Step
+     */
+    public static function onQuiqqerOrderCustomerDataSaveEnd(
+        QUI\ERP\Order\Controls\OrderProcess\CustomerData $Step
+    ) {
+        $Order    = $Step->getOrder();
+        $Customer = $Order->getCustomer();
+
+        try {
+            $User = QUI::getUsers()->get($Customer->getId());
+
+            QUI\ERP\Customer\Customers::getInstance()->addUserToCustomerGroup(
+                $User->getId()
+            );
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addDebug($Exception->getMessage());
+        }
     }
 }

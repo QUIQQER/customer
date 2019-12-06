@@ -8,19 +8,26 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'qui/controls/desktop/Panel',
     'qui/controls/buttons/ButtonSwitch',
     'qui/controls/windows/Confirm',
+    'package/quiqqer/countries/bin/Countries',
+    'package/quiqqer/payments/bin/backend/Payments',
     'qui/utils/Form',
     'Users',
     'Locale',
     'Ajax',
+    'Packages',
     'Mustache',
 
     'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.Information.html',
     'css!package/quiqqer/customer/bin/backend/controls/customer/Panel.css'
 
-], function (QUI, QUIPanel, QUIButtonSwitch, QUIConfirm, FormUtils, Users, QUILocale, QUIAjax, Mustache, templateInformation) {
+], function (QUI, QUIPanel, QUIButtonSwitch, QUIConfirm, Countries, Payments,
+             FormUtils, Users, QUILocale, QUIAjax, Packages, Mustache, templateInformation) {
     "use strict";
 
     var lg = 'quiqqer/customer';
+
+    var paymentsInstalled = false;
+    var shippingInstalled = false;
 
     return new Class({
 
@@ -33,22 +40,26 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             '$onShow',
             '$onSaveClick',
             '$onDeleteClick',
-            '$onStatusChangeClick',
             '$clickEditAddress',
             '$openCategory',
             '$openAddressManagement',
             '$onUserDelete',
-            '$onUserRefresh',
-            '$onCustomerCategoryActive'
+            '$onCustomerCategoryActive',
+            'openUser',
+            'deliveryAddressToggle'
         ],
 
         options: {
-            icon  : 'fa fa-user',
-            userId: false
+            icon            : 'fa fa-user',
+            userId          : false,
+            showUserButton  : true,
+            showDeleteButton: true
         },
 
         initialize: function (parent) {
             this.parent(parent);
+
+            this.setAttribute('#id', 'customer-panel-' + this.getAttribute('userId'));
 
             this.$User               = null;
             this.$userInitAttributes = null;
@@ -60,7 +71,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             });
 
             Users.addEvent('onDelete', this.$onUserDelete);
-            Users.addEvent('onSwitchStatus', this.$onUserRefresh);
         },
 
         /**
@@ -68,7 +78,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * remove the binded events
          */
         $onDestroy: function () {
-            Users.removeEvent('switchStatus', this.$onUserRefresh);
             Users.removeEvent('delete', this.$onUserDelete);
         },
 
@@ -92,10 +101,33 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.Loader.show();
             this.$categoryUnload();
 
-            return this.$User.save().then(function () {
+            return new Promise(function (resolve) {
+                QUIAjax.post('package_quiqqer_customer_ajax_backend_customer_save', resolve, {
+                    'package': 'quiqqer/customer',
+                    userId   : self.$User.getId(),
+                    data     : JSON.encode(self.$User.getAttributes()),
+                    onError  : resolve
+                });
+            }).then(function () {
+                return self.$refreshTitle();
+            }).then(function () {
                 self.Loader.hide();
-            }).catch(function () {
-                self.Loader.hide();
+            });
+        },
+
+        /**
+         * open the use panel
+         */
+        openUser: function () {
+            var self = this;
+
+            require([
+                'controls/users/User',
+                'utils/Panels'
+            ], function (User, Utils) {
+                Utils.openPanelInTasks(
+                    new User(self.getAttribute('userId'))
+                );
             });
         },
 
@@ -109,6 +141,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
             this.getElm().addClass('quiqqer-customer-panel');
 
+            // buttons
             this.addButton({
                 name     : 'userSave',
                 text     : QUILocale.get('quiqqer/quiqqer', 'users.user.btn.save'),
@@ -118,41 +151,64 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 }
             });
 
-            this.addButton({
-                type: 'separator'
-            });
-
-            this.addButton(
-                new QUIButtonSwitch({
-                    name    : 'status',
-                    text    : QUILocale.get('quiqqer/quiqqer', 'isActivate'),
-                    status  : true,
-                    disabled: true,
-                    events  : {
-                        onChange: this.$onStatusChangeClick
+            if (this.getAttribute('showDeleteButton')) {
+                this.addButton({
+                    name  : 'userDelete',
+                    title : QUILocale.get('quiqqer/quiqqer', 'users.user.btn.delete'),
+                    icon  : 'fa fa-trash-o',
+                    events: {
+                        onClick: this.$onDeleteClick
+                    },
+                    styles: {
+                        'float': 'right'
                     }
-                })
-            );
+                });
+            }
 
-            this.addButton({
-                name  : 'userDelete',
-                title : QUILocale.get('quiqqer/quiqqer', 'users.user.btn.delete'),
-                icon  : 'fa fa-trash-o',
-                events: {
-                    onClick: this.$onDeleteClick
-                },
-                styles: {
-                    'float': 'right'
-                }
-            });
+            if (this.getAttribute('showUserButton')) {
+                this.addButton({
+                    name  : 'openUser',
+                    title : QUILocale.get(lg, 'quiqqer.customer.panel.openUser'),
+                    icon  : 'fa fa-user',
+                    events: {
+                        onClick: this.openUser
+                    },
+                    styles: {
+                        'float': 'right'
+                    }
+                });
+            }
 
+            // categories
             this.addCategory({
                 name  : 'information',
-                text  : QUILocale.get('quiqqer/quiqqer', 'information'),
+                text  : QUILocale.get(lg, 'quiqqer.customer.panel.general'),
                 icon  : 'fa fa-file',
                 events: {
                     onActive: function () {
                         self.$openCategory('information');
+                    }
+                }
+            });
+
+            this.addCategory({
+                name  : 'userInformation',
+                text  : QUILocale.get(lg, 'quiqqer.customer.panel.userInformation'),
+                icon  : 'fa fa-user',
+                events: {
+                    onActive: function () {
+                        self.$openCategory('userInformation');
+                    }
+                }
+            });
+
+            this.addCategory({
+                name  : 'userProperty',
+                text  : QUILocale.get(lg, 'quiqqer.customer.panel.userProperty'),
+                icon  : 'fa fa-user',
+                events: {
+                    onActive: function () {
+                        self.$openCategory('userProperty');
                     }
                 }
             });
@@ -164,6 +220,28 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 events: {
                     onActive: function () {
                         self.$openCategory('addresses');
+                    }
+                }
+            });
+
+            this.addCategory({
+                name  : 'comments',
+                text  : QUILocale.get(lg, 'quiqqer.customer.panel.comments'),
+                icon  : 'fa fa-comments',
+                events: {
+                    onActive: function () {
+                        self.$openCategory('comments');
+                    }
+                }
+            });
+
+            this.addCategory({
+                name  : 'files',
+                text  : QUILocale.get(lg, 'quiqqer.customer.panel.files'),
+                icon  : 'fa fa-file-text-o',
+                events: {
+                    onActive: function () {
+                        self.$openCategory('files');
                     }
                 }
             });
@@ -180,7 +258,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                     self.addCategory(categories[i]);
                 }
-
             }, {
                 package: 'quiqqer/customer'
             });
@@ -192,6 +269,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         $onShow: function () {
             this.Loader.show();
 
+            this.setAttribute('icon', 'fa fa-spinner fa-spin');
+            this.refresh();
+
             var self   = this;
             var User   = Users.get(this.getAttribute('userId'));
             var Loaded = Promise.resolve(User);
@@ -200,42 +280,91 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 Loaded = User.load();
             }
 
-            Loaded.then(function (User) {
-                var Status = self.getButtons('status');
-
+            return Loaded.then(function (User) {
                 self.$User               = User;
                 self.$userInitAttributes = User.getAttributes();
 
-                self.setAttribute('title', QUILocale.get(lg, 'customer.panel.title', {
-                    username: User.getUsername(),
-                    user    : User.getName()
-                }));
-
-                self.refresh();
-
-                // active status
-                if (User.isActive() === -1) {
-                    Status.setSilentOff();
-                    Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isDeactivate'));
-                    Status.disable();
-                    return;
+                // check installed
+                return Packages.getPackage('quiqqer/payments').catch(function () {
+                    return false;
+                });
+            }).then(function (paymentPkg) {
+                if (paymentPkg) {
+                    paymentsInstalled = true;
                 }
 
-                Status.enable();
-
-                if (!User.isActive()) {
-                    Status.off();
-                    Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isDeactivate'));
-                } else {
-                    Status.on();
-                    Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isActivate'));
+                return Packages.getPackage('quiqqer/shipping').catch(function () {
+                    return false;
+                });
+            }).then(function (shippingPkg) {
+                if (shippingPkg) {
+                    shippingInstalled = true;
                 }
 
+                return self.$refreshTitle();
+            }).then(function () {
                 if (!self.$ActiveCat) {
                     self.getCategory('information').click();
                 }
 
                 self.Loader.hide();
+            });
+        },
+
+        /**
+         * Refresh the panel title
+         *
+         * @return {Promise}
+         */
+        $refreshTitle: function () {
+            if (this.getAttribute('header') === false) {
+                return Promise.resolve();
+            }
+
+            var self    = this;
+            var address = false;
+
+            this.setAttribute('icon', 'fa fa-spinner fa-spin');
+            this.refresh();
+
+            if (parseInt(this.$User.getAttribute('address'))) {
+                address = parseInt(this.$User.getAttribute('address'));
+            } else if (this.$User.getAttribute('quiqqer.erp.address')) {
+                address = parseInt(this.$User.getAttribute('quiqqer.erp.address'));
+            }
+
+            var GetAddress;
+
+            if (!address) {
+                GetAddress = this.getAddressDefaultAddress();
+            } else {
+                GetAddress = this.getAddress(address);
+            }
+
+            return GetAddress.then(function (addressData) {
+                var titleData = [];
+
+                if (self.$User.getUsername() === self.$User.getName()) {
+                    titleData.push(self.$User.getUsername());
+                } else {
+                    titleData.push(self.$User.getUsername());
+                    titleData.push(self.$User.getName());
+                }
+
+                if (self.$User.getAttribute('email') && self.$User.getAttribute('email') !== '') {
+                    titleData.push(self.$User.getAttribute('email'));
+                }
+
+                if (addressData && addressData.text !== ' ; ; ' && addressData.text !== '') {
+                    titleData.push(addressData.text);
+                }
+
+                self.setAttribute('icon', 'fa fa-user');
+                self.setAttribute('title', QUILocale.get(lg, 'customer.panel.title', {
+                    data: titleData.join(' - ')
+                }));
+
+                self.refresh();
             });
         },
 
@@ -246,78 +375,323 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          */
         $openInformation: function () {
             this.getContent().set('html', Mustache.render(templateInformation, {
-                detailsTitle: QUILocale.get(lg, 'customer.panel,information.details'),
-                textUserId  : QUILocale.get('quiqqer/quiqqer', 'user_id'),
-                textUsername: QUILocale.get('quiqqer/quiqqer', 'username'),
-                textEmail   : QUILocale.get('quiqqer/quiqqer', 'email'),
+                detailsTitle      : QUILocale.get(lg, 'customer.panel,information.details'),
+                textUserId        : QUILocale.get('quiqqer/quiqqer', 'user_id'),
+                textCustomerId    : QUILocale.get(lg, 'customerId'),
+                textSalutation    : QUILocale.get('quiqqer/quiqqer', 'salutation'),
+                textFirstname     : QUILocale.get('quiqqer/quiqqer', 'firstname'),
+                textLastname      : QUILocale.get('quiqqer/quiqqer', 'lastname'),
+                titleAddress      : QUILocale.get('quiqqer/quiqqer', 'address'),
+                textStreet        : QUILocale.get('quiqqer/quiqqer', 'street'),
+                textCountryZipCity: QUILocale.get(lg, 'customer.panel,information.countryZipCity'),
+                textCountry       : QUILocale.get('quiqqer/quiqqer', 'country'),
+                textZip           : QUILocale.get('quiqqer/quiqqer', 'zip'),
+                textCity          : QUILocale.get('quiqqer/quiqqer', 'city'),
+                titleAllocation   : QUILocale.get(lg, 'customer.panel,information.allocation'),
+                textGroup         : QUILocale.get(lg, 'customer.panel,information.group'),
+                textGroups        : QUILocale.get(lg, 'customer.panel,information.groups'),
+                titleCommunication: QUILocale.get(lg, 'customer.panel,information.communication'),
+                titleComments     : QUILocale.get(lg, 'customer.panel,information.comments'),
 
-                titleAddress        : QUILocale.get('quiqqer/quiqqer', 'address'),
-                titleDeliveryAddress: QUILocale.get(lg, 'customer.panel,information.erp.addresses'),
-                textInvoiceAddress  : QUILocale.get(lg, 'customer.panel,information.invoice.address'),
-                textDeliveryAddress : QUILocale.get(lg, 'customer.panel,information.delivery.address')
+                titleExtra     : QUILocale.get(lg, 'customer.panel,information.extra'),
+                textPaymentTerm: QUILocale.get(lg, 'customer.panel,information.paymentTerm'),
+                textMail       : QUILocale.get('quiqqer/quiqqer', 'email'),
+                textTel        : QUILocale.get('quiqqer/quiqqer', 'tel'),
+                textFax        : QUILocale.get('quiqqer/quiqqer', 'fax'),
+                textInternet   : QUILocale.get(lg, 'customer.panel,information.extra.homepage'),
+
+                // payments
+                payments           : paymentsInstalled,
+                textStandardPayment: QUILocale.get(lg, 'customer.panel,information.standard.payments'),
+
+                // shipping
+                titleDeliveryAddress   : QUILocale.get(lg, 'customer.panel.delivery.address'),
+                shipping               : shippingInstalled,
+                textDeliveryAddressSame: QUILocale.get(lg, 'checkout.panel.delivery.option.same')
             }));
+
+            var UserLoaded = Promise.resolve();
+
+            if (!this.$User) {
+                UserLoaded = this.$onShow();
+            }
 
             var self = this,
                 Form = this.getContent().getElement('form');
 
-            // add address
-            this.getContent()
-                .getElement('[name="create-address"]')
-                .addEvent('click', function (event) {
-                    event.stop();
+            var checkVal = function (str) {
+                if (!str || str === 'false') {
+                    return '';
+                }
 
-                    var Button = event.target;
+                return str;
+            };
 
-                    if (Button.nodeName !== 'button') {
-                        Button = Button.getParent('button');
+            var address, delivery;
+
+            // set data
+            UserLoaded.then(function () {
+                Form.elements.userId.value = self.$User.getId();
+
+                if (self.$User.getAttribute('customerId')) {
+                    Form.elements.customerId.value = self.$User.getAttribute('customerId');
+                }
+
+                // groups
+                Form.elements.groups.value     = self.$User.getAttribute('usergroup');
+                Form.elements.group.value      = self.$User.getAttribute('mainGroup');
+                Form.elements.customerId.value = self.$User.getAttribute('customerId');
+
+                Form.elements['quiqqer.erp.customer.website'].value      = checkVal(self.$User.getAttribute('quiqqer.erp.customer.website'));
+                Form.elements['quiqqer.erp.customer.payment.term'].value = checkVal(self.$User.getAttribute('quiqqer.erp.customer.payment.term'));
+
+                // address
+                address  = parseInt(self.$User.getAttribute('address'));
+                delivery = self.$User.getAttribute('quiqqer.delivery.address');
+
+                if (!delivery) {
+                    Form.elements['address-delivery'].checked = true;
+                    Form.elements['address-delivery'].addEvent('change', self.deliveryAddressToggle);
+                    self.deliveryAddressToggle();
+                }
+
+                return Countries.getCountries();
+            }).then(function (countries) {
+                var CountrySelect         = Form.elements['address-country'];
+                var CountrySelectDelivery = Form.elements['address-delivery-country'];
+
+                for (var code in countries) {
+                    if (!countries.hasOwnProperty(code)) {
+                        continue;
                     }
 
-                    Button.set('disabled', true);
+                    new Element('option', {
+                        value: code,
+                        html : countries[code]
+                    }).inject(CountrySelect);
 
-                    var Icon = Button.getElement('.fa');
+                    if (CountrySelectDelivery) {
+                        new Element('option', {
+                            value: code,
+                            html : countries[code]
+                        }).inject(CountrySelectDelivery);
+                    }
+                }
 
-                    Icon.removeClass('fa-plus');
-                    Icon.addClass('fa-spinner fa-spin');
+                if (!address) {
+                    return self.getAddressDefaultAddress();
+                }
 
-                    self.createAddress().then(function (addressId) {
-                        self.refreshAddressLists();
-                        self.editAddress(addressId);
+                return self.getAddress(address);
+            }).then(function (address) {
+                if (!address) {
+                    return;
+                }
 
-                        Button.set('disabled', false);
-                        Icon.addClass('fa-plus');
-                        Icon.removeClass('fa-spinner fa-spin');
+                Form.elements['address-salutation'].value = address.salutation;
+                Form.elements['address-firstname'].value  = address.firstname;
+                Form.elements['address-lastname'].value   = address.lastname;
+                Form.elements['address-street_no'].value  = address.street_no;
+                Form.elements['address-zip'].value        = address.zip;
+                Form.elements['address-country'].value    = address.country;
+                Form.elements['address-city'].value       = address.city;
+
+                try {
+                    var CBody = self.getElm().getElement('.customer-information-communication-body');
+                    var phone = JSON.decode(address.phone);
+
+                    if (self.$User.getAttribute('address-communication')) {
+                        phone = self.$User.getAttribute('address-communication');
+                    }
+
+                    var i, len, Row;
+
+                    var rows   = [],
+                        tel    = false,
+                        fax    = false,
+                        mobile = false;
+
+                    for (i = 0, len = phone.length; i < len; i++) {
+                        Row = new Element('tr', {
+                            'data-type': phone[i].type,
+                            html       : '<td>' +
+                                '<label class="field-container">' +
+                                '   <span class="field-container-item">' + QUILocale.get('quiqqer/quiqqer', phone[i].type) + '</span>' +
+                                '   <input name="address-communication" class="field-container-field"/>' +
+                                '</label>' +
+                                '</td>'
+                        });
+
+                        Row.getElement('input').set('value', phone[i].no);
+                        Row.getElement('input').set('data-type', phone[i].type);
+
+                        switch (phone[i].type) {
+                            case 'tel':
+                                tel = true;
+                                break;
+                            case 'fax':
+                                fax = true;
+                                break;
+                            case 'mobile':
+                                mobile = true;
+                                break;
+                        }
+
+                        rows.push(Row);
+                    }
+
+                    if (tel === false) {
+                        rows.push(
+                            new Element('tr', {
+                                'data-type': 'tel',
+                                html       : '<td>' +
+                                    '<label class="field-container">' +
+                                    '   <span class="field-container-item">' + QUILocale.get('quiqqer/quiqqer', 'tel') + '</span>' +
+                                    '   <input name="address-communication" data-type="tel" class="field-container-field"/>' +
+                                    '</label>' +
+                                    '</td>'
+                            })
+                        );
+                    }
+
+                    if (fax === false) {
+                        rows.push(
+                            new Element('tr', {
+                                'data-type': 'fax',
+                                html       : '<td>' +
+                                    '<label class="field-container">' +
+                                    '   <span class="field-container-item">' + QUILocale.get('quiqqer/quiqqer', 'fax') + '</span>' +
+                                    '   <input name="address-communication" data-type="fax" class="field-container-field"/>' +
+                                    '</label>' +
+                                    '</td>'
+                            })
+                        );
+                    }
+
+                    if (mobile === false) {
+                        rows.push(
+                            new Element('tr', {
+                                'data-type': 'mobile',
+                                html       : '<td>' +
+                                    '<label class="field-container">' +
+                                    '   <span class="field-container-item">' + QUILocale.get('quiqqer/quiqqer', 'mobile') + '</span>' +
+                                    '   <input name="address-communication" data-type="mobile" class="field-container-field"/>' +
+                                    '</label>' +
+                                    '</td>'
+                            })
+                        );
+                    }
+
+                    rows.sort(function (a, b) {
+                        return a.get('data-type').localeCompare(b.get('data-type')) * -1;
+                    });
+
+                    rows.forEach(function (R) {
+                        R.inject(CBody);
+                    });
+                } catch (e) {
+                }
+            }).then(function () {
+                // delivery address
+                if (!delivery) {
+                    return;
+                }
+
+                return self.getAddress(delivery).then(function (deliveryData) {
+                    Form.elements['address-delivery-salutation'].value = deliveryData.salutation;
+                    Form.elements['address-delivery-firstname'].value  = deliveryData.firstname;
+                    Form.elements['address-delivery-lastname'].value   = deliveryData.lastname;
+                    Form.elements['address-delivery-street_no'].value  = deliveryData.street_no;
+                    Form.elements['address-delivery-zip'].value        = deliveryData.zip;
+                    Form.elements['address-delivery-country'].value    = deliveryData.country;
+                    Form.elements['address-delivery-city'].value       = deliveryData.city;
+                });
+            }).then(function () {
+                // load comments
+                self.getComments().then(function (comments) {
+                    require(['package/quiqqer/erp/bin/backend/controls/Comments'], function (Comments) {
+                        var Container = self.getContent().getElement('.comments');
+
+                        if (!Container) {
+                            return;
+                        }
+
+                        Container.set('html', '');
+
+                        comments = comments.reverse();
+                        comments = comments.slice(0, 5);
+
+                        var Control = new Comments();
+                        Control.inject(Container);
+                        Control.unserialize(comments);
                     });
                 });
 
-            // set data
-            Form.elements.userId.value   = this.$User.getId();
-            Form.elements.username.value = this.$User.getUsername();
-            Form.elements.email.value    = this.$User.getAttribute('email');
-
-            var DefaultAddress  = self.getContent().getElement('[name="address"]');
-            var InvoiceAddress  = this.getContent().getElement('[name="quiqqer.erp.address"]');
-            var DeliveryAddress = this.getContent().getElement('[name="quiqqer.delivery.address"]');
-
-            var onChange = function (event) {
-                var Target = event.target;
-                var Button = Target.getNext('button');
-
-                if (Target.value === '') {
-                    Button.set('disabled', true);
-                } else {
-                    Button.set('disabled', false);
+                return QUI.parse(self.getContent());
+            }).then(function () {
+                if (paymentsInstalled === false) {
+                    return;
                 }
-            };
 
-            DefaultAddress.addEvent('change', onChange);
-            InvoiceAddress.addEvent('change', onChange);
-            DeliveryAddress.addEvent('change', onChange);
+                var PaymentSelect = self.getContent().getElement('[name="quiqqer.erp.standard.payment"]'),
+                    lang          = QUILocale.getCurrent();
 
-            DefaultAddress.getNext('button').addEvent('click', this.$clickEditAddress);
-            InvoiceAddress.getNext('button').addEvent('click', this.$clickEditAddress);
-            DeliveryAddress.getNext('button').addEvent('click', this.$clickEditAddress);
+                if (!PaymentSelect) {
+                    return;
+                }
 
-            return self.refreshAddressLists();
+                // standard payment
+                return new Promise(function (resolve) {
+                    PaymentSelect.set('html', '');
+
+                    new Element('option', {
+                        value: '',
+                        html : '---'
+                    }).inject(PaymentSelect);
+
+                    require([
+                        'package/quiqqer/payments/bin/backend/Payments'
+                    ], function (Payments) {
+                        Payments.getPayments().then(function (payments) {
+                            var i, len, text;
+                            for (i = 0, len = payments.length; i < len; i++) {
+                                text = '';
+
+                                if (typeof payments[i].title[lang] !== 'undefined') {
+                                    text = payments[i].title[lang];
+                                } else if (typeof payments[i].title.en === 'undefined') {
+                                    text = payments[i].title.en;
+                                }
+
+                                new Element('option', {
+                                    value: payments[i].id,
+                                    html : text
+                                }).inject(PaymentSelect);
+                            }
+
+                            if (self.$User.getAttribute('quiqqer.erp.standard.payment')) {
+                                PaymentSelect.value = self.$User.getAttribute('quiqqer.erp.standard.payment');
+                            }
+                        }).then(resolve);
+                    });
+                });
+            });
+        },
+
+        /**
+         * return all comments for the user
+         *
+         * @return {Promise}
+         */
+        getComments: function () {
+            var self = this;
+
+            return new Promise(function (resolve) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getComments', resolve, {
+                    'package': 'quiqqer/customer',
+                    uid      : self.$User.getId()
+                });
+            });
         },
 
         /**
@@ -443,6 +817,41 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         //region address
 
         /**
+         *
+         * @param {Integer} addressId
+         * @return {Promise}
+         */
+        getAddress: function (addressId) {
+            addressId = parseInt(addressId);
+
+            return this.$User.getAddressList().then(function (addressList) {
+                for (var i = 0, len = addressList.length; i < len; i++) {
+                    if (parseInt(addressList[i].id) === addressId) {
+                        return addressList[i];
+                    }
+                }
+
+                return false;
+            });
+        },
+
+        /**
+         * Return the default address
+         *
+         * @return {Promise}
+         */
+        getAddressDefaultAddress: function () {
+            var self = this;
+
+            return new Promise(function (resolve) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getAddress', resolve, {
+                    'package': 'quiqqer/customer',
+                    userId   : self.$User.getId()
+                });
+            });
+        },
+
+        /**
          * open the address management
          *
          * @return {Promise}
@@ -470,6 +879,100 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         //region category stuff
 
         /**
+         * open the comments
+         *
+         * @return {Promise}
+         */
+        $openComments: function () {
+            var self = this;
+
+            this.getContent().set('html', '');
+
+            return new Promise(function (resolve) {
+                require(['package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments'], function (Comments) {
+                    new Comments({
+                        userId: self.getAttribute('userId'),
+                        events: {
+                            onLoad: resolve
+                        }
+                    }).inject(self.getContent());
+                });
+            });
+        },
+
+        /**
+         * open the user information
+         *
+         * @return {Promise}
+         */
+        $openUserInformation: function () {
+            var self = this;
+
+            this.getContent().set('html', '');
+
+            return new Promise(function (resolve) {
+                require([
+                    'package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInformation'
+                ], function (UserInformation) {
+                    new UserInformation({
+                        userId: self.getAttribute('userId'),
+                        events: {
+                            onLoad: resolve
+                        }
+                    }).inject(self.getContent());
+                });
+            });
+        },
+
+        /**
+         * open the user properties
+         *
+         * @return {Promise}
+         */
+        $openUserProperty: function () {
+            var self = this;
+
+            this.getContent().set('html', '');
+
+            return new Promise(function (resolve) {
+                require([
+                    'package/quiqqer/customer/bin/backend/controls/customer/Panel.UserProperties'
+                ], function (UserProperties) {
+                    new UserProperties({
+                        userId: self.getAttribute('userId'),
+                        events: {
+                            onLoad: resolve
+                        }
+                    }).inject(self.getContent());
+                });
+            });
+        },
+
+        /**
+         * open the user files
+         *
+         * @return {Promise}
+         */
+        $openFiles: function () {
+            var self = this;
+
+            this.getContent().set('html', '');
+
+            return new Promise(function (resolve) {
+                require([
+                    'package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles'
+                ], function (UserFiles) {
+                    new UserFiles({
+                        userId: self.getAttribute('userId'),
+                        events: {
+                            onLoad: resolve
+                        }
+                    }).inject(self.getContent());
+                });
+            });
+        },
+
+        /**
          * Opens a category panel
          *
          * @param {String} category - name of the category
@@ -477,6 +980,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         $openCategory: function (category) {
             var self = this;
 
+            this.Loader.show();
             this.$categoryUnload();
 
             this.$hideCategory().then(function () {
@@ -486,6 +990,22 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                 if (category === 'addresses') {
                     return self.$openAddressManagement();
+                }
+
+                if (category === 'comments') {
+                    return self.$openComments();
+                }
+
+                if (category === 'userInformation') {
+                    return self.$openUserInformation();
+                }
+
+                if (category === 'userProperty') {
+                    return self.$openUserProperty();
+                }
+
+                if (category === 'files') {
+                    return self.$openFiles();
                 }
 
                 // load customer category
@@ -500,7 +1020,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     });
                 });
             }).then(function () {
-                self.$showCategory();
+                return self.$showCategory();
+            }).then(function () {
+                self.Loader.hide();
             });
         },
 
@@ -511,10 +1033,24 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             var Content = this.getContent(),
                 Form    = Content.getElement('form');
 
+            if (!Form) {
+                return;
+            }
+
             var data = FormUtils.getFormData(Form);
+            var com  = Form.getElements('[name="address-communication"]');
 
             if (typeof data.id !== 'undefined') {
                 delete data.id;
+            }
+
+            if (com.length) {
+                data['address-communication'] = com.map(function (entry) {
+                    return {
+                        type: entry.get('data-type'),
+                        no  : entry.get('value')
+                    };
+                });
             }
 
             this.$User.setAttributes(data);
@@ -658,35 +1194,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             }).open();
         },
 
-        /**
-         * event: button status on / off change
-         *
-         * @param {Object} Button - qui/controls/buttons/ButtonSwitch
-         */
-        $onStatusChangeClick: function (Button) {
-            var self         = this,
-                buttonStatus = Button.getStatus(),
-                userStatus   = this.$User.isActive();
-
-            if (buttonStatus === userStatus || userStatus === -1) {
-                return;
-            }
-
-            this.Loader.show();
-
-            var Prom;
-
-            if (buttonStatus) {
-                Prom = this.$User.activate();
-            } else {
-                Prom = this.$User.deactivate();
-            }
-
-            Prom.then(function () {
-                self.Loader.hide();
-            });
-        },
-
         //endregion
 
         //region user events
@@ -698,30 +1205,77 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @param {Array} uids - user ids, which are deleted
          */
         $onUserDelete: function (Users, uids) {
-            var uid = this.$User.getId();
+            var uid = parseInt(this.getAttribute('userId'));
 
             for (var i = 0, len = uids.length; i < len; i++) {
-                if (parseInt(uid) === parseInt(uids[i])) {
+                if (uid === parseInt(uids[i])) {
                     this.destroy();
                     break;
                 }
             }
         },
 
-        /**
-         * event: on user refresh
-         * -> refresh the data in the panel
-         */
-        $onUserRefresh: function () {
-            var Status = this.getButtons('status');
+        //endregion
 
-            if (this.$User.isActive()) {
-                Status.setSilentOn();
-                Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isActivate'));
-            } else {
-                Status.setSilentOff();
-                Status.setAttribute('text', QUILocale.get('quiqqer/quiqqer', 'isDeactivate'));
+        //region delivery
+
+        /**
+         * Toggle the delivery address
+         */
+        deliveryAddressToggle: function () {
+            if (!shippingInstalled) {
+                return;
             }
+
+            var Checkbox = this.getContent().getElement('[name="address-delivery"]');
+
+            if (Checkbox.checked) {
+                this.deliveryAddressClose();
+            } else {
+                this.deliveryAddressOpen();
+            }
+        },
+
+        /**
+         * opens the delivery address
+         */
+        deliveryAddressOpen: function () {
+            if (!shippingInstalled) {
+                return;
+            }
+
+            var Table = this.getContent().getElement('.delivery-address-table');
+
+            if (!Table) {
+                return;
+            }
+
+            Table.getElements('tr').forEach(function (Row) {
+                if (Row.getElement('input') && Row.getElement('input').name !== 'address-delivery') {
+                    Row.setStyle('display', null);
+                }
+            });
+        },
+
+        /**
+         * Close the delivery address
+         */
+        deliveryAddressClose: function () {
+            if (!shippingInstalled) {
+                return;
+            }
+
+            var Table = this.getContent().getElement('.delivery-address-table');
+
+            if (!Table) {
+                return;
+            }
+
+            Table.getElements('tr').forEach(function (Row) {
+                if (Row.getElement('input') && Row.getElement('input').name !== 'address-delivery') {
+                    Row.setStyle('display', 'none');
+                }
+            });
         }
 
         //endregion

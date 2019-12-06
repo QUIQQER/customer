@@ -7,6 +7,10 @@
                 <conf name="groupId">
                     <type><![CDATA[integer]]></type>
                 </conf>
+                <conf name="customerLogin">
+                    <type>integer</type>
+                    <defaultValue>0</defaultValue>
+                </conf>
             </section>
         </config>
 
@@ -37,6 +41,15 @@
                             <text>
                                 <locale group="quiqqer/customer" var="customer.settings.groupId"/>
                             </text>
+                        </input>
+
+                        <input conf="customer.customerLogin" type="checkbox">
+                            <text>
+                                <locale group="quiqqer/customer" var="customer.settings.customerLogin"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/customer" var="customer.settings.customerLogin.description"/>
+                            </description>
                         </input>
 
                     </settings>

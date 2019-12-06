@@ -62,6 +62,7 @@ QUI::$Ajax->registerFunction(
         }
 
 
+
         // exec
         return $Search->searchForGrid();
     },

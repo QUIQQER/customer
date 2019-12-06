@@ -22,19 +22,9 @@
             <td>
                 <label class="field-container">
                     <span class="field-container-item">
-                        {{textUsername}}
+                        {{textCustomerId}}
                     </span>
-                    <input type="text" name="username" value="" class="field-container-field">
-                </label>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <label class="field-container">
-                    <span class="field-container-item">
-                        {{textEmail}}
-                    </span>
-                    <input type="text" name="email" value="" class="field-container-field">
+                    <input type="text" name="customerId" value="" class="field-container-field">
                 </label>
             </td>
         </tr>
@@ -53,33 +43,66 @@
         <tr class="quiqqer-customer-address-select">
             <td>
                 <label class="field-container">
-                    <select name="address" class="field-container-field">
-                        <option value=""></option>
-                    </select>
-                    <button type="button"
-                            class="qui-button"
-                            style="width: 50px;"
-                            disabled
-                    >
-                        <span class="fa fa-edit"></span>
-                    </button>
+                    <span class="field-container-item">
+                        {{textSalutation}}
+                    </span>
+                    <input name="address-salutation" class="field-container-field"/>
                 </label>
             </td>
         </tr>
-        <tr>
-            <td class="quiqqer-customer-address-add">
-                <div class="field-container">
-                    <button class="qui-button" name="create-address">
-                        <span class="fa fa-plus"></span>
-                        <span>Neue Addresse anlegen</span>
-                    </button>
-                </div>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textFirstname}}
+                    </span>
+                    <input name="address-firstname" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textLastname}}
+                    </span>
+                    <input name="address-lastname" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textStreet}}
+                    </span>
+                    <input name="address-street_no" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textCountryZipCity}}
+                    </span>
+                    <select type="text"
+                            name="address-country"
+                            class="field-container-field"
+                    >
+                        <option value="" disabled selected>{{textCountry}}</option>
+                    </select>
+                    <input name="address-zip" class="field-container-field" placeholder="{{textZip}}"/>
+                    <input name="address-city" class="field-container-field" placeholder="{{textCity}}"/>
+                </label>
             </td>
         </tr>
         </tbody>
     </table>
 
-    <table class="data-table data-table-flexbox">
+    {{#shipping}}
+    <table class="data-table data-table-flexbox delivery-address-table">
         <thead>
         <tr>
             <th>
@@ -91,19 +114,10 @@
         <tr class="quiqqer-customer-address-select">
             <td>
                 <label class="field-container">
-                    <span class="field-container-item">
-                        {{textInvoiceAddress}}
+                    <span class="field-container-field">
+                        <input name="address-delivery" type="checkbox"/>
+                        {{textDeliveryAddressSame}}
                     </span>
-                    <select name="quiqqer.erp.address" class="field-container-field">
-                        <option value=""></option>
-                    </select>
-                    <button type="button"
-                            class="qui-button"
-                            style="width: 50px;"
-                            disabled
-                    >
-                        <span class="fa fa-edit"></span>
-                    </button>
                 </label>
             </td>
         </tr>
@@ -111,21 +125,180 @@
             <td>
                 <label class="field-container">
                     <span class="field-container-item">
-                        {{textDeliveryAddress}}
+                        {{textSalutation}}
                     </span>
-                    <select name="quiqqer.delivery.address" class="field-container-field">
-                        <option value=""></option>
-                    </select>
-                    <button type="button"
-                            class="qui-button"
-                            style="width: 50px;"
-                            disabled
+                    <input name="address-delivery-salutation" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textFirstname}}
+                    </span>
+                    <input name="address-delivery-firstname" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textLastname}}
+                    </span>
+                    <input name="address-delivery-lastname" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textStreet}}
+                    </span>
+                    <input name="address-delivery-street_no" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textCountryZipCity}}
+                    </span>
+                    <select type="text"
+                            name="address-delivery-country"
+                            class="field-container-field"
                     >
-                        <span class="fa fa-edit"></span>
-                    </button>
+                        <option value="" disabled selected>{{textCountry}}</option>
+                    </select>
+                    <input name="address-delivery-zip" class="field-container-field" placeholder="{{textZip}}"/>
+                    <input name="address-delivery-city" class="field-container-field" placeholder="{{textCity}}"/>
                 </label>
             </td>
         </tr>
         </tbody>
     </table>
+    {{/shipping}}
+
+    <table class="data-table data-table-flexbox">
+        <thead>
+        <tr>
+            <th>
+                {{titleExtra}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textPaymentTerm}}
+                    </span>
+                    <input name="quiqqer.erp.customer.payment.term" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+        {{#payments}}
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textStandardPayment}}
+                    </span>
+                    <select name="quiqqer.erp.standard.payment" class="field-container-field">
+                        <option value="">---</option>
+                    </select>
+                </label>
+            </td>
+        </tr>
+        {{/payments}}
+        </tbody>
+    </table>
+
+    <table class="data-table data-table-flexbox">
+        <thead>
+        <tr>
+            <th>
+                {{titleCommunication}}
+            </th>
+        </tr>
+        </thead>
+        <tbody class="customer-information-communication-body">
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textInternet}}
+                    </span>
+                    <input name="quiqqer.erp.customer.website" placeholder="www.url.com" class="field-container-field"/>
+                </label>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="data-table data-table-flexbox">
+        <thead>
+        <tr>
+            <th>
+                {{titleAllocation}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textGroup}}
+                    </span>
+                    <input name="group"
+                           type="hidden"
+                           class="field-container-field"
+                           data-qui="controls/groups/Select"
+                           data-qui-options-max="1"
+                    />
+                </label>
+            </td>
+        </tr>
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textGroups}}
+                    </span>
+                    <input name="groups"
+                           type="hidden"
+                           class="field-container-field"
+                           data-qui="controls/groups/Select"
+                    />
+                </label>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="data-table data-table-flexbox">
+        <thead>
+        <tr>
+            <th>
+                {{titleComments}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <div class="comments">
+                    <span class="fa fa-spinner fa-spin"></span>
+                </div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
 </form>

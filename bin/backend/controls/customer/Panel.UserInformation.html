@@ -1,0 +1,106 @@
+<form name="customer-user-information">
+    <table class="data-table data-table-flexbox">
+        <thead>
+        <tr>
+            <th>
+                {{title}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textUSt}}
+                    </span>
+                    <input type="text"
+                           name="quiqqer.erp.euVatId"
+                           value=""
+                           class="field-container-field"
+                           data-qui="package/quiqqer/erp/bin/backend/controls/settings/VatIdCheck"
+                    />
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textBruttoNetto}}
+                    </span>
+                    <select name="quiqqer.erp.isNettoUser"
+                            class="field-container-field"
+                    >
+                        <option value="2">brutto</option>
+                        <option value="1">netto</option>
+                    </select>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textTaxInfo}}
+                    </span>
+                    <input type="text"
+                           name="taxInfo"
+                           disabled
+                           class="field-container-field"
+                    />
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textCompanyNo}}
+                    </span>
+                    <input type="text"
+                           name="quiqqer.erp.company.identification.number"
+                           class="field-container-field"
+                    />
+                </label>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="data-table data-table-flexbox">
+        <thead>
+        <tr>
+            <th>
+                {{titleGeneral}}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textLanguage}}
+                    </span>
+                    <select name="lang" class="field-container-field"></select>
+                </label>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textDiscount}}
+                    </span>
+                    <input name="quiqqer.erp.discount" class="field-container-field"/>
+                    <span class="field-container-item" style="text-align: center; width: 50px;">
+                        <span class="fa fa-percent"></span>
+                    </span>
+                </label>
+                <div class="field-container-item-desc">{{{textDiscountDesc}}}</div>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</form>

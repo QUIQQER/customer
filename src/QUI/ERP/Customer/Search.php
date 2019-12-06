@@ -172,14 +172,19 @@ class Search extends Singleton
             $groups = \str_replace(',,', '', $groups);
             $groups = \trim($groups, ',');
 
+            if (!isset($entry['customerId'])) {
+                $entry['customerId'] = '';
+            }
+
             $result[] = [
-                'id'        => (int)$entry['id'],
-                'status'    => !!$entry['active'],
-                'username'  => $entry['username'],
-                'firstname' => $entry['firstname'],
-                'lastname'  => $entry['lastname'],
-                'email'     => $entry['email'],
-                'regdate'   => $DateFormatterLong->format($entry['regdate']),
+                'id'         => (int)$entry['id'],
+                'customerId' => $entry['customerId'],
+                'status'     => !!$entry['active'],
+                'username'   => $entry['username'],
+                'firstname'  => $entry['firstname'],
+                'lastname'   => $entry['lastname'],
+                'email'      => $entry['email'],
+                'regdate'    => $DateFormatterLong->format($entry['regdate']),
 
                 'usergroup_display' => $groups,
                 'usergroup'         => $entry['usergroup']
