@@ -78,6 +78,14 @@ class Customers extends Singleton
             $Address->setAttribute('country', $address['country']);
 
             $Address->save();
+
+            if (!$User->getAttribute('firstname') || $User->getAttribute('firstname') === '') {
+                $User->setAttribute('firstname', $address['firstname']);
+            }
+
+            if (!$User->getAttribute('lastname') || $User->getAttribute('lastname') === '') {
+                $User->setAttribute('lastname', $address['lastname']);
+            }
         }
 
         // groups
@@ -260,6 +268,16 @@ class Customers extends Singleton
 
         if (!empty($groups)) {
             $User->setGroups($groups);
+        }
+
+        if (!empty($attributes['address-firstname']) &&
+            (!$User->getAttribute('firstname') || $User->getAttribute('firstname') === '')) {
+            $User->setAttribute('firstname', $attributes['address-firstname']);
+        }
+
+        if (!empty($attributes['address-lastname']) &&
+            (!$User->getAttribute('lastname') || $User->getAttribute('lastname') === '')) {
+            $User->setAttribute('lastname', $attributes['address-lastname']);
         }
 
         $User->save();
