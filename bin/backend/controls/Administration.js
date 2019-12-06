@@ -610,6 +610,9 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             });
         },
 
+        /**
+         * Close the customer panel, if a customer panel exist
+         */
         closeCustomer: function () {
             if (!this.$CustomerPanel) {
                 return;
@@ -747,6 +750,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     events: {
                         onSubmit: function (Instance, customerId) {
                             self.refresh();
+                            self.$openCustomer(customerId);
                         }
                     }
                 }).open();
