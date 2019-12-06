@@ -7,8 +7,14 @@
             <en><![CDATA[QUIQQER - ERP - Customer]]></en>
         </locale>
         <locale name="package.description">
-            <de><![CDATA[]]></de>
-            <en><![CDATA[]]></en>
+            <de><![CDATA[
+            Mit dem Customer Paket erweitern Sie QUIQQQER um eine einfachere Kundenverwaltung.
+            Sie müssen die Kundenbearbeitung in der QUIQQQER-Benutzerverwaltung nicht mehr durchführen.
+            ]]></de>
+            <en><![CDATA[
+            With the customer administration you extend QUIQQER by a simpler administration of your customers.
+            You don't have to do the customer processing in the QUIQQER user administration anymore.
+            ]]></en>
         </locale>
 
         <locale name="window.erp.title">

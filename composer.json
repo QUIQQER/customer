@@ -1,7 +1,7 @@
 {
   "name": "quiqqer\/customer",
   "type": "quiqqer-module",
-  "description": "",
+  "description": "With the customer administration you extend QUIQQER by a simpler administration of your customers.",
   "license": "GPL-3.0+",
   "authors": [
     {
