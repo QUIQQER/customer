@@ -40,6 +40,14 @@ class EventHandler
 
             $Root = QUI::getGroups()->firstChild();
 
+            if (!QUI::getLocale()->exists('quiqqer/customer', 'customer.group.name')) {
+                try {
+                    QUI\Translator::batchImportFromPackage(QUI::getPackage('quiqqer/customer'));
+                } catch (QUI\Exception $Exception) {
+                    QUI\System\Log::addDebug($Exception->getMessage());
+                }
+            }
+
             $Customer = $Root->createChild(
                 QUI::getLocale()->get('quiqqer/customer', 'customer.group.name'),
                 QUI::getUsers()->getSystemUser()
