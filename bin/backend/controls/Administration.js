@@ -461,13 +461,14 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             this.$Grid.disable();
 
             return new Promise(function (resolve) {
-                QUIAjax.post('ajax_users_save', function () {
+                QUIAjax.post('package_quiqqer_customer_ajax_backend_customer_instantSave', function () {
                     self.$Grid.enable();
                     resolve();
                 }, {
-                    uid       : rowData.id,
-                    attributes: JSON.encode(attributes),
-                    onError   : function () {
+                    'package': 'quiqqer/customer',
+                    userId   : rowData.id,
+                    data     : JSON.encode(attributes),
+                    onError  : function () {
                         rowData[attribute] = data.oldvalue;
                         self.$Grid.setDataByRow(data.row, rowData);
                         self.$Grid.enable();
