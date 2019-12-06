@@ -187,6 +187,15 @@
             <en><![CDATA[User groups]]></en>
         </locale>
 
+        <locale name="window.customer.select.title">
+            <de><![CDATA[Kundenauwahl]]></de>
+            <en><![CDATA[Customer selection]]></en>
+        </locale>
+        <locale name="window.customer.select.button">
+            <de><![CDATA[Kunden übernehmen]]></de>
+            <en><![CDATA[Select customer]]></en>
+        </locale>
+
 
         <locale name="panel.title">
             <de><![CDATA[Kunden]]></de>

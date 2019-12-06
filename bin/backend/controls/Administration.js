@@ -1,6 +1,11 @@
 /**
  * @module package/quiqqer/customer/bin/backend/controls/Administration
  * @author www.pcsg.de (Henning Leutz)
+ *
+ * @event customerOpenBegin [self, userId]
+ * @event onCustomerOpen [self, userId, Panel]
+ * @event onCustomerOpenEnd [self, userId, Panel]
+ * @event onListOpen [self]
  */
 define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
@@ -63,6 +68,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             this.$FilterButton    = null;
             this.$customerGroup   = null;
 
+            this.$CustomerPanel = null;
             this.$GroupSwitch   = null;
             this.$GridContainer = null;
             this.$Grid          = null;
@@ -266,6 +272,15 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
         },
 
         /**
+         * Is the administration in a qui window?
+         *
+         * @return {boolean}
+         */
+        isInWindow: function () {
+            return !!this.getElm().getParent('.qui-window-popup');
+        },
+
+        /**
          * event: on user change
          */
         $onUserRefresh: function () {
@@ -321,10 +336,12 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          * @return {Array}
          */
         getSelectedCustomerIds: function () {
-            return this.$Grid.getSelectedData().map(function (entry) {
-                console.log(entry);
+            if (this.$CustomerPanel) {
+                return [this.$CustomerPanel.getAttribute('userId')];
+            }
 
-                return entry.customerId;
+            return this.$Grid.getSelectedData().map(function (entry) {
+                return parseInt(entry.id);
             });
         },
 
@@ -546,10 +563,45 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 return;
             }
 
+            var self = this;
+
+            this.fireEvent('customerOpenBegin', [this, userId]);
+
             require([
                 'package/quiqqer/customer/bin/backend/controls/customer/Panel',
                 'utils/Panels'
             ], function (Panel, PanelUtils) {
+                if (self.isInWindow()) {
+                    var Container = new Element('div', {
+                        'class': 'quiqqer-customer-administration-customer',
+                        styles : {
+                            left   : -50,
+                            opacity: 0
+                        }
+                    }).inject(self.getElm());
+
+                    self.$CustomerPanel = new Panel({
+                        header          : false,
+                        userId          : userId,
+                        showUserButton  : false,
+                        showDeleteButton: false
+                    }).inject(Container);
+
+                    self.fireEvent('customerOpen', [this, userId, self.$CustomerPanel]);
+
+                    moofx(Container).animate({
+                        left   : 0,
+                        opacity: 1
+                    }, {
+                        callback: function () {
+                            self.$CustomerPanel.fireEvent('show');
+                            self.fireEvent('customerOpenEnd', [this, userId, self.$CustomerPanel]);
+                        }
+                    });
+
+                    return;
+                }
+
                 PanelUtils.openPanelInTasks(
                     new Panel({
                         userId: userId

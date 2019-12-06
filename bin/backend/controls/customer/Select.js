@@ -99,7 +99,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
          * @param {Object} Btn
          */
         $onSearchButtonClick: function (Select, Btn) {
-            var oldIcon = Btn.getAttribute('icon');
+            var self    = this,
+                oldIcon = Btn.getAttribute('icon');
 
             Btn.setAttribute('icon', 'fa fa-spinner fa-spin');
             Btn.disable();
@@ -109,21 +110,21 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
             ], function (Window) {
                 new Window({
                     autoclose     : true,
-                    multiple      : this.getAttribute('multiple'),
-                    search        : this.getAttribute('search'),
-                    searchSettings: this.getAttribute('searchSettings'),
+                    multiple      : self.getAttribute('multiple'),
+                    search        : self.getAttribute('search'),
+                    searchSettings: self.getAttribute('searchSettings'),
                     events        : {
                         onSubmit: function (Win, userIds) {
                             for (var i = 0, len = userIds.length; i < len; i++) {
-                                this.addItem(userIds[i].id);
+                                self.addItem(userIds[i]);
                             }
-                        }.bind(this)
+                        }
                     }
                 }).open();
 
                 Btn.setAttribute('icon', oldIcon);
                 Btn.enable();
-            }.bind(this));
+            });
         }
     });
 });

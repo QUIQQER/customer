@@ -50,8 +50,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         ],
 
         options: {
-            icon  : 'fa fa-user',
-            userId: false
+            icon            : 'fa fa-user',
+            userId          : false,
+            showUserButton  : true,
+            showDeleteButton: true
         },
 
         initialize: function (parent) {
@@ -149,29 +151,33 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 }
             });
 
-            this.addButton({
-                name  : 'userDelete',
-                title : QUILocale.get('quiqqer/quiqqer', 'users.user.btn.delete'),
-                icon  : 'fa fa-trash-o',
-                events: {
-                    onClick: this.$onDeleteClick
-                },
-                styles: {
-                    'float': 'right'
-                }
-            });
+            if (this.getAttribute('showDeleteButton')) {
+                this.addButton({
+                    name  : 'userDelete',
+                    title : QUILocale.get('quiqqer/quiqqer', 'users.user.btn.delete'),
+                    icon  : 'fa fa-trash-o',
+                    events: {
+                        onClick: this.$onDeleteClick
+                    },
+                    styles: {
+                        'float': 'right'
+                    }
+                });
+            }
 
-            this.addButton({
-                name  : 'openUser',
-                title : QUILocale.get(lg, 'quiqqer.customer.panel.openUser'),
-                icon  : 'fa fa-user',
-                events: {
-                    onClick: this.openUser
-                },
-                styles: {
-                    'float': 'right'
-                }
-            });
+            if (this.getAttribute('showUserButton')) {
+                this.addButton({
+                    name  : 'openUser',
+                    title : QUILocale.get(lg, 'quiqqer.customer.panel.openUser'),
+                    icon  : 'fa fa-user',
+                    events: {
+                        onClick: this.openUser
+                    },
+                    styles: {
+                        'float': 'right'
+                    }
+                });
+            }
 
             // categories
             this.addCategory({
@@ -274,7 +280,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 Loaded = User.load();
             }
 
-            Loaded.then(function (User) {
+            return Loaded.then(function (User) {
                 self.$User               = User;
                 self.$userInitAttributes = User.getAttributes();
 
@@ -311,6 +317,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @return {Promise}
          */
         $refreshTitle: function () {
+            if (this.getAttribute('header') === false) {
+                return Promise.resolve();
+            }
+
             var self    = this;
             var address = false;
 
@@ -400,6 +410,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 textDeliveryAddressSame: QUILocale.get(lg, 'checkout.panel.delivery.option.same')
             }));
 
+            var UserLoaded = Promise.resolve();
+
+            if (!this.$User) {
+                UserLoaded = this.$onShow();
+            }
+
             var self = this,
                 Form = this.getContent().getElement('form');
 
@@ -411,32 +427,36 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 return str;
             };
 
+            var address, delivery;
+
             // set data
-            Form.elements.userId.value = this.$User.getId();
+            UserLoaded.then(function () {
+                Form.elements.userId.value = self.$User.getId();
 
-            if (this.$User.getAttribute('customerId')) {
-                Form.elements.customerId.value = this.$User.getAttribute('customerId');
-            }
+                if (self.$User.getAttribute('customerId')) {
+                    Form.elements.customerId.value = self.$User.getAttribute('customerId');
+                }
 
-            // groups
-            Form.elements.groups.value     = this.$User.getAttribute('usergroup');
-            Form.elements.group.value      = this.$User.getAttribute('mainGroup');
-            Form.elements.customerId.value = this.$User.getAttribute('customerId');
+                // groups
+                Form.elements.groups.value     = self.$User.getAttribute('usergroup');
+                Form.elements.group.value      = self.$User.getAttribute('mainGroup');
+                Form.elements.customerId.value = self.$User.getAttribute('customerId');
 
-            Form.elements['quiqqer.erp.customer.website'].value      = checkVal(this.$User.getAttribute('quiqqer.erp.customer.website'));
-            Form.elements['quiqqer.erp.customer.payment.term'].value = checkVal(this.$User.getAttribute('quiqqer.erp.customer.payment.term'));
+                Form.elements['quiqqer.erp.customer.website'].value      = checkVal(self.$User.getAttribute('quiqqer.erp.customer.website'));
+                Form.elements['quiqqer.erp.customer.payment.term'].value = checkVal(self.$User.getAttribute('quiqqer.erp.customer.payment.term'));
 
-            // address
-            var address  = parseInt(this.$User.getAttribute('address'));
-            var delivery = this.$User.getAttribute('quiqqer.delivery.address');
+                // address
+                address  = parseInt(self.$User.getAttribute('address'));
+                delivery = self.$User.getAttribute('quiqqer.delivery.address');
 
-            if (!delivery) {
-                Form.elements['address-delivery'].checked = true;
-                Form.elements['address-delivery'].addEvent('change', this.deliveryAddressToggle);
-                this.deliveryAddressToggle();
-            }
+                if (!delivery) {
+                    Form.elements['address-delivery'].checked = true;
+                    Form.elements['address-delivery'].addEvent('change', self.deliveryAddressToggle);
+                    self.deliveryAddressToggle();
+                }
 
-            return Countries.getCountries().then(function (countries) {
+                return Countries.getCountries();
+            }).then(function (countries) {
                 var CountrySelect         = Form.elements['address-country'];
                 var CountrySelectDelivery = Form.elements['address-delivery-country'];
 

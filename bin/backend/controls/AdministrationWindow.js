@@ -32,7 +32,13 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
             this.parent(options);
 
             this.setAttributes({
-                title: QUILocale.get(lg, 'window.customer.creation.title')
+                title    : QUILocale.get(lg, 'window.customer.select.title'),
+                icon     : 'fa fa-user-o',
+                autoclose: false,
+                ok_button: {
+                    text     : QUILocale.get(lg, 'window.customer.select.button'),
+                    textimage: 'fa fa-user-o'
+                }
             });
 
             this.addEvents({
@@ -44,23 +50,47 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
          * event: on open
          */
         $onOpen: function () {
+            var self = this;
+
             this.getContent().set('html', '');
             this.getContent().setStyle('padding', 0);
 
-            this.$Admin = new Administration();
+            this.$Admin = new Administration({
+                events: {
+                    onCustomerOpenBegin: function () {
+                        self.Loader.show();
+                    },
+
+                    onCustomerOpen: function () {
+                        console.log('onCustomerOpen');
+                    },
+
+                    onCustomerOpenEnd: function () {
+                        self.Loader.hide();
+                    },
+
+                    onListOpen: function () {
+
+                    }
+                }
+            });
+
             this.$Admin.inject(this.getContent());
             this.$Admin.resize();
         },
 
-
+        /**
+         * submit the window
+         */
         submit: function () {
             var ids = this.$Admin.getSelectedCustomerIds();
+console.log(ids);
+            if (!ids.length) {
+                return;
+            }
 
             this.fireEvent('submit', [this, ids]);
-
-            if (this.getAttribute('autoclose')) {
-                this.close();
-            }
+            this.close();
         }
     });
 });
