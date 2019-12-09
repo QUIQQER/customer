@@ -60,6 +60,27 @@ define('package/quiqqer/customer/bin/backend/classes/Handler', [
                     userId   : userId
                 });
             });
+        },
+
+        /**
+         * Opens the customer panel
+         *
+         * @param customerId
+         */
+        openCustomer: function (customerId) {
+            return new Promise(function (resolve) {
+                require([
+                    'package/quiqqer/customer/bin/backend/controls/customer/Panel',
+                    'utils/Panels'
+                ], function (Panel, PanelUtils) {
+                    var CustomerPanel = new Panel({
+                        userId: customerId
+                    });
+
+                    PanelUtils.openPanelInTasks(CustomerPanel);
+                    resolve(CustomerPanel);
+                });
+            });
         }
     });
 });
