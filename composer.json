@@ -24,5 +24,6 @@
     "psr-4": {
       "QUI\\ERP\\Customer\\": "src\/QUI\/ERP\/Customer"
     }
-  }
+  },
+  "version": "dev-dev"
 }
