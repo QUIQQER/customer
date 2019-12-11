@@ -1,29 +1,28 @@
 {
-  "name": "quiqqer\/customer",
-  "type": "quiqqer-module",
-  "description": "With the customer administration you extend QUIQQER by a simpler administration of your customers.",
-  "license": "GPL-3.0+",
-  "authors": [
-    {
-      "name": "Henning Leutz",
-      "email": "leutz@pcsg.de",
-      "homepage": "http:\/\/www.pcsg.de",
-      "role": "Developer"
+    "name": "quiqqer\/customer",
+    "type": "quiqqer-module",
+    "description": "With the customer administration you extend QUIQQER by a simpler administration of your customers.",
+    "license": "GPL-3.0+",
+    "authors": [
+        {
+            "name": "Henning Leutz",
+            "email": "leutz@pcsg.de",
+            "homepage": "http:\/\/www.pcsg.de",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "email": "support@pcsg.de",
+        "url": "http:\/\/www.pcsg.de"
+    },
+    "require": {
+        "php": ">=5.6",
+        "quiqqer\/quiqqer": ">=1.4|dev-master|dev-dev",
+        "quiqqer\/erp": ">=1.4|dev-master|dev-dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "QUI\\ERP\\Customer\\": "src\/QUI\/ERP\/Customer"
+        }
     }
-  ],
-  "support": {
-    "email": "support@pcsg.de",
-    "url": "http:\/\/www.pcsg.de"
-  },
-  "require": {
-    "php": ">=5.6",
-    "quiqqer\/quiqqer": ">=1.4|dev-master|dev-dev",
-    "quiqqer\/erp": ">=1.4|dev-master|dev-dev"
-  },
-  "autoload": {
-    "psr-4": {
-      "QUI\\ERP\\Customer\\": "src\/QUI\/ERP\/Customer"
-    }
-  },
-  "version": "dev-dev"
 }
