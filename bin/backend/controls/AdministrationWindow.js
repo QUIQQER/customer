@@ -25,7 +25,8 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
 
         options: {
             maxWidth : 1200,
-            maxHeight: 800
+            maxHeight: 800,
+            editable : false
         },
 
         initialize: function (options) {
@@ -56,7 +57,9 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
             this.getContent().setStyle('padding', 0);
 
             this.$Admin = new Administration({
-                events: {
+                editable   : this.getAttribute('editable'),
+                submittable: true,
+                events     : {
                     onCustomerOpenBegin: function () {
                         self.Loader.show();
                     },
@@ -79,6 +82,10 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
 
                     onCustomerOpenEnd: function () {
                         self.Loader.hide();
+                    },
+
+                    onSubmit: function () {
+                        self.submit();
                     }
                 }
             });

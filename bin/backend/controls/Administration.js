@@ -54,10 +54,11 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
         ],
 
         options: {
-            page    : 1,
-            perPage : 50,
-            editable: true,
-            add     : true
+            page       : 1,
+            perPage    : 50,
+            editable   : true,
+            submittable: false,
+            add        : true
         },
 
         initialize: function (options) {
@@ -151,6 +152,81 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             this.$Container = new Element('div');
             this.$Container.inject(this.$GridContainer);
 
+            var columnModel = [];
+
+            if (this.getAttribute('submittable')) {
+                columnModel.push({
+                    header   : '&nbsp',
+                    dataIndex: 'submit_button',
+                    dataType : 'node',
+                    width    : 30
+                });
+            }
+
+            columnModel.push({
+                header   : QUILocale.get(lg, 'customerId'),
+                dataIndex: 'customerId',
+                dataType : 'integer',
+                width    : 100
+            });
+
+            /*{
+                header   : QUILocale.get('quiqqer/quiqqer', 'username'),
+                dataIndex: 'username',
+                dataType : 'integer',
+                width    : 150,
+                editable : editable,
+                className: editable ? 'clickable' : ''
+            }*/
+
+            columnModel.push({
+                header   : QUILocale.get('quiqqer/quiqqer', 'firstname'),
+                dataIndex: 'firstname',
+                dataType : 'string',
+                width    : 150,
+                editable : editable,
+                className: editable ? 'clickable' : ''
+            });
+
+            columnModel.push({
+                header   : QUILocale.get('quiqqer/quiqqer', 'lastname'),
+                dataIndex: 'lastname',
+                dataType : 'string',
+                width    : 150,
+                editable : editable,
+                className: editable ? 'clickable' : ''
+            });
+
+            columnModel.push({
+                header   : QUILocale.get('quiqqer/quiqqer', 'email'),
+                dataIndex: 'email',
+                dataType : 'string',
+                width    : 150,
+                editable : editable,
+                className: editable ? 'clickable' : ''
+            });
+
+            columnModel.push({
+                header   : QUILocale.get('quiqqer/quiqqer', 'group'),
+                dataIndex: 'usergroup_display',
+                dataType : 'string',
+                width    : 150,
+                className: editable ? 'clickable' : ''
+            });
+
+            columnModel.push({
+                dataIndex: 'usergroup',
+                dataType : 'string',
+                hidden   : true
+            });
+
+            columnModel.push({
+                header   : QUILocale.get('quiqqer/quiqqer', 'c_date'),
+                dataIndex: 'regdate',
+                dataType : 'date',
+                width    : 150
+            });
+
             this.$Grid = new Grid(this.$Container, {
                 buttons: [{
                     name     : 'add',
@@ -172,62 +248,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     }
                 }],
 
-                columnModel      : [{
-                    header   : '&nbsp',
-                    dataIndex: 'submit_button',
-                    dataType : 'node',
-                    width    : 60
-                }, {
-                    header   : QUILocale.get(lg, 'customerId'),
-                    dataIndex: 'customerId',
-                    dataType : 'integer',
-                    width    : 100
-                },
-                    /*{
-                    header   : QUILocale.get('quiqqer/quiqqer', 'username'),
-                    dataIndex: 'username',
-                    dataType : 'integer',
-                    width    : 150,
-                    editable : editable,
-                    className: editable ? 'clickable' : ''
-                },*/
-                    {
-                        header   : QUILocale.get('quiqqer/quiqqer', 'firstname'),
-                        dataIndex: 'firstname',
-                        dataType : 'string',
-                        width    : 150,
-                        editable : false, //editable,
-                        className: false //editable ? 'clickable' : ''
-                    }, {
-                        header   : QUILocale.get('quiqqer/quiqqer', 'lastname'),
-                        dataIndex: 'lastname',
-                        dataType : 'string',
-                        width    : 150,
-                        editable : false, //editable,
-                        className: false //editable ? 'clickable' : ''
-                    }, {
-                        header   : QUILocale.get('quiqqer/quiqqer', 'email'),
-                        dataIndex: 'email',
-                        dataType : 'string',
-                        width    : 150,
-                        editable : false, //editable,
-                        className: false //editable ? 'clickable' : ''
-                    }, {
-                        header   : QUILocale.get('quiqqer/quiqqer', 'group'),
-                        dataIndex: 'usergroup_display',
-                        dataType : 'string',
-                        width    : 150,
-                        className: 'clickable'
-                    }, {
-                        dataIndex: 'usergroup',
-                        dataType : 'string',
-                        hidden   : true
-                    }, {
-                        header   : QUILocale.get('quiqqer/quiqqer', 'c_date'),
-                        dataIndex: 'regdate',
-                        dataType : 'date',
-                        width    : 150
-                    }],
+                columnModel      : columnModel,
                 pagination       : true,
                 filterInput      : true,
                 perPage          : this.getAttribute('perPage'),
@@ -420,6 +441,12 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                         });
                     };
 
+                    var click = function () {
+                        (function () {
+                            self.fireEvent('submit', [self]);
+                        }).delay(200);
+                    };
+
                     for (var i = 0, len = result.data.length; i < len; i++) {
                         result.data[i].status = new QUISwitch({
                             status: result.data[i].status,
@@ -429,9 +456,15 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                             }
                         });
 
-                        result.data[i].submit_button = new Element('span', {
-                            html: '&nbsp;'
-                        });
+                        if (self.getAttribute('submittable')) {
+                            result.data[i].submit_button = new Element('span', {
+                                'class': 'fa fa-share',
+                                title  : QUILocale.get(lg, 'window.customer.select.button'),
+                                events : {
+                                    click: click
+                                }
+                            });
+                        }
                     }
 
                     self.$Grid.setData(result);
@@ -651,15 +684,20 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             var rowData = this.$Grid.getDataByRow(data.row);
 
-            if (data.cell.get('data-index') === 'customerId' ||
-                data.cell.get('data-index') === 'firstname' ||
-                data.cell.get('data-index') === 'lasstname' ||
-                data.cell.get('data-index') === 'email' ||
-                data.cell.get('data-index') === 'regdate'
-            ) {
+            if (data.cell.get('data-index') === 'customerId' || data.cell.get('data-index') === 'regdate') {
                 this.$openCustomer(rowData.id);
                 return;
             }
+
+            if (this.getAttribute('editable') === false &&
+                (data.cell.get('data-index') === 'firstname' ||
+                    data.cell.get('data-index') === 'lastname' ||
+                    data.cell.get('data-index') === 'usergroup_display' ||
+                    data.cell.get('data-index') === 'email')) {
+                this.$openCustomer(rowData.id);
+                return;
+            }
+
 
             if (data.cell.get('data-index') === 'usergroup_display') {
                 var self     = this,
