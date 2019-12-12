@@ -148,6 +148,7 @@ class Search extends Singleton
 
         $result = [];
         $Groups = QUI::getGroups();
+        $Users  = QUI::getUsers();
 
         foreach ($data as $entry) {
             $entry['usergroup'] = \trim($entry['usergroup'], ',');
@@ -174,6 +175,22 @@ class Search extends Singleton
 
             if (!isset($entry['customerId'])) {
                 $entry['customerId'] = '';
+            }
+
+            if (empty($entry['firstname']) || empty($entry['lastname'])) {
+                try {
+                    $User    = $Users->get((int)$entry['id']);
+                    $Address = $User->getStandardAddress();
+
+                    if ($Address->getAttribute('firstname')) {
+                        $entry['firstname'] = $Address->getAttribute('firstname');
+                    }
+
+                    if ($Address->getAttribute('lastname')) {
+                        $entry['lastname'] = $Address->getAttribute('lastname');
+                    }
+                } catch (QUI\Exception $Exception) {
+                }
             }
 
             $result[] = [
