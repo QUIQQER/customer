@@ -113,6 +113,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
                     multiple      : self.getAttribute('multiple'),
                     search        : self.getAttribute('search'),
                     searchSettings: self.getAttribute('searchSettings'),
+                    customerId    : self.getValue(),
                     events        : {
                         onSubmit: function (Win, userIds) {
                             for (var i = 0, len = userIds.length; i < len; i++) {
