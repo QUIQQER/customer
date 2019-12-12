@@ -104,8 +104,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
                     }).inject(LangElm);
                 }
 
-                Form.elements.lang.value    = User.getAttribute('lang');
-                Form.elements.taxInfo.value = tax.vat + '% - ' + tax.area.title;
+                Form.elements.lang.value = User.getAttribute('lang');
+
+                if (tax) {
+                    Form.elements.taxInfo.value = tax.vat + '% - ' + tax.area.title;
+                } else {
+                    Form.elements.taxInfo.value = '---';
+                }
+
             }).then(function () {
                 return QUI.parse(self.getElm());
             }).then(function () {

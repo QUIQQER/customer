@@ -12,9 +12,13 @@
 QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_customer_getTaxByUser',
     function ($userId) {
-        $User = QUI::getUsers()->get($userId);
-        $Tax  = QUI\ERP\Tax\Utils::getTaxByUser($User);
-        $Area = $Tax->getArea();
+        try {
+            $User = QUI::getUsers()->get($userId);
+            $Tax  = QUI\ERP\Tax\Utils::getTaxByUser($User);
+            $Area = $Tax->getArea();
+        } catch (QUI\Exception $Exception) {
+            return null;
+        }
 
         return [
             'id'   => $Tax->getId(),

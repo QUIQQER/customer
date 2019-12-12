@@ -28,7 +28,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow
             maxHeight: 500,
             maxWidth : 600,
             autoclose: false,
-            icon     : 'fa fa-address-card-o'
+            icon     : 'fa fa-share'
         },
 
         initialize: function (options) {
