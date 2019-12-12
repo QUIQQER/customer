@@ -438,9 +438,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 }
 
                 // groups
-                Form.elements.groups.value     = self.$User.getAttribute('usergroup');
-                Form.elements.group.value      = self.$User.getAttribute('mainGroup');
-                Form.elements.customerId.value = self.$User.getAttribute('customerId');
+                Form.elements.groups.value = self.$User.getAttribute('usergroup');
+                Form.elements.group.value  = self.$User.getAttribute('mainGroup');
 
                 Form.elements['quiqqer.erp.customer.website'].value      = checkVal(self.$User.getAttribute('quiqqer.erp.customer.website'));
                 Form.elements['quiqqer.erp.customer.payment.term'].value = checkVal(self.$User.getAttribute('quiqqer.erp.customer.payment.term'));

@@ -628,7 +628,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     self.$CustomerPanel = new Panel({
                         header          : false,
                         userId          : userId,
-                        showUserButton  : false,
+                        showUserButton  : true,
                         showDeleteButton: false
                     }).inject(Container);
 
