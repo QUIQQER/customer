@@ -58,7 +58,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             perPage    : 50,
             editable   : true,
             submittable: false,
-            add        : true
+            add        : true,
+            customerId : false
         },
 
         initialize: function (options) {
@@ -285,6 +286,10 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             var self = this;
 
             this.$Grid.disable();
+
+            if (this.getAttribute('customerId')) {
+                this.$openCustomer(this.getAttribute('customerId'));
+            }
 
             CustomerHandler.getCustomerGroupId().then(function (customerGroup) {
                 self.$customerGroup = customerGroup;

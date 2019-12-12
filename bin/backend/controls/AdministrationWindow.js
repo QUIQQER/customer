@@ -24,9 +24,10 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
         ],
 
         options: {
-            maxWidth : 1200,
-            maxHeight: 800,
-            editable : false
+            maxWidth  : 1200,
+            maxHeight : 800,
+            editable  : false,
+            customerId: false
         },
 
         initialize: function (options) {
@@ -58,6 +59,7 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
 
             this.$Admin = new Administration({
                 editable   : this.getAttribute('editable'),
+                customerId : this.getAttribute('customerId'),
                 submittable: true,
                 events     : {
                     onCustomerOpenBegin: function () {
