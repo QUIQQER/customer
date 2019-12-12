@@ -434,7 +434,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 Form.elements.userId.value = self.$User.getId();
 
                 if (self.$User.getAttribute('customerId')) {
-                    Form.elements.customerId.value = self.$User.getAttribute('customerId');
+                    Form.elements.customerId.value = checkVal(self.$User.getAttribute('customerId'));
                 }
 
                 // groups

@@ -159,7 +159,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     header   : '&nbsp',
                     dataIndex: 'submit_button',
                     dataType : 'node',
-                    width    : 30
+                    width    : 60
                 });
             }
 
@@ -462,6 +462,11 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                                 title  : QUILocale.get(lg, 'window.customer.select.button'),
                                 events : {
                                     click: click
+                                },
+                                styles : {
+                                    cursor   : 'pointer',
+                                    textAlign: 'center',
+                                    width    : 50
                                 }
                             });
                         }
