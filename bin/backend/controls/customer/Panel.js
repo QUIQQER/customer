@@ -449,7 +449,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 address  = parseInt(self.$User.getAttribute('address'));
                 delivery = self.$User.getAttribute('quiqqer.delivery.address');
 
-                if (!delivery) {
+                if (!delivery && shippingInstalled) {
                     Form.elements['address-delivery'].checked = true;
                     Form.elements['address-delivery'].addEvent('change', self.deliveryAddressToggle);
                     self.deliveryAddressToggle();

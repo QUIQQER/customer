@@ -173,59 +173,61 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 }],
 
                 columnModel      : [{
-                    header   : QUILocale.get('quiqqer/quiqqer', 'status'),
-                    dataIndex: 'status',
-                    dataType : 'QUI',
+                    header   : '&nbsp',
+                    dataIndex: 'submit_button',
+                    dataType : 'node',
                     width    : 60
                 }, {
                     header   : QUILocale.get(lg, 'customerId'),
                     dataIndex: 'customerId',
                     dataType : 'integer',
                     width    : 100
-                }, {
+                },
+                    /*{
                     header   : QUILocale.get('quiqqer/quiqqer', 'username'),
                     dataIndex: 'username',
                     dataType : 'integer',
                     width    : 150,
                     editable : editable,
                     className: editable ? 'clickable' : ''
-                }, {
-                    header   : QUILocale.get('quiqqer/quiqqer', 'firstname'),
-                    dataIndex: 'firstname',
-                    dataType : 'string',
-                    width    : 150,
-                    editable : editable,
-                    className: editable ? 'clickable' : ''
-                }, {
-                    header   : QUILocale.get('quiqqer/quiqqer', 'lastname'),
-                    dataIndex: 'lastname',
-                    dataType : 'string',
-                    width    : 150,
-                    editable : editable,
-                    className: editable ? 'clickable' : ''
-                }, {
-                    header   : QUILocale.get('quiqqer/quiqqer', 'email'),
-                    dataIndex: 'email',
-                    dataType : 'string',
-                    width    : 150,
-                    editable : editable,
-                    className: editable ? 'clickable' : ''
-                }, {
-                    header   : QUILocale.get('quiqqer/quiqqer', 'group'),
-                    dataIndex: 'usergroup_display',
-                    dataType : 'string',
-                    width    : 150,
-                    className: 'clickable'
-                }, {
-                    dataIndex: 'usergroup',
-                    dataType : 'string',
-                    hidden   : true
-                }, {
-                    header   : QUILocale.get('quiqqer/quiqqer', 'c_date'),
-                    dataIndex: 'regdate',
-                    dataType : 'date',
-                    width    : 150
-                }],
+                },*/
+                    {
+                        header   : QUILocale.get('quiqqer/quiqqer', 'firstname'),
+                        dataIndex: 'firstname',
+                        dataType : 'string',
+                        width    : 150,
+                        editable : false, //editable,
+                        className: false //editable ? 'clickable' : ''
+                    }, {
+                        header   : QUILocale.get('quiqqer/quiqqer', 'lastname'),
+                        dataIndex: 'lastname',
+                        dataType : 'string',
+                        width    : 150,
+                        editable : false, //editable,
+                        className: false //editable ? 'clickable' : ''
+                    }, {
+                        header   : QUILocale.get('quiqqer/quiqqer', 'email'),
+                        dataIndex: 'email',
+                        dataType : 'string',
+                        width    : 150,
+                        editable : false, //editable,
+                        className: false //editable ? 'clickable' : ''
+                    }, {
+                        header   : QUILocale.get('quiqqer/quiqqer', 'group'),
+                        dataIndex: 'usergroup_display',
+                        dataType : 'string',
+                        width    : 150,
+                        className: 'clickable'
+                    }, {
+                        dataIndex: 'usergroup',
+                        dataType : 'string',
+                        hidden   : true
+                    }, {
+                        header   : QUILocale.get('quiqqer/quiqqer', 'c_date'),
+                        dataIndex: 'regdate',
+                        dataType : 'date',
+                        width    : 150
+                    }],
                 pagination       : true,
                 filterInput      : true,
                 perPage          : this.getAttribute('perPage'),
@@ -425,6 +427,10 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                             events: {
                                 onChange: onChange
                             }
+                        });
+
+                        result.data[i].submit_button = new Element('span', {
+                            html: '&nbsp;'
                         });
                     }
 
@@ -645,7 +651,12 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             var rowData = this.$Grid.getDataByRow(data.row);
 
-            if (data.cell.get('data-index') === 'customerId') {
+            if (data.cell.get('data-index') === 'customerId' ||
+                data.cell.get('data-index') === 'firstname' ||
+                data.cell.get('data-index') === 'lasstname' ||
+                data.cell.get('data-index') === 'email' ||
+                data.cell.get('data-index') === 'regdate'
+            ) {
                 this.$openCustomer(rowData.id);
                 return;
             }
