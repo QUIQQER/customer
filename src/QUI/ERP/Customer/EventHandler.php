@@ -205,11 +205,13 @@ class EventHandler
 
         // saving
         try {
-            QUI::getDataBase()->update(
-                Manager::table(),
-                $data,
-                ['id' => $User->getId()]
-            );
+            if (!empty($data)) {
+                QUI::getDataBase()->update(
+                    Manager::table(),
+                    $data,
+                    ['id' => $User->getId()]
+                );
+            }
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::addDebug($Exception->getMessage());
         }
