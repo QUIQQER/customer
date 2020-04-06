@@ -177,6 +177,10 @@ class Search extends Singleton
                 $entry['customerId'] = '';
             }
 
+            if (empty($entry['customerId'])) {
+                $entry['customerId'] = $entry['id'];
+            }
+
             if (empty($entry['firstname']) || empty($entry['lastname'])) {
                 try {
                     $User    = $Users->get((int)$entry['id']);
