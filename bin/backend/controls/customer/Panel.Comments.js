@@ -25,7 +25,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
 
         Binds: [
             'addComment',
-            '$onInject'
+            '$onInject',
+            '$onFilter'
         ],
 
         options: {
@@ -37,6 +38,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
 
             this.$Comments         = null;
             this.$AddCommentButton = null;
+            this.$FilterInput      = null;
 
             this.$editComments = false;
 
@@ -51,7 +53,30 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
          * @return {HTMLDivElement}
          */
         create: function () {
+            var self = this;
+
             this.$Elm = this.parent();
+            this.$Elm.addClass('quiqqer-customer-comments');
+
+            var Header = new Element('section', {
+                'class': 'quiqqer-customer-comments-header',
+                html   : '<div class="quiqqer-customer-comments-header-filter">' +
+                    '   <input type="text" name="filter" /> ' +
+                    '</div>'
+            }).inject(this.$Elm);
+
+            this.$FilterInput             = Header.getElement('[name="filter"]');
+            this.$FilterInput.placeholder = QUILocale.get(lg, 'window.add.comment.filter.placeholder');
+
+            this.$FilterInput.addEvent('keyup', function () {
+                if (typeof self.$timer !== 'undefined') {
+                    clearTimeout(self.$timer);
+                }
+
+                self.$timer = (function () {
+                    self.$onFilter();
+                }).delay(200);
+            });
 
             this.$AddCommentButton = new QUIButton({
                 textimage: 'fa fa-comment',
@@ -64,8 +89,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
                 }
             });
 
-            this.$AddCommentButton.inject(this.$Elm);
-            new Element('section').inject(this.$Elm);
+            this.$AddCommentButton.inject(Header);
+
+            new Element('section', {
+                'class': 'quiqqer-customer-comments-list'
+            }).inject(this.$Elm);
 
             return this.$Elm;
         },
@@ -96,7 +124,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
          */
         refresh: function (comments) {
             var self    = this;
-            var Section = this.$Elm.getElement('section');
+            var Section = this.$Elm.getElement('.quiqqer-customer-comments-list');
 
             Section.set('html', '');
 
@@ -120,6 +148,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
                 self.$Comments.unserialize(comments);
             });
         },
+
+        // region comment list
 
         /**
          * return all comments for the user
@@ -238,6 +268,36 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
                     }
                 }
             }).open();
+        },
+
+        // endregion
+
+        // region filter
+
+        /**
+         * event: on filter
+         */
+        $onFilter: function () {
+            if (!this.$Comments) {
+                return;
+            }
+
+            if (typeof this.$Comments.filter === 'undefined') {
+                return;
+            }
+
+            var value = this.$FilterInput.value;
+
+            if (value === '') {
+                this.$Comments.clearFilter();
+                return;
+            }
+
+            this.$Comments.filter(
+                this.getElm().getElement('[name="filter"]').value
+            );
         }
+
+        // endregion
     });
 });
