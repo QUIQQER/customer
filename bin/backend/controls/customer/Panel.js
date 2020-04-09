@@ -981,6 +981,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
             this.Loader.show();
             this.$categoryUnload();
+            this.getBody().setStyle('padding', 20);
 
             this.$hideCategory().then(function () {
                 if (category === 'information') {
@@ -992,6 +993,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 }
 
                 if (category === 'comments') {
+                    self.getBody().setStyle('padding', 0);
+
                     return self.$openComments();
                 }
 

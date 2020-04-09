@@ -522,6 +522,10 @@
             <de><![CDATA[Kommentar editieren]]></de>
             <en><![CDATA[Edit comment]]></en>
         </locale>
+        <locale name="window.add.comment.filter.placeholder">
+            <de><![CDATA[Filter ()...]]></de>
+            <en><![CDATA[]]></en>
+        </locale>
 
         <locale name="control.users.select.search.field.placeholder">
             <de><![CDATA[Kunden suchen ...]]></de>

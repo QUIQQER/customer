@@ -18,3 +18,35 @@
 .quiqqer-customer-address-select [name="address-country"] {
     width: 30%;
 }
+
+
+/** comments
+ ===================================== */
+
+.quiqqer-customer-comments {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.quiqqer-customer-comments-header {
+    background: #f7f7f7;
+    display: inline-block;
+    padding: 20px;
+    width: 100%;
+}
+
+.quiqqer-customer-comments-header-filter {
+    float: left;
+}
+
+.quiqqer-customer-comments-header-filter input {
+    width: 300px;
+}
+
+.quiqqer-customer-comments-list {
+    display: inline-block;
+    overflow: auto;
+    padding: 20px;
+    width: 100%;
+}
