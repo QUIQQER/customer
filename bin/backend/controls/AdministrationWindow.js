@@ -88,6 +88,14 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
 
                     onSubmit: function () {
                         self.submit();
+                    },
+
+                    onRefreshBegin: function () {
+                        self.Loader.show();
+                    },
+
+                    onRefreshEnd: function () {
+                        self.Loader.hide();
                     }
                 }
             });
