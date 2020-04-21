@@ -67,26 +67,29 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
          */
         userSearch: function (value) {
             return new Promise(function (resolve) {
-                QUIAjax.get('ajax_usersgroups_search', function (result) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_search', function (result) {
                     var i, len;
 
                     var data       = [],
-                        userResult = result.users;
+                        userResult = result.data;
 
                     for (i = 0, len = userResult.length; i < len; i++) {
                         data.push({
                             id   : userResult[i].id,
-                            title: userResult[i].username,
+                            title: userResult[i].username + ': ' + userResult[i].address_display,
                             icon : 'fa fa fa-user-o'
                         });
                     }
 
                     resolve(data);
                 }, {
-                    search: value,
-                    fields: false,
-                    params: JSON.decode({
-                        limit: 10
+                    'package': 'quiqqer/customer',
+                    // search   : value,
+                    fields   : false,
+                    params   : JSON.encode({
+                        perPage     : 5,
+                        onlyCustomer: true,
+                        search      : value
                     })
                 });
             });
