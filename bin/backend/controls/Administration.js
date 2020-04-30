@@ -287,8 +287,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             this.$Grid.disable();
 
-            if (this.getAttribute('customerId')) {
-                this.$openCustomer(this.getAttribute('customerId'));
+            if (parseInt(this.getAttribute('customerId'))) {
+                this.$openCustomer(parseInt(this.getAttribute('customerId')));
             }
 
             CustomerHandler.getCustomerGroupId().then(function (customerGroup) {
