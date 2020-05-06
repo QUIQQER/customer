@@ -181,20 +181,35 @@ class Search extends Singleton
                 $entry['customerId'] = $entry['id'];
             }
 
-            if (empty($entry['firstname']) || empty($entry['lastname'])) {
-                try {
-                    $User    = $Users->get((int)$entry['id']);
-                    $Address = $User->getStandardAddress();
+            $addressData = [];
+            $Address     = null;
 
-                    if ($Address->getAttribute('firstname')) {
-                        $entry['firstname'] = $Address->getAttribute('firstname');
-                    }
+            try {
+                $User    = $Users->get((int)$entry['id']);
+                $Address = $User->getStandardAddress();
+            } catch (QUI\Exception $Exception) {
+            }
 
-                    if ($Address->getAttribute('lastname')) {
-                        $entry['lastname'] = $Address->getAttribute('lastname');
-                    }
-                } catch (QUI\Exception $Exception) {
+            if ($Address && empty($entry['firstname']) || empty($entry['lastname'])) {
+                $name = [];
+
+                if ($Address->getAttribute('firstname')) {
+                    $entry['firstname'] = $Address->getAttribute('firstname');
+                    $name[]             = $Address->getAttribute('firstname');
                 }
+
+                if ($Address->getAttribute('lastname')) {
+                    $entry['lastname'] = $Address->getAttribute('lastname');
+                    $name[]            = $Address->getAttribute('lastname');
+                }
+
+                if (!empty($name)) {
+                    $addressData[] = \implode(' ', $name);
+                }
+            }
+
+            if ($Address) {
+                $addressData[] = $Address->getText();
             }
 
             $result[] = [
@@ -208,7 +223,8 @@ class Search extends Singleton
                 'regdate'    => $DateFormatterLong->format($entry['regdate']),
 
                 'usergroup_display' => $groups,
-                'usergroup'         => $entry['usergroup']
+                'usergroup'         => $entry['usergroup'],
+                'address_display'   => \implode(' - ', $addressData)
             ];
         }
 

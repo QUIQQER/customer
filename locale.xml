@@ -56,6 +56,40 @@
             <de><![CDATA[Die E-Mail wurde erfolgreich an den Kunden gesendet.]]></de>
             <en><![CDATA[The e-mail was successfully sent to the customer.]]></en>
         </locale>
+
+
+        <locale name="permission.quiqqer.customer._header">
+            <de><![CDATA[Kunden]]></de>
+            <en><![CDATA[Customer]]></en>
+        </locale>
+        <locale name="permission.quiqqer.customer.fileUpload">
+            <de><![CDATA[Darf Dateien hochladen]]></de>
+            <en><![CDATA[Is allowed to upload files]]></en>
+        </locale>
+        <locale name="permission.quiqqer.customer.fileView">
+            <de><![CDATA[Darf Dateien sehen]]></de>
+            <en><![CDATA[Is allowed to view files]]></en>
+        </locale>
+        <locale name="permission.quiqqer.customer.fileEdit">
+            <de><![CDATA[Darf Dateien bearbeiten]]></de>
+            <en><![CDATA[Is allowed to edit files]]></en>
+        </locale>
+        <locale name="permission.quiqqer.customer.editComments">
+            <de><![CDATA[Darf Kommentare bearbeiten]]></de>
+            <en><![CDATA[Is allowed to edit comments]]></en>
+        </locale>
+        <locale name="permission.quiqqer.customer.view">
+            <de><![CDATA[Darf Kunden aufrufen / sehen]]></de>
+            <en><![CDATA[Is allowed to view customer]]></en>
+        </locale>
+        <locale name="permission.quiqqer.customer.edit">
+            <de><![CDATA[Darf Kunden bearbeiten]]></de>
+            <en><![CDATA[Is allowed to edit customer]]></en>
+        </locale>
+        <locale name="permission.quiqqer.customer.create">
+            <de><![CDATA[Darf Kunden anlegen]]></de>
+            <en><![CDATA[Is allowed to create customer]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/customer" datatype="php">
