@@ -190,7 +190,7 @@ class Search extends Singleton
             } catch (QUI\Exception $Exception) {
             }
 
-            if ($Address && empty($entry['firstname']) || empty($entry['lastname'])) {
+            if ($Address && (empty($entry['firstname']) || empty($entry['lastname']))) {
                 $name = [];
 
                 if ($Address->getAttribute('firstname')) {
