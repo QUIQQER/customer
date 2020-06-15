@@ -125,6 +125,10 @@
             <de><![CDATA[Neuen Kunden anlegen]]></de>
             <en><![CDATA[Create new customer]]></en>
         </locale>
+        <locale name="customer.window.create.title">
+            <de><![CDATA[Neuen Kunden anlegen]]></de>
+            <en><![CDATA[Create new customer]]></en>
+        </locale>
         <locale name="window.customer.creation.next">
             <de><![CDATA[Weiter]]></de>
             <en><![CDATA[Next]]></en>
