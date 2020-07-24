@@ -60,7 +60,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
                 textDiscountDesc: QUILocale.get(lg, 'customer.user.information.discount.description'),
 
                 textSendMail      : QUILocale.get(lg, 'customer.user.information.discount.passwordMail'),
-                textSendMailButton: QUILocale.get(lg, 'customer.user.information.discount.passwordMail.button')
+                textSendMailButton: QUILocale.get(lg, 'customer.user.information.discount.passwordMail.button'),
+                textNetto         : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.brutto'),
+                textBrutto        : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.netto')
             }));
 
             return this.$Elm;
