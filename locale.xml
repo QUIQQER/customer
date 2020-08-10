@@ -439,6 +439,43 @@
             <de><![CDATA[Preis-Berechnungsgrundlage]]></de>
             <en><![CDATA[Price calculation basis]]></en>
         </locale>
+
+        <locale name="customer.user.window.checkCalculation">
+            <de><![CDATA[Preis-Berechnungsgrundlage festlegen]]></de>
+            <en><![CDATA[Determine price calculation]]></en>
+        </locale>
+        <locale name="customer.user.window.isCompany">
+            <de><![CDATA[Firma]]></de>
+            <en><![CDATA[Company]]></en>
+        </locale>
+        <locale name="customer.user.window.defaultAddress">
+            <de><![CDATA[Standard Adresse]]></de>
+            <en><![CDATA[Default Address]]></en>
+        </locale>
+        <locale name="customer.user.window.text" html="true">
+            <de><![CDATA[
+            <p>Die Preis-Berechnungsgrundlage legt fest wie der Benutzer bei Preisberechnungen behandelt werden soll.</p>
+            <p>Die Daten zeigen den Zustand den QUIQQER für den Benutzer nutzen würde. Dies kann von den aktuellen Einstellungen des Nutzers abweichen,
+            da, jeder Benutzer händisch an die Preisberechnung angepasst werden kann.</p>
+            <p>Klicke auf Übernehmen um die Einstellungen für den Benutzer von QUIQQER bestimmen zu lassen
+            oder klicke Abbrechen um alles so zu lassen wie es ist.</p>
+            ]]></de>
+            <en><![CDATA[
+            <p>The price calculation base determines how the user is to be treated in price calculations.</p>
+            <p>The data displayed the status that QUIQQER would use for the user. This may differ from the user's current settings,
+            since, each user can manually adjust to the price calculation.</p>
+            <p>Click on Apply to let QUIQQER determine the settings for the user or click Cancel to leave everything as it is.</p>
+            ]]></en>
+        </locale>
+        <locale name="customer.user.window.button">
+            <de><![CDATA[Übernehmen]]></de>
+            <en><![CDATA[Apply]]></en>
+        </locale>
+
+        <locale name="customer.user.information.checkCalculation">
+            <de><![CDATA[Preis-Berechnungsgrundlage automatisch bestimmen.]]></de>
+            <en><![CDATA[Determine price calculation basis automatically.]]></en>
+        </locale>
         <locale name="customer.user.information.taxInformation">
             <de><![CDATA[Steuerinformation]]></de>
             <en><![CDATA[Tax information]]></en>

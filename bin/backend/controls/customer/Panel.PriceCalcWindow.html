@@ -1,0 +1,49 @@
+<div class="window-price-calc-text messages-message message-information">
+    {{{informationText}}}
+</div>
+
+<table class="data-table data-table-flexbox">
+    <tbody>
+    <tr>
+        <td>
+            <label class="field-container">
+                <span class="field-container-item">
+                    {{textBruttoNetto}}
+                </span>
+                <select type="text"
+                        name="nettoStatus"
+                        class="field-container-field"
+                >
+                    <option value=""></option>
+                    <option value="2">{{textBrutto}}</option>
+                    <option value="1">{{textNetto}}</option>
+                </select>
+            </label>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <label class="field-container">
+                <span class="field-container-item">
+                    {{textIsCompany}}
+                </span>
+                <span class="field-container-field window-price-calc-isCompany"></span>
+            </label>
+        </td>
+    </tr>
+</table>
+
+<table class="data-table data-table-flexbox window-price-calc-address">
+    <tbody>
+    <tr>
+        <td>
+            <label class="field-container">
+                <span class="field-container-item">
+                    {{textDefaultAddress}}
+                </span>
+                <span class="field-container-field"></span>
+            </label>
+        </td>
+    </tr>
+    </tbody>
+</table>

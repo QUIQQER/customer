@@ -32,9 +32,18 @@
                     <select name="quiqqer.erp.isNettoUser"
                             class="field-container-field"
                     >
+                        <option value=""></option>
                         <option value="2">{{textBrutto}}</option>
                         <option value="1">{{textNetto}}</option>
                     </select>
+                    <button name="quiqqer-erp-determine-calc-status"
+                            style="width: 50px"
+                            class="field-container-item"
+                            title="{{textCheckCalculationBasis}}"
+                            disabled
+                    >
+                        <span class="fa fa-warning"></span>
+                    </button>
                 </label>
             </td>
         </tr>

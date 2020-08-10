@@ -50,3 +50,20 @@
     padding: 20px;
     width: 100%;
 }
+
+
+[name="quiqqer-erp-determine-calc-status"] {
+    cursor: pointer;
+}
+
+.window-price-calc-text:hover {
+    opacity: 1;
+}
+
+.window-price-calc-text p {
+    margin-bottom: 10px;
+}
+
+.window-price-calc-text p:last-child {
+    margin-bottom: 0;
+}
