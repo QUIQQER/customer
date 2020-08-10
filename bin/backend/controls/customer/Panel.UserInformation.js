@@ -11,9 +11,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
     'Users',
     'Mustache',
 
-    'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInformation.html'
+    'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInformation.html',
+    'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.PriceCalcWindow.html'
 
-], function (QUI, QUIControl, QUIAjax, QUILocale, Users, Mustache, template) {
+], function (
+    QUI, QUIControl, QUIAjax, QUILocale, Users, Mustache,
+    template, templatePriceCalcWindow
+) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -48,22 +52,35 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
             this.$Elm = this.parent();
 
             this.$Elm.set('html', Mustache.render(template, {
-                title          : QUILocale.get(lg, 'customer.user.information.title'),
-                textUSt        : QUILocale.get(lg, 'customer.user.information.USt'),
-                textBruttoNetto: QUILocale.get(lg, 'customer.user.information.textBruttoNetto'),
-                textTaxInfo    : QUILocale.get(lg, 'customer.user.information.taxInformation'),
-                textCompanyNo  : QUILocale.get(lg, 'customer.user.information.textCompanyNo'),
-
-                titleGeneral    : QUILocale.get(lg, 'customer.user.information.general'),
-                textLanguage    : QUILocale.get('quiqqer/quiqqer', 'language'),
-                textDiscount    : QUILocale.get(lg, 'customer.user.information.discount'),
-                textDiscountDesc: QUILocale.get(lg, 'customer.user.information.discount.description'),
-
+                title             : QUILocale.get(lg, 'customer.user.information.title'),
+                textUSt           : QUILocale.get(lg, 'customer.user.information.USt'),
+                textBruttoNetto   : QUILocale.get(lg, 'customer.user.information.textBruttoNetto'),
+                textTaxInfo       : QUILocale.get(lg, 'customer.user.information.taxInformation'),
+                textCompanyNo     : QUILocale.get(lg, 'customer.user.information.textCompanyNo'),
+                titleGeneral      : QUILocale.get(lg, 'customer.user.information.general'),
+                textLanguage      : QUILocale.get('quiqqer/quiqqer', 'language'),
+                textDiscount      : QUILocale.get(lg, 'customer.user.information.discount'),
+                textDiscountDesc  : QUILocale.get(lg, 'customer.user.information.discount.description'),
                 textSendMail      : QUILocale.get(lg, 'customer.user.information.discount.passwordMail'),
                 textSendMailButton: QUILocale.get(lg, 'customer.user.information.discount.passwordMail.button'),
                 textNetto         : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.brutto'),
-                textBrutto        : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.netto')
+                textBrutto        : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.netto'),
+
+                textCheckCalculationBasis: QUILocale.get(lg, 'customer.user.information.checkCalculation')
             }));
+
+            var StatusCheck = this.$Elm.getElement('[name="quiqqer-erp-determine-calc-status"]');
+            var Status      = this.$Elm.getElement('[name="quiqqer.erp.isNettoUser"]');
+
+            if (Status.value !== '') {
+                StatusCheck.set('html', '<span class="fa fa-check"></span>');
+            }
+
+            StatusCheck.set('disabled', false);
+            StatusCheck.addEvent('click', function (e) {
+                e.stop();
+                this.openCheck();
+            }.bind(this));
 
             return this.$Elm;
         },
@@ -147,6 +164,75 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
                 require(['package/quiqqer/translator/bin/Translator'], function (Translator) {
                     Translator.getAvailableLanguages().then(resolve);
                 });
+            });
+        },
+
+        /**
+         * open the price calculation window
+         */
+        openCheck: function () {
+            var self = this;
+
+            require(['qui/controls/windows/Confirm'], function (Confirm) {
+                new Confirm({
+                    icon     : 'fa fa-user',
+                    title    : QUILocale.get(lg, 'customer.user.window.checkCalculation'),
+                    maxHeight: 600,
+                    maxWidth : 800,
+                    ok_button: {
+                        text     : QUILocale.get(lg, 'customer.user.window.button'),
+                        textimage: 'fa fa-check'
+                    },
+                    events   : {
+                        onOpen: function (Win) {
+                            var Content = Win.getContent();
+
+                            Content.set('html', Mustache.render(templatePriceCalcWindow, {
+                                informationText   : QUILocale.get(lg, 'customer.user.window.text'),
+                                textBruttoNetto   : QUILocale.get(lg, 'customer.user.information.textBruttoNetto'),
+                                textIsCompany     : QUILocale.get(lg, 'customer.user.window.isCompany'),
+                                textDefaultAddress: QUILocale.get(lg, 'customer.user.window.defaultAddress'),
+                                textNetto         : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.brutto'),
+                                textBrutto        : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.netto')
+                            }));
+
+                            Win.Loader.show();
+
+                            QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_checkCalculation', function (result) {
+                                Content.getElement('[name="nettoStatus"]').set('value', result.status);
+                                Content.getElement('.window-price-calc-text').setStyle('margin-bottom', 20);
+
+                                if (result.isCompany) {
+                                    Content.getElement('.window-price-calc-isCompany')
+                                           .set('html', result.address.company);
+                                } else {
+                                    Content.getElement('.window-price-calc-isCompany')
+                                           .set('html', '---');
+                                }
+
+                                if (result.address.text) {
+                                    Content.getElement('.window-price-calc-address .field-container-field')
+                                           .set('html', result.address.text);
+                                } else {
+                                    Content.getElement('.window-price-calc-address .field-container-field')
+                                           .setStyle('display', 'none');
+                                }
+
+                                Win.Loader.hide();
+                            }, {
+                                'package': 'quiqqer/customer',
+                                userId   : self.getAttribute('userId')
+                            });
+                        },
+
+                        onSubmit: function (Win) {
+                            var Form    = self.$Elm.getElement('form'),
+                                Content = Win.getContent();
+
+                            Form.elements['quiqqer.erp.isNettoUser'].value = Content.getElement('[name="nettoStatus"]').value;
+                        }
+                    }
+                }).open();
             });
         }
     });
