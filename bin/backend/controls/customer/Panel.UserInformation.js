@@ -195,13 +195,38 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
                                 textDefaultAddress : QUILocale.get(lg, 'customer.user.window.defaultAddress'),
                                 textShippingAddress: QUILocale.get(lg, 'customer.user.window.shippingAddress'),
                                 textNetto          : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.brutto'),
-                                textBrutto         : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.netto')
+                                textBrutto         : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.netto'),
+
+                                textEuVatId: QUILocale.get('quiqqer/erp', 'user.profile.userdata.vatId'),
+                                textTaxId  : QUILocale.get('quiqqer/erp', 'user.settings.taxId'),
+                                textChId   : QUILocale.get('quiqqer/erp', 'quiqqer.erp.chUID')
                             }));
 
                             Win.Loader.show();
 
                             QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_checkCalculation', function (result) {
                                 Content.getElement('[name="nettoStatus"]').set('value', result.status);
+
+                                Content.getElement('[name="euVatId"]')
+                                       .set('value', result.euVatId)
+                                       .set('disabled', true);
+
+                                if (result.taxId) {
+                                    Content.getElement('[name="taxId"]')
+                                           .set('value', result.taxId)
+                                           .set('disabled', true);
+                                } else {
+                                    Content.getElement('[name="taxId"]').getParent('tr').setStyle('display', 'none')
+                                }
+
+                                if (result.chUID) {
+                                    Content.getElement('[name="chId"]')
+                                           .set('value', result.chUID)
+                                           .set('disabled', true);
+                                } else {
+                                    Content.getElement('[name="chId"]').getParent('tr').setStyle('display', 'none')
+                                }
+
                                 Content.getElement('.window-price-calc-text').setStyle('margin-bottom', 20);
 
                                 if (result.isCompany) {

@@ -18,6 +18,10 @@ QUI::$Ajax->registerFunction(
         $shipping  = false;
         $isCompany = false;
 
+        $euVatId = $User->getAttribute('quiqqer.erp.euVatId');
+        $taxId   = $User->getAttribute('quiqqer.erp.taxId');
+        $chUID   = $User->getAttribute('quiqqer.erp.chUID');
+
         // default address
         try {
             $Address = QUI\ERP\Utils\User::getUserERPAddress($User);
@@ -44,7 +48,10 @@ QUI::$Ajax->registerFunction(
             'status'    => $status,
             'address'   => $address,
             'shipping'  => $shipping,
-            'isCompany' => $isCompany
+            'isCompany' => $isCompany,
+            'euVatId'   => $euVatId,
+            'taxId'     => $taxId,
+            'chUID'     => $chUID
         ];
     },
     ['userId'],
