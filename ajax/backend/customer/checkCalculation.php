@@ -15,8 +15,10 @@ QUI::$Ajax->registerFunction(
 
         $status    = QUI\ERP\Utils\User::getBruttoNettoUserStatus($User);
         $address   = false;
+        $shipping  = false;
         $isCompany = false;
 
+        // default address
         try {
             $Address = QUI\ERP\Utils\User::getUserERPAddress($User);
             $address = $Address->getAttributes();
@@ -28,9 +30,20 @@ QUI::$Ajax->registerFunction(
         } catch (QUI\Exception $Exception) {
         }
 
+        // shipping address
+        try {
+            $shippingId = $User->getAttribute('quiqqer.delivery.address');
+            $Shipping   = $User->getAddress($shippingId);
+            $shipping   = $Shipping->getAttributes();
+
+            $shipping['text'] = $Shipping->getText();
+        } catch (QUI\Exception $Exception) {
+        }
+
         return [
             'status'    => $status,
             'address'   => $address,
+            'shipping'  => $shipping,
             'isCompany' => $isCompany
         ];
     },

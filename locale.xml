@@ -445,12 +445,20 @@
             <en><![CDATA[Determine price calculation]]></en>
         </locale>
         <locale name="customer.user.window.isCompany">
+            <de><![CDATA[Ist Geschäftskunde]]></de>
+            <en><![CDATA[Is a business customer]]></en>
+        </locale>
+        <locale name="customer.user.window.company">
             <de><![CDATA[Firma]]></de>
             <en><![CDATA[Company]]></en>
         </locale>
         <locale name="customer.user.window.defaultAddress">
             <de><![CDATA[Standard Adresse]]></de>
-            <en><![CDATA[Default Address]]></en>
+            <en><![CDATA[Default address]]></en>
+        </locale>
+        <locale name="customer.user.window.shippingAddress">
+            <de><![CDATA[Versandadresse]]></de>
+            <en><![CDATA[Shipping address]]></en>
         </locale>
         <locale name="customer.user.window.text" html="true">
             <de><![CDATA[
@@ -473,8 +481,8 @@
         </locale>
 
         <locale name="customer.user.information.checkCalculation">
-            <de><![CDATA[Preis-Berechnungsgrundlage automatisch bestimmen.]]></de>
-            <en><![CDATA[Determine price calculation basis automatically.]]></en>
+            <de><![CDATA[Analyse: Preis-Berechnungsgrundlage automatisch bestimmen.]]></de>
+            <en><![CDATA[Analysis: Determine price calculation basis automatically.]]></en>
         </locale>
         <locale name="customer.user.information.taxInformation">
             <de><![CDATA[Steuerinformation]]></de>

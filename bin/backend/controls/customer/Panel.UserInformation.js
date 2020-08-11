@@ -188,12 +188,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
                             var Content = Win.getContent();
 
                             Content.set('html', Mustache.render(templatePriceCalcWindow, {
-                                informationText   : QUILocale.get(lg, 'customer.user.window.text'),
-                                textBruttoNetto   : QUILocale.get(lg, 'customer.user.information.textBruttoNetto'),
-                                textIsCompany     : QUILocale.get(lg, 'customer.user.window.isCompany'),
-                                textDefaultAddress: QUILocale.get(lg, 'customer.user.window.defaultAddress'),
-                                textNetto         : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.brutto'),
-                                textBrutto        : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.netto')
+                                informationText    : QUILocale.get(lg, 'customer.user.window.text'),
+                                textBruttoNetto    : QUILocale.get(lg, 'customer.user.information.textBruttoNetto'),
+                                textIsCompany      : QUILocale.get(lg, 'customer.user.window.isCompany'),
+                                textCompany        : QUILocale.get(lg, 'customer.user.window.company'),
+                                textDefaultAddress : QUILocale.get(lg, 'customer.user.window.defaultAddress'),
+                                textShippingAddress: QUILocale.get(lg, 'customer.user.window.shippingAddress'),
+                                textNetto          : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.brutto'),
+                                textBrutto         : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.netto')
                             }));
 
                             Win.Loader.show();
@@ -203,19 +205,23 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
                                 Content.getElement('.window-price-calc-text').setStyle('margin-bottom', 20);
 
                                 if (result.isCompany) {
-                                    Content.getElement('.window-price-calc-isCompany')
-                                           .set('html', result.address.company);
+                                    Content.getElement('.window-price-calc-isCompany').set('html', '<span class="fa fa-check"></span>');
+                                    Content.getElement('.window-price-calc-company').set('html', result.address.company);
                                 } else {
-                                    Content.getElement('.window-price-calc-isCompany')
-                                           .set('html', '---');
+                                    Content.getElement('.window-price-calc-isCompany').set('html', '<span class="fa fa-close"></span>');
+                                    Content.getElement('.window-price-calc-company').set('html', '<span class="fa fa-close"></span>');
                                 }
 
                                 if (result.address.text) {
-                                    Content.getElement('.window-price-calc-address .field-container-field')
-                                           .set('html', result.address.text);
+                                    Content.getElement('.window-price-calc-address').set('html', result.address.text);
                                 } else {
-                                    Content.getElement('.window-price-calc-address .field-container-field')
-                                           .setStyle('display', 'none');
+                                    Content.getElement('.window-price-calc-address').set('html', '---');
+                                }
+
+                                if (result.shipping.text) {
+                                    Content.getElement('.window-price-shipping-address').set('html', result.shipping.text);
+                                } else {
+                                    Content.getElement('.window-price-shipping-address').set('html', '---');
                                 }
 
                                 Win.Loader.hide();
