@@ -272,6 +272,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.setAttribute('icon', 'fa fa-spinner fa-spin');
             this.refresh();
 
+            this.getAttribute('userId');
+
             var self   = this;
             var User   = Users.get(this.getAttribute('userId'));
             var Loaded = Promise.resolve(User);
@@ -281,6 +283,19 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             }
 
             return Loaded.then(function (User) {
+                if (!User.getId()) {
+                    // user not found
+                    self.destroy();
+
+                    QUI.getMessageHandler().then(function (MH) {
+                        MH.addError(
+                            QUILocale.get('quiqqer/quiqqer', 'exception.lib.user.not.found')
+                        );
+                    });
+
+                    return;
+                }
+
                 self.$User               = User;
                 self.$userInitAttributes = User.getAttributes();
 
@@ -308,6 +323,16 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 }
 
                 self.Loader.hide();
+            }).catch(function (Err) {
+                // user not found
+                self.fireEvent('error', [self, Err]);
+                self.destroy();
+
+                QUI.getMessageHandler().then(function (MH) {
+                    MH.addError(
+                        QUILocale.get('quiqqer/quiqqer', 'exception.lib.user.not.found')
+                    );
+                });
             });
         },
 

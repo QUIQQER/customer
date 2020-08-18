@@ -634,7 +634,14 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                         header          : false,
                         userId          : userId,
                         showUserButton  : true,
-                        showDeleteButton: false
+                        showDeleteButton: false,
+                        events          : {
+                            onError: function (Instance) {
+                                if (!Instance.$User) {
+                                    self.setAttribute('customerId', false);
+                                }
+                            }
+                        }
                     }).inject(Container);
 
                     self.fireEvent('customerOpen', [this, userId, self.$CustomerPanel]);

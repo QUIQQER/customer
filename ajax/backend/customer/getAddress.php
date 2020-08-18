@@ -14,10 +14,18 @@ QUI::$Ajax->registerFunction(
     function ($userId) {
         $User = QUI::getUsers()->get($userId);
 
+        if (!$User) {
+            return false;
+        }
+
         try {
             $Address = $User->getStandardAddress();
         } catch (QUI\Exception $Exception) {
             $Address = $User->addAddress();
+        }
+
+        if (!$Address) {
+            return false;
         }
 
         $attributes         = $Address->getAttributes();
