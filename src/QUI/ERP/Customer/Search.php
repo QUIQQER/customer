@@ -210,6 +210,14 @@ class Search extends Singleton
 
             if ($Address) {
                 $addressData[] = $Address->getText();
+
+                if (empty($entry['email'])) {
+                    $mails = $Address->getMailList();
+
+                    if (\count($mails)) {
+                        $entry['email'] = $mails[0];
+                    }
+                }
             }
 
             $result[] = [

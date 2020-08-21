@@ -41,9 +41,7 @@ QUI::$Ajax->registerFunction(
 
         if (!empty($data['email'])) {
             $User->setAttribute('email', $data['email']);
-
-            $Address->clearMail();
-            $Address->addMail($data['email']);
+            $Address->editMail(0, $data['email']);
         }
 
         $Address->save();

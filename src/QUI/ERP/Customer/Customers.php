@@ -331,13 +331,9 @@ class Customers extends Singleton
                 return $entry['type'] === 'email';
             });
 
-            if (!empty($emails)) {
-                $Address->clearMail();
-            }
-
             foreach ($emails as $entry) {
                 if (isset($entry['no']) && !empty($entry['no'])) {
-                    $Address->addMail($entry['no']);
+                    $Address->editMail(0, $entry['no']);
                 }
             }
 
