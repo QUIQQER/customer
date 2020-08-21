@@ -293,8 +293,6 @@ class Customers extends Singleton
      */
     protected function saveAddress(QUI\Users\User $User, $attributes)
     {
-        $StandardAddress = $User->getStandardAddress();
-
         try {
             $Address = $User->getStandardAddress();
         } catch (QUI\Exception $Exception) {
