@@ -59,6 +59,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
                 textCompanyNo     : QUILocale.get(lg, 'customer.user.information.textCompanyNo'),
                 titleGeneral      : QUILocale.get(lg, 'customer.user.information.general'),
                 textLanguage      : QUILocale.get('quiqqer/quiqqer', 'language'),
+                textBirthday      : QUILocale.get('quiqqer/quiqqer', 'birthday'),
                 textDiscount      : QUILocale.get(lg, 'customer.user.information.discount'),
                 textDiscountDesc  : QUILocale.get(lg, 'customer.user.information.discount.description'),
                 textSendMail      : QUILocale.get(lg, 'customer.user.information.discount.passwordMail'),
@@ -104,6 +105,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
             Form.elements['quiqqer.erp.isNettoUser'].value = User.getAttribute('quiqqer.erp.isNettoUser');
             Form.elements['quiqqer.erp.euVatId'].value     = checkVal(User.getAttribute('quiqqer.erp.euVatId'));
             Form.elements['quiqqer.erp.discount'].value    = checkVal(User.getAttribute('quiqqer.erp.discount'));
+            Form.elements['birthday'].value                = User.getAttribute('birthday');
 
             Form.elements['quiqqer.erp.company.identification.number'].value = checkVal(User.getAttribute('quiqqer.erp.company.identification.number'));
 
