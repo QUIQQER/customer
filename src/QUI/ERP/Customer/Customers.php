@@ -336,7 +336,7 @@ class Customers extends Singleton
             }
 
             foreach ($emails as $entry) {
-                if (isset($entry['no'])) {
+                if (isset($entry['no']) && !empty($entry['no'])) {
                     $Address->addMail($entry['no']);
                 }
             }

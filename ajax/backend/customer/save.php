@@ -19,6 +19,10 @@ QUI::$Ajax->registerFunction(
             $userId,
             \json_decode($data, true)
         );
+
+        QUI::getMessagesHandler()->addSuccess(
+            QUI::getLocale()->get('quiqqer/customer', 'message.customer.saved.successfully')
+        );
     },
     ['userId', 'data'],
     'Permission::checkAdminUser'

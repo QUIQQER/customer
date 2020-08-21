@@ -118,6 +118,11 @@
             Customers may log on to the system. If the customer is active, he or she can log on to the system.
             ]]></en>
         </locale>
+
+        <locale name="message.customer.saved.successfully" html="true">
+            <de><![CDATA[Der Kunde wurde erfolgreich gespeichert.]]></de>
+            <en><![CDATA[The customer was successfully saved.]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/customer" datatype="js">
