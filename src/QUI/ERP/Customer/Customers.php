@@ -293,6 +293,8 @@ class Customers extends Singleton
      */
     protected function saveAddress(QUI\Users\User $User, $attributes)
     {
+        $StandardAddress = $User->getStandardAddress();
+
         try {
             $Address = $User->getStandardAddress();
         } catch (QUI\Exception $Exception) {
@@ -321,10 +323,39 @@ class Customers extends Singleton
 
         // tel, fax, mobile
         if (!empty($attributes['address-communication'])) {
-            $Address->clearPhone();
+            $emails = \array_filter($attributes['address-communication'], function ($entry) {
+                if (!isset($entry['type'])) {
+                    return false;
+                }
 
-            foreach ($attributes['address-communication'] as $entry) {
-                if (isset($entry['no']) && isset($entry['type'])) {
+                return $entry['type'] === 'email';
+            });
+
+            if (!empty($emails)) {
+                $Address->clearMail();
+            }
+
+            foreach ($emails as $entry) {
+                if (isset($entry['no'])) {
+                    $Address->addMail($entry['no']);
+                }
+            }
+
+
+            $phones = \array_filter($attributes['address-communication'], function ($entry) {
+                if (!isset($entry['type'])) {
+                    return false;
+                }
+
+                return $entry['type'] !== 'email';
+            });
+
+            if (!empty($phones)) {
+                $Address->clearPhone();
+            }
+
+            foreach ($phones as $entry) {
+                if (isset($entry['no'])) {
                     $Address->addPhone($entry);
                 }
             }

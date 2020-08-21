@@ -521,8 +521,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 Form.elements['address-city'].value       = address.city;
 
                 try {
-                    var CBody = self.getElm().getElement('.customer-information-communication-body');
-                    var phone = JSON.decode(address.phone);
+                    var CBody  = self.getElm().getElement('.customer-information-communication-body');
+                    var phone  = JSON.decode(address.phone);
+                    var emails = JSON.decode(address.mail);
 
                     if (self.$User.getAttribute('address-communication')) {
                         phone = self.$User.getAttribute('address-communication');
@@ -533,6 +534,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     var rows   = [],
                         tel    = false,
                         fax    = false,
+                        email  = false,
                         mobile = false;
 
                     for (i = 0, len = phone.length; i < len; i++) {
@@ -562,6 +564,24 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                         }
 
                         rows.push(Row);
+                    }
+
+                    for (i = 0, len = emails.length; i < len; i++) {
+                        Row = new Element('tr', {
+                            'data-type': 'email',
+                            html       : '<td>' +
+                                '<label class="field-container">' +
+                                '   <span class="field-container-item">' + QUILocale.get('quiqqer/quiqqer', 'email') + '</span>' +
+                                '   <input name="address-communication" data-type="email" type="email" class="field-container-field"/>' +
+                                '</label>' +
+                                '</td>'
+                        });
+
+                        Row.getElement('input').set('value', emails[i]);
+                        Row.getElement('input').set('data-type', 'email');
+                        rows.push(Row);
+
+                        email = true;
                     }
 
                     if (tel === false) {
@@ -600,6 +620,20 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                                     '<label class="field-container">' +
                                     '   <span class="field-container-item">' + QUILocale.get('quiqqer/quiqqer', 'mobile') + '</span>' +
                                     '   <input name="address-communication" data-type="mobile" class="field-container-field"/>' +
+                                    '</label>' +
+                                    '</td>'
+                            })
+                        );
+                    }
+
+                    if (email === false) {
+                        rows.push(
+                            new Element('tr', {
+                                'data-type': 'email',
+                                html       : '<td>' +
+                                    '<label class="field-container">' +
+                                    '   <span class="field-container-item">' + QUILocale.get('quiqqer/quiqqer', 'email') + '</span>' +
+                                    '   <input name="address-communication" data-type="email" type="email" class="field-container-field"/>' +
                                     '</label>' +
                                     '</td>'
                             })
