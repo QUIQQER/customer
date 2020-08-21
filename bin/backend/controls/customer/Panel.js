@@ -526,8 +526,19 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     var emails = JSON.decode(address.mail);
 
                     if (self.$User.getAttribute('address-communication')) {
-                        phone = self.$User.getAttribute('address-communication');
+                        var addressEntries = self.$User.getAttribute('address-communication');
+
+                        phone = addressEntries.filter(function (e) {
+                            return e.type !== 'email';
+                        });
+
+                        emails = addressEntries.filter(function (e) {
+                            return e.type === 'email';
+                        }).map(function(e) {
+                            return e.no;
+                        });
                     }
+
 
                     var i, len, Row;
 
