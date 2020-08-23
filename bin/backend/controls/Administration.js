@@ -181,6 +181,15 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             }*/
 
             columnModel.push({
+                header   : QUILocale.get('quiqqer/quiqqer', 'company'),
+                dataIndex: 'company',
+                dataType : 'string',
+                width    : 150,
+                editable : editable,
+                className: editable ? 'clickable' : ''
+            });
+
+            columnModel.push({
                 header   : QUILocale.get('quiqqer/quiqqer', 'firstname'),
                 dataIndex: 'firstname',
                 dataType : 'string',

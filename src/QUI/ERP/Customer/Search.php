@@ -218,6 +218,10 @@ class Search extends Singleton
                         $entry['email'] = $mails[0];
                     }
                 }
+
+                if (empty($entry['company'])) {
+                    $entry['company'] = $Address->getAttribute('company');
+                }
             }
 
             $result[] = [
@@ -227,6 +231,7 @@ class Search extends Singleton
                 'username'   => $entry['username'],
                 'firstname'  => $entry['firstname'],
                 'lastname'   => $entry['lastname'],
+                'company'    => $entry['company'],
                 'email'      => $entry['email'],
                 'regdate'    => $DateFormatterLong->format($entry['regdate']),
 
