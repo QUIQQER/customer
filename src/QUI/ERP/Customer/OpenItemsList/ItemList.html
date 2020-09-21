@@ -76,5 +76,39 @@
         </td>
     </tr>
     {/foreach}
+
+    <tr></tr>
+
+    <tr class="openitemslist-tbl-sums">
+        <td colspan="10">
+            {locale group="quiqqer/customer" var="OpenItemsList.tbl.sums"}
+        </td>
+    </tr>
+
+    <!-- Totals -->
+    {foreach $this->getTotalAmountsByCurrency() as $entry}
+    <tr class="openitemslist-tbl-sums">
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+        <td class="openitemslist-tbl-align-right openitems-tbl-money">
+            {$entry['netTotalFormatted']}
+        </td>
+        <td class="openitemslist-tbl-align-right openitems-tbl-money">
+            {$entry['vatTotalFormatted']}
+        </td>
+        <td class="openitemslist-tbl-align-right openitems-tbl-money">
+            {$entry['sumTotalFormatted']}
+        </td>
+        <td>&nbsp;</td>
+        <td class="openitemslist-tbl-align-right openitems-tbl-money">
+            {$entry['paidTotalFormatted']}
+        </td>
+        <td class="openitemslist-tbl-align-right openitems-tbl-money">
+            {$entry['dueTotalFormatted']}
+        </td>
+        <td>&nbsp;</td>
+        <td>&nbsp;</td>
+    </tr>
+    {/foreach}
     </tbody>
 </table>

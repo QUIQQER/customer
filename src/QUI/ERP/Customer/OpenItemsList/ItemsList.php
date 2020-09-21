@@ -13,24 +13,9 @@ use QUI\Users\User;
 class ItemsList
 {
     /**
-     * @var float
+     * @var array
      */
-    protected $amountNetTotal = 0;
-
-    /**
-     * @var float
-     */
-    protected $amountVatTotal = 0;
-
-    /**
-     * @var float
-     */
-    protected $amountSumTotal = 0;
-
-    /**
-     * @var float
-     */
-    protected $amountDueTotal = 0;
+    protected $totalAmountsByCurrency = [];
 
     /**
      * @var \DateTime
@@ -57,12 +42,51 @@ class ItemsList
     {
         $this->items[] = $Item;
 
-        $this->amountNetTotal += $Item->getAmountTotalNet();
-        $this->amountSumTotal += $Item->getAmountTotalSum();
-        $this->amountVatTotal += $Item->getAmountTotalVat();
-        $this->amountDueTotal += $Item->getAmountOpen();
+        // Calculate total amounts
+        $Currency     = $Item->getCurrency();
+        $currencyCode = $Currency->getCode();
 
-        // Sort
+        if (empty($this->totalAmountsByCurrency[$currencyCode])) {
+            $this->totalAmountsByCurrency[$currencyCode] = [
+                'netTotal'           => 0,
+                'netTotalFormatted'  => '',
+                'vatTotal'           => 0,
+                'vatTotalFormatted'  => '',
+                'sumTotal'           => 0,
+                'sumTotalFormatted'  => '',
+                'dueTotal'           => 0,
+                'dueTotalFormatted'  => '',
+                'paidTotal'          => 0,
+                'paidTotalFormatted' => ''
+            ];
+        }
+
+        $this->totalAmountsByCurrency[$currencyCode]['netTotal']          += $Item->getAmountTotalNet();
+        $this->totalAmountsByCurrency[$currencyCode]['netTotalFormatted'] = $Currency->format(
+            $this->totalAmountsByCurrency[$currencyCode]['netTotal']
+        );
+
+        $this->totalAmountsByCurrency[$currencyCode]['sumTotal']          += $Item->getAmountTotalSum();
+        $this->totalAmountsByCurrency[$currencyCode]['sumTotalFormatted'] = $Currency->format(
+            $this->totalAmountsByCurrency[$currencyCode]['sumTotal']
+        );
+
+        $this->totalAmountsByCurrency[$currencyCode]['dueTotal']          += $Item->getAmountOpen();
+        $this->totalAmountsByCurrency[$currencyCode]['dueTotalFormatted'] = $Currency->format(
+            $this->totalAmountsByCurrency[$currencyCode]['dueTotal']
+        );
+
+        $this->totalAmountsByCurrency[$currencyCode]['paidTotal']          += $Item->getAmountPaid();
+        $this->totalAmountsByCurrency[$currencyCode]['paidTotalFormatted'] = $Currency->format(
+            $this->totalAmountsByCurrency[$currencyCode]['paidTotal']
+        );
+
+        $this->totalAmountsByCurrency[$currencyCode]['vatTotal']          += $Item->getAmountTotalVat();
+        $this->totalAmountsByCurrency[$currencyCode]['vatTotalFormatted'] = $Currency->format(
+            $this->totalAmountsByCurrency[$currencyCode]['vatTotal']
+        );
+
+        // Sort items by date ASC
         \usort($this->items, function ($ItemA, $ItemB) {
             /**
              * @var Item $ItemA
@@ -80,35 +104,11 @@ class ItemsList
     }
 
     /**
-     * @return float
+     * @return array
      */
-    public function getAmountNetTotal(): float
+    public function getTotalAmountsByCurrency(): array
     {
-        return $this->amountNetTotal;
-    }
-
-    /**
-     * @return float
-     */
-    public function getAmountVatTotal(): float
-    {
-        return $this->amountVatTotal;
-    }
-
-    /**
-     * @return float
-     */
-    public function getAmountSumTotal(): float
-    {
-        return $this->amountSumTotal;
-    }
-
-    /**
-     * @return float
-     */
-    public function getAmountDueTotal(): float
-    {
-        return $this->amountDueTotal;
+        return $this->totalAmountsByCurrency;
     }
 
     /**
