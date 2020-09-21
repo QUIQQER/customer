@@ -1,4 +1,4 @@
-<table>
+<table class="quiqqer-customer-openitemslist-table">
     <thead>
     <tr>
         <th>
@@ -25,10 +25,10 @@
         <th>
             {locale group="quiqqer/customer" var="OpenItemsList.tbl.header.amount_due"}
         </th>
-        <th>
+        <th class="openitems-tbl-daysdue">
             {locale group="quiqqer/customer" var="OpenItemsList.tbl.header.days_due"}
         </th>
-        <th>
+        <th class="openitems-tbl-dunninglevel">
             {locale group="quiqqer/customer" var="OpenItemsList.tbl.header.dunning_level"}
         </th>
     </tr>
@@ -39,7 +39,7 @@
         <td class="openitemslist-tbl-100">
             {$Item->getDateFormatted()}
         </td>
-        <td class="openitemslist-tbl-100">
+        <td>
             {$Item->getDocumentNo()}
         </td>
         <td class="openitemslist-tbl-align-right openitems-tbl-money">

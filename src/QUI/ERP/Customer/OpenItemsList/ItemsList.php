@@ -179,6 +179,9 @@ class ItemsList
             'this' => $this
         ]);
 
-        return $Engine->fetch(\dirname(__FILE__).'/ItemList.html');
+        $body = '<style>'.\file_get_contents(\dirname(__FILE__).'/ItemList.css').'</style>';
+        $body .= $Engine->fetch(\dirname(__FILE__).'/ItemList.html');
+
+        return $body;
     }
 }
