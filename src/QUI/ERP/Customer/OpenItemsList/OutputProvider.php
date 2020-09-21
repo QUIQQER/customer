@@ -169,21 +169,12 @@ class OutputProvider implements OutputProviderInterface
      */
     public static function getMailSubject($entityId)
     {
-        // @todo
+        /** @var User $ERPUser */
+        $ERPUser = self::getEntity($entityId);
+        $Locale  = $ERPUser->getLocale();
 
-        $DunningProcess = self::getEntity($entityId);
-        $CurrentDunning = $DunningProcess->getCurrentDunning();
-        $Invoice        = $DunningProcess->getInvoice();
-        $Customer       = $Invoice->getCustomer();
-        $Locale         = QUI::getLocale();
-
-        if ($Customer) {
-            $Locale = $Customer->getLocale();
-        }
-
-        return QUI::getLocale()->get('quiqqer/customer', 'mail.dunning.subject', [
-            'invoiceId'         => $Invoice->getId(),
-            'dunningLevelTitle' => $CurrentDunning->getDunningLevel()->getTitle($Locale)
+        return QUI::getLocale()->get('quiqqer/customer', 'mail.OpenItemsList.subject', [
+            'date' => $Locale->formatDate(time())
         ]);
     }
 
@@ -197,43 +188,13 @@ class OutputProvider implements OutputProviderInterface
      */
     public static function getMailBody($entityId)
     {
-        // @todo
+        /** @var User $ERPUser */
+        $ERPUser = self::getEntity($entityId);
+        $Locale  = $ERPUser->getLocale();
 
-        $DunningProcess = self::getEntity($entityId);
-        $CurrentDunning = $DunningProcess->getCurrentDunning();
-        $Invoice        = $DunningProcess->getInvoice();
-        $Customer       = $Invoice->getCustomer();
-        $Locale         = QUI::getLocale();
-
-        if ($Customer) {
-            $Locale = $Customer->getLocale();
-        }
-
-        $InvoiceTimeForPayment = \date_create($Invoice->getAttribute('time_for_payment'));
-        $InvoiceDate           = \date_create($Invoice->getAttribute('date'));
-
-        return \str_replace(
-            [
-                '[customerName]',
-                '[invoiceId]',
-                '[invoiceDate]',
-                '[totalAmountDue]',
-                '[invoiceAmountDue]',
-                '[feeAmountDue]',
-                '[dunningDueDate]',
-                '[invoiceDueDate]',
-            ],
-            [
-                $Customer->getInvoiceName(),
-                $Invoice->getId(),
-                $Locale->formatDate($InvoiceDate->getTimestamp()),
-                $CurrentDunning->getTotalAmountDueFormatted(),
-                $CurrentDunning->getInvoiceAmountDueFormatted(),
-                $CurrentDunning->getFeeAmountDueFormatted(),
-                $CurrentDunning->getDueDateFormatted(),
-                $Locale->formatDate($InvoiceTimeForPayment->getTimestamp())
-            ],
-            $CurrentDunning->getDunningLevel()->getMailContent($Locale)
-        );
+        return QUI::getLocale()->get('quiqqer/customer', 'mail.OpenItemsList.body', [
+            'date'         => $Locale->formatDate(time()),
+            'customerName' => $ERPUser->getName()
+        ]);
     }
 }
