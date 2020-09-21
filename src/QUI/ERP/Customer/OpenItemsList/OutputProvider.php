@@ -4,7 +4,6 @@ namespace QUI\ERP\Customer\OpenItemsList;
 
 use QUI;
 use QUI\ERP\Output\OutputProviderInterface;
-use QUI\ERP\Accounting\Invoice\Utils\Invoice as InvoiceUtils;
 use QUI\Interfaces\Users\User;
 use QUI\Locale;
 
@@ -13,7 +12,7 @@ use QUI\Locale;
  *
  * Output provider for quiqqer/customer:
  *
- * Outputs previews and PDF files for dunnings
+ * Outputs previews and PDF files for OpenItemLists
  */
 class OutputProvider implements OutputProviderInterface
 {
