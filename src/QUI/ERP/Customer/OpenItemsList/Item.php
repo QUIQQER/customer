@@ -2,7 +2,9 @@
 
 namespace QUI\ERP\Customer\OpenItemsList;
 
+use QUI;
 use QUI\ERP\Currency\Currency;
+use QUI\Locale;
 
 /**
  * Class Item
@@ -37,6 +39,11 @@ class Item
     protected $DueDate;
 
     /**
+     * @var \DateTime|false
+     */
+    protected $LastPaymentDate = false;
+
+    /**
      * @var float
      */
     protected $amountPaid = 0;
@@ -44,17 +51,22 @@ class Item
     /**
      * @var float
      */
-    protected $amountDueNet = 0;
+    protected $amountOpen = 0;
 
     /**
      * @var float
      */
-    protected $amountDueSum = 0;
+    protected $amountTotalNet = 0;
 
     /**
      * @var float
      */
-    protected $amountDueVat = 0;
+    protected $amountTotalSum = 0;
+
+    /**
+     * @var float
+     */
+    protected $amountTotalVat = 0;
 
     /**
      * @var float
@@ -67,9 +79,19 @@ class Item
     protected $daysDue = 0;
 
     /**
+     * @var int|false
+     */
+    protected $dunningLevel = false;
+
+    /**
      * @var Currency
      */
     protected $Currency;
+
+    /**
+     * @var Locale
+     */
+    protected $Locale;
 
     /**
      * @return string
@@ -104,6 +126,60 @@ class Item
     }
 
     /**
+     * @return int
+     */
+    public function getDaysDue(): int
+    {
+        return $this->daysDue;
+    }
+
+    /**
+     * @param int $daysDue
+     */
+    public function setDaysDue(int $daysDue)
+    {
+        $this->daysDue = $daysDue;
+    }
+
+    /**
+     * @return false|int
+     */
+    public function getDunningLevel()
+    {
+        return $this->dunningLevel;
+    }
+
+    /**
+     * @param false|int $dunningLevel
+     */
+    public function setDunningLevel($dunningLevel)
+    {
+        $this->dunningLevel = $dunningLevel;
+    }
+
+    /**
+     * @return Locale
+     */
+    public function getLocale(): Locale
+    {
+        if (!empty($this->Locale)) {
+            return $this->Locale;
+        }
+
+        $this->Locale = QUI::getLocale();
+
+        return $this->Locale;
+    }
+
+    /**
+     * @param Locale $Locale
+     */
+    public function setLocale(Locale $Locale)
+    {
+        $this->Locale = $Locale;
+    }
+
+    /**
      * @return string
      */
     public function getDocumentNo(): string
@@ -128,6 +204,14 @@ class Item
     }
 
     /**
+     * @return string
+     */
+    public function getDateFormatted()
+    {
+        return $this->getLocale()->formatDate($this->Date->getTimestamp());
+    }
+
+    /**
      * @param \DateTime $Date
      */
     public function setDate(\DateTime $Date)
@@ -136,11 +220,43 @@ class Item
     }
 
     /**
+     * @return \DateTime|false
+     */
+    public function getLastPaymentDate()
+    {
+        return $this->LastPaymentDate;
+    }
+
+    /**
+     * @return string
+     */
+    public function getLastPaymentDateFormatted()
+    {
+        return $this->getLocale()->formatDate($this->LastPaymentDate->getTimestamp());
+    }
+
+    /**
+     * @param \DateTime $LastPaymentDate
+     */
+    public function setLastPaymentDate(\DateTime $LastPaymentDate)
+    {
+        $this->LastPaymentDate = $LastPaymentDate;
+    }
+
+    /**
      * @return \DateTime
      */
     public function getDueDate(): \DateTime
     {
         return $this->DueDate;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDueDateFormatted()
+    {
+        return $this->getLocale()->formatDate($this->DueDate->getTimestamp());
     }
 
     /**
@@ -160,6 +276,14 @@ class Item
     }
 
     /**
+     * @return string
+     */
+    public function getAmountPaidFormatted()
+    {
+        return $this->Currency->format($this->amountPaid, $this->getLocale());
+    }
+
+    /**
      * @param float $amountPaid
      */
     public function setAmountPaid(float $amountPaid)
@@ -170,66 +294,122 @@ class Item
     /**
      * @return float
      */
-    public function getAmountDueNet(): float
+    public function getAmountOpen(): float
     {
-        return $this->amountDueNet;
+        return $this->amountOpen;
     }
 
     /**
-     * @param float $amountDueNet
+     * @return string
      */
-    public function setAmountDueNet(float $amountDueNet)
+    public function getAmountOpenFormatted()
     {
-        $this->amountDueNet = $amountDueNet;
+        return $this->Currency->format($this->amountOpen, $this->getLocale());
     }
 
     /**
-     * @return float
+     * @param float $amountOpen
      */
-    public function getAmountDueSum(): float
+    public function setAmountOpen(float $amountOpen)
     {
-        return $this->amountDueSum;
-    }
-
-    /**
-     * @param float $amountDueSum
-     */
-    public function setAmountDueSum(float $amountDueSum)
-    {
-        $this->amountDueSum = $amountDueSum;
+        $this->amountOpen = $amountOpen;
     }
 
     /**
      * @return float
      */
-    public function getAmountDueVat(): float
+    public function getAmountTotalNet(): float
     {
-        return $this->amountDueVat;
+        return $this->amountTotalNet;
     }
 
     /**
-     * @param float $amountDueVat
+     * @return string
      */
-    public function setAmountDueVat(float $amountDueVat)
+    public function getAmountTotalNetFormatted()
     {
-        $this->amountDueVat = $amountDueVat;
+        return $this->Currency->format($this->amountTotalNet, $this->getLocale());
+    }
+
+    /**
+     * @param float $amountTotalNet
+     */
+    public function setAmountTotalNet(float $amountTotalNet)
+    {
+        $this->amountTotalNet = $amountTotalNet;
     }
 
     /**
      * @return float
      */
-    public function getAmountTotal(): float
+    public function getAmountTotalSum(): float
     {
-        return $this->amountTotal;
+        return $this->amountTotalSum;
     }
 
     /**
-     * @param float $amountTotal
+     * @return string
      */
-    public function setAmountTotal(float $amountTotal)
+    public function getAmountTotalSumFormatted()
     {
-        $this->amountTotal = $amountTotal;
+        return $this->Currency->format($this->amountTotalSum, $this->getLocale());
     }
+
+    /**
+     * @param float $amountTotalSum
+     */
+    public function setAmountTotalSum(float $amountTotalSum)
+    {
+        $this->amountTotalSum = $amountTotalSum;
+    }
+
+    /**
+     * @return float
+     */
+    public function getAmountTotalVat(): float
+    {
+        return $this->amountTotalVat;
+    }
+
+    /**
+     * @return string
+     */
+    public function getAmountTotalVatFormatted()
+    {
+        return $this->Currency->format($this->amountTotalVat, $this->getLocale());
+    }
+
+    /**
+     * @param float $amountTotalVat
+     */
+    public function setAmountTotalVat(float $amountTotalVat)
+    {
+        $this->amountTotalVat = $amountTotalVat;
+    }
+
+//    /**
+//     * @return float
+//     */
+//    public function getAmountTotal(): float
+//    {
+//        return $this->amountTotal;
+//    }
+//
+//    /**
+//     * @return string
+//     */
+//    public function getAmountTotalFormatted()
+//    {
+//        return $this->Currency->format($this->amountTotal, $this->getLocale());
+//    }
+//
+//    /**
+//     * @param float $amountTotal
+//     */
+//    public function setAmountTotal(float $amountTotal)
+//    {
+//        $this->amountTotal = $amountTotal;
+//    }
 
     /**
      * @return Currency

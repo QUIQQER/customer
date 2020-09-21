@@ -1,0 +1,80 @@
+<table>
+    <thead>
+    <tr>
+        <th>
+            {locale group="quiqqer/customer" var="OpenItemsList.tbl.header.date"}
+        </th>
+        <th>
+            {locale group="quiqqer/customer" var="OpenItemsList.tbl.header.document_no"}
+        </th>
+        <th>
+            {locale group="quiqqer/customer" var="OpenItemsList.tbl.header.amount_net"}
+        </th>
+        <th>
+            {locale group="quiqqer/customer" var="OpenItemsList.tbl.header.amount_vat"}
+        </th>
+        <th>
+            {locale group="quiqqer/customer" var="OpenItemsList.tbl.header.amount_sum"}
+        </th>
+        <th>
+            {locale group="quiqqer/customer" var="OpenItemsList.tbl.header.last_payment"}
+        </th>
+        <th>
+            {locale group="quiqqer/customer" var="OpenItemsList.tbl.header.amount_paid"}
+        </th>
+        <th>
+            {locale group="quiqqer/customer" var="OpenItemsList.tbl.header.amount_due"}
+        </th>
+        <th>
+            {locale group="quiqqer/customer" var="OpenItemsList.tbl.header.days_due"}
+        </th>
+        <th>
+            {locale group="quiqqer/customer" var="OpenItemsList.tbl.header.dunning_level"}
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    {foreach $this->getItems() as $Item}
+    <tr>
+        <td class="openitemslist-tbl-100">
+            {$Item->getDateFormatted()}
+        </td>
+        <td class="openitemslist-tbl-100">
+            {$Item->getDocumentNo()}
+        </td>
+        <td class="openitemslist-tbl-align-right openitems-tbl-money">
+            {$Item->getAmountTotalNetFormatted()}
+        </td>
+        <td class="openitemslist-tbl-align-right openitems-tbl-money">
+            {$Item->getAmountTotalVatFormatted()}
+        </td>
+        <td class="openitemslist-tbl-align-right openitems-tbl-money">
+            {$Item->getAmountTotalSumFormatted()}
+        </td>
+        <td class="openitemslist-tbl-100">
+            {if $Item->getLastPaymentDate()}
+            {$Item->getLastPaymentDateFormatted()}
+            {else}
+            ---
+            {/if}
+        </td>
+        <td class="openitemslist-tbl-align-right openitems-tbl-money">
+            {$Item->getAmountPaidFormatted()}
+        </td>
+        <td class="openitemslist-tbl-align-right openitems-tbl-money">
+            {$Item->getAmountOpenFormatted()}
+        </td>
+        <td class="openitemslist-tbl-align-right">
+            {$Item->getDaysDue()}
+        </td>
+        <td class="openitemslist-tbl-align-right">
+            {if $Item->getDunningLevel()}
+            {$Item->getDunningLevel()}
+            {else}
+            ---
+            {/if}
+        </td>
+    </tr>
+    {/foreach}
+    </tbody>
+</table>

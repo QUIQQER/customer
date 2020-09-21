@@ -7,6 +7,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'qui/QUI',
     'qui/controls/desktop/Panel',
     'qui/controls/buttons/ButtonSwitch',
+    'qui/controls/buttons/ButtonMultiple',
     'qui/controls/windows/Confirm',
     'package/quiqqer/countries/bin/Countries',
     'package/quiqqer/payments/bin/backend/Payments',
@@ -20,7 +21,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.Information.html',
     'css!package/quiqqer/customer/bin/backend/controls/customer/Panel.css'
 
-], function (QUI, QUIPanel, QUIButtonSwitch, QUIConfirm, Countries, Payments,
+], function (QUI, QUIPanel, QUIButtonSwitch, QUIButtonMultiple, QUIConfirm, Countries, Payments,
              FormUtils, Users, QUILocale, QUIAjax, Packages, Mustache, templateInformation) {
     "use strict";
 
@@ -46,7 +47,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             '$onUserDelete',
             '$onCustomerCategoryActive',
             'openUser',
-            'deliveryAddressToggle'
+            'deliveryAddressToggle',
+            '$onOpenOpenItemsListClick'
         ],
 
         options: {
@@ -150,6 +152,31 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     onClick: this.$onSaveClick
                 }
             });
+
+            var ExtrasBtn = new QUIButtonMultiple({
+                textimage: 'fa fa-cogs',
+                title    : QUILocale.get(lg, 'quiqqer.customer.panel.extras.title'),
+                events   : {
+                    onClick: function () {
+                        ExtrasBtn.openMenu();
+                    }
+                },
+                styles   : {
+                    'float': 'right'
+                }
+            });
+
+            ExtrasBtn.getElm().addClass('quiqqer-customer-panel-extrasbtn');
+
+            ExtrasBtn.appendChild({
+                text  : QUILocale.get(lg, 'quiqqer.customer.panel.openItemsListOutput'),
+                icon  : 'fa fa-th-list',
+                events: {
+                    onClick: this.$onOpenOpenItemsListClick
+                }
+            });
+
+            this.addButton(ExtrasBtn);
 
             if (this.getAttribute('showDeleteButton')) {
                 this.addButton({
@@ -1194,6 +1221,27 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     }
                 }
             }).open();
+        },
+
+        /**
+         * User clicks on "open OpenItemList" btn
+         */
+        $onOpenOpenItemsListClick: function () {
+            var self = this;
+
+            require([
+                'package/quiqqer/erp/bin/backend/controls/OutputDialog'
+            ], function (OutputDialog) {
+                new OutputDialog({
+                    entityId  : self.getAttribute('userId'),
+                    entityType: 'OpenItemsList',
+                    events    : {
+                        onOpen: function (SubmitData) {
+                            console.log("openItemsListDialogOpen");
+                        }
+                    }
+                }).open();
+            });
         },
 
         //endregion

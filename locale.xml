@@ -118,6 +118,63 @@
             Customers may log on to the system. If the customer is active, he or she can log on to the system.
             ]]></en>
         </locale>
+        
+        <!-- OutputProvider -->
+        <locale name="OutputProvider.entity.title.OpenItemsList">
+            <de><![CDATA[Offene Posten Liste]]></de>
+            <en><![CDATA[Open Items List]]></en>
+        </locale>
+        <locale name="OutputProvider.download_filename">
+            <de><![CDATA[Offene_Posten_[uid]__[date]]]></de>
+            <en><![CDATA[]]></en>
+        </locale>
+
+        <!-- OpenItemsList -->
+        <locale name="OpenItemsList.title">
+            <de><![CDATA[Offene Posten Liste]]></de>
+            <en><![CDATA[Open Items List]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.date">
+            <de><![CDATA[Datum]]></de>
+            <en><![CDATA[Date]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.document_no">
+            <de><![CDATA[Beleg-Nr.]]></de>
+            <en><![CDATA[Document no.]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.amount_net">
+            <de><![CDATA[Netto]]></de>
+            <en><![CDATA[Net]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.amount_vat">
+            <de><![CDATA[MwSt.]]></de>
+            <en><![CDATA[VAT]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.amount_sum">
+            <de><![CDATA[Brutto]]></de>
+            <en><![CDATA[Total]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.last_payment">
+            <de><![CDATA[Letzte Zahlung]]></de>
+            <en><![CDATA[Last payment]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.amount_paid">
+            <de><![CDATA[Betrag gezahlt]]></de>
+            <en><![CDATA[Amount paid]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.amount_due">
+            <de><![CDATA[Betrag offen]]></de>
+            <en><![CDATA[Amount due]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.days_due">
+            <de><![CDATA[Tage fällig]]></de>
+            <en><![CDATA[Days due]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.dunning_level">
+            <de><![CDATA[Mahnstufe]]></de>
+            <en><![CDATA[Dunning level]]></en>
+        </locale>
+        
     </groups>
 
     <groups name="quiqqer/customer" datatype="js">
@@ -400,6 +457,14 @@
         <locale name="quiqqer.customer.panel.files">
             <de><![CDATA[Dateien]]></de>
             <en><![CDATA[Files]]></en>
+        </locale>
+        <locale name="quiqqer.customer.panel.openItemsListOutput">
+            <de><![CDATA[Offene Posten Liste]]></de>
+            <en><![CDATA[Open Items List]]></en>
+        </locale>
+        <locale name="quiqqer.customer.panel.extras.title">
+            <de><![CDATA[Weitere Optionen]]></de>
+            <en><![CDATA[Additional options]]></en>
         </locale>
         <locale name="customer.files.upload.button">
             <de><![CDATA[Upload]]></de>
