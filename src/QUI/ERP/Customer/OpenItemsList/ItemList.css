@@ -1,0 +1,33 @@
+.openitemslist-tbl-align-right {
+    text-align: right;
+}
+
+.quiqqer-customer-openitemslist-table {
+    font-size: 14px;
+    width: 100%;
+}
+
+.quiqqer-customer-openitemslist-table tbody tr:nth-child(odd) {
+    background-color: #efefef;
+}
+
+.openitems-tbl-money {
+    width: 6em;
+}
+
+.openitemslist-tbl-100 {
+    width: 6em;
+}
+
+.openitemslist-tbl-sums {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.openitems-tbl-daysdue {
+    width: 3em;
+}
+
+.openitems-tbl-dunninglevel {
+    width: 1em;
+}

@@ -31,5 +31,9 @@
             <language>de</language>
             <language>en</language>
         </languages>
+
+        <provider>
+            <erpOutput src="\QUI\ERP\Customer\OpenItemsList\OutputProvider"/>
+        </provider>
     </package>
 </quiqqer>
