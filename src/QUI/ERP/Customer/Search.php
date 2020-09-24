@@ -261,7 +261,7 @@ class Search extends Singleton
     protected function getQuery($count = false)
     {
         $table = $this->table();
-        $order = $this->order;
+        $order = 'users.'.$this->order;
 
         // limit
         $limit = '';
@@ -280,7 +280,8 @@ class Search extends Singleton
             'firstname',
             'lastname',
             'email',
-            'usergroup'
+            'usergroup',
+            'company'
         ];
 
         $searchFilters = [];
@@ -319,7 +320,7 @@ class Search extends Singleton
             if ($this->onlyCustomer) {
                 try {
                     $customerGroup = Customers::getInstance()->getCustomerGroupId();
-                    $where         = " WHERE usergroup LIKE '%,{$customerGroup},%'";
+                    $where         = " WHERE users.usergroup LIKE '%,{$customerGroup},%'";
                 } catch (QUI\Exception $Exception) {
                     QUI\System\Log::addError($Exception->getMessage());
                 }
@@ -327,7 +328,7 @@ class Search extends Singleton
 
             if ($count) {
                 return [
-                    'query' => " SELECT COUNT(id) AS count FROM {$table} {$where}",
+                    'query' => " SELECT COUNT(users.id) AS count FROM {$table} as users {$where}",
                     'binds' => []
                 ];
             }
@@ -335,7 +336,7 @@ class Search extends Singleton
             return [
                 'query' => "
                     SELECT *
-                    FROM {$table}
+                    FROM {$table} as users
                     {$where}
                     ORDER BY {$order}
                     {$limit}
@@ -353,7 +354,7 @@ class Search extends Singleton
         if ($this->onlyCustomer) {
             try {
                 $customerGroup = Customers::getInstance()->getCustomerGroupId();
-                $where[]       = 'usergroup LIKE :customerId';
+                $where[]       = 'users.usergroup LIKE :customerId';
 
                 $binds['customerId'] = [
                     'value' => '%,'.$customerGroup.',%',
@@ -374,7 +375,7 @@ class Search extends Singleton
             $bind = 'filter'.$fc;
 
             if ($filter === 'regdate_from') {
-                $where[] = 'regdate >= :'.$bind;
+                $where[] = 'users.regdate >= :'.$bind;
 
                 $binds[$bind] = [
                     'value' => (int)\strtotime($value),
@@ -384,7 +385,7 @@ class Search extends Singleton
             }
 
             if ($filter === 'regdate_to') {
-                $where[] = 'regdate <= :'.$bind;
+                $where[] = 'users.regdate <= :'.$bind;
 
                 $binds[$bind] = [
                     'value' => (int)\strtotime($value),
@@ -395,27 +396,27 @@ class Search extends Singleton
 
             switch ($filter) {
                 case 'lastvisit_from':
-                    $where[] = 'lastvisit >= :'.$bind;
+                    $where[] = 'users.lastvisit >= :'.$bind;
                     break;
 
                 case 'lastvisit_to':
-                    $where[] = 'lastvisit <= :'.$bind;
+                    $where[] = 'vlastvisit <= :'.$bind;
                     break;
 
                 case 'lastedit_from':
-                    $where[] = 'lastedit >= :'.$bind;
+                    $where[] = 'users.lastedit >= :'.$bind;
                     break;
 
                 case 'lastedit_to':
-                    $where[] = 'lastedit <= :'.$bind;
+                    $where[] = 'users.lastedit <= :'.$bind;
                     break;
 
                 case 'expire_from':
-                    $where[] = 'expire >= :'.$bind;
+                    $where[] = 'users.expire >= :'.$bind;
                     break;
 
                 case 'expire_to':
-                    $where[] = 'expire <= :'.$bind;
+                    $where[] = 'users.expire <= :'.$bind;
                     break;
 
                 default:
@@ -436,11 +437,19 @@ class Search extends Singleton
 
             foreach ($searchFilters as $filter) {
                 if ($filter === 'userId') {
-                    $filter = 'id';
+                    $filter = 'users.id';
                 }
 
                 if ($filter === 'group') {
-                    $filter = 'usergroup';
+                    $filter = 'users.usergroup';
+                }
+
+                if ($filter === 'company') {
+                    $filter = 'ad.company';
+                }
+
+                if (\strpos($filter, 'users.') === false && \strpos($filter, 'ad.') === false) {
+                    $filter = 'users.'.$filter;
                 }
 
                 $searchWhere[] = $filter.' LIKE :search';
@@ -463,8 +472,9 @@ class Search extends Singleton
         if ($count) {
             return [
                 "query" => "
-                    SELECT COUNT(id) AS count
-                    FROM {$table}
+                    SELECT COUNT(users.id) AS count
+                    FROM {$table} as users 
+                        INNER JOIN users_address AS ad ON users.id = ad.uid
                     {$whereQuery}
                 ",
                 'binds' => $binds
@@ -474,7 +484,8 @@ class Search extends Singleton
         return [
             "query" => "
                 SELECT *
-                FROM {$table}
+                FROM {$table} as users
+                     INNER JOIN users_address AS ad ON users.id = ad.uid
                 {$whereQuery}
                 ORDER BY {$order}
                 {$limit}
