@@ -118,10 +118,93 @@
             Customers may log on to the system. If the customer is active, he or she can log on to the system.
             ]]></en>
         </locale>
-
         <locale name="message.customer.saved.successfully" html="true">
             <de><![CDATA[Der Kunde wurde erfolgreich gespeichert.]]></de>
             <en><![CDATA[The customer was successfully saved.]]></en>
+        </locale>
+
+        <!-- OutputProvider -->
+        <locale name="OutputProvider.entity.title.OpenItemsList">
+            <de><![CDATA[Offene Posten Liste]]></de>
+            <en><![CDATA[Open Items List]]></en>
+        </locale>
+        <locale name="OutputProvider.download_filename">
+            <de><![CDATA[Offene_Posten_[uid]__[date]]]></de>
+            <en><![CDATA[]]></en>
+        </locale>
+
+        <!-- OpenItemsList -->
+        <locale name="OpenItemsList.title">
+            <de><![CDATA[Offene Posten Liste]]></de>
+            <en><![CDATA[Open Items List]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.date">
+            <de><![CDATA[Datum]]></de>
+            <en><![CDATA[Date]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.document_no">
+            <de><![CDATA[Beleg-Nr.]]></de>
+            <en><![CDATA[Document no.]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.amount_net">
+            <de><![CDATA[Netto]]></de>
+            <en><![CDATA[Net]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.amount_vat">
+            <de><![CDATA[MwSt.]]></de>
+            <en><![CDATA[VAT]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.amount_sum">
+            <de><![CDATA[Brutto]]></de>
+            <en><![CDATA[Total]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.last_payment">
+            <de><![CDATA[Letzte Zahlung]]></de>
+            <en><![CDATA[Last payment]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.amount_paid">
+            <de><![CDATA[Betrag gezahlt]]></de>
+            <en><![CDATA[Amount paid]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.amount_due">
+            <de><![CDATA[Betrag offen]]></de>
+            <en><![CDATA[Amount due]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.days_due">
+            <de><![CDATA[Tage fällig]]></de>
+            <en><![CDATA[Days due]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.dunning_level">
+            <de><![CDATA[Mahnstufe]]></de>
+            <en><![CDATA[Dunning level]]></en>
+        </locale>
+        <locale name="OpenItemsList.tbl.sums">
+            <de><![CDATA[SUMMEN]]></de>
+            <en><![CDATA[TOTAL]]></en>
+        </locale>
+        <locale name="mail.OpenItemsList.subject">
+            <de><![CDATA[Liste Ihrer offenen Posten - Stand: [date]]]></de>
+            <en><![CDATA[List of your open items - Date: [date]]]></en>
+        </locale>
+        <locale name="mail.OpenItemsList.body">
+            <de><![CDATA[
+<p>Sehr geehrte(r) [customerName],</p>
+<p>anbei erhalten Sie die vollständige Liste Ihrer noch offenen, fälligen Posten bis einschließlich [date].</p>
+<p>Sollte Sie noch Fragen haben, sind wir Ihnen gerne behilflich.</p>
+<br/>
+<p>
+Beste Grüße
+</p>
+]]></de>
+            <en><![CDATA[
+<p>Dear [customerName],</p>
+<p>attached you will find the complete list of your open, due items up to and including [date].</p>
+<p>If you have any further questions, we will be happy to help you.</p>
+<br/>
+<p>
+Best regards
+</p>
+]]></en>
         </locale>
     </groups>
 
@@ -405,6 +488,14 @@
         <locale name="quiqqer.customer.panel.files">
             <de><![CDATA[Dateien]]></de>
             <en><![CDATA[Files]]></en>
+        </locale>
+        <locale name="quiqqer.customer.panel.openItemsListOutput">
+            <de><![CDATA[Offene Posten Liste]]></de>
+            <en><![CDATA[Open Items List]]></en>
+        </locale>
+        <locale name="quiqqer.customer.panel.extras.title">
+            <de><![CDATA[Weitere Optionen]]></de>
+            <en><![CDATA[Additional options]]></en>
         </locale>
         <locale name="customer.files.upload.button">
             <de><![CDATA[Upload]]></de>

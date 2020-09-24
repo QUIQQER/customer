@@ -19,6 +19,9 @@
     width: 30%;
 }
 
+.quiqqer-customer-panel-extrasbtn .qui-button-multiple-dd {
+    display: none !important;
+}
 
 /** comments
  ===================================== */
