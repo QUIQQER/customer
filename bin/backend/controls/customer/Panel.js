@@ -299,8 +299,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.setAttribute('icon', 'fa fa-spinner fa-spin');
             this.refresh();
 
-            this.getAttribute('userId');
-
             var self   = this;
             var User   = Users.get(this.getAttribute('userId'));
             var Loaded = Promise.resolve(User);

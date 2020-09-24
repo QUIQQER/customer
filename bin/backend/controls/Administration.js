@@ -524,7 +524,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     resolve();
                 }, {
                     'package': 'quiqqer/customer',
-                    userId   : rowData.id,
+                    userId   : rowData.customerId,
                     data     : JSON.encode(attributes),
                     onError  : function () {
                         rowData[attribute] = data.oldvalue;
@@ -711,7 +711,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             var rowData = this.$Grid.getDataByRow(data.row);
 
             if (data.cell.get('data-index') === 'customerId' || data.cell.get('data-index') === 'regdate') {
-                this.$openCustomer(rowData.id);
+                this.$openCustomer(rowData.customerId);
                 return;
             }
 
@@ -720,7 +720,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     data.cell.get('data-index') === 'lastname' ||
                     data.cell.get('data-index') === 'usergroup_display' ||
                     data.cell.get('data-index') === 'email')) {
-                this.$openCustomer(rowData.id);
+                this.$openCustomer(rowData.customerId);
                 return;
             }
 
@@ -746,7 +746,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                             text  : QUILocale.get(lg, 'administration.contextMenu.add.to.customer'),
                             events: {
                                 onClick: function () {
-                                    self.$addToCustomer(rowData.id);
+                                    self.$addToCustomer(rowData.customerId);
                                 }
                             }
                         })
@@ -758,7 +758,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                             text  : QUILocale.get(lg, 'administration.contextMenu.remove.from.customer'),
                             events: {
                                 onClick: function () {
-                                    self.$removeFromCustomer(rowData.id);
+                                    self.$removeFromCustomer(rowData.customerId);
                                 }
                             }
                         })
@@ -771,7 +771,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                         text  : QUILocale.get(lg, 'administration.contextMenu.groups'),
                         events: {
                             onClick: function () {
-                                self.$editUserGroups(rowData.id);
+                                self.$editUserGroups(rowData.customerId);
                             }
                         }
                     })
@@ -783,7 +783,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                         text  : QUILocale.get(lg, 'administration.contextMenu.user'),
                         events: {
                             onClick: function () {
-                                self.$openCustomer(rowData.id);
+                                self.$openCustomer(rowData.customerId);
                             }
                         }
                     })
@@ -791,7 +791,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
                 Menu.inject(document.body);
                 Menu.setPosition(position.x, position.y + 30);
-                Menu.setTitle(rowData.id);
+                Menu.setTitle(rowData.customerId);
                 Menu.show();
                 Menu.focus();
             }
