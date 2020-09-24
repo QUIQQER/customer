@@ -154,7 +154,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             });
 
             var ExtrasBtn = new QUIButtonMultiple({
-                textimage: 'fa fa-cogs',
+                textimage: 'fa fa-caret-down',
                 title    : QUILocale.get(lg, 'quiqqer.customer.panel.extras.title'),
                 events   : {
                     onClick: function () {
