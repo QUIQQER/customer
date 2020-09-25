@@ -1,3 +1,6 @@
+{if $isEmpty}
+    {locale group="quiqqer/customer" var="OpenItemsList.no_open_items"}
+{else}
 <table class="quiqqer-customer-openitemslist-table">
     <thead>
     <tr>
@@ -112,3 +115,4 @@
     {/foreach}
     </tbody>
 </table>
+{/if}

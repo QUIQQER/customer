@@ -176,7 +176,8 @@ class ItemsList
         }
 
         $Engine->assign([
-            'this' => $this
+            'this'    => $this,
+            'isEmpty' => \count($this->items) === 0
         ]);
 
         $body = '<style>'.\file_get_contents(\dirname(__FILE__).'/ItemList.css').'</style>';

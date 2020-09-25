@@ -182,6 +182,10 @@
             <de><![CDATA[SUMMEN]]></de>
             <en><![CDATA[TOTAL]]></en>
         </locale>
+        <locale name="OpenItemsList.no_open_items">
+            <de><![CDATA[Es befinden sich zur Zeit keine offenen Posten in Ihrem Kundenkonto.]]></de>
+            <en><![CDATA[There are currently no open items in your customer account.]]></en>
+        </locale>
         <locale name="mail.OpenItemsList.subject">
             <de><![CDATA[Liste Ihrer offenen Posten - Stand: [date]]]></de>
             <en><![CDATA[List of your open items - Date: [date]]]></en>
