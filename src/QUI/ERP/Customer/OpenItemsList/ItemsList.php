@@ -30,7 +30,7 @@ class ItemsList
     /**
      * @var Item[]
      */
-    protected $items;
+    protected $items = [];
 
     /**
      * Add an open item to the list
