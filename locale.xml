@@ -130,7 +130,7 @@
         </locale>
         <locale name="OutputProvider.download_filename">
             <de><![CDATA[Offene_Posten_[uid]__[date]]]></de>
-            <en><![CDATA[]]></en>
+            <en><![CDATA[Open_Items_[uid]__[date]]]></en>
         </locale>
 
         <!-- OpenItemsList -->
