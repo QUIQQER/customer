@@ -178,7 +178,7 @@ class Search extends Singleton
             }
 
             if (empty($entry['customerId'])) {
-                $entry['customerId'] = $entry['id'];
+                $entry['customerId'] = $entry['user_id'];
             }
 
             $addressData = [];
@@ -222,6 +222,18 @@ class Search extends Singleton
                 if (empty($entry['company'])) {
                     $entry['company'] = $Address->getAttribute('company');
                 }
+            }
+
+            if (empty($entry['firstname'])) {
+                $entry['firstname'] = $entry['user_firstname'];
+            }
+
+            if (empty($entry['lastname'])) {
+                $entry['lastname'] = $entry['user_lastname'];
+            }
+
+            if (empty($entry['email'])) {
+                $entry['email'] = $entry['user_email'];
             }
 
             $result[] = [
@@ -281,7 +293,9 @@ class Search extends Singleton
             'lastname',
             'email',
             'usergroup',
-            'company'
+            'company',
+            'ad.firstname',
+            'ad.lastname'
         ];
 
         $searchFilters = [];
@@ -474,7 +488,7 @@ class Search extends Singleton
                 "query" => "
                     SELECT COUNT(users.id) AS count
                     FROM {$table} as users 
-                        INNER JOIN users_address AS ad ON users.id = ad.uid
+                        LEFT JOIN users_address AS ad ON users.id = ad.uid
                     {$whereQuery}
                 ",
                 'binds' => $binds
@@ -483,9 +497,13 @@ class Search extends Singleton
 
         return [
             "query" => "
-                SELECT *
+                SELECT users.`id` as user_id,
+                users.`firstname` as user_firstname,
+                users.`lastname` as user_lastname,
+                users.`email` as user_email,
+                users.*, ad.*
                 FROM {$table} as users
-                     INNER JOIN users_address AS ad ON users.id = ad.uid
+                     LEFT JOIN users_address AS ad ON users.id = ad.uid
                 {$whereQuery}
                 ORDER BY {$order}
                 {$limit}
