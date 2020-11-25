@@ -711,7 +711,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             var rowData = this.$Grid.getDataByRow(data.row);
 
             if (data.cell.get('data-index') === 'customerId' || data.cell.get('data-index') === 'regdate') {
-                this.$openCustomer(rowData.customerId);
+                this.$openCustomer(rowData.user_id);
                 return;
             }
 
@@ -720,7 +720,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     data.cell.get('data-index') === 'lastname' ||
                     data.cell.get('data-index') === 'usergroup_display' ||
                     data.cell.get('data-index') === 'email')) {
-                this.$openCustomer(rowData.customerId);
+                this.$openCustomer(rowData.user_id);
                 return;
             }
 
@@ -783,7 +783,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                         text  : QUILocale.get(lg, 'administration.contextMenu.user'),
                         events: {
                             onClick: function () {
-                                self.$openCustomer(rowData.customerId);
+                                self.$openCustomer(rowData.user_id);
                             }
                         }
                     })

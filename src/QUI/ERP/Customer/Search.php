@@ -240,6 +240,7 @@ class Search extends Singleton
                 'id'         => (int)$entry['id'],
                 'customerId' => $entry['customerId'],
                 'status'     => !!$entry['active'],
+                'user_id'    => (int)$entry['user_id'],
                 'username'   => $entry['username'],
                 'firstname'  => $entry['firstname'],
                 'lastname'   => $entry['lastname'],
@@ -489,6 +490,7 @@ class Search extends Singleton
                     SELECT COUNT(users.id) AS count
                     FROM {$table} as users 
                         LEFT JOIN users_address AS ad ON users.id = ad.uid
+                        AND users.address = ad.id
                     {$whereQuery}
                 ",
                 'binds' => $binds
@@ -503,7 +505,8 @@ class Search extends Singleton
                 users.`email` as user_email,
                 users.*, ad.*
                 FROM {$table} as users
-                     LEFT JOIN users_address AS ad ON users.id = ad.uid
+                     LEFT JOIN users_address AS ad ON users.id = ad.uid 
+                     AND users.address = ad.id
                 {$whereQuery}
                 ORDER BY {$order}
                 {$limit}
