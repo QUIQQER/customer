@@ -378,7 +378,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             }
 
             return this.$Grid.getSelectedData().map(function (entry) {
-                return parseInt(entry.id);
+                return parseInt(entry.user_id);
             });
         },
 
