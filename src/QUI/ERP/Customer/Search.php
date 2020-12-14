@@ -84,6 +84,7 @@ class Search extends Singleton
             'active',
             'deleted',
             'su',
+            'customerId',
 
             'regdate',
             'lastvisit',
@@ -274,7 +275,7 @@ class Search extends Singleton
     protected function getQuery($count = false)
     {
         $table = $this->table();
-        $order = 'users.'.$this->order;
+        $order = $this->order;
 
         // limit
         $limit = '';
@@ -547,25 +548,50 @@ class Search extends Singleton
     /**
      * Set the order
      *
-     * @param $order
+     * @param string $col - Order columny
+     * @param string $direction (optional) - Order direction [default: ASC]
+     * @return void
      */
-    public function order($order)
+    public function order(string $col, string $direction = 'ASC')
     {
         $allowed = [];
 
-        foreach ($this->getAllowedFields() as $field) {
-            $allowed[] = $field;
-            $allowed[] = $field.' ASC';
-            $allowed[] = $field.' asc';
-            $allowed[] = $field.' DESC';
-            $allowed[] = $field.' desc';
+        if (!\in_array($col, $this->getAllowedFields())) {
+            return;
         }
 
-        $order   = \trim($order);
-        $allowed = \array_flip($allowed);
+        $direction = \mb_strtoupper($direction);
 
-        if (isset($allowed[$order])) {
-            $this->order = $order;
+        if ($direction !== 'ASC') {
+            $direction = 'DESC';
+        }
+
+        switch ($col) {
+            case 'id':
+                $this->order = 'user_id '.$direction;
+                break;
+
+            case 'email':
+            case 'username':
+            case 'usergroup':
+            case 'usertitle':
+            case 'lang':
+            case 'birthday':
+            case 'active':
+            case 'deleted':
+            case 'su':
+            case 'customerId':
+                $this->order = 'users.`'.$col.'` '.$direction;
+                break;
+
+            case 'firstname':
+            case 'lastname':
+                $this->order = 'users.`'.$col.'` '.$direction.', ad.`'.$col.'` '.$direction;
+                break;
+
+            case 'company':
+                $this->order = 'ad.`'.$col.'` '.$direction;
+                break;
         }
     }
 

@@ -57,10 +57,7 @@ QUI::$Ajax->registerFunction(
             $sortBy = $params['sortBy'];
         }
 
-        if (isset($params['sortOn'])) {
-            $Search->order($sortOn.' '.$sortBy);
-        }
-
+        $Search->order($sortOn, $sortBy);
 
         // exec
         return $Search->searchForGrid();
