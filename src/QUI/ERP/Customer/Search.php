@@ -185,7 +185,7 @@ class Search extends Singleton
             $Address     = null;
 
             try {
-                $User    = $Users->get((int)$entry['id']);
+                $User    = $Users->get((int)$entry['user_id']);
                 $Address = $User->getStandardAddress();
             } catch (QUI\Exception $Exception) {
             }
