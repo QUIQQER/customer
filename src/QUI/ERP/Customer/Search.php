@@ -19,7 +19,7 @@ class Search extends Singleton
     /**
      * @var string
      */
-    protected $order = 'id DESC';
+    protected $order = 'user_id DESC';
 
     /**
      * @var array
@@ -538,7 +538,7 @@ class Search extends Singleton
 
             return $Statement->fetchAll(\PDO::FETCH_ASSOC);
         } catch (\Exception $Exception) {
-            QUI\System\Log::writeRecursive($Exception);
+            QUI\System\Log::writeException($Exception);
             QUI\System\Log::writeRecursive($query);
             QUI\System\Log::writeRecursive($binds);
             throw new QUI\Exception('Something went wrong');
@@ -554,8 +554,6 @@ class Search extends Singleton
      */
     public function order(string $col, string $direction = 'ASC')
     {
-        $allowed = [];
-
         if (!\in_array($col, $this->getAllowedFields())) {
             return;
         }
