@@ -58,8 +58,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             showDeleteButton: true
         },
 
-        initialize: function (parent) {
-            this.parent(parent);
+        initialize: function (options) {
+            this.parent(options);
 
             this.setAttribute('#id', 'customer-panel-' + this.getAttribute('userId'));
 
@@ -559,7 +559,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                         emails = addressEntries.filter(function (e) {
                             return e.type === 'email';
-                        }).map(function(e) {
+                        }).map(function (e) {
                             return e.no;
                         });
                     }
