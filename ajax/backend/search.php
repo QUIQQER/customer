@@ -49,18 +49,15 @@ QUI::$Ajax->registerFunction(
         $sortOn = 'username';
         $sortBy = 'ASC';
 
-        if (isset($params['sortOn'])) {
+        if (!empty($params['sortOn'])) {
             $sortOn = $params['sortOn'];
         }
 
-        if (isset($params['sortBy'])) {
+        if (!empty($params['sortBy'])) {
             $sortBy = $params['sortBy'];
         }
-
-        if (isset($params['sortOn'])) {
-            $Search->order($sortOn.' '.$sortBy);
-        }
-
+        
+        $Search->order($sortOn, $sortBy);
 
         // exec
         return $Search->searchForGrid();
