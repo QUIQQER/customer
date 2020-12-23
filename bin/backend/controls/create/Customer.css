@@ -14,12 +14,18 @@
 .quiqqer-customer-create-button {
     background: #dddddd;
     clear: both;
+    display: flex;
     height: 50px;
     padding: 10px;
 }
 
-.quiqqer-customer-create-button [name="next"] {
-    float: right;
+.quiqqer-customer-create-button-steps {
+    flex-grow: 1;
+    text-align: center;
+}
+
+.quiqqer-customer-create-button button {
+    width: 140px;
 }
 
 .quiqqer-customer-create ul {

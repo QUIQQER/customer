@@ -37,6 +37,7 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
             this.$Container = null;
             this.$List      = null;
             this.$Form      = null;
+            this.$Steps     = null;
 
             this.addEvents({
                 onInject: this.$onInject
@@ -122,9 +123,11 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
             this.$List      = this.$Elm.getElement('.quiqqer-customer-create-container ul');
             this.$Next      = this.$Elm.getElement('[name="next"]');
             this.$Previous  = this.$Elm.getElement('[name="previous"]');
+            this.$Steps     = this.$Elm.getElement('.quiqqer-customer-create-button-steps');
 
             this.$Next.addEvent('click', this.next);
             this.$Previous.addEvent('click', this.previous);
+            this.refreshStepDisplay();
 
             return this.$Elm;
         },
@@ -224,7 +227,10 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
                 moofx(self.$List).animate({
                     top: newTop
                 }, {
-                    callback: resolve
+                    callback: function () {
+                        self.refreshStepDisplay();
+                        resolve();
+                    }
                 });
             });
         },
@@ -251,9 +257,32 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
                 moofx(self.$List).animate({
                     top: newTop
                 }, {
-                    callback: resolve
+                    callback: function () {
+                        self.refreshStepDisplay();
+                        resolve();
+                    }
                 });
             });
+        },
+
+        /**
+         * refresh the step display
+         */
+        refreshStepDisplay: function () {
+            var step   = 1;
+            var steps  = this.$List.getElements('li');
+            var pos    = this.$List.getPosition(this.$Container);
+            var top    = pos.y;
+            var height = this.$Container.getSize().y;
+
+            if ((top * -1) / height) {
+                step = ((top * -1) / height) + 1;
+            }
+
+            this.$Steps.set('html', QUILocale.get(lg, 'customer.create.steps', {
+                step: step,
+                max : steps.length
+            }));
         },
 
         /**

@@ -714,6 +714,11 @@ Best regards
             <de><![CDATA[Kunden suchen ...]]></de>
             <en><![CDATA[Search customer ...]]></en>
         </locale>
+
+        <locale name="customer.create.steps">
+            <de><![CDATA[Schritt [step] von [max]]]></de>
+            <en><![CDATA[Step [step] from [max]]]></en>
+        </locale>
     </groups>
 
 </locales>
