@@ -75,7 +75,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
 
                     for (i = 0, len = userResult.length; i < len; i++) {
                         data.push({
-                            id   : userResult[i].id,
+                            id   : userResult[i].user_id,
                             title: userResult[i].username + ': ' + userResult[i].address_display,
                             icon : 'fa fa fa-user-o'
                         });
