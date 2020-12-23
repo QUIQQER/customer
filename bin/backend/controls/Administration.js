@@ -298,6 +298,10 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             if (parseInt(this.getAttribute('customerId'))) {
                 this.$openCustomer(parseInt(this.getAttribute('customerId')));
+            } else {
+                if (this.isInWindow() && this.$SearchInput) {
+                    this.$SearchInput.focus();
+                }
             }
 
             CustomerHandler.getCustomerGroupId().then(function (customerGroup) {
