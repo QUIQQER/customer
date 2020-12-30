@@ -210,6 +210,11 @@ Best regards
 </p>
 ]]></en>
         </locale>
+
+        <locale name="exception.empty.mail.not.allowed">
+            <de><![CDATA[Eine leere E-Mail Adresse ist nicht erlaubt.]]></de>
+            <en><![CDATA[A blank email address is not allowed.]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/customer" datatype="js">

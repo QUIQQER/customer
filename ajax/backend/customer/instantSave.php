@@ -25,21 +25,27 @@ QUI::$Ajax->registerFunction(
             $Address = $User->addAddress([]);
         }
 
-        if (!empty($data['username'])) {
+        if (isset($data['username'])) {
             $User->setAttribute('username', $data['username']);
         }
 
-        if (!empty($data['firstname'])) {
+        if (isset($data['firstname'])) {
             $User->setAttribute('firstname', $data['firstname']);
             $Address->setAttribute('firstname', $data['firstname']);
         }
 
-        if (!empty($data['lastname'])) {
+        if (isset($data['lastname'])) {
             $User->setAttribute('lastname', $data['lastname']);
             $Address->setAttribute('lastname', $data['lastname']);
         }
 
-        if (!empty($data['email'])) {
+        if (isset($data['email'])) {
+            if (empty($data['email'])) {
+                throw new QUI\Exception(
+                    QUI::getLocale()->get('quiqqer/customer', 'exception.empty.mail.not.allowed')
+                );
+            }
+
             $User->setAttribute('email', $data['email']);
             $Address->editMail(0, $data['email']);
         }

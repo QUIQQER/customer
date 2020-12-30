@@ -239,8 +239,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 dataIndex: 'lastname',
                 dataType : 'string',
                 width    : 150,
-                editable : editable,
-                className: editable ? 'clickable' : ''
+                editable : true,
+                className: 'clickable'
             });
 
             columnModel.push({
@@ -248,16 +248,16 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 dataIndex: 'email',
                 dataType : 'string',
                 width    : 150,
-                editable : editable,
-                className: editable ? 'clickable' : ''
+                editable : true,
+                className: 'clickable'
             });
 
             columnModel.push({
                 header   : QUILocale.get('quiqqer/quiqqer', 'group'),
                 dataIndex: 'usergroup_display',
                 dataType : 'string',
-                width    : 150,
-                className: editable ? 'clickable' : ''
+                editable : true,
+                className: 'clickable'
             });
 
             columnModel.push({
