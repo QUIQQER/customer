@@ -719,6 +719,11 @@ Best regards
             <de><![CDATA[Schritt [step] von [max]]]></de>
             <en><![CDATA[Step [step] from [max]]]></en>
         </locale>
+
+        <locale name="panel.search.editable.button.title">
+            <de><![CDATA[Editierungsmodus aktivieren und deaktivieren]]></de>
+            <en><![CDATA[Activate and deactivate editing mode]]></en>
+        </locale>
     </groups>
 
 </locales>

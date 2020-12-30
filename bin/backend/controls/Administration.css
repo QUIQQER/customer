@@ -11,13 +11,14 @@
 .quiqqer-customer-administration-search {
     background: #e1e4e9;
     clear: both;
-    padding: 20px;
+    height: 70px;
     width: 100%;
 }
 
 .quiqqer-customer-administration-search [name="customer-search"] {
     float: left;
-    width: calc(100% - 100px);
+    padding: 20px;
+    width: calc(100% - 200px);
 }
 
 .quiqqer-customer-administration-search [name="add"] {
@@ -76,6 +77,26 @@
 .quiqqer-customer-administration-search-filter-specs label {
     float: left;
     width: 25%;
+}
+
+.quiqqer-customer-administration-search .qui-switch {
+    margin-top: 25px !important;
+}
+
+.quiqqer-customer-administration-editableButton {
+    cursor: pointer;
+    float: right;
+    line-height: 70px;
+    margin-left: 20px;
+    padding: 0 20px;
+}
+
+.quiqqer-customer-administration-editableButton:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.quiqqer-customer-administration-editableButton--active {
+    background: rgba(0, 0, 0, 0.1);
 }
 
 /** grid / result

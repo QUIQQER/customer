@@ -60,7 +60,9 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationPanel', [
             this.getContent().setStyle('padding', 0);
 
             this.$Administration = new Administration({
-                events: {
+                editable          : false,
+                showEditableButton: true,
+                events            : {
                     onRefreshBegin: function () {
                         self.Loader.show();
                     },
@@ -70,6 +72,7 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationPanel', [
                     }
                 }
             });
+
             this.$Administration.inject(this.getContent());
             this.$Administration.resize();
         }

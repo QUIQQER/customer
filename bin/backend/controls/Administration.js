@@ -2,6 +2,13 @@
  * @module package/quiqqer/customer/bin/backend/controls/Administration
  * @author www.pcsg.de (Henning Leutz)
  *
+ * This is the main administration control for the customer package
+ *
+ * Customer Administration
+ * - List of customers
+ * - Manage customer
+ * - Search customer
+ *
  * @event customerOpenBegin [self, userId]
  * @event onCustomerOpen [self, userId, Panel]
  * @event onCustomerOpenEnd [self, userId, Panel]
@@ -46,6 +53,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             '$onUserChange',
             '$editComplete',
             '$gridDblClick',
+            '$gridDblClickBegin',
             '$gridClick',
             'refresh',
             'toggleFilter',
@@ -59,7 +67,9 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             editable   : true,
             submittable: false,
             add        : true,
-            customerId : false
+            customerId : false,
+
+            showEditableButton: false
         },
 
         initialize: function (options) {
@@ -70,10 +80,11 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             this.$FilterButton    = null;
             this.$customerGroup   = null;
 
-            this.$CustomerPanel = null;
-            this.$GroupSwitch   = null;
-            this.$GridContainer = null;
-            this.$Grid          = null;
+            this.$CustomerPanel  = null;
+            this.$GroupSwitch    = null;
+            this.$GridContainer  = null;
+            this.$Grid           = null;
+            this.$EditableButton = null;
 
             this.addEvents({
                 onInject : this.$onInject,
@@ -137,17 +148,42 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 this.$AddButton.setStyle('display', 'none');
             }
 
+            if (this.getAttribute('showEditableButton')) {
+                this.$EditableButton = new Element('div', {
+                    'class': 'quiqqer-customer-administration-editableButton',
+                    'html' : '<span class="fa fa-edit"></span>',
+                    title  : QUILocale.get(lg, 'panel.search.editable.button.title'),
+                    events : {
+                        click: function () {
+                            var activeClass = 'quiqqer-customer-administration-editableButton--active';
+                            var active      = self.$EditableButton.hasClass(activeClass);
+
+                            if (active) {
+                                // deactivate
+                                self.$EditableButton.removeClass(activeClass);
+                                self.setAttribute('editable', false);
+                            } else {
+                                // activate
+                                self.$EditableButton.addClass(activeClass);
+                                self.setAttribute('editable', true);
+                            }
+                        }
+                    }
+                }).inject(this.$SearchContainer);
+            }
+
             this.$GroupSwitch = new QUISwitch({
                 events: {
                     onChange: this.refresh
                 },
                 status: true,
                 styles: {
-                    'float'  : 'right',
-                    marginTop: 5
+                    'float'    : 'right',
+                    marginRight: this.getAttribute('showEditableButton') ? 0 : 20
                 },
                 title : QUILocale.get(lg, 'panel.search.switch.customer.group')
             }).inject(this.$SearchContainer);
+
 
             // create grid
             this.$Container = new Element('div');
@@ -185,8 +221,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 dataIndex: 'company',
                 dataType : 'string',
                 width    : 150,
-                editable : editable,
-                className: editable ? 'clickable' : ''
+                editable : true,
+                className: 'clickable'
             });
 
             columnModel.push({
@@ -194,8 +230,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 dataIndex: 'firstname',
                 dataType : 'string',
                 width    : 150,
-                editable : editable,
-                className: editable ? 'clickable' : ''
+                editable : true,
+                className: 'clickable'
             });
 
             columnModel.push({
@@ -278,11 +314,12 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             // Events
             this.$Grid.addEvents({
-                onClick     : this.$gridClick,
-                onDblClick  : this.$gridDblClick,
+                onClick        : this.$gridClick,
+                onDblClick     : this.$gridDblClick,
+                onDblClickBegin: this.$gridDblClickBegin,
                 // onBlur    : this.$gridBlur,
-                editComplete: this.$editComplete,
-                refresh     : this.refresh
+                editComplete   : this.$editComplete,
+                refresh        : this.refresh
             });
 
             return this.$Elm;
@@ -703,6 +740,19 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
         },
 
         /**
+         *
+         * @param event
+         * @param GridInstance
+         */
+        $gridDblClickBegin: function (event, GridInstance) {
+            if (!this.getAttribute('editable')) {
+                GridInstance.setAttribute('editable', false);
+            } else {
+                GridInstance.setAttribute('editable', true);
+            }
+        },
+
+        /**
          * event: on dbl click at grid
          *
          * @param {object} data - cell data
@@ -713,6 +763,12 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             }
 
             var rowData = this.$Grid.getDataByRow(data.row);
+
+            // if no editable, every dbl click opens the customer
+            if (!this.getAttribute('editable')) {
+                this.$openCustomer(rowData.user_id);
+                return;
+            }
 
             if (data.cell.get('data-index') === 'customerId' || data.cell.get('data-index') === 'regdate') {
                 this.$openCustomer(rowData.user_id);
