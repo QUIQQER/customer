@@ -5,6 +5,7 @@
  */
 
 /**
+ * Instant edit / double click edit at the administration grid
  *
  * @return array
  */
