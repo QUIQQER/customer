@@ -1,10 +1,8 @@
 <?php
 
 /**
- * This file contains package_quiqqer_customer_ajax_backend_customer_save
+ * This file contains package_quiqqer_customer_ajax_backend_customer_instantSave
  */
-
-use QUI\ERP\Customer\Customers;
 
 /**
  *
