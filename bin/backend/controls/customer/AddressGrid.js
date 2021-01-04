@@ -297,11 +297,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
          * @param event
          */
         $onGridDblClick: function (event) {
-            if (event.cell.get('data-index') !== 'id') {
-                return;
+            if (event.cell.get('data-index') === 'id' ||
+                event.cell.get('data-index') === 'phone' ||
+                event.cell.get('data-index') === 'mail' ||
+                event.cell.get('data-index') === 'country'
+            ) {
+                this.editAddress(this.$Grid.getSelectedData()[0].id);
             }
-
-            this.editAddress(this.$Grid.getSelectedData()[0].id);
         },
 
         /**
@@ -343,7 +345,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
                         street_no : rowData.street_no,
                         zip       : rowData.zip,
                         city      : rowData.city,
-                        country   : rowData.country
+                        country   : rowData.country,
+                        phone     : JSON.decode(rowData.phone),
+                        mails     : JSON.decode(rowData.mail)
                     })
                 });
             });

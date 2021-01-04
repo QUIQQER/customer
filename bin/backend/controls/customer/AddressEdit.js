@@ -12,7 +12,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
     'Ajax',
     'Mustache',
 
-    'text!package/quiqqer/customer/bin/backend/controls/customer/AddressEdit.html'
+    'text!package/quiqqer/customer/bin/backend/controls/customer/AddressEdit.html',
+    'css!package/quiqqer/customer/bin/backend/controls/customer/AddressEdit.css'
 
 ], function (QUI, QUIControl, Countries, Users, QUILocale, QUIAjax, Mustache, template) {
     "use strict";
@@ -48,6 +49,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
          * @return {HTMLDivElement}
          */
         create: function () {
+            var self = this;
+
             this.$Elm = this.parent();
             this.$Elm.addClass('quiqqer-customer-address-edit');
 
@@ -62,6 +65,16 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
                 textAddressCity      : QUILocale.get('quiqqer/quiqqer', 'city'),
                 textAddressCountry   : QUILocale.get('quiqqer/quiqqer', 'country')
             }));
+
+            this.getElm().getElement('[name="add-phone"]').addEvent('click', function (e) {
+                e.stop();
+                self.addPhone();
+            });
+
+            this.getElm().getElement('[name="add-email"]').addEvent('click', function (e) {
+                e.stop();
+                self.addEmail();
+            });
 
             return this.$Elm;
         },
@@ -99,6 +112,30 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
                     elements['address-zip'].value        = result.zip;
                     elements['address-city'].value       = result.city;
                     elements['address-country'].value    = result.country;
+
+                    var mail  = [];
+                    var phone = [];
+
+                    try {
+                        mail = JSON.decode(result.mail);
+                    } catch (e) {
+                    }
+
+                    mail.forEach(function (entry) {
+                        self.addEmail().getElement('input').set('value', entry);
+                    });
+
+                    try {
+                        phone = JSON.decode(result.phone);
+                    } catch (e) {
+                    }
+
+                    phone.forEach(function (entry) {
+                        var Phone = self.addPhone();
+
+                        Phone.getElement('select').set('value', entry.type);
+                        Phone.getElement('input').set('value', entry.no);
+                    });
 
                     self.fireEvent('load', [self]);
                 }, {
@@ -166,6 +203,29 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
                 var Form     = self.getElm().getElement('form'),
                     elements = Form.elements;
 
+                // phone
+                var phone = self.getElm().getElements(
+                    '.quiqqer-customer-address-phoneTable tbody tr'
+                ).map(function (Row) {
+                    var Input  = Row.getElement('input');
+                    var Select = Row.getElement('select');
+
+                    return {
+                        type: Select.value,
+                        no  : Input.value
+                    };
+                });
+
+                // email
+                var mails = self.getElm().getElements(
+                    '.quiqqer-customer-address-emailTable input'
+                ).map(function (Input) {
+                    return Input.value;
+                }).filter(function (entry) {
+                    return entry;
+                });
+
+
                 QUIAjax.post('ajax_users_address_save', resolve, {
                     'package': 'quiqqer/customer',
                     onError  : reject,
@@ -178,10 +238,63 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
                         street_no : elements['address-street_no'].value,
                         zip       : elements['address-zip'].value,
                         city      : elements['address-city'].value,
-                        country   : elements['address-country'].value
+                        country   : elements['address-country'].value,
+                        mails     : mails,
+                        phone     : phone
                     })
                 });
             });
+        },
+
+        //region phone & mail
+
+        /**
+         * Add a phone entry
+         *
+         * @return {Element}
+         */
+        addPhone: function () {
+            var Table = this.getElm().getElement('.quiqqer-customer-address-phoneTable');
+
+            return new Element('tr', {
+                html: '' +
+                    '<td>' +
+                    '    <label class="field-container">\n' +
+                    '        <span class="field-container-item field-container-item-select">\n' +
+                    '            <select name="phone-type">' +
+                    '                <option value="tel">Telefon</option>' +
+                    '                <option value="fax">Fax</option>' +
+                    '                <option value="mobile">Mobil</option>' +
+                    '            </select>' +
+                    '        </span>\n' +
+                    '        <input type="text" class="field-container-field" />' +
+                    '    </label>' +
+                    '</td>'
+            }).inject(Table.getElement('tbody'));
+        },
+
+        /**
+         * Add an email entry
+         *
+         * @return {Element}
+         */
+        addEmail: function () {
+            var Table = this.getElm().getElement('.quiqqer-customer-address-emailTable');
+
+            return new Element('tr', {
+                html: '' +
+                    '<td>' +
+                    '    <label class="field-container">\n' +
+                    '        <span class="field-container-item">\n' +
+                    '            E-Mail' +
+                    '        </span>\n' +
+                    '        <input type="email" class="field-container-field" />' +
+                    '    </label>' +
+                    '</td>'
+            }).inject(Table.getElement('tbody'));
         }
+
+
+        //endregion
     });
 });

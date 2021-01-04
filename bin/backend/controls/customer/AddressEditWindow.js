@@ -25,7 +25,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow
 
         options: {
             addressId: false,
-            maxHeight: 500,
+            maxHeight: 700,
             maxWidth : 600,
             autoclose: false,
             icon     : 'fa fa-share'

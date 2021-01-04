@@ -1,0 +1,23 @@
+.quiqqer-customer-address-edit .data-table {
+    margin-bottom: 20px !important;
+}
+
+.quiqqer-customer-address-edit [name="add-phone"],
+.quiqqer-customer-address-edit [name="add-email"] {
+    float: right;
+}
+
+.field-container-item-select {
+    padding: 0 !important;
+}
+
+.field-container-item-select select {
+    background: #f4f2f0;
+    border: 1px solid #f4f2f0;
+    width: 100%;
+}
+
+.quiqqer-customer-address-phoneTable th span,
+.quiqqer-customer-address-emailTable th span {
+    line-height: 30px;
+}
