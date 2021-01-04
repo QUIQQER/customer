@@ -15,8 +15,18 @@
     justify-content: flex-end;
 }
 
+.quiqqer-customer-address-select select:focus,
+.quiqqer-customer-address-select input:focus {
+    z-index: 1;
+}
+
 .quiqqer-customer-address-select [name="address-country"] {
     width: 30%;
+}
+
+.quiqqer-customer-address-select [name="address-zip"] {
+    border-radius: 0;
+    border-right: 1px solid rgba(147, 128, 108, 0.25);
 }
 
 .quiqqer-customer-panel-extrasbtn .qui-button-multiple-dd {
