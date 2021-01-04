@@ -429,6 +429,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 textUserId        : QUILocale.get('quiqqer/quiqqer', 'user_id'),
                 textCustomerId    : QUILocale.get(lg, 'customerId'),
                 textSalutation    : QUILocale.get('quiqqer/quiqqer', 'salutation'),
+                textCompany       : QUILocale.get('quiqqer/quiqqer', 'company'),
                 textFirstname     : QUILocale.get('quiqqer/quiqqer', 'firstname'),
                 textLastname      : QUILocale.get('quiqqer/quiqqer', 'lastname'),
                 titleAddress      : QUILocale.get('quiqqer/quiqqer', 'address'),
@@ -544,6 +545,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 Form.elements['address-zip'].value        = address.zip;
                 Form.elements['address-country'].value    = address.country;
                 Form.elements['address-city'].value       = address.city;
+                Form.elements['address-company'].value    = address.company;
 
                 try {
                     var CBody  = self.getElm().getElement('.customer-information-communication-body');
