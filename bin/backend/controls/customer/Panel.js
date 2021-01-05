@@ -154,11 +154,27 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             });
 
             var ExtrasBtn = new QUIButtonMultiple({
+                name     : 'extra',
                 textimage: 'fa fa-caret-down',
                 title    : QUILocale.get(lg, 'quiqqer.customer.panel.extras.title'),
                 events   : {
                     onClick: function () {
-                        ExtrasBtn.openMenu();
+                        ExtrasBtn.getMenu().then(function (Menu) {
+                            var pos  = ExtrasBtn.getElm().getPosition(),
+                                size = ExtrasBtn.getElm().getSize();
+
+                            Menu.setAttribute('corner', 'topRight');
+
+                            ExtrasBtn.openMenu().then(function () {
+                                Menu.setPosition(
+                                    pos.x - 135,
+                                    pos.y + size.y + 10
+                                );
+                            });
+
+                            console.log(pos);
+                            console.log(Menu.getElm());
+                        });
                     }
                 },
                 styles   : {
@@ -166,7 +182,16 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 }
             });
 
-            ExtrasBtn.getElm().addClass('quiqqer-customer-panel-extrasbtn');
+            if (this.getAttribute('showUserButton')) {
+                ExtrasBtn.appendChild({
+                    name  : 'openUser',
+                    text  : QUILocale.get(lg, 'quiqqer.customer.panel.openUser'),
+                    icon  : 'fa fa-user',
+                    events: {
+                        onClick: this.openUser
+                    }
+                });
+            }
 
             ExtrasBtn.appendChild({
                 text  : QUILocale.get(lg, 'quiqqer.customer.panel.openItemsListOutput'),
@@ -175,36 +200,26 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     onClick: this.$onOpenOpenItemsListClick
                 }
             });
-
-            this.addButton(ExtrasBtn);
+console.log(ExtrasBtn);
+            ExtrasBtn.getElm().addClass('quiqqer-customer-panel-extrasbtn');
 
             if (this.getAttribute('showDeleteButton')) {
                 this.addButton({
-                    name  : 'userDelete',
-                    title : QUILocale.get('quiqqer/quiqqer', 'users.user.btn.delete'),
-                    icon  : 'fa fa-trash-o',
-                    events: {
+                    name   : 'userDelete',
+                    'class': 'quiqqer-customer-delete',
+                    title  : QUILocale.get('quiqqer/quiqqer', 'users.user.btn.delete'),
+                    icon   : 'fa fa-trash-o',
+                    events : {
                         onClick: this.$onDeleteClick
                     },
-                    styles: {
+                    styles : {
                         'float': 'right'
                     }
                 });
             }
 
-            if (this.getAttribute('showUserButton')) {
-                this.addButton({
-                    name  : 'openUser',
-                    title : QUILocale.get(lg, 'quiqqer.customer.panel.openUser'),
-                    icon  : 'fa fa-user',
-                    events: {
-                        onClick: this.openUser
-                    },
-                    styles: {
-                        'float': 'right'
-                    }
-                });
-            }
+            this.addButton(ExtrasBtn);
+
 
             // categories
             this.addCategory({

@@ -33,6 +33,20 @@
     display: none !important;
 }
 
+.quiqqer-customer-panel-extrasbtn > button {
+    padding: 0 !important;
+    text-align: center;
+    width: 50px;
+}
+
+.quiqqer-customer-delete {
+    width: 50px;
+}
+
+.quiqqer-customer-panel-extrasbtn > button .qui-button-multiple-textimage {
+    float: none;
+}
+
 /** comments
  ===================================== */
 
