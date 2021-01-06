@@ -729,6 +729,15 @@ Best regards
             <de><![CDATA[Editierungsmodus aktivieren und deaktivieren]]></de>
             <en><![CDATA[Activate and deactivate editing mode]]></en>
         </locale>
+
+        <locale name="window.customer.address.select.title">
+            <de><![CDATA[Kundenadresse auswählen]]></de>
+            <en><![CDATA[Select customer address]]></en>
+        </locale>
+        <locale name="window.customer.address.select.information">
+            <de><![CDATA[Bitte wähle eine Kundenadresse aus:]]></de>
+            <en><![CDATA[Please select a customer address:]]></en>
+        </locale>
     </groups>
 
 </locales>

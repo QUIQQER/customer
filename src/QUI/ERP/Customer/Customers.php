@@ -270,13 +270,11 @@ class Customers extends Singleton
             $User->setGroups($groups);
         }
 
-        if (!empty($attributes['address-firstname']) &&
-            (!$User->getAttribute('firstname') || $User->getAttribute('firstname') === '')) {
+        if (!empty($attributes['address-firstname'])) {
             $User->setAttribute('firstname', $attributes['address-firstname']);
         }
 
-        if (!empty($attributes['address-lastname']) &&
-            (!$User->getAttribute('lastname') || $User->getAttribute('lastname') === '')) {
+        if (!empty($attributes['address-lastname'])) {
             $User->setAttribute('lastname', $attributes['address-lastname']);
         }
 

@@ -64,8 +64,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
                 textDiscountDesc  : QUILocale.get(lg, 'customer.user.information.discount.description'),
                 textSendMail      : QUILocale.get(lg, 'customer.user.information.discount.passwordMail'),
                 textSendMailButton: QUILocale.get(lg, 'customer.user.information.discount.passwordMail.button'),
-                textNetto         : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.brutto'),
-                textBrutto        : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.netto'),
+                textNetto         : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.netto'),
+                textBrutto        : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.brutto'),
 
                 textCheckCalculationBasis: QUILocale.get(lg, 'customer.user.information.checkCalculation')
             }));
@@ -196,8 +196,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
                                 textCompany        : QUILocale.get(lg, 'customer.user.window.company'),
                                 textDefaultAddress : QUILocale.get(lg, 'customer.user.window.defaultAddress'),
                                 textShippingAddress: QUILocale.get(lg, 'customer.user.window.shippingAddress'),
-                                textNetto          : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.brutto'),
-                                textBrutto         : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.netto'),
+                                textNetto          : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.netto'),
+                                textBrutto         : QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.brutto'),
 
                                 textEuVatId: QUILocale.get('quiqqer/erp', 'user.profile.userdata.vatId'),
                                 textTaxId  : QUILocale.get('quiqqer/erp', 'user.settings.taxId'),
