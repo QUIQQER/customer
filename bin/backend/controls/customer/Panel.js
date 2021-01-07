@@ -172,9 +172,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                                     pos.y + size.y + 10
                                 );
                             });
-
-                            console.log(pos);
-                            console.log(Menu.getElm());
                         });
                     }
                 },
@@ -201,7 +198,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     onClick: this.$onOpenOpenItemsListClick
                 }
             });
-            console.log(ExtrasBtn);
+
             ExtrasBtn.getElm().addClass('quiqqer-customer-panel-extrasbtn');
 
             if (this.getAttribute('showDeleteButton')) {
@@ -814,7 +811,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     Select.value = self.$User.getAttribute('quiqqer.erp.customer.contact.person');
                 }
 
-                Button.disabled = false;
+                Button.disabled = Select.value === '';
+
+                Select.addEvent('change', function () {
+                    Button.disabled = Select.value === '';
+                });
+
                 Button.addEvent('click', function (e) {
                     e.stop();
 
