@@ -81,6 +81,21 @@ define('package/quiqqer/customer/bin/backend/classes/Handler', [
                     resolve(CustomerPanel);
                 });
             });
+        },
+
+        /**
+         * add a address to customer
+         *
+         * @param userId
+         * @return {Promise}
+         */
+        addAddressToCustomer: function (userId) {
+            return new Promise(function (resolve) {
+                QUIAjax.post('package_quiqqer_customer_ajax_backend_customer_addAddress', resolve, {
+                    'package': 'quiqqer/customer',
+                    userId   : userId
+                });
+            });
         }
     });
 });

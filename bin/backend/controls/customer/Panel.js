@@ -788,37 +788,52 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     });
                 });
             }).then(function () {
-                return self.$User.getAddressList();
-            }).then(function (addresses) {
+                return self.$refreshContactAddressList();
+            }).then(function () {
                 var Select = Form.elements['quiqqer.erp.customer.contact.person'],
                     Button = self.getElm().getElement('[name="edit-contact-person"]');
-
-                Select.set('html', '');
-
-                new Element('option', {
-                    value: '',
-                    html : ''
-                }).inject(Select);
-
-                for (var i = 0, len = addresses.length; i < len; i++) {
-                    new Element('option', {
-                        value: addresses[i].id,
-                        html : addresses[i].text
-                    }).inject(Select);
-                }
 
                 if (self.$User.getAttribute('quiqqer.erp.customer.contact.person')) {
                     Select.value = self.$User.getAttribute('quiqqer.erp.customer.contact.person');
                 }
 
-                Button.disabled = Select.value === '';
+                Button.disabled = false;
 
                 Select.addEvent('change', function () {
-                    Button.disabled = Select.value === '';
+                    if (Select.value === '') {
+                        Button.set('html', '<span class="fa fa-plus"></span>');
+                        return;
+                    }
+
+                    Button.set('html', '<span class="fa fa-edit"></span>');
                 });
 
                 Button.addEvent('click', function (e) {
                     e.stop();
+
+                    // create
+                    if (Select.value === '') {
+                        // add new address
+                        Button.set('html', '<span class="fa fa-spinner fa-spin"></span>');
+
+                        require(['package/quiqqer/customer/bin/backend/Handler'], function (Handler) {
+                            Handler.addAddressToCustomer(self.$User.getId()).then(function (addressId) {
+                                new AddressEditWindow({
+                                    addressId: parseInt(addressId)
+                                }).open();
+
+                                // refresh list
+                                self.$User.load().then(function () {
+                                    return self.$refreshContactAddressList();
+                                }).then(function () {
+                                    Select.value = addressId;
+                                    Button.set('html', '<span class="fa fa-edit"></span>');
+                                });
+                            });
+                        });
+
+                        return;
+                    }
 
                     new AddressEditWindow({
                         addressId: parseInt(Select.value)
@@ -1449,6 +1464,34 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             Table.getElements('tr').forEach(function (Row) {
                 if (Row.getElement('input') && Row.getElement('input').name !== 'address-delivery') {
                     Row.setStyle('display', 'none');
+                }
+            });
+        },
+
+        /**
+         * refresh the contact address list
+         *
+         * @return {Promise<void>}
+         */
+        $refreshContactAddressList: function () {
+            var self = this;
+
+            return this.$User.getAddressList().then(function (addresses) {
+                var Form   = self.getContent().getElement('form'),
+                    Select = Form.elements['quiqqer.erp.customer.contact.person'];
+
+                Select.set('html', '');
+
+                new Element('option', {
+                    value: '',
+                    html : ''
+                }).inject(Select);
+
+                for (var i = 0, len = addresses.length; i < len; i++) {
+                    new Element('option', {
+                        value: addresses[i].id,
+                        html : addresses[i].text
+                    }).inject(Select);
                 }
             });
         }

@@ -118,7 +118,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
 
                     try {
                         mail = JSON.decode(result.mail);
+
+                        if (typeOf(mail) !== 'array') {
+                            mail = [];
+                        }
                     } catch (e) {
+                        mail = [];
                     }
 
                     mail.forEach(function (entry) {
@@ -127,7 +132,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
 
                     try {
                         phone = JSON.decode(result.phone);
+
+                        if (typeOf(phone) !== 'array') {
+                            phone = [];
+                        }
                     } catch (e) {
+                        phone = [];
                     }
 
                     phone.forEach(function (entry) {
