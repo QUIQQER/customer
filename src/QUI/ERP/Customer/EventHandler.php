@@ -88,7 +88,7 @@ class EventHandler
      * @param QUI\Users\User $User
      * @param array $attributes
      */
-    public static function onUserExtraAttributes(QUI\Users\User $User, &$attributes)
+    public static function onUserExtraAttributes(QUI\Users\User $User, array &$attributes)
     {
         $cache = 'quiqqer/package/quiqqer/customer';
 
@@ -126,7 +126,7 @@ class EventHandler
      *
      * @return array
      */
-    protected static function readAttributesFromUserXML($file)
+    protected static function readAttributesFromUserXML(string $file): array
     {
         $cache = 'quiqqer/package/customer/user-extra-attributes/'.\md5($file);
 

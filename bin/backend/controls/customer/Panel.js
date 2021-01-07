@@ -11,6 +11,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'qui/controls/windows/Confirm',
     'package/quiqqer/countries/bin/Countries',
     'package/quiqqer/payments/bin/backend/Payments',
+    'package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow',
     'qui/utils/Form',
     'Users',
     'Locale',
@@ -21,7 +22,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.Information.html',
     'css!package/quiqqer/customer/bin/backend/controls/customer/Panel.css'
 
-], function (QUI, QUIPanel, QUIButtonSwitch, QUIButtonMultiple, QUIConfirm, Countries, Payments,
+], function (QUI, QUIPanel, QUIButtonSwitch, QUIButtonMultiple, QUIConfirm, Countries, Payments, AddressEditWindow,
              FormUtils, Users, QUILocale, QUIAjax, Packages, Mustache, templateInformation) {
     "use strict";
 
@@ -200,7 +201,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     onClick: this.$onOpenOpenItemsListClick
                 }
             });
-console.log(ExtrasBtn);
+            console.log(ExtrasBtn);
             ExtrasBtn.getElm().addClass('quiqqer-customer-panel-extrasbtn');
 
             if (this.getAttribute('showDeleteButton')) {
@@ -439,6 +440,8 @@ console.log(ExtrasBtn);
          * opens the user information
          */
         $openInformation: function () {
+            this.Loader.show();
+
             this.getContent().set('html', Mustache.render(templateInformation, {
                 detailsTitle      : QUILocale.get(lg, 'customer.panel,information.details'),
                 textUserId        : QUILocale.get('quiqqer/quiqqer', 'user_id'),
@@ -453,6 +456,7 @@ console.log(ExtrasBtn);
                 textCountry       : QUILocale.get('quiqqer/quiqqer', 'country'),
                 textZip           : QUILocale.get('quiqqer/quiqqer', 'zip'),
                 textCity          : QUILocale.get('quiqqer/quiqqer', 'city'),
+                textContactPerson : QUILocale.get(lg, 'customer.panel,information.contactPerson'),
                 titleAllocation   : QUILocale.get(lg, 'customer.panel,information.allocation'),
                 textGroup         : QUILocale.get(lg, 'customer.panel,information.group'),
                 textGroups        : QUILocale.get(lg, 'customer.panel,information.groups'),
@@ -786,6 +790,40 @@ console.log(ExtrasBtn);
                         }).then(resolve);
                     });
                 });
+            }).then(function () {
+                return self.$User.getAddressList();
+            }).then(function (addresses) {
+                var Select = Form.elements['quiqqer.erp.customer.contact.person'],
+                    Button = self.getElm().getElement('[name="edit-contact-person"]');
+
+                Select.set('html', '');
+
+                new Element('option', {
+                    value: '',
+                    html : ''
+                }).inject(Select);
+
+                for (var i = 0, len = addresses.length; i < len; i++) {
+                    new Element('option', {
+                        value: addresses[i].id,
+                        html : addresses[i].text
+                    }).inject(Select);
+                }
+
+                if (self.$User.getAttribute('quiqqer.erp.customer.contact.person')) {
+                    Select.value = self.$User.getAttribute('quiqqer.erp.customer.contact.person');
+                }
+
+                Button.disabled = false;
+                Button.addEvent('click', function (e) {
+                    e.stop();
+
+                    new AddressEditWindow({
+                        addressId: parseInt(Select.value)
+                    }).open();
+                });
+            }).then(function () {
+                self.Loader.hide();
             });
         },
 
@@ -1321,7 +1359,7 @@ console.log(ExtrasBtn);
                     entityId  : self.getAttribute('userId'),
                     entityType: 'OpenItemsList',
                     events    : {
-                        onOpen: function (SubmitData) {
+                        onOpen: function () {
                             console.log("openItemsListDialogOpen");
                         }
                     }
