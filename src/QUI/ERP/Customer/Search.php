@@ -50,7 +50,7 @@ class Search extends Singleton
      *
      * @return string
      */
-    public function table()
+    public function table(): string
     {
         return QUI::getDBTableName('users');
     }
@@ -60,7 +60,7 @@ class Search extends Singleton
      *
      * @return string
      */
-    public function tableAddress()
+    public function tableAddress(): string
     {
         return QUI::getDBTableName('users_address');
     }
@@ -68,7 +68,7 @@ class Search extends Singleton
     /**
      * @return array
      */
-    public function getAllowedFields()
+    public function getAllowedFields(): array
     {
         return [
             'id',
@@ -100,7 +100,7 @@ class Search extends Singleton
      *
      * @throws QUI\Exception
      */
-    public function search()
+    public function search(): array
     {
         return $this->executeQueryParams($this->getQuery());
     }
@@ -108,7 +108,7 @@ class Search extends Singleton
     /**
      * @throws QUI\Exception
      */
-    public function searchForGrid()
+    public function searchForGrid(): array
     {
         // select display invoices
         $users = $this->executeQueryParams($this->getQuery());
@@ -129,7 +129,7 @@ class Search extends Singleton
      * @param $data
      * @return array
      */
-    protected function parseListForGrid($data)
+    protected function parseListForGrid($data): array
     {
         $localeCode = QUI::getLocale()->getLocalesByLang(
             QUI::getLocale()->getCurrent()
@@ -263,7 +263,7 @@ class Search extends Singleton
     /**
      * @return array
      */
-    protected function getQueryCount()
+    protected function getQueryCount(): array
     {
         return $this->getQuery(true);
     }
@@ -272,7 +272,7 @@ class Search extends Singleton
      * @param bool $count - Use count select, or not
      * @return array
      */
-    protected function getQuery($count = false)
+    protected function getQuery($count = false): array
     {
         $table = $this->table();
         $order = $this->order;
@@ -521,7 +521,7 @@ class Search extends Singleton
      * @return array
      * @throws QUI\Exception
      */
-    protected function executeQueryParams($queryData = [])
+    protected function executeQueryParams($queryData = []): array
     {
         $PDO   = QUI::getDataBase()->getPDO();
         $binds = $queryData['binds'];
@@ -614,7 +614,7 @@ class Search extends Singleton
      * @param string $filter
      * @param string|array $value
      */
-    public function setFilter($filter, $value)
+    public function setFilter(string $filter, $value)
     {
         if ($filter === 'search') {
             $this->search = $value;
