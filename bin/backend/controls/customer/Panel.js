@@ -114,6 +114,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             }).then(function () {
                 return self.$refreshTitle();
             }).then(function () {
+                // refresh user
+                return self.$User.load();
+            }).then(function () {
                 self.Loader.hide();
             });
         },
