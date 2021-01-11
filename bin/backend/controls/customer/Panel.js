@@ -1502,7 +1502,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     Select = Form.elements['quiqqer.erp.customer.contact.person'];
 
                 Select.set('html', '');
-
+                
                 new Element('option', {
                     value: '',
                     html : ''
