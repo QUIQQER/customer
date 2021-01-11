@@ -811,6 +811,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     Button.set('html', '<span class="fa fa-edit"></span>');
                 });
 
+                Select.fireEvent('change');
+
                 Button.addEvent('click', function (e) {
                     e.stop();
 
@@ -822,9 +824,31 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                         require(['package/quiqqer/customer/bin/backend/Handler'], function (Handler) {
                             Handler.addAddressToCustomer(self.$User.getId()).then(function (addressId) {
                                 new AddressEditWindow({
-                                    addressId: parseInt(addressId)
+                                    addressId: parseInt(addressId),
+                                    events   : {
+                                        onSubmit: function () {
+                                            // refresh list
+                                            self.$User.load().then(function () {
+                                                return self.$refreshContactAddressList();
+                                            }).then(function () {
+                                                Select.value = addressId;
+                                                Button.set('html', '<span class="fa fa-edit"></span>');
+                                            });
+                                        }
+                                    }
                                 }).open();
+                            });
+                        });
 
+                        return;
+                    }
+
+                    var addressId = parseInt(Select.value);
+
+                    new AddressEditWindow({
+                        addressId: addressId,
+                        events   : {
+                            onSubmit: function () {
                                 // refresh list
                                 self.$User.load().then(function () {
                                     return self.$refreshContactAddressList();
@@ -832,14 +856,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                                     Select.value = addressId;
                                     Button.set('html', '<span class="fa fa-edit"></span>');
                                 });
-                            });
-                        });
-
-                        return;
-                    }
-
-                    new AddressEditWindow({
-                        addressId: parseInt(Select.value)
+                            }
+                        }
                     }).open();
                 });
             }).then(function () {
