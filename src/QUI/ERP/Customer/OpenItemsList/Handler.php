@@ -17,6 +17,11 @@ use QUI\ERP\Accounting\Dunning\Handler as DunningsHandler;
 class Handler
 {
     /**
+     * Tables
+     */
+    const TBL_OPEN_ITEMS = 'customer_open_items';
+
+    /**
      * Generate an open items list for a user
      *
      * @param ERPUser $User
@@ -161,5 +166,70 @@ class Handler
         }
 
         return $Item;
+    }
+
+    /**
+     * Updates the open items record of a user with up-to-date item data.
+     *
+     * @param ERPUser $User
+     * @return void
+     *
+     * @throws QUI\Exception
+     */
+    public static function updateOpenItemsRecord(ERPUser $User): void
+    {
+        $OpenItemsList = self::getOpenItemsList($User);
+        $items         = $OpenItemsList->getItems();
+
+        // If no open items exist -> Delete entry from db
+        if (empty($items)) {
+            QUI::getDataBase()->delete(
+                self::getTable(),
+                [
+                    'userId' => $User->getId()
+                ]
+            );
+
+            return;
+        }
+
+        // Parse open items to db entry
+        foreach ($OpenItemsList->getTotalAmountsByCurrency() as $currency => $values) {
+            QUI::getDataBase()->replace(
+                self::getTable(),
+                [
+                    'userId'           => $User->getId(),
+                    'customerId'       => $User->getAttribute('customerId'),
+                    'net_sum'          => $values['netTotal'],
+                    'total_sum'        => $values['sumTotal'],
+                    'open_sum'         => $values['dueTotal'],
+                    'paid_sum'         => $values['paidTotal'],
+                    'vat_sum'          => $values['vatTotal'],
+                    'open_items_count' => \count($OpenItemsList->getItemsByCurrencyCode($currency)),
+                    'currency'         => $currency
+                ]
+            );
+        }
+    }
+
+    /**
+     * Search open items records
+     *
+     * @param array $searchParams
+     * @return array
+     */
+    public static function search(array $searchParams): array
+    {
+
+    }
+
+    /**
+     * Get table that contains open items
+     *
+     * @return string
+     */
+    public static function getTable(): string
+    {
+        return QUI::getDBTableName(self::TBL_OPEN_ITEMS);
     }
 }

@@ -1,0 +1,182 @@
+.div[data-index="processingStatusBox"] {
+    text-align: center;
+}
+
+.journal-grid-overdue {
+    color: red;
+    font-weight: bold;
+}
+
+.monospace {
+    font-family: monospace, monospace;
+}
+
+/** Offer details
+ ================================================= */
+
+.quiqqer-customer-openitems-details,
+.quiqqer-customer-openitems-details-header,
+.quiqqer-customer-openitems-details-article,
+.quiqqer-customer-openitems-details-calculation {
+    float: left;
+    width: 100%;
+}
+
+.quiqqer-customer-openitems-details-header-pos,
+.quiqqer-customer-openitems-details-header-articleNo,
+.quiqqer-customer-openitems-details-header-description,
+.quiqqer-customer-openitems-details-header-quantity,
+.quiqqer-customer-openitems-details-header-netto,
+.quiqqer-customer-openitems-details-header-brutto {
+    border-bottom: 1px solid #dedede;
+    margin-bottom: 5px !important;
+}
+
+.quiqqer-customer-openitems-details-header-pos,
+.quiqqer-customer-openitems-details-header-articleNo,
+.quiqqer-customer-openitems-details-header-description,
+.quiqqer-customer-openitems-details-header-quantity,
+.quiqqer-customer-openitems-details-header-netto,
+.quiqqer-customer-openitems-details-header-brutto,
+.quiqqer-customer-openitems-details-article-pos,
+.quiqqer-customer-openitems-details-article-articleNo,
+.quiqqer-customer-openitems-details-article-description,
+.quiqqer-customer-openitems-details-article-quantity,
+.quiqqer-customer-openitems-details-article-netto,
+.quiqqer-customer-openitems-details-article-brutto {
+    float: left;
+    padding: 0 5px 5px 5px;
+}
+
+.quiqqer-customer-openitems-details-article {
+    padding: 0 0 5px;
+}
+
+.quiqqer-customer-openitems-details-header-pos,
+.quiqqer-customer-openitems-details-article-pos {
+    width: 20px;
+}
+
+.quiqqer-customer-openitems-details-header-articleNo,
+.quiqqer-customer-openitems-details-article-articleNo {
+    width: 100px;
+}
+
+.quiqqer-customer-openitems-details-header-description,
+.quiqqer-customer-openitems-details-article-description {
+    width: 300px;
+}
+
+.quiqqer-customer-openitems-details-article-description .description {
+    clear: both;
+    display: block;
+}
+
+.quiqqer-customer-openitems-details-header-quantity,
+.quiqqer-customer-openitems-details-article-quantity {
+    text-align: right;
+    width: 100px;
+}
+
+.quiqqer-customer-openitems-details-header-netto,
+.quiqqer-customer-openitems-details-article-netto,
+.quiqqer-customer-openitems-details-header-brutto,
+.quiqqer-customer-openitems-details-article-brutto {
+    text-align: right;
+    width: 160px;
+}
+
+.quiqqer-customer-openitems-details-calculation {
+    border-top: 1px solid #DEDEDE;
+    padding: 5px 0;
+}
+
+.quiqqer-customer-openitems-details-calculation-container {
+    text-align: right;
+    width: 840px;
+}
+
+/** Journal details
+ ================================================= */
+
+.offers-offer-details {
+    border: 1px solid #DDDDDD;
+    float: left;
+    margin-bottom: 10px;
+    max-width: 800px;
+    padding-bottom: 10px;
+    width: 100%;
+}
+
+.offers-offer-details h1 {
+    display: none;
+}
+
+.offers-offer-details .articles-article {
+    margin-top: 0;
+}
+
+.offers-offer-details .articles-article-header th {
+    background: #dedede;
+    line-height: normal;
+}
+
+.offers-offer-details td {
+    background: #fefefe;
+    border-right: 0 !important;
+}
+
+.offers-offer-details .articles-sum td {
+    text-align: right;
+}
+
+/** Total Display
+ ================================================= */
+
+.quiqqer-customer-openitems-total {
+    background: #fff;
+    border-top: 2px solid #DEDEDE;
+    bottom: -20px;
+    display: none;
+    float: left;
+    height: 100px;
+    left: 0;
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+    z-index: 100;
+}
+
+.quiqqer-customer-openitems-total header,
+.quiqqer-customer-openitems-total-row {
+    clear: both;
+    float: left;
+    width: 100%;
+}
+
+.quiqqer-customer-openitems-total header > div,
+.quiqqer-customer-openitems-total-row > div {
+    float: left;
+    line-height: 25px;
+    padding: 0 10px;
+    text-align: right;
+    width: 25%;
+}
+
+.quiqqer-customer-openitems-total-row > div:first-child {
+    text-align: left;
+}
+
+.quiqqer-customer-openitems-total-row:nth-child(even) {
+    background: #f7f7f7;
+}
+
+.quiqqer-customer-openitems-total-row:hover {
+    background: #eaeff4;
+}
+
+.payment-status-amountCell {
+    text-align: right !important;
+    padding-right: 5px;
+    padding-left: 0 !important;
+}

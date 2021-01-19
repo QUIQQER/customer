@@ -164,6 +164,23 @@ class ItemsList
     }
 
     /**
+     * @param string $currencyCode
+     * @return Item[]
+     */
+    public function getItemsByCurrencyCode(string $currencyCode): array
+    {
+        $items = [];
+
+        foreach ($this->items as $Item) {
+            if ($Item->getCurrency()->getCode() === $currencyCode) {
+                $items[] = $Item;
+            }
+        }
+
+        return $items;
+    }
+
+    /**
      * @return string
      */
     public function getListAsHtmlTable()
