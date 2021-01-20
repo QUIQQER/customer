@@ -90,9 +90,28 @@
             <de><![CDATA[Darf Kunden anlegen]]></de>
             <en><![CDATA[Is allowed to create customer]]></en>
         </locale>
+
+        <!-- Menu -->
+        <locale name="menu.extras.accounting">
+            <de><![CDATA[FiBu]]></de>
+            <en><![CDATA[Accounting]]></en>
+        </locale>
+        <locale name="menu.extras.accounting_openitems">
+            <de><![CDATA[Offene Posten]]></de>
+            <en><![CDATA[Open Items]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/customer" datatype="php">
+        <locale name="OpenItemsList.documentType.invoice">
+            <de><![CDATA[Rechnung]]></de>
+            <en><![CDATA[Invoice]]></en>
+        </locale>
+        <locale name="OpenItemsList.documentType.order">
+            <de><![CDATA[Bestellung]]></de>
+            <en><![CDATA[Order]]></en>
+        </locale>
+
         <locale name="customer.create.category.details">
             <de><![CDATA[Stammdaten]]></de>
             <en><![CDATA[Master data]]></en>

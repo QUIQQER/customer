@@ -180,3 +180,17 @@
     padding-right: 5px;
     padding-left: 0 !important;
 }
+
+/** Open items grid
+ ================================================= */
+.quiqqer-customer-openitems-details {
+    height: 500px;
+}
+
+.quiqqer-customer-openitems-details div.bDiv > ul {
+    padding: 0 !important;
+}
+
+.quiqqer-customer-openitems-details div.bDiv > ul > li {
+    overflow: hidden !important;
+}

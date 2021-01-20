@@ -29,6 +29,11 @@ class Item
     protected $documentNo = '';
 
     /**
+     * @var string
+     */
+    protected $documentType;
+
+    /**
      * @var \DateTime
      */
     protected $Date;
@@ -92,6 +97,16 @@ class Item
      * @var Locale
      */
     protected $Locale;
+
+    /**
+     * Item constructor.
+     *
+     * @param string $documentType - Type of document (e.g. invoice, order etc.)
+     */
+    public function __construct(string $documentType)
+    {
+        $this->documentType = $documentType;
+    }
 
     /**
      * @return string
@@ -193,6 +208,14 @@ class Item
     public function setDocumentNo(string $documentNo)
     {
         $this->documentNo = $documentNo;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDocumentType(): string
+    {
+        return $this->documentType;
     }
 
     /**

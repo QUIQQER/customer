@@ -47,7 +47,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             '$refreshButtonStatus',
             '$onPDFExportButtonClick',
             '$onClickCopyProcess',
-            '$onClickProcessDetails',
+            '$onClickOpenItemsDetails',
             '$onClickOpenProcess',
             '$onSearchKeyUp'
         ],
@@ -60,27 +60,23 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
             this.parent(options);
 
-            this.$Grid       = null;
-            this.$Status     = null;
-            this.$TimeFilter = null;
-            this.$Total      = null;
-            this.$Search     = null;
-            this.$Currency   = null;
+            this.$Grid     = null;
+            this.$Total    = null;
+            this.$Search   = null;
+            this.$Currency = null;
 
             this.$currentSearch = '';
             this.$searchDelay   = null;
             this.$periodFilter  = null;
             this.$loaded        = false;
 
+            this.$GridDetails = null;
+
             this.addEvents({
                 onCreate: this.$onCreate,
                 onResize: this.$onResize,
                 onInject: this.$onInject,
                 onDelete: this.$onDestroy
-            });
-
-            Processes.addEvents({
-                onSetStatus: this.$onProcessChange
             });
         },
 
@@ -96,10 +92,6 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 return;
             }
 
-            if (this.$loaded) {
-                this.$periodFilter = this.$TimeFilter.getValue();
-            }
-
             var status = '';
             var from   = '',
                 to     = '';
@@ -110,10 +102,6 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 this.disableFilter();
             } else {
                 this.enableFilter();
-
-                status = this.$Status.getValue();
-                from   = this.$TimeFilter.getValue().from;
-                to     = this.$TimeFilter.getValue().to;
             }
 
             var sortOn = this.$Grid.options.sortOn;
@@ -127,7 +115,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     break;
             }
 
-            Processes.getProcessList({
+            this.$search({
                 perPage: this.$Grid.options.perPage,
                 page   : this.$Grid.options.page,
                 sortBy : this.$Grid.options.sortBy,
@@ -140,11 +128,11 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     currency: this.$Currency.getAttribute('value')
                 }
             }).then(function (result) {
-                result.data = result.data.map(function (entry) {
+                result.grid.data = result.grid.data.map(function (entry) {
                     return self.$parseGridRow(entry);
                 });
 
-                this.$Grid.setData(result);
+                this.$Grid.setData(result.grid);
                 this.$refreshButtonStatus();
 
                 this.$Total.set(
@@ -171,27 +159,15 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             var selected = this.$Grid.getSelectedData(),
                 buttons  = this.$Grid.getButtons();
 
-            var Actions = buttons.filter(function (Button) {
-                return Button.getAttribute('name') === 'actions';
-            })[0];
-
             var PDF = buttons.filter(function (Button) {
                 return Button.getAttribute('name') === 'printPdf';
             })[0];
 
-            var Open = buttons.filter(function (Button) {
-                return Button.getAttribute('name') === 'open';
-            })[0];
-
             if (selected.length) {
-                Open.enable();
                 PDF.enable();
-                Actions.enable();
                 return;
             }
 
-            Open.disable();
-            Actions.disable();
             PDF.disable();
         },
 
@@ -269,7 +245,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 autoSectionToggle    : false,
                 openAccordionOnClick : false,
                 toggleiconTitle      : '',
-                accordionLiveRenderer: this.$onClickProcessDetails,
+                accordionLiveRenderer: this.$onClickOpenItemsDetails,
                 exportData           : true,
                 exportTypes          : {
                     csv : 'CSV',
@@ -300,41 +276,41 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     showNotInExport: true,
                     export         : false
                 }, {
-                    header   : QUILocale.get(lg, 'panel.ProcessDrafts.grid.userId'),
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.userId'),
                     dataIndex: 'customerId',
                     dataType : 'string',
                     width    : 150
                 }, {
-                    header   : QUILocale.get(lg, 'panel.ProcessDrafts.grid.customerName'),
-                    dataIndex: 'customerName',
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.customerName'),
+                    dataIndex: 'customer_name',
                     dataType : 'integer',
                     width    : 200
                 }, {
-                    header   : QUILocale.get(lg, 'panel.ProcessDrafts.grid.netSum'),
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.netSum'),
                     dataIndex: 'display_net_sum',
                     dataType : 'string',
                     width    : 100,
                     className: 'payment-status-amountCell'
                 }, {
-                    header   : QUILocale.get(lg, 'panel.ProcessDrafts.grid.vatSum'),
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.vatSum'),
                     dataIndex: 'display_vat_sum',
                     dataType : 'string',
                     width    : 100,
                     className: 'payment-status-amountCell'
                 }, {
-                    header   : QUILocale.get(lg, 'panel.ProcessDrafts.grid.totalSum'),
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.totalSum'),
                     dataIndex: 'display_total_sum',
                     dataType : 'string',
                     width    : 100,
                     className: 'payment-status-amountCell'
                 }, {
-                    header   : QUILocale.get(lg, 'panel.ProcessDrafts.grid.paidSum'),
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.paidSum'),
                     dataIndex: 'display_paid_sum',
                     dataType : 'string',
                     width    : 100,
                     className: 'payment-status-amountCell'
                 }, {
-                    header   : QUILocale.get(lg, 'panel.ProcessDrafts.grid.openSum'),
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.openSum'),
                     dataIndex: 'display_open_sum',
                     dataType : 'string',
                     width    : 100,
@@ -378,12 +354,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          * event: on inject
          */
         $onInject: function () {
-            var self  = this,
-                value = this.$Status.getValue();
-
-            if (value === '' || !value) {
-                this.$Status.setValue('');
-            }
+            var self = this;
 
             this.$loaded = true;
 
@@ -475,11 +446,11 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             return ProcessesHandler.getProcessList({
                 ids: processIds,
             }).then(function (result) {
-                for (i = 0, len = result.data.length; i < len; i++) {
-                    var processId = result.data[i].id;
+                for (i = 0, len = result.grid.data.length; i < len; i++) {
+                    var processId = result.grid.data[i].id;
 
                     if (processId in IdToRow) {
-                        self.$Grid.setDataByRow(IdToRow[processId], self.$parseGridRow(result.data[i]));
+                        self.$Grid.setDataByRow(IdToRow[processId], self.$parseGridRow(result.grid.data[i]));
                     }
                 }
             });
@@ -534,29 +505,109 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
         },
 
         /**
-         * Open the accordion details of the process
+         * Open the accordion details of the open items
          *
          * @param {Object} data
          */
-        $onClickProcessDetails: function (data) {
-            var row        = data.row,
+        $onClickOpenItemsDetails: function (data) {
+            var self       = this,
+                Row        = self.$Grid.getDataByRow(data.row),
                 ParentNode = data.parent;
 
             ParentNode.setStyle('padding', 10);
-            ParentNode.set('html', '<div class="fa fa-spinner fa-spin"></div>');
+            //ParentNode.set('html', '<div class="fa fa-spinner fa-spin"></div>');
 
-            Processes.getArticleHtml(this.$Grid.getDataByRow(row).id).then(function (result) {
-                ParentNode.set('html', '');
+            ParentNode.addClass('quiqqer-customer-openitems-details');
 
-                if (result.indexOf('<table') === -1) {
-                    ParentNode.set('html', QUILocale.get(lg, 'panel.ProcessDrafts.no_articles'));
-                    return;
-                }
+            this.$GridDetails = new Grid(ParentNode, {
+                pagination          : true,
+                serverSort          : false,
+                accordion           : false,
+                autoSectionToggle   : false,
+                openAccordionOnClick: false,
+                toggleiconTitle     : '',
+                // @todo Export aktivieren?
+                //exportData          : true,
+                //exportTypes         : {
+                //    csv : 'CSV',
+                //    json: 'JSON'
+                //},
+                buttons    : [{
+                    name     : 'addTransaction',
+                    text     : QUILocale.get(lg, 'panels.OpenItems.btn.addTransaction'),
+                    textimage: 'fa fa-file-o',
+                    disabled : true,
+                    events   : {
+                        onClick: this.$onClickAddTransaction
+                    }
+                }],
+                columnModel: [{
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.userId'),
+                    dataIndex: 'date',
+                    dataType : 'string',
+                    width    : 150
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.customerName'),
+                    dataIndex: 'documentTypeTitle',
+                    dataType : 'string',
+                    width    : 200
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.customerName'),
+                    dataIndex: 'documentNo',
+                    dataType : 'string',
+                    width    : 200
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.netSum'),
+                    dataIndex: 'net',
+                    dataType : 'string',
+                    width    : 100,
+                    className: 'payment-status-amountCell'
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.vatSum'),
+                    dataIndex: 'vat',
+                    dataType : 'string',
+                    width    : 100,
+                    className: 'payment-status-amountCell'
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.totalSum'),
+                    dataIndex: 'gross',
+                    dataType : 'string',
+                    width    : 100,
+                    className: 'payment-status-amountCell'
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.paidSum'),
+                    dataIndex: 'paid',
+                    dataType : 'string',
+                    width    : 100,
+                    className: 'payment-status-amountCell'
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.openSum'),
+                    dataIndex: 'open',
+                    dataType : 'string',
+                    width    : 100,
+                    className: 'payment-status-amountCell'
+                }]
+            });
 
-                new Element('div', {
-                    'class': 'purchasing-process-details',
-                    html   : result
-                }).inject(ParentNode);
+            this.$GridDetails.addEvents({
+                //onRefresh : this.refresh,
+                //onClick   : this.$refreshButtonStatus,
+                //onDblClick: this.$onClickOpenProcess
+            });
+
+            this.Loader.show();
+
+            this.$getUserOpenItems(Row.userId).then(function (result) {
+
+                console.log(result);
+
+                self.$GridDetails.setData(result);
+                self.Loader.hide();
+
+                var size = ParentNode.getSize();
+
+                self.$GridDetails.setHeight(size.y - 120);
+                self.$GridDetails.setWidth(size.x - 20);
             });
         },
 
@@ -713,16 +764,12 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          * Disable the filter
          */
         disableFilter: function () {
-            this.$TimeFilter.disable();
-            this.$Status.disable();
         },
 
         /**
          * Enable the filter
          */
         enableFilter: function () {
-            this.$TimeFilter.enable();
-            this.$Status.enable();
         },
 
         /**
@@ -788,6 +835,38 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             });
 
             return Data;
+        },
+
+        /**
+         * Search open item slist
+         *
+         * @param {Object} SearchParams
+         * @return {Promise}
+         */
+        $search: function (SearchParams) {
+            return new Promise(function (resolve, reject) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_OpenItemsList_search', resolve, {
+                    'package'   : 'quiqqer/customer',
+                    searchParams: JSON.encode(SearchParams),
+                    onError     : reject
+                });
+            });
+        },
+
+        /**
+         * Get list of open items by user
+         *
+         * @param {Number} userId
+         * @return {Promise}
+         */
+        $getUserOpenItems: function (userId) {
+            return new Promise(function (resolve, reject) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_OpenItemsList_getUserOpenItems', resolve, {
+                    'package': 'quiqqer/customer',
+                    userId   : userId,
+                    onError  : reject
+                });
+            });
         }
     });
 });
