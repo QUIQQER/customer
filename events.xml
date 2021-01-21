@@ -7,4 +7,10 @@
     <event on="onQuiqqerOrderCustomerDataSaveEnd"
            fire="\QUI\ERP\Customer\EventHandler::onQuiqqerOrderCustomerDataSaveEnd"
     />
+
+    <!-- Open items -->
+    <event on="onTransactionCreate" fire="\QUI\ERP\Customer\OpenItemsList\Events::onTransactionCreate"/>
+    <event on="onQuiqqerInvoiceTemporaryInvoicePostEnd" fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerInvoiceTemporaryInvoicePostEnd"/>
+    <event on="onQuiqqerOrderCreated" fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerOrderCreated"/>
+
 </events>

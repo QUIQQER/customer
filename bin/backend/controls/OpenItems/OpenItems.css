@@ -175,6 +175,23 @@
     background: #eaeff4;
 }
 
+.openItems-total {
+    background-color: #efefef;
+    height: 80px;
+    padding: 20px;
+    text-align: right;
+    width: 100%;
+}
+
+.openItems-total th {
+    text-align: right;
+    width: 20%;
+}
+
+.quiqqer-customer-openitems-totals-tbl {
+    width: 100%;
+}
+
 .payment-status-amountCell {
     text-align: right !important;
     padding-right: 5px;
@@ -183,14 +200,22 @@
 
 /** Open items grid
  ================================================= */
-.quiqqer-customer-openitems-details {
-    height: 500px;
+.quiqqer-customer-openitems-userrecords-list {
+    height: 400px;
 }
 
-.quiqqer-customer-openitems-details div.bDiv > ul {
+.quiqqer-customer-openitems-userrecords-list div.bDiv > ul {
     padding: 0 !important;
 }
 
-.quiqqer-customer-openitems-details div.bDiv > ul > li {
+.quiqqer-customer-openitems-userrecords-list div.bDiv > ul > li {
     overflow: hidden !important;
+}
+
+.quiqqer-customer-openitems-userrecords-search {
+    background-color: #efefef;
+    height: 50px;
+    padding: 10px;
+    text-align: right;
+    width: 100%;
 }

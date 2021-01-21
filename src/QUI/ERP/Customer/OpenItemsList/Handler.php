@@ -11,6 +11,7 @@ use QUI\ERP\Accounting\Dunning\Handler as DunningsHandler;
 use QUI\Utils\Grid;
 use QUI\Utils\Security\Orthos;
 use QUI\ERP\Customer\Customers;
+use QUI\ERP\Order\Handler as OrderHandler;
 
 /**
  * Class Handler
@@ -53,10 +54,27 @@ class Handler
             $List->addItem(self::parseInvoiceToOpenItem($Invoice));
         }
 
+        try {
+            $Conf           = QUI::getPackage('quiqqer/customer')->getConfig();
+            $considerOrders = $Conf->get('openItems', 'considerOrders');
+
+            if (!empty($considerOrders)) {
+                $orders = self::getOpenOrders($User);
+
+                foreach ($orders as $Order) {
+                    $List->addItem(self::parseOrderToOpenItem($Order));
+                }
+            }
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
+
         // @todo Fetch open dunnings
 
         return $List;
     }
+
+    // region Invoices
 
     /**
      * Get all open invoices of a user
@@ -76,19 +94,19 @@ class Handler
             'select' => ['id'],
             'from'   => $Invoices->invoiceTable(),
             'where'  => [
-                'paid_status'      => [
+                'paid_status' => [
                     'type'  => 'NOT IN',
                     'value' => [
                         QUI\ERP\Constants::PAYMENT_STATUS_PAID,
                         QUI\ERP\Constants::PAYMENT_STATUS_CANCELED
                     ]
                 ],
-                'time_for_payment' => [
-                    'type'  => '<=',
-                    'value' => \date('Y-m-d H:i:s')
-                ],
-                'customer_id'      => $User->getId(),
-                'type'             => InvoiceHandler::TYPE_INVOICE
+//                'time_for_payment' => [
+//                    'type'  => '<=',
+//                    'value' => \date('Y-m-d H:i:s')
+//                ],
+                'customer_id' => $User->getId(),
+                'type'        => InvoiceHandler::TYPE_INVOICE
             ]
         ]);
 
@@ -180,6 +198,133 @@ class Handler
         return $Item;
     }
 
+    // endregion
+
+    // region Orders
+
+    /**
+     * Get all open orders of a user
+     *
+     * @param QUI\Interfaces\Users\User $User
+     * @return QUI\ERP\Order\Order[]
+     */
+    protected static function getOpenOrders(QUI\Interfaces\Users\User $User)
+    {
+        if (!QUI::getPackageManager()->isInstalled('quiqqer/order')) {
+            return [];
+        }
+
+        $Orders = OrderHandler::getInstance();
+
+        $result = QUI::getDataBase()->fetch([
+            'select' => ['id'],
+            'from'   => $Orders->table(),
+            'where'  => [
+                'paid_status' => [
+                    'type'  => 'NOT IN',
+                    'value' => [
+                        QUI\ERP\Constants::PAYMENT_STATUS_PAID,
+                        QUI\ERP\Constants::PAYMENT_STATUS_CANCELED,
+                        QUI\ERP\Constants::PAYMENT_STATUS_PLAN
+                    ]
+                ],
+                'customerId'  => $User->getId(),
+                'invoice_id'  => null
+            ]
+        ]);
+
+        $orders = [];
+
+        foreach ($result as $row) {
+            try {
+                $orders[] = $Orders->get($row['id']);
+            } catch (\Exception $Exception) {
+                QUI\System\Log::writeException($Exception);
+            }
+        }
+
+        return $orders;
+    }
+
+    /**
+     * Parses order data to an open item
+     *
+     * @param QUI\ERP\Order\Order $Order
+     * @return Item
+     */
+    protected static function parseOrderToOpenItem(QUI\ERP\Order\Order $Order)
+    {
+        $Item = new Item(self::DOCUMENT_TYPE_ORDER);
+
+        // Basic data
+        $Item->setDocumentNo($Order->getPrefixedId());
+        $Item->setDate(\date_create($Order->getAttribute('c_date')));
+
+        if (!empty($Order->getAttribute('payment_time'))) {
+            $Item->setDueDate(\date_create($Order->getAttribute('payment_time')));
+        }
+
+        // Invoice amounts
+        $paidStatus = $Order->getPaidStatusInformation();
+        $Item->setAmountPaid($paidStatus['paid']);
+        $Item->setAmountOpen($paidStatus['toPay']);
+
+        $OrderArticles = $Order->getArticles();
+        $calculations  = $OrderArticles->getCalculations();
+
+        $Item->setAmountTotalNet($calculations['nettoSum']);
+        $Item->setAmountTotalSum($calculations['sum']);
+
+        if (!empty($calculations['vatArray'])) {
+            $Item->setAmountTotalVat(\array_sum(\array_column($calculations['vatArray'], 'sum')));
+        }
+
+        $Item->setCurrency($Order->getCurrency());
+
+        // Latest transaction date
+        $Transactions = QUI\ERP\Accounting\Payments\Transactions\Handler::getInstance();
+        $transactions = $Transactions->getTransactionsByHash($Order->getHash());
+
+        if (!empty($transactions)) {
+            // Sort by date
+            \usort($transactions, function ($TransactionA, $TransactionB) {
+                /**
+                 * @var QUI\ERP\Accounting\Payments\Transactions\Transaction $TransactionA
+                 * @var QUI\ERP\Accounting\Payments\Transactions\Transaction $TransactionB
+                 */
+                $DateA = \date_create($TransactionA->getDate());
+                $DateB = \date_create($TransactionB->getDate());
+
+                if ($DateA === $DateB) {
+                    return 0;
+                }
+
+                return $DateA > $DateB ? -1 : 1;
+            });
+
+            $LatestTransactionDate = \date_create($transactions[0]->getDate());
+            $Item->setLastPaymentDate($LatestTransactionDate);
+        }
+
+        // Days due
+//        $Now            = \date_create();
+//        $TimeForPayment = \date_create($Invoice->getAttribute('time_for_payment'));
+//        $Item->setDaysDue($TimeForPayment->diff($Now)->days + 1);
+
+        // Check if dunning exist
+//        if (QUI::getPackageManager()->isInstalled('quiqqer/dunning')) {
+//            $DunningProcess = DunningsHandler::getInstance()->getDunningProcessByInvoiceId($Invoice->getCleanId());
+//
+//            if ($DunningProcess && $DunningProcess->getCurrentDunning()) {
+//                $Item->setDunningLevel($DunningProcess->getCurrentDunning()->getDunningLevel()->getLevel());
+//            }
+//        }
+
+        return $Item;
+    }
+
+    // endregion
+
     /**
      * Updates the open items record of a user with up-to-date item data.
      *
@@ -267,6 +412,14 @@ class Handler
                     'type'  => \PDO::PARAM_STR
                 ];
             }
+        }
+
+        if (!empty($searchParams['currency'])) {
+            $where[] = '`currency` = \''.Orthos::clear($searchParams['currency']).'\'';
+        }
+
+        if (!empty($searchParams['userId'])) {
+            $where[] = '`userId` = '.(int)$searchParams['userId'];
         }
 
         // build WHERE query string
@@ -387,6 +540,38 @@ class Handler
         }
 
         return $result;
+    }
+
+    /**
+     * Calculate the totals for a set of customer open items
+     *
+     * @param array $entries - Database rows form customer_open_items table
+     * @param QUI\ERP\Currency\Currency $Currency
+     * @return array - Totals prepared for backend display
+     */
+    public static function getTotals(array $entries, QUI\ERP\Currency\Currency $Currency)
+    {
+        $net   = 0;
+        $vat   = 0;
+        $gross = 0;
+        $paid  = 0;
+        $open  = 0;
+
+        foreach ($entries as $entry) {
+            $net   += $entry['net_sum'];
+            $vat   += $entry['vat_sum'];
+            $gross += $entry['total_sum'];
+            $paid  += $entry['paid_sum'];
+            $open  += $entry['open_sum'];
+        }
+
+        return [
+            'display_net'   => $Currency->format($net),
+            'display_vat'   => $Currency->format($vat),
+            'display_gross' => $Currency->format($gross),
+            'display_paid'  => $Currency->format($paid),
+            'display_open'  => $Currency->format($open)
+        ];
     }
 
     /**

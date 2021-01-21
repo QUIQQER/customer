@@ -12,6 +12,13 @@
                     <defaultValue>0</defaultValue>
                 </conf>
             </section>
+
+            <section name="openItems">
+                <conf name="considerOrders">
+                    <type><![CDATA[boolean]]></type>
+                    <defaultvalue>0</defaultvalue>
+                </conf>
+            </section>
         </config>
 
         <window name="ERP">
@@ -49,6 +56,22 @@
                             </text>
                             <description>
                                 <locale group="quiqqer/customer" var="customer.settings.customerLogin.description"/>
+                            </description>
+                        </input>
+
+                    </settings>
+
+                    <settings title="openItems" name="openItems">
+                        <title>
+                            <locale group="quiqqer/customer" var="openItems.settings.title"/>
+                        </title>
+
+                        <input conf="openItems.considerOrders" type="checkbox">
+                            <text>
+                                <locale group="quiqqer/customer" var="customer.settings.considerOrders"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/customer" var="customer.settings.considerOrders.description"/>
                             </description>
                         </input>
 

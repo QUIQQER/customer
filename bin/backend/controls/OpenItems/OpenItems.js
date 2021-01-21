@@ -11,20 +11,22 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
     'qui/controls/desktop/Panel',
     'qui/controls/buttons/Button',
     'qui/controls/buttons/Separator',
-    'qui/controls/buttons/Select',
     'qui/controls/contextmenu/Item',
     'controls/grid/Grid',
+
+    'package/quiqqer/payment-transactions/bin/backend/controls/IncomingPayments/AddPaymentWindow',
 
     'Locale',
     'Ajax',
     'Mustache',
 
     'text!package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems.Total.html',
+    'text!package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems.UserRecords.html',
     'css!package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems.css',
     'css!package/quiqqer/erp/bin/backend/payment-status.css'
 
-], function (QUI, QUIPanel, QUIButton, QUISeparator, QUISelect, QUIContextMenuItem, Grid,
-             QUILocale, QUIAjax, Mustache, templateTotal) {
+], function (QUI, QUIPanel, QUIButton, QUISeparator, QUIContextMenuItem, Grid, AddPaymentWindow,
+             QUILocale, QUIAjax, Mustache, templateTotal, templateUserRecords) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -45,11 +47,16 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             '$onInject',
             '$onProcessChange',
             '$refreshButtonStatus',
-            '$onPDFExportButtonClick',
+            '$onClickShowOpenItemsList',
             '$onClickCopyProcess',
-            '$onClickOpenItemsDetails',
+            '$onClickOpenUserRecords',
             '$onClickOpenProcess',
-            '$onSearchKeyUp'
+            '$onSearchKeyUp',
+            '$refreshUserRecords',
+            '$refreshUserRecordsButtons',
+            '$onClickAddTransaction',
+            '$onClickOpenDocument',
+            '$onUserRecordsSearchKeyUp'
         ],
 
         initialize: function (options) {
@@ -70,7 +77,10 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             this.$periodFilter  = null;
             this.$loaded        = false;
 
-            this.$GridDetails = null;
+            this.$GridDetails              = null;
+            this.$currentRecordsUserId     = false;
+            this.$UserRecordsSearch        = null;
+            this.$currentUserRecordsSearch = '';
 
             this.addEvents({
                 onCreate: this.$onCreate,
@@ -92,41 +102,19 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 return;
             }
 
-            var status = '';
-            var from   = '',
-                to     = '';
-
             this.$currentSearch = this.$Search.value;
-
-            if (this.$currentSearch !== '') {
-                this.disableFilter();
-            } else {
-                this.enableFilter();
-            }
 
             var sortOn = this.$Grid.options.sortOn;
 
-            switch (sortOn) {
-                case 'supplier_name':
-                case 'display_vatsum':
-                case 'display_paid':
-                case 'display_toPay':
-                    sortOn = false;
-                    break;
-            }
+            this.showTotal();
 
             this.$search({
-                perPage: this.$Grid.options.perPage,
-                page   : this.$Grid.options.page,
-                sortBy : this.$Grid.options.sortBy,
-                sortOn : sortOn,
-                search : this.$currentSearch,
-                filters: {
-                    from    : from,
-                    to      : to,
-                    status  : status,
-                    currency: this.$Currency.getAttribute('value')
-                }
+                perPage : this.$Grid.options.perPage,
+                page    : this.$Grid.options.page,
+                sortBy  : this.$Grid.options.sortBy,
+                sortOn  : sortOn,
+                search  : this.$currentSearch,
+                currency: this.$Currency.getAttribute('value')
             }).then(function (result) {
                 result.grid.data = result.grid.data.map(function (entry) {
                     return self.$parseGridRow(entry);
@@ -137,8 +125,46 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
                 this.$Total.set(
                     'html',
-                    Mustache.render(templateTotal, result.total)
+                    Mustache.render(templateTotal, Object.merge({}, result.totals, {
+                        headerNet  : QUILocale.get(lg, 'panel.OpenItems.grid.net'),
+                        headerVat  : QUILocale.get(lg, 'panel.OpenItems.grid.vat'),
+                        headerGross: QUILocale.get(lg, 'panel.OpenItems.grid.gross'),
+                        headerPaid : QUILocale.get(lg, 'panel.OpenItems.grid.paid'),
+                        headerOpen : QUILocale.get(lg, 'panel.OpenItems.grid.open')
+                    }))
                 );
+
+                this.$currentRecordsUserId = null;
+
+                this.Loader.hide();
+            }.bind(this)).catch(function (err) {
+                console.error(err);
+                this.Loader.hide();
+            }.bind(this));
+        },
+
+        /**
+         * Refresh grid entry for a specific user
+         *
+         * @param {Number} userId
+         * @return {Promise}
+         */
+        $refreshUserEntry: function (userId) {
+            var self = this;
+
+            return this.$search({
+                userId: userId
+            }).then(function (result) {
+                var entries = self.$Grid.getData();
+
+                for (var i = 0, len = entries.length; i < len; i++) {
+                    var Entry = entries[i];
+
+                    if (Entry.userId === userId) {
+                        self.$Grid.setDataByRow(i, self.$parseGridRow(result.grid.data[0]));
+                        break;
+                    }
+                }
 
                 this.Loader.hide();
             }.bind(this)).catch(function (err) {
@@ -160,7 +186,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 buttons  = this.$Grid.getButtons();
 
             var PDF = buttons.filter(function (Button) {
-                return Button.getAttribute('name') === 'printPdf';
+                return Button.getAttribute('name') === 'showOpenItemsList';
             })[0];
 
             if (selected.length) {
@@ -242,30 +268,22 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 pagination           : true,
                 serverSort           : true,
                 accordion            : true,
-                autoSectionToggle    : false,
+                autoSectionToggle    : true,
                 openAccordionOnClick : false,
-                toggleiconTitle      : '',
-                accordionLiveRenderer: this.$onClickOpenItemsDetails,
+                toggleiconTitle      : QUILocale.get(lg, 'panels.OpenItems.grid.toggle_title'),
+                accordionLiveRenderer: this.$onClickOpenUserRecords,
                 exportData           : true,
                 exportTypes          : {
                     csv : 'CSV',
                     json: 'JSON'
                 },
                 buttons              : [{
-                    name     : 'addTransaction',
-                    text     : QUILocale.get(lg, 'panels.OpenItems.btn.addTransaction'),
-                    textimage: 'fa fa-file-o',
-                    disabled : true,
-                    events   : {
-                        onClick: this.$onClickOpenProcess
-                    }
-                }, {
-                    name     : 'printPdf',
-                    text     : QUILocale.get(lg, 'panels.OpenItems.btn.pdf'),
+                    name     : 'showOpenItemsList',
+                    text     : QUILocale.get(lg, 'panels.OpenItems.btn.showOpenItemsList'),
                     textimage: 'fa fa-print',
                     disabled : true,
                     events   : {
-                        onClick: this.$onPDFExportButtonClick
+                        onClick: this.$onClickShowOpenItemsList
                     }
                 }],
                 columnModel          : [{
@@ -286,44 +304,52 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     dataType : 'integer',
                     width    : 200
                 }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.netSum'),
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.openItemsCount'),
+                    dataIndex: 'open_items_count',
+                    dataType : 'integer',
+                    width    : 100
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.net'),
                     dataIndex: 'display_net_sum',
                     dataType : 'string',
                     width    : 100,
                     className: 'payment-status-amountCell'
                 }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.vatSum'),
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.vat'),
                     dataIndex: 'display_vat_sum',
                     dataType : 'string',
                     width    : 100,
                     className: 'payment-status-amountCell'
                 }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.totalSum'),
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.gross'),
                     dataIndex: 'display_total_sum',
                     dataType : 'string',
                     width    : 100,
                     className: 'payment-status-amountCell'
                 }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.paidSum'),
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.paid'),
                     dataIndex: 'display_paid_sum',
                     dataType : 'string',
                     width    : 100,
                     className: 'payment-status-amountCell'
                 }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.openSum'),
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.open'),
                     dataIndex: 'display_open_sum',
                     dataType : 'string',
                     width    : 100,
                     className: 'payment-status-amountCell'
+                }, {
+                    dataIndex: 'userId',
+                    dataType : 'integer',
+                    hidden   : true
                 }]
             });
 
             this.$Grid.addEvents({
                 onRefresh : this.refresh,
                 onClick   : this.$refreshButtonStatus,
-                onDblClick: this.$onClickOpenProcess
+                onDblClick: this.$onClickShowOpenItemsList
             });
-
 
             this.$Total = new Element('div', {
                 'class': 'openItems-total'
@@ -346,7 +372,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
             var size = Body.getSize();
 
-            this.$Grid.setHeight(size.y - 20);
+            this.$Grid.setHeight(size.y - 110);
             this.$Grid.setWidth(size.x - 20);
         },
 
@@ -387,6 +413,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 self.$Currency.enable();
                 self.$Currency.setAttribute('value', currency.code);
                 self.$Currency.setAttribute('text', currency.code);
+
+                self.refresh();
             }, {
                 'package': 'quiqqer/currency'
             });
@@ -396,218 +424,33 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             });
         },
 
-        /**
-         * event: on panel destroy
-         */
-        $onDestroy: function () {
-            Processes.removeEvents({
-                onPostProcess: this.$onProcessChange
-            });
-        },
-
-        /**
-         * event: A change was made to a purchasing process
-         *
-         * Update single processes in table without refreshing everything
-         *
-         * @param {Object} ProcessesHandler
-         * @param {Number|Array} processIds
-         */
-        $onProcessChange: function (ProcessesHandler, processIds) {
-            if (!this.$Grid) {
-                return;
-            }
-
-            var self    = this,
-                rows    = this.$Grid.getData(),
-                IdToRow = {};
-
-            var i, j, len, jlen, processId;
-
-            if (typeof processIds === 'string' || typeof processIds === 'number') {
-                processIds = [processIds];
-            }
-
-            for (i = 0, len = processIds.length; i < len; i++) {
-                processId = processIds[i];
-
-                for (j = 0, jlen = rows.length; j < jlen; j++) {
-                    if (rows[j].id == processId) {
-                        IdToRow[processId] = j;
-                        break;
-                    }
-                }
-            }
-
-            if (!Object.getLength(IdToRow)) {
-                return;
-            }
-
-            return ProcessesHandler.getProcessList({
-                ids: processIds,
-            }).then(function (result) {
-                for (i = 0, len = result.grid.data.length; i < len; i++) {
-                    var processId = result.grid.data[i].id;
-
-                    if (processId in IdToRow) {
-                        self.$Grid.setDataByRow(IdToRow[processId], self.$parseGridRow(result.grid.data[i]));
-                    }
-                }
-            });
-        },
-
         //region Buttons events
 
         /**
          * event : on PDF Export button click
          */
-        $onPDFExportButtonClick: function (Button) {
+        $onClickShowOpenItemsList: function (Button) {
+            var self         = this;
             var selectedData = this.$Grid.getSelectedData();
 
             if (!selectedData.length) {
                 return;
             }
 
-            Button.setAttribute('textimage', 'fa fa-spinner fa-spin');
-
-            return new Promise(function (resolve) {
-                require([
-                    'package/quiqqer/erp/bin/backend/controls/OutputDialog'
-                ], function (OutputDialog) {
-                    new OutputDialog({
-                        entityId  : selectedData[0].id,
-                        entityType: 'PurchasingProcess',
-                        events    : {
-                            onOpen: function (SubmitData) {
-                                Button.setAttribute('textimage', 'fa fa-print');
-                                resolve();
-                            }
-                        }
-                    }).open();
-                });
-            });
-        },
-
-        /**
-         * Create a copy of a process as a draft
-         */
-        $onClickCopyProcess: function () {
-            var self     = this,
-                selected = this.$Grid.getSelectedData();
-
-            if (!selected.length) {
-                return Promise.resolve(false);
-            }
-
-            DialogUtils.openCopyDialog(selected[0].id_str).then(function (newId) {
-                ProcessPanels.openProcessDraft(newId);
-            });
-        },
-
-        /**
-         * Open the accordion details of the open items
-         *
-         * @param {Object} data
-         */
-        $onClickOpenItemsDetails: function (data) {
-            var self       = this,
-                Row        = self.$Grid.getDataByRow(data.row),
-                ParentNode = data.parent;
-
-            ParentNode.setStyle('padding', 10);
-            //ParentNode.set('html', '<div class="fa fa-spinner fa-spin"></div>');
-
-            ParentNode.addClass('quiqqer-customer-openitems-details');
-
-            this.$GridDetails = new Grid(ParentNode, {
-                pagination          : true,
-                serverSort          : false,
-                accordion           : false,
-                autoSectionToggle   : false,
-                openAccordionOnClick: false,
-                toggleiconTitle     : '',
-                // @todo Export aktivieren?
-                //exportData          : true,
-                //exportTypes         : {
-                //    csv : 'CSV',
-                //    json: 'JSON'
-                //},
-                buttons    : [{
-                    name     : 'addTransaction',
-                    text     : QUILocale.get(lg, 'panels.OpenItems.btn.addTransaction'),
-                    textimage: 'fa fa-file-o',
-                    disabled : true,
-                    events   : {
-                        onClick: this.$onClickAddTransaction
-                    }
-                }],
-                columnModel: [{
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.userId'),
-                    dataIndex: 'date',
-                    dataType : 'string',
-                    width    : 150
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.customerName'),
-                    dataIndex: 'documentTypeTitle',
-                    dataType : 'string',
-                    width    : 200
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.customerName'),
-                    dataIndex: 'documentNo',
-                    dataType : 'string',
-                    width    : 200
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.netSum'),
-                    dataIndex: 'net',
-                    dataType : 'string',
-                    width    : 100,
-                    className: 'payment-status-amountCell'
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.vatSum'),
-                    dataIndex: 'vat',
-                    dataType : 'string',
-                    width    : 100,
-                    className: 'payment-status-amountCell'
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.totalSum'),
-                    dataIndex: 'gross',
-                    dataType : 'string',
-                    width    : 100,
-                    className: 'payment-status-amountCell'
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.paidSum'),
-                    dataIndex: 'paid',
-                    dataType : 'string',
-                    width    : 100,
-                    className: 'payment-status-amountCell'
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.openSum'),
-                    dataIndex: 'open',
-                    dataType : 'string',
-                    width    : 100,
-                    className: 'payment-status-amountCell'
-                }]
-            });
-
-            this.$GridDetails.addEvents({
-                //onRefresh : this.refresh,
-                //onClick   : this.$refreshButtonStatus,
-                //onDblClick: this.$onClickOpenProcess
-            });
-
             this.Loader.show();
 
-            this.$getUserOpenItems(Row.userId).then(function (result) {
-
-                console.log(result);
-
-                self.$GridDetails.setData(result);
-                self.Loader.hide();
-
-                var size = ParentNode.getSize();
-
-                self.$GridDetails.setHeight(size.y - 120);
-                self.$GridDetails.setWidth(size.x - 20);
+            require([
+                'package/quiqqer/erp/bin/backend/controls/OutputDialog'
+            ], function (OutputDialog) {
+                new OutputDialog({
+                    entityId  : selectedData[0].userId,
+                    entityType: 'OpenItemsList',
+                    events    : {
+                        onOpen: function () {
+                            self.Loader.hide();
+                        }
+                    }
+                }).open();
             });
         },
 
@@ -761,18 +604,6 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
         },
 
         /**
-         * Disable the filter
-         */
-        disableFilter: function () {
-        },
-
-        /**
-         * Enable the filter
-         */
-        enableFilter: function () {
-        },
-
-        /**
          * key up event at the search input
          *
          * @param {DOMEvent} event
@@ -853,20 +684,430 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             });
         },
 
+        // region User records
+
+        /**
+         * Open the accordion details of the open items
+         *
+         * @param {Object} data
+         */
+        $onClickOpenUserRecords: function (data) {
+            var self       = this,
+                Row        = self.$Grid.getDataByRow(data.row),
+                ParentNode = data.parent;
+
+            if (Row.userId === this.$currentRecordsUserId) {
+                return;
+            }
+
+            this.$currentRecordsUserId = Row.userId;
+
+            ParentNode.setStyle('padding', 10);
+            //ParentNode.set('html', '<div class="fa fa-spinner fa-spin"></div>');
+
+            ParentNode.addClass('quiqqer-customer-openitems-userrecords');
+            ParentNode.set('html', Mustache.render(templateUserRecords, {
+                placeholderSearch: QUILocale.get(lg, 'panels.OpenItems.details.tpl.placeholderSearch')
+            }));
+
+            this.$UserRecordsSearch = ParentNode.getElement('.quiqqer-customer-openitems-userrecords-search input');
+
+            this.$UserRecordsSearch.addEvents({
+                keyup : this.$onUserRecordsSearchKeyUp,
+                search: this.$onUserRecordsSearchKeyUp,
+                click : this.$onUserRecordsSearchKeyUp
+            });
+
+            new QUIButton({
+                name  : 'searchUserRecords',
+                icon  : 'fa fa-search',
+                styles: {
+                    float : 'right',
+                    margin: 0
+                },
+                events: {
+                    onClick: function () {
+                        self.$refreshUserRecords(self.$GridDetails);
+                    }
+                }
+            }).inject(
+                ParentNode.getElement('.quiqqer-customer-openitems-userrecords-search'),
+                'bottom'
+            );
+
+            var GridParent = ParentNode.getElement('.quiqqer-customer-openitems-userrecords-list');
+
+            if (this.$GridDetails) {
+                this.$GridDetails.destroy();
+            }
+
+            this.$GridDetails = new Grid(GridParent, {
+                pagination          : true,
+                serverSort          : true,
+                accordion           : false,
+                autoSectionToggle   : false,
+                openAccordionOnClick: false,
+                toggleiconTitle     : '',
+                // @todo Export aktivieren?
+                //exportData          : true,
+                //exportTypes         : {
+                //    csv : 'CSV',
+                //    json: 'JSON'
+                //},
+                buttons    : [{
+                    name     : 'open',
+                    text     : QUILocale.get(lg, 'panels.OpenItems.details.btn.open'),
+                    textimage: 'fa fa-file-o',
+                    disabled : true,
+                    events   : {
+                        onClick: this.$onClickOpenDocument
+                    }
+                }, {
+                    name     : 'addTransaction',
+                    text     : QUILocale.get(lg, 'panels.OpenItems.details.btn.addTransaction'),
+                    textimage: 'fa fa-money',
+                    disabled : true,
+                    events   : {
+                        onClick: this.$onClickAddTransaction
+                    }
+                }],
+                columnModel: [{
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.date'),
+                    dataIndex: 'date',
+                    dataType : 'string',
+                    width    : 100
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.documentNo'),
+                    dataIndex: 'documentNo',
+                    dataType : 'string',
+                    width    : 125
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.documentType'),
+                    dataIndex: 'documentTypeTitle',
+                    dataType : 'string',
+                    width    : 85
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.net'),
+                    dataIndex: 'net',
+                    dataType : 'string',
+                    width    : 100,
+                    className: 'payment-status-amountCell'
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.vat'),
+                    dataIndex: 'vat',
+                    dataType : 'string',
+                    width    : 100,
+                    className: 'payment-status-amountCell'
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.gross'),
+                    dataIndex: 'gross',
+                    dataType : 'string',
+                    width    : 100,
+                    className: 'payment-status-amountCell'
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.paid'),
+                    dataIndex: 'paid',
+                    dataType : 'string',
+                    width    : 100,
+                    className: 'payment-status-amountCell'
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.open'),
+                    dataIndex: 'open',
+                    dataType : 'string',
+                    width    : 100,
+                    className: 'payment-status-amountCell'
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.daysDue'),
+                    dataIndex: 'daysDue',
+                    dataType : 'integer',
+                    width    : 75
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.dunningLevel'),
+                    dataIndex: 'dunningLevel',
+                    dataType : 'integer',
+                    width    : 75
+                }, {
+                    dataIndex: 'documentType',
+                    dataType : 'string',
+                    hidden   : true
+                }]
+            });
+
+            this.$GridDetails.addEvents({
+                onRefresh : this.$refreshUserRecords,
+                onClick   : this.$refreshUserRecordsButtons,
+                onDblClick: this.$onClickAddTransaction
+            });
+
+            this.$refreshUserRecords(this.$GridDetails, true);
+
+            var size = ParentNode.getSize();
+
+            self.$GridDetails.setHeight(size.y - 120);
+        },
+
+        /**
+         * Refresh grid button status of user open items records details
+         */
+        $refreshUserRecordsButtons: function () {
+            if (!this.$GridDetails) {
+                return;
+            }
+
+            var selected = this.$GridDetails.getSelectedData(),
+                buttons  = this.$GridDetails.getButtons();
+
+            var OpenDocument = buttons.filter(function (Button) {
+                return Button.getAttribute('name') === 'open';
+            })[0];
+
+            var AddTransaction = buttons.filter(function (Button) {
+                return Button.getAttribute('name') === 'addTransaction';
+            })[0];
+
+            if (selected.length) {
+                OpenDocument.enable();
+                AddTransaction.enable();
+                return;
+            }
+
+            OpenDocument.disable();
+            AddTransaction.disable();
+        },
+
+        /**
+         * If the user clicks the "add transaction to open item record" button
+         */
+        $onClickAddTransaction: function () {
+            var self     = this,
+                selected = this.$GridDetails.getSelectedData();
+
+            if (!selected.length) {
+                return;
+            }
+
+            var Row = selected[0];
+            var erpEntity;
+
+            switch (Row.documentType) {
+                case 'invoice':
+                    erpEntity = 'Invoice';
+                    break;
+
+                case 'order':
+                    erpEntity = 'Order';
+                    break;
+
+                default:
+                    return;
+            }
+
+            var submitTransaction = function (Win, Data) {
+                Win.Loader.show();
+
+                switch (erpEntity) {
+                    case 'Invoice':
+                        require(['package/quiqqer/invoice/bin/Invoices'], function (Invoices) {
+                            Invoices.addPaymentToInvoice(
+                                Row.documentNo,
+                                Data.amount,
+                                Data.payment_method
+                            ).then(function () {
+                                Win.close();
+
+                                self.$refreshUserEntry(self.$currentRecordsUserId).then(function () {
+                                    self.$refreshUserRecords(self.$GridDetails, true);
+                                });
+                            }).catch(function (err) {
+                                Win.Loader.hide();
+                            });
+                        });
+                        break;
+
+                    case 'Order':
+                        // @todo
+                        break;
+                }
+            };
+
+            new AddPaymentWindow({
+                entityId  : Row.documentNo,
+                entityType: erpEntity,
+                events    : {
+                    onSubmit: submitTransaction
+                }
+            }).open();
+        },
+
+        /**
+         * If the user clicks the "open open item record document" button
+         */
+        $onClickOpenDocument: function () {
+            var self     = this,
+                selected = this.$GridDetails.getSelectedData();
+
+            if (!selected.length) {
+                return;
+            }
+
+            var Row = selected[0];
+
+            switch (Row.documentType) {
+                case 'invoice':
+                    this.Loader.show();
+
+                    require(['package/quiqqer/invoice/bin/backend/utils/Panels'], function (InvoicePanels) {
+                        InvoicePanels.openInvoice(Row.documentNo).then(function () {
+                            self.Loader.hide();
+                        });
+                    });
+                    break;
+
+                case 'order':
+                    // @todo
+                    break;
+
+                default:
+                    return;
+            }
+        },
+
+        /**
+         * key up event at the user records search input
+         *
+         * @param {DOMEvent} event
+         */
+        $onUserRecordsSearchKeyUp: function (event) {
+            if (event.key === 'up' ||
+                event.key === 'down' ||
+                event.key === 'left' ||
+                event.key === 'right') {
+                return;
+            }
+
+            var SearchInput = event.target;
+
+            if (this.$searchDelay) {
+                clearTimeout(this.$searchDelay);
+            }
+
+            if (event.type === 'click') {
+                // workaround, cancel needs time to clear
+                (function () {
+                    if (this.$UserRecordsSearch.value !== this.$currentUserRecordsSearch) {
+                        this.$searchDelay = (function () {
+                            this.$refreshUserRecords(this.$GridDetails);
+                        }).delay(250, this);
+                    }
+                }).delay(100, this);
+            }
+
+            if (this.$UserRecordsSearch.value === this.$currentUserRecordsSearch) {
+                return;
+            }
+
+            if (event.key === 'enter') {
+                this.$searchDelay = (function () {
+                    this.$refreshUserRecords(this.$GridDetails);
+                }).delay(250, this);
+                return;
+            }
+        },
+
+        /**
+         * Refresh GRID with user open items records
+         *
+         * @param {Object} Grid
+         * @param {Boolean} [forceRefresh] - Force refresh of user open items records; otherwise try
+         * to fetch from cache
+         */
+        $refreshUserRecords: function (Grid, forceRefresh) {
+            if (!this.$GridDetails) {
+                return;
+            }
+
+            forceRefresh = forceRefresh || false;
+
+            var self   = this;
+            var sortOn = this.$GridDetails.options.sortOn;
+
+            switch (sortOn) {
+                case 'supplier_name':
+                case 'display_vatsum':
+                case 'display_paid':
+                case 'display_toPay':
+                    sortOn = false;
+                    break;
+            }
+
+            this.Loader.show();
+
+            this.$currentUserRecordsSearch = this.$UserRecordsSearch.value;
+
+            this.$getUserOpenItems(
+                this.$currentRecordsUserId,
+                {
+                    perPage: this.$GridDetails.options.perPage,
+                    page   : this.$GridDetails.options.page,
+                    sortBy : this.$GridDetails.options.sortBy,
+                    sortOn : sortOn,
+                    search : this.$currentUserRecordsSearch
+                },
+                forceRefresh
+            ).then(function (result) {
+                self.$GridDetails.setData(result);
+                self.Loader.hide();
+
+                self.$refreshUserRecordsButtons();
+            });
+        },
+
         /**
          * Get list of open items by user
          *
          * @param {Number} userId
+         * @param {Object} SearchParams
+         * @param {Boolean} forceRefresh
          * @return {Promise}
          */
-        $getUserOpenItems: function (userId) {
+        $getUserOpenItems: function (userId, SearchParams, forceRefresh) {
             return new Promise(function (resolve, reject) {
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_OpenItemsList_getUserOpenItems', resolve, {
-                    'package': 'quiqqer/customer',
-                    userId   : userId,
-                    onError  : reject
+                    'package'   : 'quiqqer/customer',
+                    userId      : userId,
+                    searchParams: JSON.encode(SearchParams),
+                    forceRefresh: forceRefresh ? 1 : 0,
+                    onError     : reject
                 });
             });
+        },
+
+        // endregion
+
+        // region Totals
+
+        /**
+         * Show the total display
+         */
+        showTotal: function () {
+            this.getContent().setStyle('overflow', 'hidden');
+
+            return new Promise(function (resolve) {
+                this.$Total.setStyles({
+                    display: 'inline-block',
+                    opacity: 0
+                });
+
+                moofx(this.$Total).animate({
+                    bottom : 1,
+                    opacity: 1
+                }, {
+                    duration: 200,
+                    callback: resolve
+                });
+            }.bind(this));
         }
+
+        // endregion
     });
 });

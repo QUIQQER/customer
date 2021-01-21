@@ -231,6 +231,10 @@ class Item
      */
     public function getDateFormatted()
     {
+        if (empty($this->Date)) {
+            return '-';
+        }
+
         return $this->getLocale()->formatDate($this->Date->getTimestamp());
     }
 
@@ -255,6 +259,10 @@ class Item
      */
     public function getLastPaymentDateFormatted()
     {
+        if (empty($this->LastPaymentDate)) {
+            return '-';
+        }
+
         return $this->getLocale()->formatDate($this->LastPaymentDate->getTimestamp());
     }
 
@@ -279,6 +287,10 @@ class Item
      */
     public function getDueDateFormatted()
     {
+        if (empty($this->DueDate)) {
+            return '-';
+        }
+
         return $this->getLocale()->formatDate($this->DueDate->getTimestamp());
     }
 

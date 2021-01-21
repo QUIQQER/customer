@@ -23,16 +23,26 @@ QUI::$Ajax->registerFunction(
 
             $Grid = new Grid($searchParams);
 
+            if (!empty($searchParams['currency'])) {
+                $Currency = new \QUI\ERP\Currency\Currency($searchParams['currency']);
+            } else {
+                $Currency = \QUI\ERP\Currency\Handler::getDefaultCurrency();
+            }
+
             return [
                 'grid'   => $Grid->parseResult($result, $count),
-                'totals' => [] // @todo
+                'totals' => Handler::getTotals($result, $Currency)
             ];
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
             return [
                 'grid'   => [],
-                'totals' => []
+                'totals' => [
+                    'display_gross_toPay' => '',
+                    'display_gross_paid'  => '',
+                    'display_gross_total' => ''
+                ]
             ];
         }
     },
