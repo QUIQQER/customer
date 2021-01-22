@@ -247,6 +247,15 @@ class Customers extends Singleton
         // delivery Address
         $this->saveDeliveryAddress($User, $attributes);
 
+        if (empty($attributes['email'])) {
+            $Address  = $User->getStandardAddress();
+            $mailList = $Address->getMailList();
+
+            if (!empty($mailList)) {
+                $User->setAttribute('email', \reset($mailList));
+            }
+        }
+
 
         // group
         $groups = [];
