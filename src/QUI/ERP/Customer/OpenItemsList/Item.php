@@ -206,7 +206,7 @@ class Item
     /**
      * @return string
      */
-    public function getDateFormatted()
+    public function getDateFormatted(): string
     {
         return $this->getLocale()->formatDate($this->Date->getTimestamp());
     }
@@ -230,7 +230,7 @@ class Item
     /**
      * @return string
      */
-    public function getLastPaymentDateFormatted()
+    public function getLastPaymentDateFormatted(): string
     {
         return $this->getLocale()->formatDate($this->LastPaymentDate->getTimestamp());
     }
@@ -254,7 +254,7 @@ class Item
     /**
      * @return string
      */
-    public function getDueDateFormatted()
+    public function getDueDateFormatted(): string
     {
         return $this->getLocale()->formatDate($this->DueDate->getTimestamp());
     }
@@ -278,7 +278,7 @@ class Item
     /**
      * @return string
      */
-    public function getAmountPaidFormatted()
+    public function getAmountPaidFormatted(): string
     {
         return $this->Currency->format($this->amountPaid, $this->getLocale());
     }
@@ -302,7 +302,7 @@ class Item
     /**
      * @return string
      */
-    public function getAmountOpenFormatted()
+    public function getAmountOpenFormatted(): string
     {
         return $this->Currency->format($this->amountOpen, $this->getLocale());
     }
@@ -326,7 +326,7 @@ class Item
     /**
      * @return string
      */
-    public function getAmountTotalNetFormatted()
+    public function getAmountTotalNetFormatted(): string
     {
         return $this->Currency->format($this->amountTotalNet, $this->getLocale());
     }
@@ -350,7 +350,7 @@ class Item
     /**
      * @return string
      */
-    public function getAmountTotalSumFormatted()
+    public function getAmountTotalSumFormatted(): string
     {
         return $this->Currency->format($this->amountTotalSum, $this->getLocale());
     }
@@ -374,7 +374,7 @@ class Item
     /**
      * @return string
      */
-    public function getAmountTotalVatFormatted()
+    public function getAmountTotalVatFormatted(): string
     {
         return $this->Currency->format($this->amountTotalVat, $this->getLocale());
     }

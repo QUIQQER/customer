@@ -32,7 +32,7 @@ class Customers extends Singleton
      * @throws QUI\Exception
      * @throws QUI\Permissions\Exception
      */
-    public function createCustomer($customerId, $address = [], $groupIds = [])
+    public function createCustomer($customerId, $address = [], $groupIds = []): QUI\Users\User
     {
         QUI\Permissions\Permission::checkPermission('quiqqer.customer.create');
 
@@ -106,7 +106,7 @@ class Customers extends Singleton
      * @throws Exception
      * @throws QUI\Exception
      */
-    public function getCustomerGroupId()
+    public function getCustomerGroupId(): int
     {
         $Package = QUI::getPackage('quiqqer/customer');
         $Config  = $Package->getConfig();
@@ -127,7 +127,7 @@ class Customers extends Singleton
      *
      * @return bool
      */
-    public function getCustomerLoginFlag()
+    public function getCustomerLoginFlag(): bool
     {
         try {
             $Package = QUI::getPackage('quiqqer/customer');
@@ -147,7 +147,7 @@ class Customers extends Singleton
      * @throws Exception
      * @throws QUI\Exception
      */
-    public function getCustomerGroup()
+    public function getCustomerGroup(): ?QUI\Groups\Group
     {
         if ($this->Group === null) {
             $this->Group = QUI::getGroups()->get($this->getCustomerGroupId());
@@ -298,7 +298,7 @@ class Customers extends Singleton
      * @throws QUI\Permissions\Exception
      * @throws QUI\Users\Exception
      */
-    protected function saveAddress(QUI\Users\User $User, $attributes)
+    protected function saveAddress(QUI\Users\User $User, array $attributes)
     {
         try {
             $Address = $User->getStandardAddress();
@@ -440,7 +440,7 @@ class Customers extends Singleton
      *
      * @throws QUI\Exception
      */
-    public function addCommentToUser(QUI\Users\User $User, $comment)
+    public function addCommentToUser(QUI\Users\User $User, string $comment)
     {
         QUI\Permissions\Permission::checkPermission('quiqqer.customer.editComments');
 
@@ -502,7 +502,7 @@ class Customers extends Singleton
      * @param QUI\Users\User $User
      * @return QUI\ERP\Comments
      */
-    public function getUserComments(QUI\Users\User $User)
+    public function getUserComments(QUI\Users\User $User): QUI\ERP\Comments
     {
         $comments = $User->getAttribute('comments');
         $comments = \json_decode($comments, true);
