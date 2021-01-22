@@ -287,6 +287,17 @@ class Customers extends Singleton
             $User->setAttribute('lastname', $attributes['address-lastname']);
         }
 
+        // company flag
+        // default address
+        try {
+            $Address   = QUI\ERP\Utils\User::getUserERPAddress($User);
+            $isCompany = $Address->getAttribute('company');
+            $isCompany = !empty($isCompany);
+
+            $User->setCompanyStatus($isCompany);
+        } catch (QUI\Exception $Exception) {
+        }
+
         $User->save();
     }
 
