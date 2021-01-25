@@ -369,6 +369,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 self.fireEvent('error', [self, Err]);
                 self.destroy();
 
+                console.error(Err);
+
                 QUI.getMessageHandler().then(function (MH) {
                     MH.addError(
                         QUILocale.get('quiqqer/quiqqer', 'exception.lib.user.not.found')

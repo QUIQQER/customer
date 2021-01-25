@@ -242,12 +242,12 @@ class Customers extends Singleton
         $User->setAttributes($attributes);
 
         // address
-        $this->saveAddress($User, $attributes);
+        $this->changeAddress($User, $attributes);
 
         // delivery Address
         $this->saveDeliveryAddress($User, $attributes);
 
-        if (empty($attributes['email'])) {
+        if (isset($attributes['address-communication'])) {
             $Address  = $User->getStandardAddress();
             $mailList = $Address->getMailList();
 
@@ -279,13 +279,16 @@ class Customers extends Singleton
             $User->setGroups($groups);
         }
 
-        if (!empty($attributes['address-firstname'])) {
+        if (isset($attributes['address-firstname'])) {
             $User->setAttribute('firstname', $attributes['address-firstname']);
         }
 
-        if (!empty($attributes['address-lastname'])) {
+        if (isset($attributes['address-lastname'])) {
             $User->setAttribute('lastname', $attributes['address-lastname']);
         }
+
+        // user email
+
 
         // company flag
         // default address
@@ -309,14 +312,9 @@ class Customers extends Singleton
      * @throws QUI\Permissions\Exception
      * @throws QUI\Users\Exception
      */
-    protected function saveAddress(QUI\Users\User $User, array $attributes)
+    protected function changeAddress(QUI\Users\User $User, array $attributes)
     {
-        try {
-            $Address = $User->getStandardAddress();
-        } catch (QUI\Exception $Exception) {
-            // create one
-            $Address = $User->addAddress([]);
-        }
+        $Address = $User->getStandardAddress();
 
         $addressAttributes = [
             'salutation',
@@ -379,8 +377,6 @@ class Customers extends Singleton
             $Address->addMail($attributes['address-mail']);
             unset($attributes['address-mail']);
         }
-
-        $Address->save();
     }
 
     /**
