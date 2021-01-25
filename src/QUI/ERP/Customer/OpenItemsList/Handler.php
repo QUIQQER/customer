@@ -22,7 +22,7 @@ class Handler
      * @param ERPUser $User
      * @return ItemsList
      */
-    public static function getOpenItemsList(ERPUser $User)
+    public static function getOpenItemsList(ERPUser $User): ItemsList
     {
         $List = new ItemsList();
 

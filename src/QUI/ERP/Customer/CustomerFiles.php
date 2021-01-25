@@ -37,7 +37,7 @@ class CustomerFiles
      * @param QUI\Interfaces\Users\User $User
      * @return string
      */
-    public static function getFolderPath(QUI\Interfaces\Users\User $User)
+    public static function getFolderPath(QUI\Interfaces\Users\User $User): string
     {
         try {
             $Package = QUI::getPackageManager()->getInstalledPackage('quiqqer/customer');
@@ -57,7 +57,7 @@ class CustomerFiles
      *
      * @throws QUI\Permissions\Exception
      */
-    public static function getFileList($customerId)
+    public static function getFileList($customerId): array
     {
         Permission::checkPermission('quiqqer.customer.fileView');
 

@@ -122,7 +122,7 @@ class ItemsList
     /**
      * @return string
      */
-    public function getDateFormatted()
+    public function getDateFormatted(): string
     {
         if (empty($this->User)) {
             return $this->Date->format('Y-m-d H:i');
@@ -166,12 +166,13 @@ class ItemsList
     /**
      * @return string
      */
-    public function getListAsHtmlTable()
+    public function getListAsHtmlTable(): string
     {
         try {
             $Engine = QUI::getTemplateManager()->getEngine();
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
+
             return '';
         }
 
