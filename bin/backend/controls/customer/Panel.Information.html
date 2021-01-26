@@ -44,9 +44,9 @@
             <td>
                 <label class="field-container">
                     <span class="field-container-item">
-                        {{textSalutation}}
+                        {{textCompany}}
                     </span>
-                    <input name="address-salutation" class="field-container-field"/>
+                    <input name="address-company" class="field-container-field"/>
                 </label>
             </td>
         </tr>
@@ -54,9 +54,9 @@
             <td>
                 <label class="field-container">
                     <span class="field-container-item">
-                        {{textCompany}}
+                        {{textSalutation}}
                     </span>
-                    <input name="address-company" class="field-container-field"/>
+                    <input name="address-salutation" class="field-container-field"/>
                 </label>
             </td>
         </tr>
@@ -118,6 +118,28 @@
                     <button name="edit-contact-person" class="qui-button" style="width: 50px;" disabled>
                         <span class="fa fa-edit"></span>
                     </button>
+                </label>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <table class="data-table data-table-flexbox">
+        <thead>
+        <tr>
+            <th>
+                {{titleCommunication}}
+            </th>
+        </tr>
+        </thead>
+        <tbody class="customer-information-communication-body">
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textInternet}}
+                    </span>
+                    <input name="quiqqer.erp.customer.website" placeholder="www.url.com" class="field-container-field"/>
                 </label>
             </td>
         </tr>
@@ -239,28 +261,6 @@
             </td>
         </tr>
         {{/payments}}
-        </tbody>
-    </table>
-
-    <table class="data-table data-table-flexbox">
-        <thead>
-        <tr>
-            <th>
-                {{titleCommunication}}
-            </th>
-        </tr>
-        </thead>
-        <tbody class="customer-information-communication-body">
-        <tr class="quiqqer-customer-address-select">
-            <td>
-                <label class="field-container">
-                    <span class="field-container-item">
-                        {{textInternet}}
-                    </span>
-                    <input name="quiqqer.erp.customer.website" placeholder="www.url.com" class="field-container-field"/>
-                </label>
-            </td>
-        </tr>
         </tbody>
     </table>
 
