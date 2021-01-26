@@ -10,4 +10,24 @@
         <locale group="quiqqer/customer" var="menu.erp.customer.title"/>
     </item>
 
+    <item parent="/extras/"
+          name="erp"
+          icon="fa fa-sun-o"
+    >
+        <locale group="quiqqer/erp" var="menu.erp.title"/>
+    </item>
+    <item parent="/extras/erp/"
+          name="accounting"
+          icon="fa fa-line-chart"
+    >
+        <locale group="quiqqer/customer" var="menu.extras.accounting"/>
+    </item>
+    <item parent="/extras/erp/accounting/"
+          name="accounting_openitems"
+          require="package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems"
+          icon="fa fa-money"
+    >
+        <locale group="quiqqer/customer" var="menu.extras.accounting_openitems"/>
+    </item>
+
 </menu>

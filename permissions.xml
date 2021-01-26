@@ -24,4 +24,11 @@
         <defaultvalue>1</defaultvalue>
     </permission>
 
+    <permission name="quiqqer.customer.OpenItemsList.view" type="bool">
+        <defaultvalue>0</defaultvalue>
+    </permission>
+    <permission name="quiqqer.customer.OpenItemsList.addPayment" type="bool">
+        <defaultvalue>0</defaultvalue>
+    </permission>
+
 </permissions>
