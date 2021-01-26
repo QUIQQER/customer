@@ -24,9 +24,19 @@ class Item
     protected $description = '';
 
     /**
+     * @var int|string
+     */
+    protected $documentId;
+
+    /**
      * @var string
      */
     protected $documentNo = '';
+
+    /**
+     * @var string
+     */
+    protected $documentType;
 
     /**
      * @var \DateTime
@@ -94,6 +104,18 @@ class Item
     protected $Locale;
 
     /**
+     * Item constructor.
+     *
+     * @param int|string $documentId - Internal document id
+     * @param string $documentType - Type of document (e.g. invoice, order etc.)
+     */
+    public function __construct($documentId, string $documentType)
+    {
+        $this->documentId   = $documentId;
+        $this->documentType = $documentType;
+    }
+
+    /**
      * @return string
      */
     public function getTitle(): string
@@ -142,6 +164,21 @@ class Item
     }
 
     /**
+     * @return int
+     */
+    public function getDaysOpen(): int
+    {
+        if (empty($this->Date)) {
+            return 0;
+        }
+
+        $Now  = \date_create();
+        $Diff = $Now->diff($this->Date);
+
+        return $Diff->days + 1;
+    }
+
+    /**
      * @return false|int
      */
     public function getDunningLevel()
@@ -180,6 +217,14 @@ class Item
     }
 
     /**
+     * @return int|string
+     */
+    public function getDocumentId()
+    {
+        return $this->documentId;
+    }
+
+    /**
      * @return string
      */
     public function getDocumentNo(): string
@@ -196,6 +241,14 @@ class Item
     }
 
     /**
+     * @return string
+     */
+    public function getDocumentType(): string
+    {
+        return $this->documentType;
+    }
+
+    /**
      * @return \DateTime
      */
     public function getDate(): \DateTime
@@ -208,6 +261,10 @@ class Item
      */
     public function getDateFormatted(): string
     {
+        if (empty($this->Date)) {
+            return '-';
+        }
+
         return $this->getLocale()->formatDate($this->Date->getTimestamp());
     }
 
@@ -232,6 +289,10 @@ class Item
      */
     public function getLastPaymentDateFormatted(): string
     {
+        if (empty($this->LastPaymentDate)) {
+            return '-';
+        }
+
         return $this->getLocale()->formatDate($this->LastPaymentDate->getTimestamp());
     }
 
@@ -256,6 +317,10 @@ class Item
      */
     public function getDueDateFormatted(): string
     {
+        if (empty($this->DueDate)) {
+            return '-';
+        }
+
         return $this->getLocale()->formatDate($this->DueDate->getTimestamp());
     }
 

@@ -18,7 +18,7 @@ use QUI\Users\Manager;
 class EventHandler
 {
     /**
-     * event: on package setup
+     * quiqqer/quiqqer: onPackageSetup
      * - create customer group
      *
      * @param Package $Package
@@ -29,8 +29,39 @@ class EventHandler
             return;
         }
 
-        // create customer group
+        self::createCustomerGroup();
+        self::updateOpenItemsRecords();
+    }
+
+    /**
+     * Update open items records of alle customers
+     *
+     * @return void
+     */
+    protected static function updateOpenItemsRecords(): void
+    {
+        $CustomerGroup = Customers::getInstance()->getCustomerGroup();
+        $Users         = QUI::getUsers();
+
+        foreach ($CustomerGroup->getUserIds() as $userId) {
+            try {
+                $User = $Users->get($userId);
+                QUI\ERP\Customer\OpenItemsList\Handler::updateOpenItemsRecord($User);
+            } catch (\Exception $Exception) {
+                QUI\System\Log::writeException($Exception);
+            }
+        }
+    }
+
+    /**
+     * Create customer user group
+     *
+     * @return void
+     */
+    protected static function createCustomerGroup(): void
+    {
         try {
+            $Package = QUI::getPackage('quiqqer/customer');
             $Config  = $Package->getConfig();
             $groupId = $Config->getValue('customer', 'groupId');
 

@@ -345,10 +345,18 @@ class Customers extends Singleton
                 return $entry['type'] === 'email';
             });
 
+            $mailHasChanged = false;
+
             foreach ($emails as $entry) {
                 if (isset($entry['no']) && !empty($entry['no'])) {
                     $Address->editMail(0, $entry['no']);
+                    $mailHasChanged = true;
                 }
+            }
+
+            if ($mailHasChanged === false) {
+                $Address->clearMail();
+                $User->setAttribute('email', '');
             }
 
 
@@ -372,11 +380,11 @@ class Customers extends Singleton
         }
 
         // mail
-        if (!empty($attributes['address-mail'])) {
-            $Address->clearMail();
-            $Address->addMail($attributes['address-mail']);
-            unset($attributes['address-mail']);
-        }
+//        if (!empty($attributes['address-mail'])) {
+//            $Address->clearMail();
+//            $Address->addMail($attributes['address-mail']);
+//            unset($attributes['address-mail']);
+//        }
     }
 
     /**

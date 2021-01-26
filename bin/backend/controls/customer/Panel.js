@@ -117,6 +117,16 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 // refresh user
                 return self.$User.load();
             }).then(function () {
+                // search all user panels and refresh it
+                var userPanels = QUI.Controls.getByType('controls/users/User');
+                var customerId = self.$User.getId();
+
+                for (var i = 0, len = userPanels.length; i < len; i++) {
+                    if (userPanels[i].getUser().getId() === customerId) {
+                        userPanels[i].refreshDisplay();
+                    }
+                }
+
                 self.Loader.hide();
             });
         },
@@ -1504,7 +1514,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     Select = Form.elements['quiqqer.erp.customer.contact.person'];
 
                 Select.set('html', '');
-                
+
                 new Element('option', {
                     value: '',
                     html : ''

@@ -33,6 +33,18 @@
             <de><![CDATA[Kunden]]></de>
             <en><![CDATA[Customer]]></en>
         </locale>
+        <locale name="openItems.settings.title">
+            <de><![CDATA[Offene Posten]]></de>
+            <en><![CDATA[Open Items]]></en>
+        </locale>
+        <locale name="customer.settings.considerOrders">
+            <de><![CDATA[Bestellungen berücksichtigen]]></de>
+            <en><![CDATA[Consider order]]></en>
+        </locale>
+        <locale name="customer.settings.considerOrders.description">
+            <de><![CDATA[Bei der Erfassung von offenen Posten werden auch Bestellungen einbezogen, sofern sie keine zugeordnete Rechnung haben]]></de>
+            <en><![CDATA[When capturing open items, purchase orders are also included if they do not have an assigned invoice]]></en>
+        </locale>
         <locale name="customer.settings.groupId">
             <de><![CDATA[Kundengruppe]]></de>
             <en><![CDATA[Customer group]]></en>
@@ -90,9 +102,28 @@
             <de><![CDATA[Darf Kunden anlegen]]></de>
             <en><![CDATA[Is allowed to create customer]]></en>
         </locale>
+
+        <!-- Menu -->
+        <locale name="menu.extras.accounting">
+            <de><![CDATA[FiBu]]></de>
+            <en><![CDATA[Accounting]]></en>
+        </locale>
+        <locale name="menu.extras.accounting_openitems">
+            <de><![CDATA[Offene Posten]]></de>
+            <en><![CDATA[Open Items]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/customer" datatype="php">
+        <locale name="OpenItemsList.documentType.invoice">
+            <de><![CDATA[Rechnung]]></de>
+            <en><![CDATA[Invoice]]></en>
+        </locale>
+        <locale name="OpenItemsList.documentType.order">
+            <de><![CDATA[Bestellung]]></de>
+            <en><![CDATA[Order]]></en>
+        </locale>
+
         <locale name="customer.create.category.details">
             <de><![CDATA[Stammdaten]]></de>
             <en><![CDATA[Master data]]></en>
@@ -218,6 +249,93 @@ Best regards
     </groups>
 
     <groups name="quiqqer/customer" datatype="js">
+
+        <!-- OpenItems -->
+        <locale name="panels.OpenItems.grid.toggle_title">
+            <de><![CDATA[Zeige alle offenen Posten dieses Kunden]]></de>
+            <en><![CDATA[Show all open items of this customer]]></en>
+        </locale>
+        <locale name="panels.OpenItems.title">
+            <de><![CDATA[Offene Posten]]></de>
+            <en><![CDATA[Open Items]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.date">
+            <de><![CDATA[Datum]]></de>
+            <en><![CDATA[Date]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.details.documentType">
+            <de><![CDATA[Beleg-Typ]]></de>
+            <en><![CDATA[Document type]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.details.documentNo">
+            <de><![CDATA[Beleg-Nr.]]></de>
+            <en><![CDATA[Document no.]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.net">
+            <de><![CDATA[Netto]]></de>
+            <en><![CDATA[Net]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.vat">
+            <de><![CDATA[MwSt.]]></de>
+            <en><![CDATA[VAT]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.gross">
+            <de><![CDATA[Brutto]]></de>
+            <en><![CDATA[Gross]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.paid">
+            <de><![CDATA[beglichen]]></de>
+            <en><![CDATA[paid]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.open">
+            <de><![CDATA[offen]]></de>
+            <en><![CDATA[open]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.userId">
+            <de><![CDATA[Kunden-Nr.]]></de>
+            <en><![CDATA[Customer no.]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.customerName">
+            <de><![CDATA[Kunde]]></de>
+            <en><![CDATA[Customer]]></en>
+        </locale>
+        <locale name="panels.OpenItems.details.btn.open">
+            <de><![CDATA[Beleg öffnen]]></de>
+            <en><![CDATA[Open document]]></en>
+        </locale>
+        <locale name="panels.OpenItems.details.btn.addTransaction">
+            <de><![CDATA[Zahlung buchen]]></de>
+            <en><![CDATA[Book payment]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.openItemsCount">
+            <de><![CDATA[Offene Posten]]></de>
+            <en><![CDATA[Open items]]></en>
+        </locale>
+        <locale name="panels.OpenItems.btn.showOpenItemsList">
+            <de><![CDATA[OPOS-Liste drucken / versenden]]></de>
+            <en><![CDATA[Print / send Open Items List]]></en>
+        </locale>
+        <locale name="panels.OpenItems.details.tpl.placeholderSearch">
+            <de><![CDATA[Beleg-Suche...]]></de>
+            <en><![CDATA[Document search...]]></en>
+        </locale>
+        <locale name="panels.OpenItems.search.placeholder">
+            <de><![CDATA[Kunden-Suche...]]></de>
+            <en><![CDATA[Cusomter search...]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.details.daysDue">
+            <de><![CDATA[Tage fällig]]></de>
+            <en><![CDATA[Days due]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.details.daysOpen">
+            <de><![CDATA[Tage offen]]></de>
+            <en><![CDATA[Days open]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.details.dunningLevel">
+            <de><![CDATA[Mahnstufe]]></de>
+            <en><![CDATA[Dunning level]]></en>
+        </locale>
+
         <locale name="window.customer.creation.title">
             <de><![CDATA[Neuen Kunden anlegen]]></de>
             <en><![CDATA[Create new customer]]></en>

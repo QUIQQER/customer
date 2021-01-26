@@ -102,7 +102,15 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
                 var Formatter = QUILocale.getDateTimeFormatter();
                 var LastEdit  = new window.Date(lastEdit * 1000);
 
-                Form.elements.lastLogin.value = Formatter.format(LastEdit);
+                if (lastEdit) {
+                    try {
+                        Form.elements.lastLogin.value = Formatter.format(LastEdit);
+                    } catch (e) {
+                        Form.elements.lastLogin.value = '---';
+                    }
+                } else {
+                    Form.elements.lastLogin.value = '---';
+                }
 
                 if (parseInt(User.getAttribute('regdate'))) {
                     try {

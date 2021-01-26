@@ -18,8 +18,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
 ], function (QUI, QUIControl, Countries, Users, QUILocale, QUIAjax, Mustache, template) {
     "use strict";
 
-    var lg = 'quiqqer/customer';
-
     return new Class({
 
         Extends: QUIControl,
@@ -236,7 +234,63 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
                 });
 
 
-                QUIAjax.post('ajax_users_address_save', resolve, {
+                QUIAjax.post([
+                    'ajax_users_address_save',
+                    'ajax_users_address_getUserByAddress'
+                ], function (result, userId) {
+                    require(['Users'], function (Users) {
+                        Users.get(userId).load().then(function (User) {
+                            // consider address-communication
+                            var i, len;
+                            var com = User.getAttribute('address-communication');
+
+
+                            if (mails.length) {
+                                for (i = 0, len = com.length; i < len; i++) {
+                                    if (com[i].type === 'email') {
+                                        com[i].no = mails[0];
+                                    }
+                                }
+                            }
+
+                            if (phone.length) {
+                                var tel    = '';
+                                var fax    = '';
+                                var mobile = '';
+
+                                for (i = 0, len = phone.length; i < len; i++) {
+                                    if (phone[i].type === 'tel') {
+                                        tel = phone[i].no;
+                                    }
+
+                                    if (phone[i].type === 'fax') {
+                                        fax = phone[i].no;
+                                    }
+
+                                    if (phone[i].type === 'mobile') {
+                                        mobile = phone[i].no;
+                                    }
+                                }
+
+                                for (i = 0, len = com.length; i < len; i++) {
+                                    if (com[i].type === 'tel') {
+                                        com[i].no = tel;
+                                    }
+
+                                    if (com[i].type === 'fax') {
+                                        com[i].no = fax;
+                                    }
+
+                                    if (com[i].type === 'mobile') {
+                                        com[i].no = mobile;
+                                    }
+                                }
+                            }
+
+                            resolve();
+                        });
+                    });
+                }, {
                     'package': 'quiqqer/customer',
                     onError  : reject,
                     aid      : self.getAttribute('addressId'),
@@ -303,7 +357,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
                     '</td>'
             }).inject(Table.getElement('tbody'));
         }
-
 
         //endregion
     });
