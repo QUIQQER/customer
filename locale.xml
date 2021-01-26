@@ -324,6 +324,10 @@ Best regards
             <en><![CDATA[Cusomter search...]]></en>
         </locale>
         <locale name="panel.OpenItems.grid.details.daysDue">
+            <de><![CDATA[Tage fällig]]></de>
+            <en><![CDATA[Days due]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.details.daysOpen">
             <de><![CDATA[Tage offen]]></de>
             <en><![CDATA[Days open]]></en>
         </locale>

@@ -56,7 +56,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             '$refreshUserRecordsButtons',
             '$onClickAddTransaction',
             '$onClickOpenDocument',
-            '$onUserRecordsSearchKeyUp'
+            '$onUserRecordsSearchKeyUp',
+            '$onGridDblClick'
         ],
 
         initialize: function (options) {
@@ -307,12 +308,14 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     header   : QUILocale.get(lg, 'panel.OpenItems.grid.userId'),
                     dataIndex: 'customerId',
                     dataType : 'string',
-                    width    : 150
+                    width    : 150,
+                    className: 'clickable'
                 }, {
                     header   : QUILocale.get(lg, 'panel.OpenItems.grid.customerName'),
                     dataIndex: 'customer_name',
                     dataType : 'integer',
-                    width    : 200
+                    width    : 200,
+                    className: 'clickable'
                 }, {
                     header   : QUILocale.get(lg, 'panel.OpenItems.grid.openItemsCount'),
                     dataIndex: 'open_items_count',
@@ -358,12 +361,49 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             this.$Grid.addEvents({
                 onRefresh : this.refresh,
                 onClick   : this.$refreshButtonStatus,
-                onDblClick: this.$onClickShowOpenItemsList
+                onDblClick: function (data) {
+                    self.$onGridDblClick(data, self.$Grid);
+                }
             });
 
             this.$Total = new Element('div', {
                 'class': 'openItems-total'
             }).inject(this.getContent());
+        },
+
+        /**
+         * On grid cell double click
+         *
+         * @param {object} data - cell data
+         * @param {Object} Grid
+         * @return {Promise}
+         */
+        $onGridDblClick: function (data, Grid) {
+            if (typeof data === 'undefined' || typeof data.cell === 'undefined') {
+                return Promise.resolve();
+            }
+
+            var selected = Grid.getSelectedData();
+
+            if (!selected.length) {
+                return Promise.resolve();
+            }
+
+            var Cell    = data.cell,
+                rowData = Grid.getDataByRow(data.row);
+
+            switch (Cell.get('data-index')) {
+                case 'customerId':
+                case 'customer_name':
+                    return new Promise(function (resolve) {
+                        require(['package/quiqqer/customer/bin/backend/Handler'], function (CustomerHandler) {
+                            CustomerHandler.openCustomer(rowData.userId);
+                        });
+                    });
+
+                default:
+                    this.$onClickShowOpenItemsList();
+            }
         },
 
         /**
@@ -439,7 +479,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
         /**
          * event : on PDF Export button click
          */
-        $onClickShowOpenItemsList: function (Button) {
+        $onClickShowOpenItemsList: function () {
             var self         = this;
             var selectedData = this.$Grid.getSelectedData();
 
@@ -826,6 +866,11 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     dataType : 'string',
                     width    : 100,
                     className: 'payment-status-amountCell'
+                }, {
+                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.daysOpen'),
+                    dataIndex: 'daysOpen',
+                    dataType : 'integer',
+                    width    : 75
                 }, {
                     header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.daysDue'),
                     dataIndex: 'daysDue',

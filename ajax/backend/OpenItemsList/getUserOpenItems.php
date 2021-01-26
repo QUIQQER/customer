@@ -176,7 +176,8 @@ QUI::$Ajax->registerFunction(
                     'paid'              => $Item->getAmountPaidFormatted(),
                     'open'              => $Item->getAmountOpenFormatted(),
                     'dunningLevel'      => $Item->getDunningLevel() ?: '-',
-                    'daysDue'           => $Item->getDaysDue()
+                    'daysDue'           => $Item->getDaysDue(),
+                    'daysOpen'          => $Item->getDaysOpen()
                 ];
             }
 
