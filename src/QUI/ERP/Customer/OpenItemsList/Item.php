@@ -164,6 +164,21 @@ class Item
     }
 
     /**
+     * @return int
+     */
+    public function getDaysOpen(): int
+    {
+        if (empty($this->Date)) {
+            return 0;
+        }
+
+        $Now  = \date_create();
+        $Diff = $Now->diff($this->Date);
+
+        return $Diff->days + 1;
+    }
+
+    /**
      * @return false|int
      */
     public function getDunningLevel()
