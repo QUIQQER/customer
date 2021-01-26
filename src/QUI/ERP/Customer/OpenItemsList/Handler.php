@@ -98,7 +98,8 @@ class Handler
                     'type'  => 'NOT IN',
                     'value' => [
                         QUI\ERP\Constants::PAYMENT_STATUS_PAID,
-                        QUI\ERP\Constants::PAYMENT_STATUS_CANCELED
+                        QUI\ERP\Constants::PAYMENT_STATUS_CANCELED,
+                        QUI\ERP\Constants::PAYMENT_STATUS_DEBIT
                     ]
                 ],
 //                'time_for_payment' => [
@@ -114,6 +115,13 @@ class Handler
 
         foreach ($result as $row) {
             try {
+                $Invoice = $Invoices->get($row['id']);
+
+                // Filter invoices that are considered paid (even if not in database)
+                if ($Invoice->isPaid()) {
+                    continue;
+                }
+
                 $invoices[] = $Invoices->get($row['id']);
             } catch (\Exception $Exception) {
                 QUI\System\Log::writeException($Exception);
@@ -131,7 +139,7 @@ class Handler
      */
     protected static function parseInvoiceToOpenItem(Invoice $Invoice)
     {
-        $Item = new Item(self::DOCUMENT_TYPE_INVOICE);
+        $Item = new Item($Invoice->getCleanId(), self::DOCUMENT_TYPE_INVOICE);
 
         // Basic data
         $Item->setDocumentNo($Invoice->getId());
@@ -225,6 +233,7 @@ class Handler
                     'value' => [
                         QUI\ERP\Constants::PAYMENT_STATUS_PAID,
                         QUI\ERP\Constants::PAYMENT_STATUS_CANCELED,
+                        QUI\ERP\Constants::PAYMENT_STATUS_DEBIT,
                         QUI\ERP\Constants::PAYMENT_STATUS_PLAN
                     ]
                 ],
@@ -254,7 +263,7 @@ class Handler
      */
     protected static function parseOrderToOpenItem(QUI\ERP\Order\Order $Order)
     {
-        $Item = new Item(self::DOCUMENT_TYPE_ORDER);
+        $Item = new Item($Order->getCleanId(), self::DOCUMENT_TYPE_ORDER);
 
         // Basic data
         $Item->setDocumentNo($Order->getPrefixedId());

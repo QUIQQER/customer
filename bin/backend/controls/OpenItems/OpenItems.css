@@ -177,6 +177,7 @@
 
 .openItems-total {
     background-color: #efefef;
+    border-top: 1px dotted black;
     height: 80px;
     padding: 20px;
     text-align: right;

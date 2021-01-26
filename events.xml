@@ -9,7 +9,9 @@
     />
 
     <!-- Open items -->
-    <event on="onTransactionCreate" fire="\QUI\ERP\Customer\OpenItemsList\Events::onTransactionCreate"/>
+    <event on="onTransactionCreate" fire="\QUI\ERP\Customer\OpenItemsList\Events::onTransactionCreate" priority="500"/>
+    <event on="onQuiqqerInvoicePaymentStatusChanged" fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerInvoicePaymentStatusChanged" />
+    <event on="onQuiqqerOrderPaidStatusChanged" fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerOrderPaidStatusChanged" />
     <event on="onQuiqqerInvoiceTemporaryInvoicePostEnd" fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerInvoiceTemporaryInvoicePostEnd"/>
     <event on="onQuiqqerOrderCreated" fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerOrderCreated"/>
 

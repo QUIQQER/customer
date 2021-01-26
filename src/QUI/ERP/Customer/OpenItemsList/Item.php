@@ -24,6 +24,11 @@ class Item
     protected $description = '';
 
     /**
+     * @var int|string
+     */
+    protected $documentId;
+
+    /**
      * @var string
      */
     protected $documentNo = '';
@@ -101,10 +106,12 @@ class Item
     /**
      * Item constructor.
      *
+     * @param int|string $documentId - Internal document id
      * @param string $documentType - Type of document (e.g. invoice, order etc.)
      */
-    public function __construct(string $documentType)
+    public function __construct($documentId, string $documentType)
     {
+        $this->documentId   = $documentId;
         $this->documentType = $documentType;
     }
 
@@ -192,6 +199,14 @@ class Item
     public function setLocale(Locale $Locale)
     {
         $this->Locale = $Locale;
+    }
+
+    /**
+     * @return int|string
+     */
+    public function getDocumentId()
+    {
+        return $this->documentId;
     }
 
     /**

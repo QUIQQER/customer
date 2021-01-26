@@ -81,6 +81,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             this.$currentRecordsUserId     = false;
             this.$UserRecordsSearch        = null;
             this.$currentUserRecordsSearch = '';
+            this.$refreshTotalsOnly        = false;
 
             this.addEvents({
                 onCreate: this.$onCreate,
@@ -116,12 +117,14 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 search  : this.$currentSearch,
                 currency: this.$Currency.getAttribute('value')
             }).then(function (result) {
-                result.grid.data = result.grid.data.map(function (entry) {
-                    return self.$parseGridRow(entry);
-                });
+                if (!this.$refreshTotalsOnly) {
+                    result.grid.data = result.grid.data.map(function (entry) {
+                        return self.$parseGridRow(entry);
+                    });
 
-                this.$Grid.setData(result.grid);
-                this.$refreshButtonStatus();
+                    this.$Grid.setData(result.grid);
+                    this.$refreshButtonStatus();
+                }
 
                 this.$Total.set(
                     'html',
@@ -135,6 +138,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 );
 
                 this.$currentRecordsUserId = null;
+                this.$refreshTotalsOnly    = false;
 
                 this.Loader.hide();
             }.bind(this)).catch(function (err) {
@@ -161,12 +165,18 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     var Entry = entries[i];
 
                     if (Entry.userId === userId) {
-                        self.$Grid.setDataByRow(i, self.$parseGridRow(result.grid.data[0]));
+                        if (!result.grid.data.length) {
+                            self.$Grid.deleteRow(i);
+                        } else {
+                            self.$Grid.setDataByRow(i, self.$parseGridRow(result.grid.data[0]));
+                        }
+
                         break;
                     }
                 }
 
-                this.Loader.hide();
+                this.$refreshTotalsOnly = true;
+                this.refresh();
             }.bind(this)).catch(function (err) {
                 console.error(err);
                 this.Loader.hide();
@@ -830,6 +840,10 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     dataIndex: 'documentType',
                     dataType : 'string',
                     hidden   : true
+                }, {
+                    dataIndex: 'documentId',
+                    dataType : 'string',
+                    hidden   : true
                 }]
             });
 
@@ -925,7 +939,22 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                         break;
 
                     case 'Order':
-                        // @todo
+                        require(['package/quiqqer/order/bin/backend/Orders'], function (Orders) {
+                            Orders.addPaymentToOrder(
+                                Row.documentId,
+                                Data.amount,
+                                Data.payment_method,
+                                Data.date
+                            ).then(function () {
+                                Win.close();
+
+                                self.$refreshUserEntry(self.$currentRecordsUserId).then(function () {
+                                    self.$refreshUserRecords(self.$GridDetails, true);
+                                });
+                            }).catch(function (err) {
+                                Win.Loader.hide();
+                            });
+                        });
                         break;
                 }
             };
@@ -964,7 +993,13 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     break;
 
                 case 'order':
-                    // @todo
+                    require(['package/quiqqer/order/bin/backend/controls/panels/Orders'], function (Orders) {
+                        var Handler = new Orders();
+
+                        Handler.openOrder(Row.documentId).then(function () {
+                            self.Loader.hide();
+                        });
+                    });
                     break;
 
                 default:

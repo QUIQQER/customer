@@ -7,6 +7,7 @@ use QUI\ERP\Accounting\Payments\Transactions\Transaction;
 use QUI\ERP\Accounting\Invoice\InvoiceTemporary;
 use QUI\ERP\Accounting\Invoice\Invoice;
 use QUI\ERP\Order\Settings;
+use QUI\ERP\Order\Order;
 
 /**
  * Class Events
@@ -33,6 +34,64 @@ class Events
 
         try {
             $User = QUI::getUsers()->get($userId);
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeDebugException($Exception);
+            return;
+        }
+
+        try {
+            Handler::updateOpenItemsRecord($User);
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
+    }
+
+    /**
+     * quiqqer/invoice: onQuiqqerInvoicePaymentStatusChanged
+     *
+     * Update open records of user if a transaction was made against one of his open items
+     *
+     * @param Invoice $Invoice
+     * @param int $currentStatus
+     * @param int $oldStatus
+     * @return void
+     */
+    public static function onQuiqqerInvoicePaymentStatusChanged(
+        Invoice $Invoice,
+        int $currentStatus,
+        int $oldStatus
+    ) {
+        try {
+            $User = $Invoice->getCustomer();
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeDebugException($Exception);
+            return;
+        }
+
+        try {
+            Handler::updateOpenItemsRecord($User);
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
+    }
+
+    /**
+     * quiqqer/order: onQuiqqerOrderPaidStatusChanged
+     *
+     * Update open records of user if a transaction was made against one of his open items
+     *
+     * @param Order $Order
+     * @param int $currentStatus
+     * @param int $oldStatus
+     * @return void
+     */
+    public static function onQuiqqerOrderPaidStatusChanged(
+        Order $Order,
+        int $currentStatus,
+        int $oldStatus
+    ) {
+        try {
+            $User = $Order->getCustomer();
         } catch (\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             return;

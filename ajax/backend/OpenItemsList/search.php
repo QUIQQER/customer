@@ -39,9 +39,11 @@ QUI::$Ajax->registerFunction(
             return [
                 'grid'   => [],
                 'totals' => [
-                    'display_gross_toPay' => '',
-                    'display_gross_paid'  => '',
-                    'display_gross_total' => ''
+                    'display_net'   => 0,
+                    'display_vat'   => 0,
+                    'display_gross' => 0,
+                    'display_paid'  => 0,
+                    'display_open'  => 0
                 ]
             ];
         }
