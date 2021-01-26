@@ -538,8 +538,10 @@ class Handler
             }
 
             try {
-                $Customer             = QUI::getUsers()->get($row['userId']);
-                $row['customer_name'] = $Customer->getName();
+                $Customer = QUI::getUsers()->get($row['userId']);
+                $Customer = QUI\ERP\User::convertUserToErpUser($Customer);
+
+                $row['customer_name'] = $Customer->getInvoiceName();
             } catch (\Exception $Exception) {
                 QUI\System\Log::writeException($Exception);
                 $row['customer_name'] = '-';
