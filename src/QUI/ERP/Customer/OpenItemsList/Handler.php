@@ -192,7 +192,12 @@ class Handler
         // Days due
         $Now            = \date_create();
         $TimeForPayment = \date_create($Invoice->getAttribute('time_for_payment'));
-        $Item->setDaysDue($TimeForPayment->diff($Now)->days + 1);
+
+        if ($Now < $TimeForPayment) {
+            $Item->setDaysDue(0);
+        } else {
+            $Item->setDaysDue($TimeForPayment->diff($Now)->days + 1);
+        }
 
         // Check if dunning exist
         if (QUI::getPackageManager()->isInstalled('quiqqer/dunning')) {
