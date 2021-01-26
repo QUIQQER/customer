@@ -441,6 +441,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 var i, len, entry, text;
 
                 if (!currencies.length || currencies.length === 1) {
+                    self.refresh();
                     self.$Currency.hide();
                     return;
                 }
