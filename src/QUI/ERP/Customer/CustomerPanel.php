@@ -15,7 +15,7 @@ class CustomerPanel extends Singleton
     /**
      * @return array
      */
-    public function getPanelCategories()
+    public function getPanelCategories(): array
     {
         $cache = 'quiqqer/customer/panel/categories';
 
@@ -94,7 +94,7 @@ class CustomerPanel extends Singleton
      * @param string $category
      * @return string
      */
-    public function getPanelCategory($category)
+    public function getPanelCategory(string $category): string
     {
         $files = [];
 
@@ -124,8 +124,6 @@ class CustomerPanel extends Singleton
         $Settings = QUI\Utils\XML\Settings::getInstance();
         $Settings->setXMLPath('//quiqqer/window');
 
-        $result = $Settings->getCategoriesHtml($files, $category);
-
-        return $result;
+        return $Settings->getCategoriesHtml($files, $category);
     }
 }

@@ -90,6 +90,7 @@ class OutputProvider implements OutputProviderInterface
     {
         /** @var User $ERPUser */
         $ERPUser = self::getEntity($entityId);
+
         return $ERPUser->getLocale();
     }
 
@@ -134,9 +135,11 @@ class OutputProvider implements OutputProviderInterface
         try {
             /** @var User $ERPUser */
             $ERPUser = self::getEntity($entityId);
+
             return $ERPUser->getId() === $User->getId();
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
+
             return false;
         }
     }

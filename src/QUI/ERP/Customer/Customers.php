@@ -32,7 +32,7 @@ class Customers extends Singleton
      * @throws QUI\Exception
      * @throws QUI\Permissions\Exception
      */
-    public function createCustomer($customerId, $address = [], $groupIds = [])
+    public function createCustomer($customerId, $address = [], $groupIds = []): QUI\Users\User
     {
         QUI\Permissions\Permission::checkPermission('quiqqer.customer.create');
 
@@ -106,7 +106,7 @@ class Customers extends Singleton
      * @throws Exception
      * @throws QUI\Exception
      */
-    public function getCustomerGroupId()
+    public function getCustomerGroupId(): int
     {
         $Package = QUI::getPackage('quiqqer/customer');
         $Config  = $Package->getConfig();
@@ -127,7 +127,7 @@ class Customers extends Singleton
      *
      * @return bool
      */
-    public function getCustomerLoginFlag()
+    public function getCustomerLoginFlag(): bool
     {
         try {
             $Package = QUI::getPackage('quiqqer/customer');
@@ -147,7 +147,7 @@ class Customers extends Singleton
      * @throws Exception
      * @throws QUI\Exception
      */
-    public function getCustomerGroup()
+    public function getCustomerGroup(): ?QUI\Groups\Group
     {
         if ($this->Group === null) {
             $this->Group = QUI::getGroups()->get($this->getCustomerGroupId());
@@ -242,10 +242,19 @@ class Customers extends Singleton
         $User->setAttributes($attributes);
 
         // address
-        $this->saveAddress($User, $attributes);
+        $this->changeAddress($User, $attributes);
 
         // delivery Address
         $this->saveDeliveryAddress($User, $attributes);
+
+        if (isset($attributes['address-communication'])) {
+            $Address  = $User->getStandardAddress();
+            $mailList = $Address->getMailList();
+
+            if (!empty($mailList)) {
+                $User->setAttribute('email', \reset($mailList));
+            }
+        }
 
 
         // group
@@ -270,12 +279,26 @@ class Customers extends Singleton
             $User->setGroups($groups);
         }
 
-        if (!empty($attributes['address-firstname'])) {
+        if (isset($attributes['address-firstname'])) {
             $User->setAttribute('firstname', $attributes['address-firstname']);
         }
 
-        if (!empty($attributes['address-lastname'])) {
+        if (isset($attributes['address-lastname'])) {
             $User->setAttribute('lastname', $attributes['address-lastname']);
+        }
+
+        // user email
+
+
+        // company flag
+        // default address
+        try {
+            $Address   = QUI\ERP\Utils\User::getUserERPAddress($User);
+            $isCompany = $Address->getAttribute('company');
+            $isCompany = !empty($isCompany);
+
+            $User->setCompanyStatus($isCompany);
+        } catch (QUI\Exception $Exception) {
         }
 
         $User->save();
@@ -289,14 +312,9 @@ class Customers extends Singleton
      * @throws QUI\Permissions\Exception
      * @throws QUI\Users\Exception
      */
-    protected function saveAddress(QUI\Users\User $User, $attributes)
+    protected function changeAddress(QUI\Users\User $User, array $attributes)
     {
-        try {
-            $Address = $User->getStandardAddress();
-        } catch (QUI\Exception $Exception) {
-            // create one
-            $Address = $User->addAddress([]);
-        }
+        $Address = $User->getStandardAddress();
 
         $addressAttributes = [
             'salutation',
@@ -359,8 +377,6 @@ class Customers extends Singleton
             $Address->addMail($attributes['address-mail']);
             unset($attributes['address-mail']);
         }
-
-        $Address->save();
     }
 
     /**
@@ -431,7 +447,7 @@ class Customers extends Singleton
      *
      * @throws QUI\Exception
      */
-    public function addCommentToUser(QUI\Users\User $User, $comment)
+    public function addCommentToUser(QUI\Users\User $User, string $comment)
     {
         QUI\Permissions\Permission::checkPermission('quiqqer.customer.editComments');
 
@@ -493,7 +509,7 @@ class Customers extends Singleton
      * @param QUI\Users\User $User
      * @return QUI\ERP\Comments
      */
-    public function getUserComments(QUI\Users\User $User)
+    public function getUserComments(QUI\Users\User $User): QUI\ERP\Comments
     {
         $comments = $User->getAttribute('comments');
         $comments = \json_decode($comments, true);
