@@ -34,8 +34,8 @@
             <en><![CDATA[Customer]]></en>
         </locale>
         <locale name="openItems.settings.title">
-            <de><![CDATA[Offene Posten]]></de>
-            <en><![CDATA[Open Items]]></en>
+            <de><![CDATA[Zahlungseingänge]]></de>
+            <en><![CDATA[Incoming payments]]></en>
         </locale>
         <locale name="customer.settings.considerOrders">
             <de><![CDATA[Bestellungen berücksichtigen]]></de>
@@ -52,6 +52,14 @@
         <locale name="customer.group.name">
             <de><![CDATA[Kunden]]></de>
             <en><![CDATA[Customers]]></en>
+        </locale>
+        <locale name="erp.panel.accounting.text">
+            <de><![CDATA[Buchhaltung]]></de>
+            <en><![CDATA[Accounting]]></en>
+        </locale>
+        <locale name="erp.panel.open_items.text">
+            <de><![CDATA[Zahlungseingänge]]></de>
+            <en><![CDATA[Incoming payments]]></en>
         </locale>
 
         <locale name="exception.customer.group.not.exists">
@@ -109,8 +117,8 @@
             <en><![CDATA[Accounting]]></en>
         </locale>
         <locale name="menu.extras.accounting_openitems">
-            <de><![CDATA[Offene Posten]]></de>
-            <en><![CDATA[Open Items]]></en>
+            <de><![CDATA[Zahlungseingänge]]></de>
+            <en><![CDATA[Incoming payments]]></en>
         </locale>
     </groups>
 
@@ -156,8 +164,8 @@
 
         <!-- OutputProvider -->
         <locale name="OutputProvider.entity.title.OpenItemsList">
-            <de><![CDATA[Offene Posten Liste]]></de>
-            <en><![CDATA[Open Items List]]></en>
+            <de><![CDATA[Zahlungseingänge]]></de>
+            <en><![CDATA[Incoming payments]]></en>
         </locale>
         <locale name="OutputProvider.download_filename">
             <de><![CDATA[Offene_Posten_[uid]__[date]]]></de>
@@ -166,8 +174,8 @@
 
         <!-- OpenItemsList -->
         <locale name="OpenItemsList.title">
-            <de><![CDATA[Offene Posten Liste]]></de>
-            <en><![CDATA[Open Items List]]></en>
+            <de><![CDATA[Zahlungseingänge]]></de>
+            <en><![CDATA[Incoming payments]]></en>
         </locale>
         <locale name="OpenItemsList.tbl.header.date">
             <de><![CDATA[Datum]]></de>
@@ -256,8 +264,8 @@ Best regards
             <en><![CDATA[Show all open items of this customer]]></en>
         </locale>
         <locale name="panels.OpenItems.title">
-            <de><![CDATA[Offene Posten]]></de>
-            <en><![CDATA[Open Items]]></en>
+            <de><![CDATA[Zahlungseingänge]]></de>
+            <en><![CDATA[Incoming payments]]></en>
         </locale>
         <locale name="panel.OpenItems.grid.date">
             <de><![CDATA[Datum]]></de>
@@ -334,6 +342,18 @@ Best regards
         <locale name="panel.OpenItems.grid.details.dunningLevel">
             <de><![CDATA[Mahnstufe]]></de>
             <en><![CDATA[Dunning level]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.openOpenPositions">
+            <de><![CDATA[Offene Posten anzeigen]]></de>
+            <en><![CDATA[Show open items]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.openCustomer">
+            <de><![CDATA[Kunden öffnen]]></de>
+            <en><![CDATA[Open customer]]></en>
+        </locale>
+        <locale name="panel.OpenItems.grid.chooseOption">
+            <de><![CDATA[Bitte wählen]]></de>
+            <en><![CDATA[Please choose]]></en>
         </locale>
 
         <locale name="window.customer.creation.title">
