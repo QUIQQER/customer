@@ -299,8 +299,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     header   : QUILocale.get(lg, 'panel.OpenItems.grid.userId'),
                     dataIndex: 'customerId',
                     dataType : 'string',
-                    width    : 150,
-                    className: 'clickable'
+                    width    : 150
                 }, {
                     header   : QUILocale.get(lg, 'panel.OpenItems.grid.customerName'),
                     dataIndex: 'customer_name',
@@ -385,7 +384,6 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 position = Cell.getPosition();
 
             switch (Cell.get('data-index')) {
-                case 'customerId':
                 case 'customer_name':
                     require([
                         'qui/controls/contextmenu/Menu',
@@ -402,7 +400,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
                         Menu.appendChild(
                             new QUIMenuItem({
-                                icon  : 'fa fa-user-o',
+                                icon  : 'fa fa-list-ul',
                                 text  : QUILocale.get(lg, 'panel.OpenItems.grid.openOpenPositions'),
                                 events: {
                                     onClick: function () {
@@ -414,7 +412,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
                         Menu.appendChild(
                             new QUIMenuItem({
-                                icon  : 'fa fa-file-text-o',
+                                icon  : 'fa fa-user-o',
                                 text  : QUILocale.get(lg, 'panel.OpenItems.grid.openCustomer'),
                                 events: {
                                     onClick: function () {
