@@ -379,12 +379,9 @@ class Customers extends Singleton
             }
         }
 
-        // mail
-//        if (!empty($attributes['address-mail'])) {
-//            $Address->clearMail();
-//            $Address->addMail($attributes['address-mail']);
-//            unset($attributes['address-mail']);
-//        }
+        if (isset($attributes['address-suffix'])) {
+            $Address->setAddressSuffix($attributes['address-suffix']);
+        }
     }
 
     /**

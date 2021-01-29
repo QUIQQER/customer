@@ -460,6 +460,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 textCustomerId    : QUILocale.get(lg, 'customerId'),
                 textSalutation    : QUILocale.get('quiqqer/quiqqer', 'salutation'),
                 textCompany       : QUILocale.get('quiqqer/quiqqer', 'company'),
+                textAddressSuffix : QUILocale.get('quiqqer/quiqqer', 'address.suffix'),
                 textFirstname     : QUILocale.get('quiqqer/quiqqer', 'firstname'),
                 textLastname      : QUILocale.get('quiqqer/quiqqer', 'lastname'),
                 titleAddress      : QUILocale.get('quiqqer/quiqqer', 'address'),
@@ -577,6 +578,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 Form.elements['address-country'].value    = address.country;
                 Form.elements['address-city'].value       = address.city;
                 Form.elements['address-company'].value    = address.company;
+                Form.elements['address-suffix'].value     = address.suffix;
 
                 try {
                     var CBody  = self.getElm().getElement('.customer-information-communication-body');
@@ -1241,7 +1243,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
             var data = FormUtils.getFormData(Form);
             var com  = Form.getElements('[name="address-communication"]');
-
+console.log(data);
             if (typeof data.id !== 'undefined') {
                 delete data.id;
             }
