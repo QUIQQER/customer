@@ -7,7 +7,6 @@
  */
 define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
-    'qui/QUI',
     'qui/controls/desktop/Panel',
     'qui/controls/buttons/Button',
     'qui/controls/buttons/Separator',
@@ -25,7 +24,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
     'css!package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems.css',
     'css!package/quiqqer/erp/bin/backend/payment-status.css'
 
-], function (QUI, QUIPanel, QUIButton, QUISeparator, QUIContextMenuItem, Grid, AddPaymentWindow,
+], function (QUIPanel, QUIButton, QUISeparator, QUIContextMenuItem, Grid, AddPaymentWindow,
              QUILocale, QUIAjax, Mustache, templateTotal, templateUserRecords) {
     "use strict";
 
@@ -230,20 +229,12 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
             this.addButton(this.$Currency);
 
-            var Separator = new QUISeparator();
-
-            this.addButton(Separator);
-
-            Separator.getElm().setStyles({
-                'float': 'right'
-            });
-
             this.$Search = new Element('input', {
                 type       : 'search',
                 name       : 'search-value',
                 placeholder: QUILocale.get(lg, 'panels.OpenItems.search.placeholder'),
                 styles     : {
-                    'float': 'left',
+                    'float': 'right',
                     margin : '10px 0 0 0',
                     width  : 200
                 },
@@ -254,18 +245,18 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 }
             });
 
-            this.addButton(this.$Search);
-
             this.addButton({
                 name  : 'search',
                 icon  : 'fa fa-search',
                 styles: {
-                    'float': 'left'
+                    'float': 'right'
                 },
                 events: {
                     onClick: this.refresh
                 }
             });
+
+            this.addButton(this.$Search);
 
             // Grid
             this.getContent().setStyles({
@@ -308,8 +299,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     header   : QUILocale.get(lg, 'panel.OpenItems.grid.userId'),
                     dataIndex: 'customerId',
                     dataType : 'string',
-                    width    : 150,
-                    className: 'clickable'
+                    width    : 150
                 }, {
                     header   : QUILocale.get(lg, 'panel.OpenItems.grid.customerName'),
                     dataIndex: 'customer_name',
@@ -376,7 +366,6 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          *
          * @param {object} data - cell data
          * @param {Object} Grid
-         * @return {Promise}
          */
         $onGridDblClick: function (data, Grid) {
             if (typeof data === 'undefined' || typeof data.cell === 'undefined') {
@@ -389,22 +378,65 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 return Promise.resolve();
             }
 
-            var Cell    = data.cell,
-                rowData = Grid.getDataByRow(data.row);
+            var self     = this,
+                Cell     = data.cell,
+                rowData  = Grid.getDataByRow(data.row),
+                position = Cell.getPosition();
 
             switch (Cell.get('data-index')) {
-                case 'customerId':
                 case 'customer_name':
-                    return new Promise(function (resolve) {
-                        require(['package/quiqqer/customer/bin/backend/Handler'], function (CustomerHandler) {
-                            CustomerHandler.openCustomer(rowData.userId);
+                    require([
+                        'qui/controls/contextmenu/Menu',
+                        'qui/controls/contextmenu/Item'
+                    ], function (QUIMenu, QUIMenuItem) {
+                        var Menu = new QUIMenu({
+                            events: {
+                                onBlur: function () {
+                                    Menu.hide();
+                                    Menu.destroy();
+                                }
+                            }
                         });
+
+                        Menu.appendChild(
+                            new QUIMenuItem({
+                                icon  : 'fa fa-list-ul',
+                                text  : QUILocale.get(lg, 'panel.OpenItems.grid.openOpenPositions'),
+                                events: {
+                                    onClick: function () {
+                                        self.$Grid.accordianOpen(data.element);
+                                    }
+                                }
+                            })
+                        );
+
+                        Menu.appendChild(
+                            new QUIMenuItem({
+                                icon  : 'fa fa-user-o',
+                                text  : QUILocale.get(lg, 'panel.OpenItems.grid.openCustomer'),
+                                events: {
+                                    onClick: function () {
+                                        require(['package/quiqqer/customer/bin/backend/Handler'], function (CustomerHandler) {
+                                            CustomerHandler.openCustomer(rowData.userId);
+                                        });
+                                    }
+                                }
+                            })
+                        );
+
+                        Menu.inject(document.body);
+                        Menu.setPosition(position.x, position.y + 30);
+                        Menu.setTitle(QUILocale.get(lg, 'panel.OpenItems.grid.chooseOption'));
+                        Menu.show();
+                        Menu.focus();
                     });
+                    break;
 
                 default:
-                    this.$onClickShowOpenItemsList();
+                    this.$Grid.accordianOpen(data.element);
             }
-        },
+        }
+        ,
 
         /**
          * event : on resize
@@ -424,7 +456,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
             this.$Grid.setHeight(size.y - 110);
             this.$Grid.setWidth(size.x - 20);
-        },
+        }
+        ,
 
         /**
          * event: on inject
@@ -440,7 +473,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             ], function (currencies, currency) {
                 var i, len, entry, text;
 
-                if (!currencies.length || currencies.length === 1) {
+                if (!currencies.length) {
                     self.refresh();
                     self.$Currency.hide();
                     return;
@@ -473,7 +506,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             this.$Currency.getContextMenu(function (ContextMenu) {
                 ContextMenu.setAttribute('showIcons', false);
             });
-        },
+        }
+        ,
 
         //region Buttons events
 
@@ -503,7 +537,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     }
                 }).open();
             });
-        },
+        }
+        ,
 
         /**
          * event: on click open process
@@ -582,7 +617,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             }
 
             return this.openProcess(selected[0].id);
-        },
+        }
+        ,
 
         //endregion
 
@@ -607,7 +643,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     resolve(Panel);
                 });
             });
-        },
+        }
+        ,
 
         /**
          * Add a payment to an process
@@ -636,7 +673,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             }).catch(function (err) {
                 console.error(err);
             });
-        },
+        }
+        ,
 
         /**
          * Opens a temporary process
@@ -652,7 +690,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     PanelUtils.openTemporaryProcess(processId).then(resolve);
                 });
             });
-        },
+        }
+        ,
 
         /**
          * key up event at the search input
@@ -692,7 +731,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 }).delay(250, this);
                 return;
             }
-        },
+        }
+        ,
 
         /**
          * Parse data entry of a grid row for display purposes
@@ -717,7 +757,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             });
 
             return Data;
-        },
+        }
+        ,
 
         /**
          * Search open item slist
@@ -733,7 +774,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     onError     : reject
                 });
             });
-        },
+        }
+        ,
 
         // region User records
 
@@ -757,34 +799,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             //ParentNode.set('html', '<div class="fa fa-spinner fa-spin"></div>');
 
             ParentNode.addClass('quiqqer-customer-openitems-userrecords');
-            ParentNode.set('html', Mustache.render(templateUserRecords, {
-                placeholderSearch: QUILocale.get(lg, 'panels.OpenItems.details.tpl.placeholderSearch')
-            }));
-
-            this.$UserRecordsSearch = ParentNode.getElement('.quiqqer-customer-openitems-userrecords-search input');
-
-            this.$UserRecordsSearch.addEvents({
-                keyup : this.$onUserRecordsSearchKeyUp,
-                search: this.$onUserRecordsSearchKeyUp,
-                click : this.$onUserRecordsSearchKeyUp
-            });
-
-            new QUIButton({
-                name  : 'searchUserRecords',
-                icon  : 'fa fa-search',
-                styles: {
-                    float : 'right',
-                    margin: 0
-                },
-                events: {
-                    onClick: function () {
-                        self.$refreshUserRecords(self.$GridDetails);
-                    }
-                }
-            }).inject(
-                ParentNode.getElement('.quiqqer-customer-openitems-userrecords-search'),
-                'bottom'
-            );
+            ParentNode.set('html', Mustache.render(templateUserRecords));
 
             var GridParent = ParentNode.getElement('.quiqqer-customer-openitems-userrecords-list');
 
@@ -806,20 +821,20 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 //    json: 'JSON'
                 //},
                 buttons    : [{
-                    name     : 'open',
-                    text     : QUILocale.get(lg, 'panels.OpenItems.details.btn.open'),
-                    textimage: 'fa fa-file-o',
-                    disabled : true,
-                    events   : {
-                        onClick: this.$onClickOpenDocument
-                    }
-                }, {
                     name     : 'addTransaction',
                     text     : QUILocale.get(lg, 'panels.OpenItems.details.btn.addTransaction'),
                     textimage: 'fa fa-money',
                     disabled : true,
                     events   : {
                         onClick: this.$onClickAddTransaction
+                    }
+                }, {
+                    name     : 'open',
+                    text     : QUILocale.get(lg, 'panels.OpenItems.details.btn.open'),
+                    textimage: 'fa fa-file-o',
+                    disabled : true,
+                    events   : {
+                        onClick: this.$onClickOpenDocument
                     }
                 }],
                 columnModel: [{
@@ -893,18 +908,54 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 }]
             });
 
+            var GridBtnBar = this.$GridDetails.getElm().getElement('.tDiv');
+
+            new QUIButton({
+                name  : 'searchUserRecords',
+                icon  : 'fa fa-search',
+                styles: {
+                    float : 'right',
+                    margin: 4
+                },
+                events: {
+                    onClick: function () {
+                        self.$refreshUserRecords(self.$GridDetails);
+                    }
+                }
+            }).inject(GridBtnBar);
+
+            this.$UserRecordsSearch = new Element('input', {
+                'class'    : 'quiqqer-customer-openitems-userrecords-search',
+                'type'     : 'search',
+                placeholder: QUILocale.get(lg, 'panels.OpenItems.details.tpl.placeholderSearch'),
+            }).inject(this.$GridDetails.getElm().getElement('.tDiv'));
+
+            this.$UserRecordsSearch.addEvents({
+                keyup : this.$onUserRecordsSearchKeyUp,
+                search: this.$onUserRecordsSearchKeyUp,
+                click : this.$onUserRecordsSearchKeyUp
+            });
+
             this.$GridDetails.addEvents({
                 onRefresh : this.$refreshUserRecords,
                 onClick   : this.$refreshUserRecordsButtons,
                 onDblClick: this.$onClickAddTransaction
             });
 
-            this.$refreshUserRecords(this.$GridDetails, true);
+            this.$refreshUserRecords(this.$GridDetails, true).then(function () {
+                var entries = self.$GridDetails.getData();
+
+                if (entries.length) {
+                    self.$GridDetails.selectRow(self.$GridDetails.getRowElement(0));
+                    self.$refreshUserRecordsButtons();
+                }
+            });
 
             var size = ParentNode.getSize();
 
             self.$GridDetails.setHeight(size.y - 120);
-        },
+        }
+        ,
 
         /**
          * Refresh grid button status of user open items records details
@@ -933,7 +984,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
             OpenDocument.disable();
             AddTransaction.disable();
-        },
+        }
+        ,
 
         /**
          * If the user clicks the "add transaction to open item record" button
@@ -1012,7 +1064,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     onSubmit: submitTransaction
                 }
             }).open();
-        },
+        }
+        ,
 
         /**
          * If the user clicks the "open open item record document" button
@@ -1051,7 +1104,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 default:
                     return;
             }
-        },
+        }
+        ,
 
         /**
          * key up event at the user records search input
@@ -1065,8 +1119,6 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 event.key === 'right') {
                 return;
             }
-
-            var SearchInput = event.target;
 
             if (this.$searchDelay) {
                 clearTimeout(this.$searchDelay);
@@ -1091,9 +1143,9 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 this.$searchDelay = (function () {
                     this.$refreshUserRecords(this.$GridDetails);
                 }).delay(250, this);
-                return;
             }
-        },
+        }
+        ,
 
         /**
          * Refresh GRID with user open items records
@@ -1101,6 +1153,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          * @param {Object} Grid
          * @param {Boolean} [forceRefresh] - Force refresh of user open items records; otherwise try
          * to fetch from cache
+         *
+         * @return {Promise}
          */
         $refreshUserRecords: function (Grid, forceRefresh) {
             if (!this.$GridDetails) {
@@ -1125,7 +1179,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
             this.$currentUserRecordsSearch = this.$UserRecordsSearch.value;
 
-            this.$getUserOpenItems(
+            return this.$getUserOpenItems(
                 this.$currentRecordsUserId,
                 {
                     perPage: this.$GridDetails.options.perPage,
@@ -1141,7 +1195,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
                 self.$refreshUserRecordsButtons();
             });
-        },
+        }
+        ,
 
         /**
          * Get list of open items by user
@@ -1161,7 +1216,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     onError     : reject
                 });
             });
-        },
+        }
+        ,
 
         // endregion
 
