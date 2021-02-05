@@ -304,7 +304,7 @@ class Customers extends Singleton
         $User->save();
 
         // status
-        if (!empty($attributes['status'])) {
+        if (!empty($attributes['status']) && !$User->isActive()) {
             $SystemUser = QUI::getUsers()->getSystemUser();
 
             try {
@@ -319,10 +319,9 @@ class Customers extends Singleton
                         $SystemUser
                     );
 
-                    try {
-                        $User->activate(false, $SystemUser);
-                    } catch (QUI\Exception $Exception) {
-                    }
+                    $User->activate(false, $SystemUser);
+                } else {
+                    throw $Exception;
                 }
             }
         }
