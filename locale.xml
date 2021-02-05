@@ -151,10 +151,16 @@
         </locale>
         <locale name="customer.settings.customerLogin.description">
             <de><![CDATA[
-            Kunden dürfen sich am System anmelden. Wenn der Kunde aktiv ist, kann er sich somit am System einloggen.
+            Wenn diese Option deaktiviert ist, lassen sich Nutzer aus der Kundengruppe nicht aktivieren.
+            Wenn diese Option aktiv ist, kann in jedem Kunden in den Benutzereigenschaften bestimmt werde das sich
+            der Kunde am System anmelden kann. So wird ein Kunde beim Speichern automatisch aktiviert.
             ]]></de>
             <en><![CDATA[
-            Customers may log on to the system. If the customer is active, he or she can log on to the system.
+            If this option is deactivated, users from the customer group cannot be activated.
+
+            If this option is active, it can be determined in the user properties of each customer
+            that the user can log on to the system.
+            In this way, a customer is automatically activated when it is saved.
             ]]></en>
         </locale>
         <locale name="message.customer.saved.successfully" html="true">
@@ -813,14 +819,20 @@ Best regards
             <en><![CDATA[Send E-mail]]></en>
         </locale>
 
-        <locale name="message.customer.cant.log.in">
+        <locale name="message.customer.cant.log.in" html="true">
             <de><![CDATA[
-            Das System ist so eingestellt das Kunden sich nicht am System anmelden können.
-            Daher kann der Status eines Kunde und das Login Passwort nicht geändert werden.
+            Das System ist so konfiguriert das Nutzer aus der Kundengruppe nicht aktiviert werden können
+            und sich somit nicht am System anmelden können. Daher kann der Status eines Kunde und das Login Passwort nicht geändert werden.
+            <br />
+            <br />
+            Dies kann unter Einstellungen -> Kunden -> Kundenlogin geändert werden.
             ]]></de>
             <en><![CDATA[
-            The system is configured that customers cannot log in to the system.
-            Therefore the status of a customer and the login password cannot be changed.
+            The system is configured in such a way that users from the client group cannot be activated and therefore
+            cannot log in to the system. Therefore, the status of a client and the login password cannot be changed.
+            <br />
+            <br />
+            This can be changed under Settings -> Customer -> Customer Login.
             ]]></en>
         </locale>
 
