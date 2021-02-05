@@ -302,6 +302,29 @@ class Customers extends Singleton
         }
 
         $User->save();
+
+        // status
+        if (!empty($attributes['status']) && !$User->isActive()) {
+            $SystemUser = QUI::getUsers()->getSystemUser();
+
+            try {
+                $User->activate(false, $SystemUser);
+            } catch (QUI\Exception $Exception) {
+                // if no password, set a password
+                $userAttr = $User->getAttributes();
+
+                if (!$userAttr['hasPassword']) {
+                    $User->setPassword(
+                        QUI\Utils\Security\Orthos::getPassword(),
+                        $SystemUser
+                    );
+
+                    $User->activate(false, $SystemUser);
+                } else {
+                    throw $Exception;
+                }
+            }
+        }
     }
 
     /**
