@@ -9,7 +9,7 @@
                 </conf>
                 <conf name="customerLogin">
                     <type>integer</type>
-                    <defaultValue>0</defaultValue>
+                    <defaultvalue>1</defaultvalue>
                 </conf>
             </section>
 

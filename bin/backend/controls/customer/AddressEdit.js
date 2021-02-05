@@ -61,7 +61,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
                 textAddressStreet    : QUILocale.get('quiqqer/quiqqer', 'street'),
                 textAddressZIP       : QUILocale.get('quiqqer/quiqqer', 'zip'),
                 textAddressCity      : QUILocale.get('quiqqer/quiqqer', 'city'),
-                textAddressCountry   : QUILocale.get('quiqqer/quiqqer', 'country')
+                textAddressCountry   : QUILocale.get('quiqqer/quiqqer', 'country'),
+                textAddressSuffix    : QUILocale.get('quiqqer/quiqqer', 'address.suffix')
             }));
 
             this.getElm().getElement('[name="add-phone"]').addEvent('click', function (e) {
@@ -110,6 +111,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
                     elements['address-zip'].value        = result.zip;
                     elements['address-city'].value       = result.city;
                     elements['address-country'].value    = result.country;
+                    elements['address-suffix'].value     = result.suffix;
 
                     var mail  = [];
                     var phone = [];
@@ -303,6 +305,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
                         zip       : elements['address-zip'].value,
                         city      : elements['address-city'].value,
                         country   : elements['address-country'].value,
+                        suffix    : elements['address-suffix'].value,
                         mails     : mails,
                         phone     : phone
                     })
