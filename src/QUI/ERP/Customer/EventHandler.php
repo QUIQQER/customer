@@ -249,6 +249,44 @@ class EventHandler
     }
 
     /**
+     * @param QUI\Users\User $User
+     * @param string|false $code
+     * @param null|QUI\Users\User $ParentUser
+     *
+     * @throws QUI\Users\Exception
+     */
+    public static function onUserActivateBegin(QUI\Users\User $User, $code, $ParentUser)
+    {
+        $Group = Utils::getInstance()->getCustomerGroup();
+
+        if (!$Group) {
+            return;
+        }
+
+        if (!$User->isInGroup($Group->getId())) {
+            return;
+        }
+
+        try {
+            $Package = QUI::getPackage('quiqqer/customer');
+            $Config  = $Package->getConfig();
+            $login   = (int)$Config->getValue('customer', 'customerLogin');
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addError($Exception->getMessage());
+
+            throw new QUI\Users\Exception(
+                QUI::getLocale()->get('quiqqer/customer', 'exception.customer.login.not.allowed')
+            );
+        }
+
+        if (empty($login)) {
+            throw new QUI\Users\Exception(
+                QUI::getLocale()->get('quiqqer/customer', 'exception.customer.login.not.allowed')
+            );
+        }
+    }
+
+    /**
      * event handling for onQuiqqerOrderCustomerDataSaveEnd
      * - set the user to the customer group
      *

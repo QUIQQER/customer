@@ -42,8 +42,10 @@
             <en><![CDATA[Consider order]]></en>
         </locale>
         <locale name="customer.settings.considerOrders.description">
-            <de><![CDATA[Bei der Erfassung von offenen Posten werden auch Bestellungen einbezogen, sofern sie keine zugeordnete Rechnung haben]]></de>
-            <en><![CDATA[When capturing open items, purchase orders are also included if they do not have an assigned invoice]]></en>
+            <de>
+                <![CDATA[Bei der Erfassung von offenen Posten werden auch Bestellungen einbezogen, sofern sie keine zugeordnete Rechnung haben]]></de>
+            <en>
+                <![CDATA[When capturing open items, purchase orders are also included if they do not have an assigned invoice]]></en>
         </locale>
         <locale name="customer.settings.groupId">
             <de><![CDATA[Kundengruppe]]></de>
@@ -259,6 +261,14 @@ Best regards
         <locale name="exception.empty.mail.not.allowed">
             <de><![CDATA[Eine leere E-Mail Adresse ist nicht erlaubt.]]></de>
             <en><![CDATA[A blank email address is not allowed.]]></en>
+        </locale>
+        <locale name="exception.customer.login.not.allowed">
+            <de><![CDATA[
+            Der Kunde kann leider nicht aktiviert werden. Kundenlogin ist für dieses System deaktiviert.
+            ]]></de>
+            <en><![CDATA[
+            Sorry, the customer cannot be activated. Customer login is disabled for this system.
+            ]]></en>
         </locale>
     </groups>
 

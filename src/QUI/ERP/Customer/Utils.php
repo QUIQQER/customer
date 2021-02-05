@@ -65,4 +65,22 @@ class Utils extends QUI\Utils\Singleton
 
         return $permission;
     }
+
+    /**
+     * Return the global customer group
+     *
+     * @return QUI\Groups\Everyone|QUI\Groups\Group|QUI\Groups\Guest|null
+     */
+    public function getCustomerGroup()
+    {
+        $Package = QUI::getPackage('quiqqer/customer');
+        $Config  = $Package->getConfig();
+        $groupId = $Config->getValue('customer', 'groupId');
+
+        if (empty($groupId)) {
+            return null;
+        }
+
+        return QUI::getGroups()->get($groupId);
+    }
 }
