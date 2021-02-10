@@ -6,10 +6,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/SelectItem', [
 
     'qui/QUI',
     'qui/controls/elements/SelectItem',
-    'Ajax',
-    'Users'
+    'Ajax'
 
-], function (QUI, QUIElementSelectItem, QUIAjax, Users) {
+], function (QUI, QUIElementSelectItem, QUIAjax) {
     "use strict";
 
     return new Class({
@@ -46,21 +45,27 @@ define('package/quiqqer/customer/bin/backend/controls/customer/SelectItem', [
                 return Prom;
             }
 
-            var User = Users.get(parseInt(id));
+            var self = this;
 
-            if (!User.isLoaded()) {
-                Prom = User.load();
-            }
+            return new Promise(function (resolve) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_userDisplayName', function (displayName) {
+                    self.$Text.set({
+                        html : displayName,
+                        title: displayName
+                    });
 
-            return Prom.then(function () {
-                this.$Text.set({
-                    html: User.getName()
+                    resolve();
+                }, {
+                    'package'      : 'quiqqer/customer',
+                    userId         : parseInt(id),
+                    showAddressName: self.getAttribute('Parent').getAttribute('showAddressName') ? 1 : 0,
+                    onError        : function (err) {
+                        console.error(err);
+                        self.destroy();
+                        resolve();
+                    }
                 });
-            }.bind(this)).catch(function (err) {
-                console.error(err);
-
-                this.destroy();
-            }.bind(this));
+            });
         }
     });
 });
