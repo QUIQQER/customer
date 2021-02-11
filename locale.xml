@@ -664,6 +664,10 @@ Best regards
             <de><![CDATA[Weitere Optionen]]></de>
             <en><![CDATA[Additional options]]></en>
         </locale>
+        <locale name="quiqqer.customer.panel.sendMail">
+            <de><![CDATA[E-Mail an Kunden senden]]></de>
+            <en><![CDATA[Send email to customer]]></en>
+        </locale>
         <locale name="customer.files.upload.button">
             <de><![CDATA[Upload]]></de>
             <en><![CDATA[Upload]]></en>

@@ -6,11 +6,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
     'qui/QUI',
     'qui/controls/desktop/Panel',
-    'qui/controls/buttons/ButtonSwitch',
     'qui/controls/buttons/ButtonMultiple',
     'qui/controls/windows/Confirm',
     'package/quiqqer/countries/bin/Countries',
-    'package/quiqqer/payments/bin/backend/Payments',
     'package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow',
     'qui/utils/Form',
     'Users',
@@ -22,7 +20,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.Information.html',
     'css!package/quiqqer/customer/bin/backend/controls/customer/Panel.css'
 
-], function (QUI, QUIPanel, QUIButtonSwitch, QUIButtonMultiple, QUIConfirm, Countries, Payments, AddressEditWindow,
+], function (QUI, QUIPanel, QUIButtonMultiple, QUIConfirm, Countries, AddressEditWindow,
              FormUtils, Users, QUILocale, QUIAjax, Packages, Mustache, templateInformation) {
     "use strict";
 
@@ -49,7 +47,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             '$onCustomerCategoryActive',
             'openUser',
             'deliveryAddressToggle',
-            '$onOpenOpenItemsListClick'
+            '$onOpenOpenItemsListClick',
+            '$onClickSendMail'
         ],
 
         options: {
@@ -209,6 +208,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 icon  : 'fa fa-th-list',
                 events: {
                     onClick: this.$onOpenOpenItemsListClick
+                }
+            });
+
+            ExtrasBtn.appendChild({
+                text  : QUILocale.get(lg, 'quiqqer.customer.panel.sendMail'),
+                icon  : 'fa fa-envelope',
+                events: {
+                    onClick: this.$onClickSendMail
                 }
             });
 
@@ -1243,7 +1250,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
             var data = FormUtils.getFormData(Form);
             var com  = Form.getElements('[name="address-communication"]');
-console.log(data);
+            console.log(data);
             if (typeof data.id !== 'undefined') {
                 delete data.id;
             }
@@ -1415,6 +1422,19 @@ console.log(data);
                             console.log("openItemsListDialogOpen");
                         }
                     }
+                }).open();
+            });
+        },
+
+        /**
+         * Open "send mail to user" popup
+         */
+        $onClickSendMail: function () {
+            var self = this;
+
+            require(['controls/users/mail/SendUserMail'], function (SendUserMail) {
+                new SendUserMail({
+                    userId: self.getAttribute('userId')
                 }).open();
             });
         },
