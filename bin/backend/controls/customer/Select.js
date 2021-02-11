@@ -39,6 +39,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
             'userSearch'
         ],
 
+        options: {
+            showAddressName: true
+        },
+
         initialize: function (options) {
             this.parent(options);
 
@@ -85,8 +89,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
                 }, {
                     'package': 'quiqqer/customer',
                     // search   : value,
-                    fields   : false,
-                    params   : JSON.encode({
+                    fields: false,
+                    params: JSON.encode({
                         perPage     : 5,
                         onlyCustomer: true,
                         search      : value
