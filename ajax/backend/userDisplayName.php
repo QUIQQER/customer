@@ -14,6 +14,10 @@ QUI::$Ajax->registerFunction(
     function ($userId, $showAddressName) {
         $User = QUI::getUsers()->get($userId);
 
+        if (QUI::getUsers()->isNobodyUser($User)) {
+            return '';
+        }
+
         if (empty($showAddressName)) {
             return $User->getName();
         }
@@ -38,7 +42,9 @@ QUI::$Ajax->registerFunction(
             }
         }
 
-        $addressData[] = $Address->getText();
+        if ($Address) {
+            $addressData[] = $Address->getText();
+        }
 
         $result = \implode(' - ', $addressData);
         $result = \trim($result, ' - ');
