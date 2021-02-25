@@ -1532,6 +1532,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             var self = this;
 
             return this.$User.getAddressList().then(function (addresses) {
+                if (!self.getContent().getElement('form')) {
+                    return;
+                }
+
                 var Form   = self.getContent().getElement('form'),
                     Select = Form.elements['quiqqer.erp.customer.contact.person'];
 
