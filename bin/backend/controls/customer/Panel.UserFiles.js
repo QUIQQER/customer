@@ -26,7 +26,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
         Binds: [
             '$onInject',
             'openUpload',
-            'openDeleteDialog'
+            'openDeleteDialog',
+            'download'
         ],
 
         options: {
@@ -121,6 +122,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
                     }
                 });
             });
+
+            this.$Grid.addEvent('dblClick', this.download);
 
             return this.$Elm;
         },
@@ -291,6 +294,39 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
                     }
                 }
             }).open();
+        },
+
+        download: function () {
+            var data = this.$Grid.getSelectedData();
+
+            if (!data.length) {
+                return;
+            }
+
+            data = data[0];
+
+            var uid = String.uniqueID();
+            var id  = 'download-customer-file-' + uid;
+
+            new Element('iframe', {
+                src   : URL_OPT_DIR + 'quiqqer/customer/bin/backend/download.php?' + Object.toQueryString({
+                    file      : data.filename,
+                    extension : data.extension,
+                    customerId: this.getAttribute('userId')
+                }),
+                id    : id,
+                styles: {
+                    position: 'absolute',
+                    top     : -200,
+                    left    : -200,
+                    width   : 50,
+                    height  : 50
+                }
+            }).inject(document.body);
+
+            (function () {
+                document.getElements('#' + id).destroy();
+            }).delay(20000, this);
         }
     });
 });
