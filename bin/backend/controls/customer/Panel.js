@@ -1250,7 +1250,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
             var data = FormUtils.getFormData(Form);
             var com  = Form.getElements('[name="address-communication"]');
-            console.log(data);
+
             if (typeof data.id !== 'undefined') {
                 delete data.id;
             }
