@@ -52,6 +52,4 @@ class ErpProvider extends AbstractErpProvider
             new NumberRange()
         ];
     }
-
-
 }
