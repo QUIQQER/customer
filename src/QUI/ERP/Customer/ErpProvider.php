@@ -42,4 +42,16 @@ class ErpProvider extends AbstractErpProvider
 
         $Accounting->appendChild($Purchasing);
     }
+
+    /**
+     * @return array
+     */
+    public static function getNumberRanges()
+    {
+        return [
+            new NumberRange()
+        ];
+    }
+
+
 }

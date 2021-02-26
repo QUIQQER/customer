@@ -11,6 +11,12 @@
                     <type>integer</type>
                     <defaultvalue>1</defaultvalue>
                 </conf>
+                <conf name="nextCustomerNo">
+                    <type>integer</type>
+                </conf>
+                <conf name="customerNoPrefix">
+                    <type><![CDATA[string]]></type>
+                </conf>
             </section>
 
             <section name="openItems">
@@ -56,6 +62,15 @@
                             </text>
                             <description>
                                 <locale group="quiqqer/customer" var="customer.settings.customerLogin.description"/>
+                            </description>
+                        </input>
+
+                        <input conf="customer.customerNoPrefix" type="text">
+                            <text>
+                                <locale group="quiqqer/customer" var="customer.settings.customerNoPrefix"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/customer" var="customer.settings.customerNoPrefix.description"/>
                             </description>
                         </input>
 

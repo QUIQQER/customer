@@ -63,6 +63,14 @@
             <de><![CDATA[Zahlungseingänge]]></de>
             <en><![CDATA[Incoming payments]]></en>
         </locale>
+        <locale name="customer.settings.customerNoPrefix">
+            <de><![CDATA[Kunden-Nr. Präfix]]></de>
+            <en><![CDATA[Customer no. prefix]]></en>
+        </locale>
+        <locale name="customer.settings.customerNoPrefix.description">
+            <de><![CDATA[Präfix, das allen Kunden-Nr. vorangestellt wird.]]></de>
+            <en><![CDATA[Prefix that is prependend to all customer numbers.]]></en>
+        </locale>
 
         <locale name="exception.customer.group.not.exists">
             <de><![CDATA[Kundengruppe existiert nicht.]]></de>
@@ -125,6 +133,12 @@
     </groups>
 
     <groups name="quiqqer/customer" datatype="php">
+
+        <locale name="NumberRange.title">
+            <de><![CDATA[Kundennummer]]></de>
+            <en><![CDATA[Customer number]]></en>
+        </locale>
+
         <locale name="OpenItemsList.documentType.invoice">
             <de><![CDATA[Rechnung]]></de>
             <en><![CDATA[Invoice]]></en>
