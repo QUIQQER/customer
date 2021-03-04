@@ -73,6 +73,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.$userInitAttributes = null;
             this.$customerIdPrefix   = '';
             this.$editCustomerNo     = false;
+            this.$currentCategory    = 'information';
 
             this.addEvents({
                 onCreate : this.$onCreate,
@@ -133,7 +134,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                         userPanels[i].refreshDisplay();
                     }
                 }
-
+                self.$openCategory(self.$currentCategory);
                 self.Loader.hide();
             });
         },
@@ -1320,6 +1321,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.getBody().setStyle('padding', 20);
 
             this.$hideCategory().then(function () {
+                self.$currentCategory = category;
+
                 if (category === 'information') {
                     return self.$openInformation();
                 }
@@ -1391,10 +1394,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 });
             }
 
+            // Only edit customer no. explicitly
             if (this.$editCustomerNo) {
                 data.customerId = this.$editCustomerNo;
             } else if ('customerId' in data) {
-                data.customerId = data.customerId.substr(this.$customerIdPrefix.length);
+                delete data.customerId;
             }
 
             this.$User.setAttributes(data);
