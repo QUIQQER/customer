@@ -23,7 +23,6 @@ QUI::$Ajax->registerFunction(
 
         $sql = "SELECT `id` FROM ".QUI::getUsers()::table();
         $sql .= " WHERE `username` = '$customerNo' OR `customerId` = '$customerNo'";
-//        $sql .= " AND `usergroup` LIKE '%,$customerGroupId,%')";
         $sql .= " LIMIT 1";
 
         $result = QUI::getDataBase()->fetchSQL($sql);
