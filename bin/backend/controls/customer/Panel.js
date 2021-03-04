@@ -503,8 +503,40 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                         var PrefixInput     = Content.getElement('input[name="prefix"]');
                         var CustomerNoInput = Content.getElement('input[name="customerId"]');
 
-                        PrefixInput.value     = self.$customerIdPrefix;
-                        CustomerNoInput.value = self.$User.getAttribute('customerId');
+                        PrefixInput.value = self.$customerIdPrefix;
+
+                        Win.Loader.show();
+
+                        Handler.getNewCustomerNo().then(function (nextCustomerNo) {
+                            if (self.$User.getAttribute('customerId')) {
+                                var currentCustomerNo = self.$User.getAttribute('customerId');
+
+                                CustomerNoInput.value = currentCustomerNo;
+                                Win.getButton('submit').disable();
+
+                                CustomerNoInput.addEvent('keyup', function () {
+                                    if (CustomerNoInput.value.trim() !== currentCustomerNo) {
+                                        Win.getButton('submit').enable();
+                                    } else {
+                                        Win.getButton('submit').disable();
+                                    }
+                                });
+                            } else {
+                                CustomerNoInput.value = nextCustomerNo;
+                            }
+
+                            Content.getElement('.quiqqer-customer-customerNo-edit-nextId').set(
+                                'html',
+                                QUILocale.get(lg, 'customer.panel.editId.nextCustomerNo', {
+                                    nextCustomerNo: nextCustomerNo
+                                })
+                            );
+
+                            Win.Loader.hide();
+                        }, function () {
+                            Win.close();
+                        });
+
 
                         CustomerNoInput.focus();
                         CustomerNoInput.select();

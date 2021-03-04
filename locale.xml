@@ -636,6 +636,10 @@ Best regards
             <de><![CDATA[Kunden-Nr. jetzt ändern]]></de>
             <en><![CDATA[Change customer no. now]]></en>
         </locale>
+        <locale name="customer.panel.editId.nextCustomerNo" html="true">
+            <de><![CDATA[Nächste zu vergebende Kd.-Nr.: <b>[nextCustomerNo]</b>]]></de>
+            <en><![CDATA[Next no. to be assigned: <b>[nextCusomterNo]</b>]]></en>
+        </locale>
         <locale name="checkout.panel.delivery.option.same">
             <de><![CDATA[Gleiche Adresse wie Rechnungsadresse]]></de>
             <en><![CDATA[Same address as billing address]]></en>

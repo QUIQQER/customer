@@ -344,7 +344,7 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
             this.$Next.disabled = true;
 
             Promise.all([
-                this.$getNewCustomerNo(),
+                Handler.getNewCustomerNo(),
                 Handler.getCustomerIdPrefix()
             ]).then(function (result) {
                 var Input       = self.$Elm.getElement('input[name="customerId"]');
@@ -361,17 +361,6 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
 
                 self.$Next.disabled = false;
                 self.fireEvent('load', [self]);
-            });
-        },
-
-        /**
-         * Get next customer no
-         */
-        $getNewCustomerNo: function () {
-            return new Promise(function (resolve) {
-                QUIAjax.get('package_quiqqer_customer_ajax_backend_create_getNewCustomerNo', resolve, {
-                    'package': 'quiqqer/customer'
-                });
             });
         }
     });

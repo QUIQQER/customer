@@ -62,6 +62,19 @@ define('package/quiqqer/customer/bin/backend/classes/Handler', [
         },
 
         /**
+         * Get next customer no.
+         *
+         * @return {Promise}
+         */
+        getNewCustomerNo: function () {
+            return new Promise(function (resolve) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_create_getNewCustomerNo', resolve, {
+                    'package': 'quiqqer/customer'
+                });
+            });
+        },
+
+        /**
          * add user to customer group
          *
          * @param userId
