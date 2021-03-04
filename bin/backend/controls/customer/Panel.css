@@ -94,3 +94,49 @@
 .window-price-calc-text p:last-child {
     margin-bottom: 0;
 }
+
+/**
+ * Edit customer no.
+ */
+.quiqqer-customer-customerNo-edit-inputs {
+    display: flex;
+}
+
+.quiqqer-customer-customerNo-edit {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+
+    clear: both;
+    font-size: 16px;
+    padding: 10px;
+    width: 100%;
+}
+
+.quiqqer-customer-customerNo-edit label {
+    clear: both;
+    display: block;
+    margin: 20px auto;
+    text-align: left;
+    width: 250px;
+}
+
+.quiqqer-customer-customerNo-edit input {
+    clear: both;
+    font-size: 16px;
+    padding: 10px;
+    width: 100%;
+}
+
+.quiqqer-customer-customerNo-edit-prefix {
+    margin-right: 10px !important;
+    text-align: right !important;
+    width: 100px !important;
+}
+
+.quiqqer-customer-customerNo-edit-prefix > input {
+    padding-right: 0;
+    text-align: right;
+}

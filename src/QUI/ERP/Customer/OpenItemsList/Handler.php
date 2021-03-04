@@ -364,13 +364,19 @@ class Handler
             return;
         }
 
+        $customerId = $User->getAttribute('customerId');
+
+        if ($User instanceof QUI\ERP\User) {
+            $customerId = $User->getCustomerNo();
+        }
+
         // Parse open items to db entry
         foreach ($OpenItemsList->getTotalAmountsByCurrency() as $currency => $values) {
             QUI::getDataBase()->replace(
                 self::getTable(),
                 [
                     'userId'           => $User->getId(),
-                    'customerId'       => $User->getAttribute('customerId'),
+                    'customerId'       => $customerId,
                     'net_sum'          => $values['netTotal'],
                     'total_sum'        => $values['sumTotal'],
                     'open_sum'         => $values['dueTotal'],

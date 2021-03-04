@@ -134,6 +134,11 @@
 
     <groups name="quiqqer/customer" datatype="php">
 
+        <locale name="exception.customer_no_already_exists">
+            <de><![CDATA[Die Kunden-Nr. "[customerNo]" existiert bereits und kann daher nicht vergeben werden.]]></de>
+            <en><![CDATA[Customer no. "[customerNo]" already exists and cannot be assigned.]]></en>
+        </locale>
+        
         <locale name="NumberRange.title">
             <de><![CDATA[Kundennummer]]></de>
             <en><![CDATA[Customer number]]></en>
@@ -446,6 +451,10 @@ Best regards
             This customer number can still be changed later.
             ]]></en>
         </locale>
+        <locale name="window.customer.creation.customerNo.labelPrefix">
+            <de><![CDATA[Präfix]]></de>
+            <en><![CDATA[Prefix]]></en>
+        </locale>
 
         <locale name="window.customer.creation.dataHeader.title">
             <de><![CDATA[Kunden Daten]]></de>
@@ -614,6 +623,18 @@ Best regards
         <locale name="customer.panel.delivery.address">
             <de><![CDATA[Versandadresse]]></de>
             <en><![CDATA[Shipping address]]></en>
+        </locale>
+        <locale name="customer.panel.btn.edit_id">
+            <de><![CDATA[Kunden-Nr. bearbeiten]]></de>
+            <en><![CDATA[Edit customer no.]]></en>
+        </locale>
+        <locale name="customer.panel.editId.title">
+            <de><![CDATA[Kunden-Nr. bearbeiten]]></de>
+            <en><![CDATA[Edit customer no.]]></en>
+        </locale>
+        <locale name="customer.panel.editId.confirm">
+            <de><![CDATA[Kunden-Nr. jetzt ändern]]></de>
+            <en><![CDATA[Change customer no. now]]></en>
         </locale>
         <locale name="checkout.panel.delivery.option.same">
             <de><![CDATA[Gleiche Adresse wie Rechnungsadresse]]></de>

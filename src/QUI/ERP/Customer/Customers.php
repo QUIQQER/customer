@@ -38,6 +38,17 @@ class Customers extends Singleton
 
         $User = QUI::getUsers()->createChild($customerId);
 
+        /**
+         * Check if $customerId equals the next customerId in the NumberRange.
+         * If so, then set then increase the next customerId by 1.
+         */
+        $NumberRange    = new NumberRange();
+        $nextCustomerNo = $NumberRange->getNextCustomerNo();
+
+        if ((int)$customerId === $NumberRange->getNextCustomerNo()) {
+            $NumberRange->setRange($nextCustomerNo + 1);
+        }
+
         $User->setAttribute('customerId', $customerId);
         $User->setAttribute('mainGroup', $this->getCustomerGroupId());
         $User->save();
@@ -58,7 +69,8 @@ class Customers extends Singleton
                 'street_no',
                 'zip',
                 'city',
-                'country'
+                'country',
+                'suffix'
             ];
 
             foreach ($needles as $needle) {
@@ -76,6 +88,10 @@ class Customers extends Singleton
             $Address->setAttribute('zip', $address['zip']);
             $Address->setAttribute('city', $address['city']);
             $Address->setAttribute('country', $address['country']);
+
+            if (!empty($address['suffix'])) {
+                $Address->setAddressSuffix($address['suffix']);
+            }
 
             $Address->save();
 
@@ -236,6 +252,20 @@ class Customers extends Singleton
 
             unset($attributes['password1']);
             unset($attributes['password2']);
+        }
+
+        /**
+         * If a new customer no. shall be set and the current username equals the new customer no.
+         * then also change the username.
+         */
+        if (!empty($attributes['customerId'])) {
+            $newCustomerId     = $attributes['customerId'];
+            $currentCustomerId = $User->getAttribute('customerId');
+
+            if ($currentCustomerId !== $newCustomerId &&
+                $User->getUsername() === $currentCustomerId) {
+                $attributes['username'] = $newCustomerId;
+            }
         }
 
         // defaults
