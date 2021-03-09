@@ -6,7 +6,10 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
 
     'qui/QUI',
     'qui/controls/Control',
+
     'package/quiqqer/countries/bin/Countries',
+    'package/quiqqer/customer/bin/backend/Handler',
+
     'Locale',
     'Ajax',
     'Mustache',
@@ -15,7 +18,7 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
 
     'css!package/quiqqer/customer/bin/backend/controls/create/Customer.css'
 
-], function (QUI, QUIControl, Countries, QUILocale, QUIAjax, Mustache, template) {
+], function (QUI, QUIControl, Countries, Handler, QUILocale, QUIAjax, Mustache, template) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -62,6 +65,7 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
                 customerDataText     : QUILocale.get(lg, 'window.customer.creation.dataHeader.text'),
                 customerGroupsHeader : QUILocale.get(lg, 'window.customer.creation.groups.title'),
                 customerGroupsText   : QUILocale.get(lg, 'window.customer.creation.groups.text'),
+                labelPrefix          : QUILocale.get(lg, 'window.customer.creation.customerNo.labelPrefix'),
 
                 textAddressCompany   : QUILocale.get('quiqqer/quiqqer', 'company'),
                 textAddressSalutation: QUILocale.get('quiqqer/quiqqer', 'salutation'),
@@ -71,6 +75,7 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
                 textAddressZIP       : QUILocale.get('quiqqer/quiqqer', 'zip'),
                 textAddressCity      : QUILocale.get('quiqqer/quiqqer', 'city'),
                 textAddressCountry   : QUILocale.get('quiqqer/quiqqer', 'country'),
+                textAddressSuffix    : QUILocale.get('quiqqer/quiqqer', 'address.suffix'),
 
                 textGroup     : QUILocale.get(lg, 'window.customer.creation.group'),
                 textGroups    : QUILocale.get(lg, 'window.customer.creation.groups'),
@@ -85,7 +90,6 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
             var CustomerId = this.$Elm.getElement('[name="customerId"]');
             var Company    = this.$Elm.getElement('[name="address-company"]');
             var Country    = this.$Elm.getElement('[name="address-country"]');
-
 
             CustomerId.addEvent('keydown', function (event) {
                 if (event.key === 'tab') {
@@ -152,6 +156,10 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
                         html : countries[code]
                     }).inject(CountrySelect);
                 }
+
+                if (QUIQQER_CONFIG.globals.country) {
+                    CountrySelect.value = QUIQQER_CONFIG.globals.country;
+                }
             }).then(function () {
                 return QUI.parse(self.$Elm);
             }).then(function () {
@@ -179,7 +187,8 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
                 'street_no' : elements['address-street_no'].value,
                 'zip'       : elements['address-zip'].value,
                 'city'      : elements['address-city'].value,
-                'country'   : elements['address-country'].value
+                'country'   : elements['address-country'].value,
+                'suffix'    : elements['address-suffix'].value
             };
 
 
@@ -212,6 +221,12 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
             var scrollHeight = this.$Container.getScrollSize().y;
             var newTop       = this.$roundToStepPos(top - height);
 
+            var step = 1;
+
+            if ((top * -1) / height) {
+                step = Math.round(((top * -1) / height) + 1);
+            }
+
             // change last step button
             if (newTop - height <= scrollHeight * -1) {
                 this.$Next.set('html', QUILocale.get(lg, 'window.customer.creation.create'));
@@ -224,13 +239,26 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
             }
 
             return new Promise(function (resolve) {
-                moofx(self.$List).animate({
-                    top: newTop
-                }, {
-                    callback: function () {
-                        self.refreshStepDisplay();
-                        resolve();
-                    }
+                var checkPromises = [];
+
+                if (step === 1) {
+                    var elements   = self.$Form.elements;
+                    var customerId = elements.customerId.value;
+
+                    checkPromises.push(Handler.validateCustomerNo(customerId));
+                }
+
+                Promise.all(checkPromises).then(function () {
+                    moofx(self.$List).animate({
+                        top: newTop
+                    }, {
+                        callback: function () {
+                            self.refreshStepDisplay();
+                            resolve();
+                        }
+                    });
+                }, function () {
+                    resolve();
                 });
             });
         },
@@ -276,7 +304,17 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
             var height = this.$Container.getSize().y;
 
             if ((top * -1) / height) {
-                step = ((top * -1) / height) + 1;
+                step = Math.round(((top * -1) / height) + 1);
+            }
+
+            switch (step) {
+                case 1:
+                    this.$Container.getElement('input[name="customerId"]').focus();
+                    break;
+
+                case 2:
+                    this.$Container.getElement('input[name="address-company"]').focus();
+                    break;
             }
 
             this.$Steps.set('html', QUILocale.get(lg, 'customer.create.steps', {
@@ -303,24 +341,26 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
         showCustomerNumber: function () {
             var self = this;
 
-            this.$getNewCustomerNo().then(function (customerNo) {
-                var Input = self.$Elm.getElement('input');
+            this.$Next.disabled = true;
 
-                Input.value = customerNo;
+            Promise.all([
+                Handler.getNewCustomerNo(),
+                Handler.getCustomerIdPrefix()
+            ]).then(function (result) {
+                var Input       = self.$Elm.getElement('input[name="customerId"]');
+                var InputPrefix = self.$Elm.getElement('input[name="prefix"]');
+
+                if (result[1]) {
+                    InputPrefix.value = result[1];
+                } else {
+                    InputPrefix.setStyle('display', 'none');
+                }
+
+                Input.value = result[0];
                 Input.focus();
 
+                self.$Next.disabled = false;
                 self.fireEvent('load', [self]);
-            });
-        },
-
-        /**
-         *
-         */
-        $getNewCustomerNo: function () {
-            return new Promise(function (resolve) {
-                QUIAjax.get('package_quiqqer_customer_ajax_backend_create_getNewCustomerNo', resolve, {
-                    'package': 'quiqqer/customer'
-                });
             });
         }
     });

@@ -33,6 +33,48 @@ define('package/quiqqer/customer/bin/backend/classes/Handler', [
         },
 
         /**
+         * Get customer ID prefix
+         *
+         * @return {Promise}
+         */
+        getCustomerIdPrefix: function () {
+            return new Promise(function (resolve) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_create_getPrefix', resolve, {
+                    'package': 'quiqqer/customer'
+                });
+            });
+        },
+
+        /**
+         * Validate a (potential) new customer no.
+         *
+         * @param {String|Number} customerNo
+         * @return {Promise}
+         */
+        validateCustomerNo: function (customerNo) {
+            return new Promise(function (resolve, reject) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_create_validateCustomerNo', resolve, {
+                    'package' : 'quiqqer/customer',
+                    customerNo: customerNo,
+                    onError   : reject
+                });
+            });
+        },
+
+        /**
+         * Get next customer no.
+         *
+         * @return {Promise}
+         */
+        getNewCustomerNo: function () {
+            return new Promise(function (resolve) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_create_getNewCustomerNo', resolve, {
+                    'package': 'quiqqer/customer'
+                });
+            });
+        },
+
+        /**
          * add user to customer group
          *
          * @param userId

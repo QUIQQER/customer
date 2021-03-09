@@ -6,10 +6,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
     'qui/QUI',
     'qui/controls/desktop/Panel',
+    'qui/controls/buttons/Button',
     'qui/controls/buttons/ButtonMultiple',
     'qui/controls/windows/Confirm',
     'package/quiqqer/countries/bin/Countries',
     'package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow',
+
+    'package/quiqqer/customer/bin/backend/Handler',
+
     'qui/utils/Form',
     'Users',
     'Locale',
@@ -18,10 +22,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'Mustache',
 
     'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.Information.html',
+    'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.EditId.html',
     'css!package/quiqqer/customer/bin/backend/controls/customer/Panel.css'
 
-], function (QUI, QUIPanel, QUIButtonMultiple, QUIConfirm, Countries, AddressEditWindow,
-             FormUtils, Users, QUILocale, QUIAjax, Packages, Mustache, templateInformation) {
+], function (QUI, QUIPanel, QUIButton, QUIButtonMultiple, QUIConfirm, Countries, AddressEditWindow, Handler,
+             FormUtils, Users, QUILocale, QUIAjax, Packages, Mustache, templateInformation, templateEditId) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -48,7 +53,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             'openUser',
             'deliveryAddressToggle',
             '$onOpenOpenItemsListClick',
-            '$onClickSendMail'
+            '$onClickSendMail',
+            '$onEditCustomerIdClick'
         ],
 
         options: {
@@ -65,6 +71,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
             this.$User               = null;
             this.$userInitAttributes = null;
+            this.$customerIdPrefix   = '';
+            this.$editCustomerNo     = false;
+            this.$currentCategory    = 'information';
 
             this.addEvents({
                 onCreate : this.$onCreate,
@@ -125,7 +134,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                         userPanels[i].refreshDisplay();
                     }
                 }
-
+                self.$openCategory(self.$currentCategory);
                 self.Loader.hide();
             });
         },
@@ -381,6 +390,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 return Packages.getPackage('quiqqer/shipping').catch(function () {
                     return false;
                 });
+            }).then(function () {
+                return Handler.getCustomerIdPrefix();
+            }).then(function (customerIdPrefix) {
+                self.$customerIdPrefix = customerIdPrefix;
             }).then(function (shippingPkg) {
                 if (shippingPkg) {
                     shippingInstalled = true;
@@ -441,7 +454,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             return GetAddress.then(function (addressData) {
                 var titleData = [];
 
-                if (self.$User.getUsername() === self.$User.getName()) {
+                if (self.$User.getAttribute('customerId') !== '') {
+                    titleData.push(self.$customerIdPrefix + self.$User.getAttribute('customerId'));
+                } else if (self.$User.getUsername() === self.$User.getName()) {
                     titleData.push(self.$User.getUsername());
                 } else {
                     titleData.push(self.$User.getUsername());
@@ -465,6 +480,108 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             });
         },
 
+        /**
+         * Edit customer ID
+         */
+        $onEditCustomerIdClick: function () {
+            var self = this;
+
+            new QUIConfirm({
+                maxHeight: 275,
+                maxWidth : 450,
+                autoclose: false,
+
+                title: QUILocale.get(lg, 'customer.panel.editId.title'),
+                icon : 'fa fa-edit',
+
+                cancel_button: {
+                    text     : false,
+                    textimage: 'icon-remove fa fa-remove'
+                },
+                ok_button    : {
+                    text     : QUILocale.get(lg, 'customer.panel.editId.confirm'),
+                    textimage: 'icon-ok fa fa-check'
+                },
+                events       : {
+                    onOpen  : function (Win) {
+                        var Content = Win.getContent();
+
+                        Content.addClass('quiqqer-customer-customerNo-edit');
+
+                        Content.set('html', Mustache.render(templateEditId, {
+                            customerNoInputHeader: QUILocale.get(lg, 'window.customer.creation.customerNo.inputLabel'),
+                            labelPrefix          : QUILocale.get(lg, 'window.customer.creation.customerNo.labelPrefix'),
+                        }));
+
+                        var PrefixInput     = Content.getElement('input[name="prefix"]');
+                        var CustomerNoInput = Content.getElement('input[name="customerId"]');
+
+                        PrefixInput.value = self.$customerIdPrefix;
+
+                        Win.Loader.show();
+
+                        Handler.getNewCustomerNo().then(function (nextCustomerNo) {
+                            if (self.$User.getAttribute('customerId')) {
+                                var currentCustomerNo = self.$User.getAttribute('customerId');
+
+                                CustomerNoInput.value = currentCustomerNo;
+                                Win.getButton('submit').disable();
+
+                                CustomerNoInput.addEvent('keyup', function () {
+                                    if (CustomerNoInput.value.trim() !== currentCustomerNo) {
+                                        Win.getButton('submit').enable();
+                                    } else {
+                                        Win.getButton('submit').disable();
+                                    }
+                                });
+                            } else {
+                                CustomerNoInput.value = nextCustomerNo;
+                            }
+
+                            Content.getElement('.quiqqer-customer-customerNo-edit-nextId').set(
+                                'html',
+                                QUILocale.get(lg, 'customer.panel.editId.nextCustomerNo', {
+                                    nextCustomerNo: nextCustomerNo
+                                })
+                            );
+
+                            Win.Loader.hide();
+                        }, function () {
+                            Win.close();
+                        });
+
+
+                        CustomerNoInput.focus();
+                        CustomerNoInput.select();
+                    },
+                    onSubmit: function (Win) {
+                        var CustomerNoInput = Win.getContent().getElement('input[name="customerId"]');
+                        var newCustomerNo   = CustomerNoInput.value.trim();
+
+                        if (newCustomerNo === '') {
+                            CustomerNoInput.focus();
+                            return;
+                        }
+
+                        Win.Loader.show();
+
+                        Handler.validateCustomerNo(newCustomerNo).then(function () {
+                            self.$editCustomerNo = newCustomerNo;
+
+                            self.update().then(function () {
+                                self.$editCustomerNo = false;
+                                Win.close();
+                            }, function () {
+                                Win.Loader.hide();
+                            });
+                        }, function () {
+                            Win.Loader.hide();
+                        });
+                    }
+                }
+            }).open();
+        },
+
         //region information
 
         /**
@@ -473,7 +590,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         $openInformation: function () {
             this.Loader.show();
 
-            this.getContent().set('html', Mustache.render(templateInformation, {
+            var Content = this.getContent();
+
+            Content.set('html', Mustache.render(templateInformation, {
                 detailsTitle      : QUILocale.get(lg, 'customer.panel,information.details'),
                 textUserId        : QUILocale.get('quiqqer/quiqqer', 'user_id'),
                 textCustomerId    : QUILocale.get(lg, 'customerId'),
@@ -512,6 +631,15 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 textDeliveryAddressSame: QUILocale.get(lg, 'checkout.panel.delivery.option.same')
             }));
 
+            // Edit customer ID button
+            new QUIButton({
+                icon  : 'fa fa-edit',
+                title : QUILocale.get(lg, 'customer.panel.btn.edit_id'),
+                events: {
+                    onClick: this.$onEditCustomerIdClick
+                }
+            }).inject(Content.getElement('.customer-information-btn-editId'))
+
             var UserLoaded = Promise.resolve();
 
             if (!this.$User) {
@@ -519,7 +647,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             }
 
             var self = this,
-                Form = this.getContent().getElement('form');
+                Form = Content.getElement('form');
 
             var checkVal = function (str) {
                 if (!str || str === 'false') {
@@ -536,7 +664,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 Form.elements.userId.value = self.$User.getId();
 
                 if (self.$User.getAttribute('customerId')) {
-                    Form.elements.customerId.value = checkVal(self.$User.getAttribute('customerId'));
+                    Form.elements.customerId.value = self.$customerIdPrefix + checkVal(self.$User.getAttribute('customerId'));
                 }
 
                 // groups
@@ -1205,6 +1333,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.getBody().setStyle('padding', 20);
 
             this.$hideCategory().then(function () {
+                self.$currentCategory = category;
+
                 if (category === 'information') {
                     return self.$openInformation();
                 }
@@ -1274,6 +1404,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                         no  : entry.get('value')
                     };
                 });
+            }
+
+            // Only edit customer no. explicitly
+            if (this.$editCustomerNo) {
+                data.customerId = this.$editCustomerNo;
+            } else if ('customerId' in data) {
+                delete data.customerId;
             }
 
             this.$User.setAttributes(data);

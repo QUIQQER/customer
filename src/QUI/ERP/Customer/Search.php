@@ -147,6 +147,9 @@ class Search extends Singleton
             \IntlDateFormatter::SHORT
         );
 
+        $NumberRange = new NumberRange();
+        $prefix      = $NumberRange->getCustomerNoPrefix();
+
         $result = [];
         $Groups = QUI::getGroups();
         $Users  = QUI::getUsers();
@@ -180,6 +183,8 @@ class Search extends Singleton
 
             if (empty($entry['customerId'])) {
                 $entry['customerId'] = $entry['user_id'];
+            } else {
+                $entry['customerId'] = $prefix.$entry['customerId'];
             }
 
             $addressData = [];
@@ -296,6 +301,7 @@ class Search extends Singleton
             'email',
             'usergroup',
             'company',
+            'customerId',
             'ad.firstname',
             'ad.lastname'
         ];
@@ -370,9 +376,9 @@ class Search extends Singleton
         if ($this->onlyCustomer) {
             try {
                 $customerGroup = Customers::getInstance()->getCustomerGroupId();
-                $where[]       = 'users.usergroup LIKE :customerId';
+                $where[]       = 'users.usergroup LIKE :customerGroupId';
 
-                $binds['customerId'] = [
+                $binds['customerGroupId'] = [
                     'value' => '%,'.$customerGroup.',%',
                     'type'  => \PDO::PARAM_STR
                 ];
@@ -447,6 +453,8 @@ class Search extends Singleton
             $fc++;
         }
 
+        $NumberRange  = new NumberRange();
+        $prefixLength = \mb_strlen($NumberRange->getCustomerNoPrefix());
 
         if (!empty($this->search)) {
             $searchWhere = [];
@@ -466,6 +474,16 @@ class Search extends Singleton
 
                 if (\strpos($filter, 'users.') === false && \strpos($filter, 'ad.') === false) {
                     $filter = 'users.'.$filter;
+                }
+
+                if ($filter === 'users.customerId') {
+                    $searchWhere[]      = $filter.' LIKE :customer_id_no_prefix';
+                    $customerIdNoPrefix = \mb_substr($this->search, $prefixLength);
+
+                    $binds['customer_id_no_prefix'] = [
+                        'value' => '%'.$customerIdNoPrefix.'%',
+                        'type'  => \PDO::PARAM_STR
+                    ];
                 }
 
                 $searchWhere[] = $filter.' LIKE :search';
@@ -488,11 +506,17 @@ class Search extends Singleton
         if ($count) {
             return [
                 "query" => "
-                    SELECT COUNT(users.id) AS count
-                    FROM {$table} as users 
-                        LEFT JOIN users_address AS ad ON users.id = ad.uid
-                        AND users.address = ad.id
-                    {$whereQuery}
+                    SELECT COUNT(search_query.`user_id`) AS count
+                    FROM (
+                        SELECT users.`id` as user_id,
+                        users.`firstname` as user_firstname,
+                        users.`lastname` as user_lastname,
+                        users.`email` as user_email
+                        FROM {$table} as users
+                             LEFT JOIN users_address AS ad ON users.id = ad.uid 
+                             AND users.address = ad.id
+                        {$whereQuery}
+                    ) as search_query
                 ",
                 'binds' => $binds
             ];

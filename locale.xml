@@ -63,6 +63,14 @@
             <de><![CDATA[Zahlungseingänge]]></de>
             <en><![CDATA[Incoming payments]]></en>
         </locale>
+        <locale name="customer.settings.customerNoPrefix">
+            <de><![CDATA[Kunden-Nr. Präfix]]></de>
+            <en><![CDATA[Customer no. prefix]]></en>
+        </locale>
+        <locale name="customer.settings.customerNoPrefix.description">
+            <de><![CDATA[Präfix, das allen Kunden-Nr. vorangestellt wird.]]></de>
+            <en><![CDATA[Prefix that is prependend to all customer numbers.]]></en>
+        </locale>
 
         <locale name="exception.customer.group.not.exists">
             <de><![CDATA[Kundengruppe existiert nicht.]]></de>
@@ -125,6 +133,17 @@
     </groups>
 
     <groups name="quiqqer/customer" datatype="php">
+
+        <locale name="exception.customer_no_already_exists">
+            <de><![CDATA[Die Kunden-Nr. "[customerNo]" existiert bereits und kann daher nicht vergeben werden.]]></de>
+            <en><![CDATA[Customer no. "[customerNo]" already exists and cannot be assigned.]]></en>
+        </locale>
+        
+        <locale name="NumberRange.title">
+            <de><![CDATA[Kundennummer]]></de>
+            <en><![CDATA[Customer number]]></en>
+        </locale>
+
         <locale name="OpenItemsList.documentType.invoice">
             <de><![CDATA[Rechnung]]></de>
             <en><![CDATA[Invoice]]></en>
@@ -432,6 +451,10 @@ Best regards
             This customer number can still be changed later.
             ]]></en>
         </locale>
+        <locale name="window.customer.creation.customerNo.labelPrefix">
+            <de><![CDATA[Präfix]]></de>
+            <en><![CDATA[Prefix]]></en>
+        </locale>
 
         <locale name="window.customer.creation.dataHeader.title">
             <de><![CDATA[Kunden Daten]]></de>
@@ -600,6 +623,22 @@ Best regards
         <locale name="customer.panel.delivery.address">
             <de><![CDATA[Versandadresse]]></de>
             <en><![CDATA[Shipping address]]></en>
+        </locale>
+        <locale name="customer.panel.btn.edit_id">
+            <de><![CDATA[Kunden-Nr. bearbeiten]]></de>
+            <en><![CDATA[Edit customer no.]]></en>
+        </locale>
+        <locale name="customer.panel.editId.title">
+            <de><![CDATA[Kunden-Nr. bearbeiten]]></de>
+            <en><![CDATA[Edit customer no.]]></en>
+        </locale>
+        <locale name="customer.panel.editId.confirm">
+            <de><![CDATA[Kunden-Nr. jetzt ändern]]></de>
+            <en><![CDATA[Change customer no. now]]></en>
+        </locale>
+        <locale name="customer.panel.editId.nextCustomerNo" html="true">
+            <de><![CDATA[Nächste zu vergebende Kd.-Nr.: <b>[nextCustomerNo]</b>]]></de>
+            <en><![CDATA[Next no. to be assigned: <b>[nextCusomterNo]</b>]]></en>
         </locale>
         <locale name="checkout.panel.delivery.option.same">
             <de><![CDATA[Gleiche Adresse wie Rechnungsadresse]]></de>

@@ -5,10 +5,16 @@
                 <h1>{{customerNoHeader}}</h1>
                 {{{customerNoText}}}
 
-                <label>
-                    <span>{{customerNoInputHeader}}</span>
-                    <input type="text" name="customerId"/>
-                </label>
+                <div class="quiqqer-customer-create-customerNo-inputs">
+                    <label class="quiqqer-customer-create-customerNo-prefix">
+                        <span>{{labelPrefix}}</span>
+                        <input type="text" name="prefix" disabled/>
+                    </label>
+                    <label>
+                        <span>{{customerNoInputHeader}}</span>
+                        <input type="text" name="customerId"/>
+                    </label>
+                </div>
             </section>
         </li>
         <li>
@@ -25,6 +31,16 @@
                                     {{textAddressCompany}}
                                 </span>
                                     <input type="text" name="address-company" value="" class="field-container-field">
+                                </label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label class="field-container">
+                                <span class="field-container-item">
+                                    {{textAddressSuffix}}
+                                </span>
+                                    <input type="text" name="address-suffix" value="" class="field-container-field">
                                 </label>
                             </td>
                         </tr>
