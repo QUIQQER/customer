@@ -142,7 +142,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             ], function (User, Utils) {
                 Utils.openPanelInTasks(
                     new User(self.getAttribute('userId'))
-                );
+                ).then(function () {
+                    self.destroy();
+                });
             });
         },
 
@@ -333,11 +335,21 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.refresh();
 
             var self   = this;
+            var userId = this.getAttribute('userId');
             var User   = Users.get(this.getAttribute('userId'));
             var Loaded = Promise.resolve(User);
 
             if (!User.isLoaded()) {
                 Loaded = User.load();
+            }
+
+            // check if user panels exists
+            var userPanels = QUI.Controls.getByType('controls/users/User');
+
+            for (var i = 0, len = userPanels.length; i < len; i++) {
+                if (userPanels[i].getUser().getId() === userId) {
+                    userPanels[i].destroy();
+                }
             }
 
             return Loaded.then(function (User) {
