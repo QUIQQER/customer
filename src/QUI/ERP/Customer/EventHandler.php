@@ -232,8 +232,18 @@ class EventHandler
             }
         }
 
+        $newNextCustomerNo = false;
+        $NumberRange       = new NumberRange();
+
         if (isset($attributes['customerId'])) {
             $data['customerId'] = $attributes['customerId'];
+
+            // Check: if customerId is set to the next ID in line, then the next ID must be increased by 1
+            $nextCustomerNo = $NumberRange->getNextCustomerNo();
+
+            if ((int)$data['customerId'] === $nextCustomerNo) {
+                $newNextCustomerNo = $nextCustomerNo + 1;
+            }
         }
 
         // comments
@@ -246,14 +256,20 @@ class EventHandler
             }
         }
 
+        if (empty($data)) {
+            return;
+        }
+
         // saving
         try {
-            if (!empty($data)) {
-                QUI::getDataBase()->update(
-                    Manager::table(),
-                    $data,
-                    ['id' => $User->getId()]
-                );
+            QUI::getDataBase()->update(
+                Manager::table(),
+                $data,
+                ['id' => $User->getId()]
+            );
+
+            if ($newNextCustomerNo) {
+                $NumberRange->setRange($newNextCustomerNo);
             }
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::addDebug($Exception->getMessage());
