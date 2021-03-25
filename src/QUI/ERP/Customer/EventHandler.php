@@ -34,7 +34,7 @@ class EventHandler
     }
 
     /**
-     * Update open items records of alle customers
+     * Update open items records of all customers
      *
      * @return void
      */
