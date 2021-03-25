@@ -137,8 +137,11 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     }))
                 );
 
-                this.$currentRecordsUserId = null;
-                this.$refreshTotalsOnly    = false;
+                if (!this.$refreshTotalsOnly) {
+                    this.$currentRecordsUserId = null;
+                }
+
+                this.$refreshTotalsOnly = false;
 
                 this.Loader.hide();
             }.bind(this)).catch(function (err) {
@@ -435,8 +438,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 default:
                     this.$Grid.accordianOpen(data.element);
             }
-        }
-        ,
+        },
 
         /**
          * event : on resize
@@ -456,8 +458,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
             this.$Grid.setHeight(size.y - 110);
             this.$Grid.setWidth(size.x - 20);
-        }
-        ,
+        },
 
         /**
          * event: on inject
@@ -506,8 +507,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             this.$Currency.getContextMenu(function (ContextMenu) {
                 ContextMenu.setAttribute('showIcons', false);
             });
-        }
-        ,
+        },
 
         //region Buttons events
 
@@ -537,8 +537,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     }
                 }).open();
             });
-        }
-        ,
+        },
 
         /**
          * event: on click open process
@@ -617,8 +616,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             }
 
             return this.openProcess(selected[0].id);
-        }
-        ,
+        },
 
         //endregion
 
@@ -643,8 +641,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     resolve(Panel);
                 });
             });
-        }
-        ,
+        },
 
         /**
          * Add a payment to an process
@@ -673,8 +670,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             }).catch(function (err) {
                 console.error(err);
             });
-        }
-        ,
+        },
 
         /**
          * Opens a temporary process
@@ -690,8 +686,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     PanelUtils.openTemporaryProcess(processId).then(resolve);
                 });
             });
-        }
-        ,
+        },
 
         /**
          * key up event at the search input
@@ -731,8 +726,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 }).delay(250, this);
                 return;
             }
-        }
-        ,
+        },
 
         /**
          * Parse data entry of a grid row for display purposes
@@ -757,8 +751,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             });
 
             return Data;
-        }
-        ,
+        },
 
         /**
          * Search open item slist
@@ -774,8 +767,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     onError     : reject
                 });
             });
-        }
-        ,
+        },
 
         // region User records
 
@@ -954,8 +946,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             var size = ParentNode.getSize();
 
             self.$GridDetails.setHeight(size.y - 120);
-        }
-        ,
+        },
 
         /**
          * Refresh grid button status of user open items records details
@@ -984,8 +975,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
             OpenDocument.disable();
             AddTransaction.disable();
-        }
-        ,
+        },
 
         /**
          * If the user clicks the "add transaction to open item record" button
@@ -1064,8 +1054,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     onSubmit: submitTransaction
                 }
             }).open();
-        }
-        ,
+        },
 
         /**
          * If the user clicks the "open open item record document" button
@@ -1104,8 +1093,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 default:
                     return;
             }
-        }
-        ,
+        },
 
         /**
          * key up event at the user records search input
@@ -1144,8 +1132,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     this.$refreshUserRecords(this.$GridDetails);
                 }).delay(250, this);
             }
-        }
-        ,
+        },
 
         /**
          * Refresh GRID with user open items records
@@ -1195,8 +1182,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
                 self.$refreshUserRecordsButtons();
             });
-        }
-        ,
+        },
 
         /**
          * Get list of open items by user
@@ -1216,8 +1202,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     onError     : reject
                 });
             });
-        }
-        ,
+        },
 
         // endregion
 

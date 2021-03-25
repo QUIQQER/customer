@@ -6,8 +6,10 @@ use QUI;
 use QUI\ERP\Accounting\Payments\Transactions\Transaction;
 use QUI\ERP\Accounting\Invoice\InvoiceTemporary;
 use QUI\ERP\Accounting\Invoice\Invoice;
+use QUI\ERP\Accounting\Invoice\Handler as InvoiceHandler;
 use QUI\ERP\Order\Settings;
 use QUI\ERP\Order\Order;
+use QUI\ERP\Order\Handler as OrderHandler;
 
 /**
  * Class Events
@@ -26,17 +28,28 @@ class Events
      */
     public static function onTransactionCreate(Transaction $Transaction)
     {
-        $userId = $Transaction->getAttribute('uid');
-
-        if (empty($userId)) {
-            return;
-        }
-
+        // Get invoice by hash
         try {
-            $User = QUI::getUsers()->get($userId);
+            $Invoice = InvoiceHandler::getInstance()->getInvoiceByHash($Transaction->getHash());
+            $User    = $Invoice->getCustomer();
         } catch (\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
-            return;
+
+            // Get order by hash
+            try {
+                $Order = OrderHandler::getInstance()->getOrderByHash($Transaction->getHash());
+                $User  = $Order->getCustomer();
+            } catch (\Exception $Exception) {
+                QUI\System\Log::writeDebugException($Exception);
+                return;
+            }
+        }
+
+        // Prefer LIVE user instead of invoice user
+        $LiveErpUser = self::getLiveErpUser($User->getId());
+
+        if ($LiveErpUser) {
+            $User = $LiveErpUser;
         }
 
         try {
@@ -63,6 +76,13 @@ class Events
     ) {
         try {
             $User = $Invoice->getCustomer();
+
+            // Prefer LIVE user instead of invoice user
+            $LiveErpUser = self::getLiveErpUser($User->getId());
+
+            if ($LiveErpUser) {
+                $User = $LiveErpUser;
+            }
         } catch (\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             return;
@@ -92,6 +112,13 @@ class Events
     ) {
         try {
             $User = $Order->getCustomer();
+
+            // Prefer LIVE user instead of invoice user
+            $LiveErpUser = self::getLiveErpUser($User->getId());
+
+            if ($LiveErpUser) {
+                $User = $LiveErpUser;
+            }
         } catch (\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             return;
@@ -119,6 +146,13 @@ class Events
     ): void {
         try {
             $User = $Invoice->getCustomer();
+
+            // Prefer LIVE user instead of invoice user
+            $LiveErpUser = self::getLiveErpUser($User->getId());
+
+            if ($LiveErpUser) {
+                $User = $LiveErpUser;
+            }
         } catch (\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             return;
@@ -163,6 +197,13 @@ class Events
 
         try {
             $User = $Order->getCustomer();
+
+            // Prefer LIVE user instead of invoice user
+            $LiveErpUser = self::getLiveErpUser($User->getId());
+
+            if ($LiveErpUser) {
+                $User = $LiveErpUser;
+            }
         } catch (\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             return;
@@ -172,6 +213,32 @@ class Events
             Handler::updateOpenItemsRecord($User);
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
+        }
+    }
+
+    /**
+     * Get ERP user from LIVE user data based on $userId from invoice or order
+     *
+     * @param int $userId
+     * @return QUI\ERP\User|false
+     */
+    protected static function getLiveErpUser(int $userId)
+    {
+        try {
+            $User = QUI::getUsers()->get($userId);
+        } catch (\Exception $Exception) {
+            if ($Exception->getCode() !== 404) {
+                QUI\System\Log::writeException($Exception);
+            }
+
+            return false;
+        }
+
+        try {
+            return QUI\ERP\User::convertUserToErpUser($User);
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+            return false;
         }
     }
 }

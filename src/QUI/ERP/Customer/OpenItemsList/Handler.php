@@ -387,6 +387,9 @@ class Handler
                 ]
             );
         }
+
+        // Clear cache used in backend administration
+        QUI\Cache\Manager::clear('quiqqer/customer/openitems/'.$User->getId());
     }
 
     /**
