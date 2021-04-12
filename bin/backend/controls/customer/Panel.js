@@ -390,15 +390,15 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 return Packages.getPackage('quiqqer/shipping').catch(function () {
                     return false;
                 });
-            }).then(function () {
-                return Handler.getCustomerIdPrefix();
-            }).then(function (customerIdPrefix) {
-                self.$customerIdPrefix = customerIdPrefix;
             }).then(function (shippingPkg) {
                 if (shippingPkg) {
                     shippingInstalled = true;
                 }
 
+                return Handler.getCustomerIdPrefix();
+            }).then(function (customerIdPrefix) {
+                self.$customerIdPrefix = customerIdPrefix;
+            }).then(function () {
                 return self.$refreshTitle();
             }).then(function () {
                 if (!self.$ActiveCat) {
@@ -1565,12 +1565,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             ], function (OutputDialog) {
                 new OutputDialog({
                     entityId  : self.getAttribute('userId'),
-                    entityType: 'OpenItemsList',
-                    events    : {
-                        onOpen: function () {
-                            console.log("openItemsListDialogOpen");
-                        }
-                    }
+                    entityType: 'OpenItemsList'
                 }).open();
             });
         },
