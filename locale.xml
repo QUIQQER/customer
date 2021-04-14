@@ -8,12 +8,16 @@
         </locale>
         <locale name="package.description">
             <de><![CDATA[
-            Mit dem Customer Paket erweitern Sie QUIQQQER um eine einfachere Kundenverwaltung.
-            Sie müssen die Kundenbearbeitung in der QUIQQQER-Benutzerverwaltung nicht mehr durchführen.
+            Mit dem E-COYN Kunden Modul verwaltest du all deine Kunden an einer zentralen Stelle.
+            Die übersichtliche Kunden-Verwaltung hilft dir dabei, Kunden schnell zu finden, anzulegen und zu bearbeiten.
+            Für jeden Kunden gibt es eine Reihe von individuellen Eigenschaften und Funktionen,
+            die durch die umfangreiche Entwickler-Schnittstelle jederzeit erweiterbar sind.
             ]]></de>
             <en><![CDATA[
-            With the customer administration you extend QUIQQER by a simpler administration of your customers.
-            You don't have to do the customer processing in the QUIQQER user administration anymore.
+            With the E-COYN customer module you manage all your customers in one central place.
+            The clearly arranged customer management helps you to quickly find, create and edit customers.
+            There are a number of individual properties and functions for each customer,
+            which can be extended at any time through the extensive developer interface.
             ]]></en>
         </locale>
 
@@ -138,7 +142,7 @@
             <de><![CDATA[Die Kunden-Nr. "[customerNo]" existiert bereits und kann daher nicht vergeben werden.]]></de>
             <en><![CDATA[Customer no. "[customerNo]" already exists and cannot be assigned.]]></en>
         </locale>
-        
+
         <locale name="NumberRange.title">
             <de><![CDATA[Kundennummer]]></de>
             <en><![CDATA[Customer number]]></en>
