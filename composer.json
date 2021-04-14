@@ -3,6 +3,7 @@
     "type": "quiqqer-module",
     "description": "With the customer administration you extend QUIQQER by a simpler administration of your customers.",
     "license": "GPL-3.0+",
+    "version": "1.0.0",
     "authors": [
         {
             "name": "Henning Leutz",
