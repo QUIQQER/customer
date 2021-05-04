@@ -83,4 +83,56 @@ class Utils extends QUI\Utils\Singleton
 
         return QUI::getGroups()->get($groupId);
     }
+
+    /**
+     * Get e-mail address of a customer user in the following order:
+     *
+     * 1. Email address of QUIQQER user
+     * 2. Email address of default address
+     * 3. Email address of contact address
+     *
+     * @param QUI\Interfaces\Users\User $Customer
+     * @return string|false - Email address or false if no address exists
+     */
+    public function getEmailByCustomer(QUI\Interfaces\Users\User $Customer)
+    {
+        if (!empty($Customer->getAttribute('email'))) {
+            return $Customer->getAttribute('email');
+        }
+
+        if (\method_exists($Customer, 'getStandardAddress')) {
+            try {
+                /** @var QUI\Users\Address $StandardAddress */
+                $StandardAddress = $Customer->getStandardAddress();
+                $mailAddresses   = $StandardAddress->getMailList();
+
+                if (!empty($mailAddresses)) {
+                    return \current($mailAddresses);
+                }
+            } catch (\Exception $Exception) {
+                QUI\System\Log::writeDebugException($Exception);
+            }
+        }
+
+        try {
+            $contactPersonAddressId = $Customer->getAttribute('quiqqer.erp.customer.contact.person');
+
+            if (!empty($contactPersonAddressId)) {
+                if (!($Customer instanceof QUI\Users\User)) {
+                    $Customer = QUI::getUsers()->get($Customer->getId());
+                }
+
+                $ContactAddress = new QUI\Users\Address($Customer, $contactPersonAddressId);
+                $mailAddresses  = $ContactAddress->getMailList();
+
+                if (!empty($mailAddresses)) {
+                    return \current($mailAddresses);
+                }
+            }
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeDebugException($Exception);
+        }
+
+        return false;
+    }
 }
