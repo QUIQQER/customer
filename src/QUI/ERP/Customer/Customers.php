@@ -44,9 +44,10 @@ class Customers extends Singleton
          */
         $NumberRange    = new NumberRange();
         $nextCustomerNo = $NumberRange->getNextCustomerNo();
+        $customerId     = (int)$customerId;
 
-        if ((int)$customerId === $NumberRange->getNextCustomerNo()) {
-            $NumberRange->setRange($nextCustomerNo + 1);
+        if ((int)$customerId >= $nextCustomerNo) {
+            $NumberRange->setRange($customerId + 1);
         }
 
         $User->setAttribute('customerId', $customerId);
