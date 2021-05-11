@@ -156,9 +156,7 @@ class OutputProvider implements OutputProviderInterface
     {
         /** @var User $ERPUser */
         $ERPUser = self::getEntity($entityId);
-        $email   = $ERPUser->getAttribute('email');
-
-        return $email ?: false;
+        return QUI\ERP\Customer\Utils::getInstance()->getEmailByCustomer($ERPUser);
     }
 
     /**
