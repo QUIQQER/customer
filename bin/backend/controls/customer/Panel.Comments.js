@@ -137,14 +137,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
             });
 
             if (typeof comments !== 'undefined') {
-                comments = comments.reverse();
+                //comments = comments.reverse();
                 self.$Comments.unserialize(comments);
 
                 return Promise.resolve();
             }
 
             return this.getComments().then(function (comments) {
-                comments = comments.reverse();
+                //comments = comments.reverse();
                 self.$Comments.unserialize(comments);
             });
         },

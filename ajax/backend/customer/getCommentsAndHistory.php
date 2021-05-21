@@ -1,24 +1,24 @@
 <?php
 
 /**
- * This file contains package_quiqqer_customer_ajax_backend_customer_getComments
- */
-
-/**
- * Return all comments for an user
- * - considers comments from invoice
- * - considers comments from orders
+ * Return all comments and history entries for an user
+ * - considers comments from other ERP modules
  *
  * @param int $page - Pagination page no.
  * @param int $pageSize - Pagination page size
  * @return array
  */
 QUI::$Ajax->registerFunction(
-    'package_quiqqer_customer_ajax_backend_customer_getComments',
+    'package_quiqqer_customer_ajax_backend_customer_getCommentsAndHistory',
     function ($uid, $page, $limit) {
         $User     = QUI::getUsers()->get($uid);
         $Comments = QUI\ERP\Comments::getCommentsByUser($User);
-        $comments = $Comments->toArray();
+        $History  = QUI\ERP\Comments::getHistoryByUser($User);
+
+        $comments = \array_merge(
+            $Comments->toArray(),
+            $History->toArray()
+        );
 
         // Sorty by time DESC
         \usort($comments, function ($commA, $commB) {

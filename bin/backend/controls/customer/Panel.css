@@ -147,3 +147,65 @@
     font-size: 12px;
     width: 100%;
 }
+
+/**
+ * Pagination
+ */
+.comments-pagination {
+    /*width: 95%; *!*/
+    /* background-color: red; */
+    height: 60px;
+    bottom: 0;
+    /* position: absolute; */
+    /* display: flex; */
+    padding: 20px 6px;
+    float: left;
+    width: 350px;
+}
+
+/*.comments-pagination .qui-media-pagination__hidden {*/
+/*    display: none;*/
+/*}*/
+
+/*.comments-pagination .qui-media-pagination-limit {*/
+/*    float: left;*/
+/*    height: 32px;*/
+/*    margin: 0 10px 0 0;*/
+/*    width: 65px;*/
+/*}*/
+
+.comments-pagination .quiqqer-sheets-desktop,
+.comments-pagination .quiqqer-pagination {
+    /*clear: none !important;*/
+    float: left;
+    width: calc(100% - 10px) !important;
+}
+
+.comments-pagination .quiqqer-sheets-sheet,
+.comments-pagination .quiqqer-sheets-first,
+.comments-pagination .quiqqer-sheets-last,
+.comments-pagination .quiqqer-sheets-next,
+.comments-pagination .quiqqer-sheets-prev {
+    color: black;
+    width: 30px;
+}
+
+.comments-pagination .quiqqer-sheets-desktop-current {
+    color: white;
+}
+
+.comments-pagination .quiqqer-sheets-desktop {
+    margin: 0 !important;
+}
+
+.qui-media-pagination .quiqqer-sheets-desktop a {
+    color: #212527;
+}
+
+.qui-media-pagination .quiqqer-sheets-desktop-current {
+    color: #efefef !important;
+}
+
+.qui-media-pagination .quiqqer-sheets-desktop a:hover {
+    color: #a4a4a4;
+}

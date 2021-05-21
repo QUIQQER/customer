@@ -54,7 +54,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             'deliveryAddressToggle',
             '$onOpenOpenItemsListClick',
             '$onClickSendMail',
-            '$onEditCustomerIdClick'
+            '$onEditCustomerIdClick',
+            '$getPagination',
+            '$onCommentsPaginationChange',
+            '$loadComments'
         ],
 
         options: {
@@ -74,6 +77,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.$customerIdPrefix   = '';
             this.$editCustomerNo     = false;
             this.$currentCategory    = 'information';
+            this.$CommentsPagination = null;
+            this.$CommentsPage       = {
+                page : 1,
+                limit: 5
+            };
 
             this.addEvents({
                 onCreate : this.$onCreate,
@@ -302,6 +310,17 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 events: {
                     onActive: function () {
                         self.$openCategory('comments');
+                    }
+                }
+            });
+
+            this.addCategory({
+                name  : 'history',
+                text  : QUILocale.get(lg, 'quiqqer.customer.panel.history'),
+                icon  : 'fa fa-history',
+                events: {
+                    onActive: function () {
+                        self.$openCategory('history');
                     }
                 }
             });
@@ -593,26 +612,26 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             var Content = this.getContent();
 
             Content.set('html', Mustache.render(templateInformation, {
-                detailsTitle      : QUILocale.get(lg, 'customer.panel,information.details'),
-                textUserId        : QUILocale.get('quiqqer/quiqqer', 'user_id'),
-                textCustomerId    : QUILocale.get(lg, 'customerId'),
-                textSalutation    : QUILocale.get('quiqqer/quiqqer', 'salutation'),
-                textCompany       : QUILocale.get('quiqqer/quiqqer', 'company'),
-                textAddressSuffix : QUILocale.get('quiqqer/quiqqer', 'address.suffix'),
-                textFirstname     : QUILocale.get('quiqqer/quiqqer', 'firstname'),
-                textLastname      : QUILocale.get('quiqqer/quiqqer', 'lastname'),
-                titleAddress      : QUILocale.get('quiqqer/quiqqer', 'address'),
-                textStreet        : QUILocale.get('quiqqer/quiqqer', 'street'),
-                textCountryZipCity: QUILocale.get(lg, 'customer.panel,information.countryZipCity'),
-                textCountry       : QUILocale.get('quiqqer/quiqqer', 'country'),
-                textZip           : QUILocale.get('quiqqer/quiqqer', 'zip'),
-                textCity          : QUILocale.get('quiqqer/quiqqer', 'city'),
-                textContactPerson : QUILocale.get(lg, 'customer.panel,information.contactPerson'),
-                titleAllocation   : QUILocale.get(lg, 'customer.panel,information.allocation'),
-                textGroup         : QUILocale.get(lg, 'customer.panel,information.group'),
-                textGroups        : QUILocale.get(lg, 'customer.panel,information.groups'),
-                titleCommunication: QUILocale.get(lg, 'customer.panel,information.communication'),
-                titleComments     : QUILocale.get(lg, 'customer.panel,information.comments'),
+                detailsTitle           : QUILocale.get(lg, 'customer.panel,information.details'),
+                textUserId             : QUILocale.get('quiqqer/quiqqer', 'user_id'),
+                textCustomerId         : QUILocale.get(lg, 'customerId'),
+                textSalutation         : QUILocale.get('quiqqer/quiqqer', 'salutation'),
+                textCompany            : QUILocale.get('quiqqer/quiqqer', 'company'),
+                textAddressSuffix      : QUILocale.get('quiqqer/quiqqer', 'address.suffix'),
+                textFirstname          : QUILocale.get('quiqqer/quiqqer', 'firstname'),
+                textLastname           : QUILocale.get('quiqqer/quiqqer', 'lastname'),
+                titleAddress           : QUILocale.get('quiqqer/quiqqer', 'address'),
+                textStreet             : QUILocale.get('quiqqer/quiqqer', 'street'),
+                textCountryZipCity     : QUILocale.get(lg, 'customer.panel,information.countryZipCity'),
+                textCountry            : QUILocale.get('quiqqer/quiqqer', 'country'),
+                textZip                : QUILocale.get('quiqqer/quiqqer', 'zip'),
+                textCity               : QUILocale.get('quiqqer/quiqqer', 'city'),
+                textContactPerson      : QUILocale.get(lg, 'customer.panel,information.contactPerson'),
+                titleAllocation        : QUILocale.get(lg, 'customer.panel,information.allocation'),
+                textGroup              : QUILocale.get(lg, 'customer.panel,information.group'),
+                textGroups             : QUILocale.get(lg, 'customer.panel,information.groups'),
+                titleCommunication     : QUILocale.get(lg, 'customer.panel,information.communication'),
+                titleCommentsAndHistory: QUILocale.get(lg, 'customer.panel,information.commentsAndHistory'),
 
                 titleExtra     : QUILocale.get(lg, 'customer.panel,information.extra'),
                 textPaymentTerm: QUILocale.get(lg, 'customer.panel,information.paymentTerm'),
@@ -884,27 +903,31 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 });
             }).then(function () {
                 // load comments
-                self.getComments().then(function (comments) {
-                    require(['package/quiqqer/erp/bin/backend/controls/Comments'], function (Comments) {
-                        var Container = self.getContent().getElement('.comments');
-
-                        if (!Container) {
-                            return;
-                        }
-
-                        Container.set('html', '');
-
-                        comments = comments.reverse();
-                        comments = comments.slice(0, 5);
-
-                        var Control = new Comments();
-                        Control.inject(Container);
-                        Control.unserialize(comments);
-                    });
-                });
-
                 return QUI.parse(self.getContent());
             }).then(function () {
+                // load pagination
+                return self.$getPagination();
+            }).then(function (paginationHtml) {
+                var Content             = self.getContent();
+                var PaginationContainer = Content.getElement('.comments-pagination');
+
+                PaginationContainer.set('html', paginationHtml);
+
+                return QUI.parse(PaginationContainer).then(function () {
+                    self.$CommentsPagination = QUI.Controls.getById(
+                        Content.getElement(
+                            '[data-qui="package/quiqqer/controls/bin/navigating/Pagination"]'
+                        ).get('data-quiid')
+                    );
+
+                    self.$CommentsPagination.addEvents({
+                        onChange: self.$onCommentsPaginationChange
+                    });
+
+                    return self.$loadComments();
+                });
+            }).then(function () {
+                // PAYMENTS
                 if (paymentsInstalled === false) {
                     return;
                 }
@@ -1023,22 +1046,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 });
             }).then(function () {
                 self.Loader.hide();
-            });
-        },
-
-        /**
-         * return all comments for the user
-         *
-         * @return {Promise}
-         */
-        getComments: function () {
-            var self = this;
-
-            return new Promise(function (resolve) {
-                QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getComments', resolve, {
-                    'package': 'quiqqer/customer',
-                    uid      : self.$User.getId()
-                });
             });
         },
 
@@ -1249,6 +1256,28 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         },
 
         /**
+         * open the history
+         *
+         * @return {Promise}
+         */
+        $openHistory: function () {
+            var self = this;
+
+            this.getContent().set('html', '');
+
+            return new Promise(function (resolve) {
+                require(['package/quiqqer/customer/bin/backend/controls/customer/Panel.History'], function (Comments) {
+                    new Comments({
+                        userId: self.getAttribute('userId'),
+                        events: {
+                            onLoad: resolve
+                        }
+                    }).inject(self.getContent());
+                });
+            });
+        },
+
+        /**
          * open the user information
          *
          * @return {Promise}
@@ -1347,6 +1376,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     self.getBody().setStyle('padding', 0);
 
                     return self.$openComments();
+                }
+
+                if (category === 'history') {
+                    self.getBody().setStyle('padding', 0);
+
+                    return self.$openHistory();
                 }
 
                 if (category === 'userInformation') {
@@ -1697,8 +1732,91 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     }).inject(Select);
                 }
             });
-        }
+        },
 
         //endregion
+
+        // region pagination
+
+        /**
+         * return all comments for the user
+         *
+         * @return {Promise}
+         */
+        getComments: function () {
+            var self = this;
+
+            return new Promise(function (resolve) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getCommentsAndHistory', resolve, {
+                    'package': 'quiqqer/customer',
+                    uid      : self.$User.getId(),
+                    page     : self.$CommentsPage.page,
+                    limit    : self.$CommentsPage.limit
+                });
+            });
+        },
+
+        /**
+         * Load comments and history
+         *
+         * @return {Promise}
+         */
+        $loadComments() {
+            var self = this;
+
+            this.Loader.show();
+
+            return this.getComments().then(function (comments) {
+                require(['package/quiqqer/erp/bin/backend/controls/Comments'], function (Comments) {
+                    var Container = self.getContent().getElement('.comments');
+
+                    if (!Container) {
+                        return;
+                    }
+
+                    Container.set('html', '');
+
+                    //comments = comments.reverse(); // @todo weg
+                    //comments = comments.slice(0, 5); // @todo weg
+
+                    var Control = new Comments();
+                    Control.inject(Container);
+                    Control.unserialize(comments);
+
+                    self.Loader.hide();
+                });
+            });
+        },
+
+        /**
+         * If pagination on comments change
+         *
+         * @param {Object} Control
+         * @param {Object} SheetElm
+         * @param {Object} Page
+         */
+        $onCommentsPaginationChange: function (Control, SheetElm, Page) {
+            this.$CommentsPage = Page;
+            this.$loadComments();
+        },
+
+        /**
+         * Get HTML of pagination control
+         *
+         * @return {Promise}
+         */
+        $getPagination: function () {
+            var self = this;
+
+            return new Promise(function (resolve, reject) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getPagination', resolve, {
+                    'package': 'quiqqer/customer',
+                    uid      : self.getAttribute('userId'),
+                    onError  : reject
+                });
+            });
+        }
+
+        // endregion
     });
 });

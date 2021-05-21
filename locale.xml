@@ -612,9 +612,9 @@ Best regards
             <en><![CDATA[Default term of payment]]></en>
         </locale>
 
-        <locale name="customer.panel,information.comments">
-            <de><![CDATA[Kommentare]]></de>
-            <en><![CDATA[Comments]]></en>
+        <locale name="customer.panel,information.commentsAndHistory">
+            <de><![CDATA[Kommentare & Verlauf]]></de>
+            <en><![CDATA[Comments & history]]></en>
         </locale>
         <locale name="customer.panel,information.standard.payments">
             <de><![CDATA[Standard Zahlungsweise]]></de>
@@ -690,6 +690,10 @@ Best regards
         <locale name="quiqqer.customer.panel.comments">
             <de><![CDATA[Kommentare]]></de>
             <en><![CDATA[Comments]]></en>
+        </locale>
+        <locale name="quiqqer.customer.panel.history">
+            <de><![CDATA[Verlauf]]></de>
+            <en><![CDATA[History]]></en>
         </locale>
         <locale name="quiqqer.customer.panel.openUser">
             <de><![CDATA[Benutzer direkt öffnen]]></de>
