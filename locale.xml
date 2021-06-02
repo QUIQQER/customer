@@ -138,6 +138,15 @@
 
     <groups name="quiqqer/customer" datatype="php">
 
+        <locale name="comment.DownloadEntry.add_file">
+            <de><![CDATA[Datei "[file]" wurde von [editUser] im Frontend-Profil des Kunden zum Download zur Verfügung gestellt.]]></de>
+            <en><![CDATA[File "[file]" was made available for download by [editUser] in the customer's frontend profile.]]></en>
+        </locale>
+        <locale name="comment.DownloadEntry.remove_file">
+            <de><![CDATA[Datei "[file]" wurde von [editUser] aus den Downloads im Frontend-Profil des Kunden entfernt.]]></de>
+            <en><![CDATA[File "[file]" was removed from the downloadas  in the customer's frontend profile by [editUser].]]></en>
+        </locale>
+        
         <locale name="exception.ajax.backend.general">
             <de><![CDATA[Bei der Anfrage ist ein unerwarteter Fehler aufgetreten. Bitte prüfen Sie die Fehler-Logs oder wenden sich an einen Administrator.]]></de>
             <en><![CDATA[An unexpected error occurred during the request. Please check the error logs or contact an administrator.]]></en>

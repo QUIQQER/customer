@@ -233,6 +233,21 @@ class CustomerFiles
         );
 
         $DownloadEntry->update();
+
+        $User     = QUI::getUsers()->get($customerId);
+        $EditUser = QUI::getUserBySession();
+
+        Customers::getInstance()->addCommentToUser(
+            $User,
+            QUI::getLocale()->get(
+                'quiqqer/customer',
+                'comment.DownloadEntry.add_file',
+                [
+                    'editUser' => $EditUser->getName().' (#'.$EditUser->getId().')',
+                    'file'     => $file
+                ]
+            )
+        );
     }
 
     /**
@@ -283,6 +298,21 @@ class CustomerFiles
         if ($itemCount === 0) {
             self::deleteDownloadEntry($customerId);
         }
+
+        $User     = QUI::getUsers()->get($customerId);
+        $EditUser = QUI::getUserBySession();
+
+        Customers::getInstance()->addCommentToUser(
+            $User,
+            QUI::getLocale()->get(
+                'quiqqer/customer',
+                'comment.DownloadEntry.remove_file',
+                [
+                    'editUser' => $EditUser->getName().' (#'.$EditUser->getId().')',
+                    'file'     => $file
+                ]
+            )
+        );
     }
 
     /**
@@ -314,7 +344,7 @@ class CustomerFiles
         $fileExt  = $pathInfo['extension'];
 
         foreach ($DownloadEntry->getUrls() as $entry) {
-            $url = $entry['url'];
+            $url = \urldecode($entry['url']);
 
             if (\mb_strpos($url, 'file='.$fileName) !== false &&
                 \mb_strpos($url, 'extension='.$fileExt) !== false) {
