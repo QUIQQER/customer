@@ -19,18 +19,21 @@ require_once dirname(__FILE__, 5).'/header.php';
 
 use QUI\Utils\Security\Orthos;
 
-$User = QUI::getUserBySession();
+$User          = QUI::getUserBySession();
+$isBackendUser = $User->canUseBackend();
 
-if (!$User->canUseBackend()) {
-    exit;
-}
+$Request    = QUI::getRequest();
+$file       = Orthos::clear($Request->query->get('file'));
+$extension  = Orthos::clear($Request->query->get('extension'));
+$customerId = (int)$Request->query->get('customerId');
 
-try {
-    QUI\Permissions\Permission::checkPermission('quiqqer.customer.fileView');
-} catch (QUI\Permissions\Exception $Exception) {
-    $message = $Exception->getMessage();
+if ($isBackendUser) {
+    try {
+        QUI\Permissions\Permission::checkPermission('quiqqer.customer.fileView');
+    } catch (QUI\Permissions\Exception $Exception) {
+        $message = $Exception->getMessage();
 
-    echo '
+        echo '
     <script>
     var parent = window.parent;
     
@@ -43,13 +46,11 @@ try {
     }
     </script>';
 
+        exit;
+    }
+} elseif ($customerId !== $User->getId()) {
     exit;
 }
-
-$Request    = QUI::getRequest();
-$file       = Orthos::clear($Request->query->get('file'));
-$extension  = Orthos::clear($Request->query->get('extension'));
-$customerId = Orthos::clear($Request->query->get('customerId'));
 
 try {
     $Customer    = QUI::getUsers()->get($customerId);

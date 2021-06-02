@@ -6,5 +6,6 @@
         <attribute>quiqqer.erp.customer.website</attribute>
         <attribute>quiqqer.erp.customer.payment.term</attribute>
         <attribute>quiqqer.erp.customer.contact.person</attribute>
+        <attribute>quiqqer.erp.customer.download_entry_id</attribute>
     </attributes>
 </user>
