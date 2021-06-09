@@ -190,7 +190,8 @@ class CustomerFiles
      * This makes the file available for download in the user's frontend profile!
      *
      * @param int $customerId
-     * @param string $file
+     * @param string $file - The filename of the file (excluding the path!); file must already exist
+     * in the user files (i.e. added via addFileToCustomer())
      * @return void
      *
      * @throws QUI\Exception
