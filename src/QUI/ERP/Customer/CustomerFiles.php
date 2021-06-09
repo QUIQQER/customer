@@ -342,14 +342,19 @@ class CustomerFiles
 
         $pathInfo = \pathinfo($filePath);
         $fileName = $pathInfo['filename'];
-        $fileExt  = $pathInfo['extension'];
+        $fileExt  = !empty($pathInfo['extension']) ? $pathInfo['extension'] : false;
 
         foreach ($DownloadEntry->getUrls() as $entry) {
             $url = \urldecode($entry['url']);
 
-            if (\mb_strpos($url, 'file='.$fileName) !== false &&
-                \mb_strpos($url, 'extension='.$fileExt) !== false) {
-                return true;
+            if (\mb_strpos($url, 'file='.$fileName) !== false) {
+                if ($fileExt) {
+                    if (\mb_strpos($url, 'extension='.$fileExt) !== false) {
+                        return true;
+                    }
+                } else {
+                    return true;
+                }
             }
         }
 
