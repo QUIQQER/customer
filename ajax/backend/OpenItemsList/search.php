@@ -24,7 +24,7 @@ QUI::$Ajax->registerFunction(
             $Grid = new Grid($searchParams);
 
             if (!empty($searchParams['currency'])) {
-                $Currency = new \QUI\ERP\Currency\Currency($searchParams['currency']);
+                $Currency = \QUI\ERP\Currency\Handler::getCurrency($searchParams['currency']);
             } else {
                 $Currency = \QUI\ERP\Currency\Handler::getDefaultCurrency();
             }
