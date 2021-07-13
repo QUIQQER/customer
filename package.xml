@@ -35,6 +35,8 @@
         <provider>
             <erpOutput src="\QUI\ERP\Customer\OpenItemsList\OutputProvider"/>
             <erp src="\QUI\ERP\Customer\ErpProvider"/>
+
+            <gdprDataProvider src="\QUI\ERP\Customer\GdprDataProvider"/>
         </provider>
     </package>
 </quiqqer>

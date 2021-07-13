@@ -138,6 +138,47 @@
 
     <groups name="quiqqer/customer" datatype="php">
 
+        <locale name="GdprDataProvider.userDataField.customerId">
+            <de><![CDATA[Kunden-Nr.]]></de>
+            <en><![CDATA[Customer no.]]></en>
+        </locale>
+        <locale name="GdprDataProvider.userDataField.address">
+            <de><![CDATA[Adresse #[no]]]></de>
+            <en><![CDATA[Address #[no]]]></en>
+        </locale>
+        <locale name="GdprDataProvider.userDataField.address" html="true">
+            <de><![CDATA[Adresse #[no]]]></de>
+            <en><![CDATA[Address #[no]]]></en>
+        </locale>
+        <locale name="GdprDataProvider.userDataField.numbers" html="true">
+            <de><![CDATA[Rufnummern:<br/>[numbers]]]></de>
+            <en><![CDATA[Contact numbers:<br/>[numbers]]]></en>
+        </locale>
+        <locale name="GdprDataProvider.userDataField.emailAddresses" html="true">
+            <de><![CDATA[E-Mail-Adressen:<br/>[addresses]]]></de>
+            <en><![CDATA[Email addresses:<br/>[addresses]]]></en>
+        </locale>
+        <locale name="GdprDataProvider.title">
+            <de><![CDATA[Kundenkonto]]></de>
+            <en><![CDATA[Customer account]]></en>
+        </locale>
+        <locale name="GdprDataProvider.purpose">
+            <de><![CDATA[Die Kundendaten dienen der Ausführung von Bestellungen und Aufträgen so wie der Rechnungsstellung und Angebotserstellung. Zudem dienen Sie der Kontaktaufnahme zum Zwecke der Vermittlung dieser Dokumente.]]></de>
+            <en><![CDATA[The customer data are used for the execution of orders and contracts as well as for invoicing and preparation of offers. In addition, they are used for contacting for the purpose of arranging these documents.]]></en>
+        </locale>
+        <locale name="GdprDataProvider.recipients">
+            <de><![CDATA[Die Kundendaten werden i.d.R. nicht an Dritte weitergegeben. Ausnahmen gibt es, sofern Kundendaten im Auftrag des Kunden selbst weitergegeben werden sollen (z.B. die Ausführung einer Bestellung im Namen des Kunden bei einem Drittanbieter). In diesen Fällen werden lediglich die zur Ausführung des Auftrags notwendigen Daten weitergereicht.]]></de>
+            <en><![CDATA[The customer data are used for the execution of orders and contracts as well as for invoicing and preparation of offers. In addition, they are used to contact you for the purpose of arranging these documents.the customer data are generally not disclosed to third parties. There are exceptions if customer data is to be passed on on behalf of the customer himself (e.g. the execution of an order on behalf of the customer with a third party supplier). In these cases, only the data necessary for the execution of the order will be passed on.]]></en>
+        </locale>
+        <locale name="GdprDataProvider.storageDuration">
+            <de><![CDATA[]]></de>
+            <en><![CDATA[]]></en>
+        </locale>
+        <locale name="GdprDataProvider.origin">
+            <de><![CDATA[]]></de>
+            <en><![CDATA[]]></en>
+        </locale>
+
         <locale name="comment.DownloadEntry.add_file">
             <de><![CDATA[Datei "[file]" wurde von [editUser] im Frontend-Profil des Kunden zum Download zur Verfügung gestellt.]]></de>
             <en><![CDATA[File "[file]" was made available for download by [editUser] in the customer's frontend profile.]]></en>
