@@ -956,7 +956,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                             for (i = 0, len = payments.length; i < len; i++) {
                                 text = '';
 
-                                if (typeof payments[i].title[lang] !== 'undefined') {
+                                if (typeof payments[i].title === 'string') {
+                                    text = payments[i].title;
+                                } else if (typeof payments[i].title[lang] !== 'undefined') {
                                     text = payments[i].title[lang];
                                 } else if (typeof payments[i].title.en === 'undefined') {
                                     text = payments[i].title.en;
