@@ -80,7 +80,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.$CommentsPagination = null;
             this.$CommentsPage       = {
                 page : 1,
-                limit: 5
+                limit: 10
             };
 
             this.addEvents({
@@ -914,15 +914,17 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 PaginationContainer.set('html', paginationHtml);
 
                 return QUI.parse(PaginationContainer).then(function () {
-                    self.$CommentsPagination = QUI.Controls.getById(
-                        Content.getElement(
-                            '[data-qui="package/quiqqer/controls/bin/navigating/Pagination"]'
-                        ).get('data-quiid')
-                    );
+                    if (paginationHtml) {
+                        self.$CommentsPagination = QUI.Controls.getById(
+                            Content.getElement(
+                                '[data-qui="package/quiqqer/controls/bin/navigating/Pagination"]'
+                            ).get('data-quiid')
+                        );
 
-                    self.$CommentsPagination.addEvents({
-                        onChange: self.$onCommentsPaginationChange
-                    });
+                        self.$CommentsPagination.addEvents({
+                            onChange: self.$onCommentsPaginationChange
+                        });
+                    }
 
                     return self.$loadComments();
                 });
@@ -1777,9 +1779,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     }
 
                     Container.set('html', '');
-
-                    //comments = comments.reverse(); // @todo weg
-                    //comments = comments.slice(0, 5); // @todo weg
 
                     var Control = new Comments();
                     Control.inject(Container);

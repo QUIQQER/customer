@@ -29,7 +29,7 @@ QUI::$Ajax->registerFunction(
         }
 
         $page   = !empty($page) ? (int)$page : 1;
-        $limit  = !empty($limit) ? (int)$limit : 5;
+        $limit  = !empty($limit) ? (int)$limit : 10;
         $offset = ($page - 1) * $limit;
 
         return \array_slice($comments, $offset, $limit);

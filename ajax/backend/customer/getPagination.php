@@ -21,10 +21,14 @@ QUI::$Ajax->registerFunction(
             $History->toArray()
         );
 
+        if (\count($comments) <= 10) {
+            return '';
+        }
+
         $Pagination = new Pagination([
             'count'   => \count($comments),
             'useAjax' => true,
-            'limit'   => 5
+            'limit'   => 10
         ]);
 
         $Output  = new QUI\Output();

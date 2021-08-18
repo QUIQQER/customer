@@ -1,0 +1,8 @@
+.quiqqer-customer-userfiles-actions > button {
+    height: 17px;
+    line-height: 17px;
+}
+
+.quiqqer-customer-userfiles-actions > button span.fa {
+    font-size: 12px !important;
+}

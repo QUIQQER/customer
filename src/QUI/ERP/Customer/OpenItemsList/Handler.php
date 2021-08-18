@@ -533,11 +533,13 @@ class Handler
      *
      * @param array $result
      * @return array
+     *
+     * @throws QUI\Exception
      */
     public static function parseForGrid(array $result): array
     {
         foreach ($result as $k => $row) {
-            $Currency = new QUI\ERP\Currency\Currency($row['currency']);
+            $Currency = QUI\ERP\Currency\Handler::getCurrency($row['currency']);
 
             $sumColumns = [
                 'net_sum',

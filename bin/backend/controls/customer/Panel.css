@@ -149,36 +149,28 @@
 }
 
 /**
+ * Comments
+ */
+form[name="customer-information"] .comments {
+    max-height: 550px;
+    float: left;
+    overflow: auto;
+}
+
+/**
  * Pagination
  */
 .comments-pagination {
-    /*width: 95%; *!*/
-    /* background-color: red; */
-    height: 60px;
+    height: 45px;
     bottom: 0;
-    /* position: absolute; */
-    /* display: flex; */
-    padding: 20px 6px;
     float: left;
-    width: 350px;
+    width: 50%;
 }
-
-/*.comments-pagination .qui-media-pagination__hidden {*/
-/*    display: none;*/
-/*}*/
-
-/*.comments-pagination .qui-media-pagination-limit {*/
-/*    float: left;*/
-/*    height: 32px;*/
-/*    margin: 0 10px 0 0;*/
-/*    width: 65px;*/
-/*}*/
 
 .comments-pagination .quiqqer-sheets-desktop,
 .comments-pagination .quiqqer-pagination {
-    /*clear: none !important;*/
     float: left;
-    width: calc(100% - 10px) !important;
+    width: calc(100% - 24px) !important;
 }
 
 .comments-pagination .quiqqer-sheets-sheet,
@@ -208,4 +200,8 @@
 
 .qui-media-pagination .quiqqer-sheets-desktop a:hover {
     color: #a4a4a4;
+}
+
+.quiqqer-customer__hidden {
+    display: none;
 }

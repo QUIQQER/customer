@@ -138,6 +138,37 @@
 
     <groups name="quiqqer/customer" datatype="php">
 
+        <locale name="comment.DownloadEntry.add_file">
+            <de><![CDATA[Datei "[file]" wurde von [editUser] im Frontend-Profil des Kunden zum Download zur Verfügung gestellt.]]></de>
+            <en><![CDATA[File "[file]" was made available for download by [editUser] in the customer's frontend profile.]]></en>
+        </locale>
+        <locale name="comment.DownloadEntry.remove_file">
+            <de><![CDATA[Datei "[file]" wurde von [editUser] aus den Downloads im Frontend-Profil des Kunden entfernt.]]></de>
+            <en><![CDATA[File "[file]" was removed from the downloadas  in the customer's frontend profile by [editUser].]]></en>
+        </locale>
+        
+        <locale name="exception.ajax.backend.general">
+            <de><![CDATA[Bei der Anfrage ist ein unerwarteter Fehler aufgetreten. Bitte prüfen Sie die Fehler-Logs oder wenden sich an einen Administrator.]]></de>
+            <en><![CDATA[An unexpected error occurred during the request. Please check the error logs or contact an administrator.]]></en>
+        </locale>
+        <locale name="message.ajax.backend.files.downloadEntry.addFile.success">
+            <de><![CDATA[Die Datei "[file]" ist nun für den Kunden zum Download verfügbar.]]></de>
+            <en><![CDATA[The file "[file]" is now available for download by the customer.]]></en>
+        </locale>
+        <locale name="message.ajax.backend.files.downloadEntry.removeFile.success">
+            <de><![CDATA[Die Datei "[file]" ist nun nicht mehr für den Kunden zum Download verfügbar.]]></de>
+            <en><![CDATA[The file "[file]" is now not anymore available for download by the customer.]]></en>
+        </locale>
+        
+        <locale name="DownloadEntry.title">
+            <de><![CDATA[Ihre Kunden-Downloads]]></de>
+            <en><![CDATA[Your customer downloads]]></en>
+        </locale>
+        <locale name="DownloadEntry.description">
+            <de><![CDATA[Speziell für Sie zur Verfügung gestellt]]></de>
+            <en><![CDATA[Specially provided for you]]></en>
+        </locale>
+
         <locale name="exception.customer_no_already_exists">
             <de><![CDATA[Die Kunden-Nr. "[customerNo]" existiert bereits und kann daher nicht vergeben werden.]]></de>
             <en><![CDATA[Customer no. "[customerNo]" already exists and cannot be assigned.]]></en>
@@ -435,6 +466,50 @@ Best regards
         <locale name="window.customer.delete.information">
             <de><![CDATA[Folgende Datei werden unwiederruflich gelöscht:]]></de>
             <en><![CDATA[The following file is irrevocably deleted:]]></en>
+        </locale>
+        <locale name="window.customer.upload.tbl.header.actions">
+            <de><![CDATA[Aktionen]]></de>
+            <en><![CDATA[Actions]]></en>
+        </locale>
+        <locale name="window.customer.upload.tbl.btn.download">
+            <de><![CDATA[Hier klicken, um diese Datei herunterzuladen]]></de>
+            <en><![CDATA[Click here to download this file]]></en>
+        </locale>
+        <locale name="window.customer.upload.tbl.btn.user_download">
+            <de><![CDATA[Hier klicken, um diese Datei im Frontend-Profil des Benutzers zum Download zur Verfügung zu stellen]]></de>
+            <en><![CDATA[Click here to make this file available for download in the user's frontend profile]]></en>
+        </locale>
+        <locale name="window.customer.userDownload.add.title">
+            <de><![CDATA[Datei für Kunden zum Download freischalten]]></de>
+            <en><![CDATA[Unlock file to download for user]]></en>
+        </locale>
+        <locale name="window.customer.userDownload.add.text">
+            <de><![CDATA[Soll die Datei dem Kunden in seinem Frontend-Profil zum Download bereitgestellt werden?]]></de>
+            <en><![CDATA[Shall this file be made available to download in the customers frontend profile?]]></en>
+        </locale>
+        <locale name="window.customer.userDownload.add.information" html="true">
+            <de><![CDATA[Die Datei <b>[file]</b> kann im Anschluss vom Kunden in seinem Frontend-Profil unter "Meine Downloads" heruntergeladen werden. Dies ist nur möglich, wenn der Kunde eingeloggt ist.]]></de>
+            <en><![CDATA[The file <b>[file]</b> can then be downloaded by the customer in his frontend profile under "My Downloads". This is only possible if the customer is logged in.]]></en>
+        </locale>
+        <locale name="window.customer.userDownload.add.btn.submit">
+            <de><![CDATA[Datei jetzt bereitstellen]]></de>
+            <en><![CDATA[Provide file now]]></en>
+        </locale>
+        <locale name="window.customer.userDownload.remove.title">
+            <de><![CDATA[Datei-Download für Kunden zurücknehmen]]></de>
+            <en><![CDATA[Take back file download for customer]]></en>
+        </locale>
+        <locale name="window.customer.userDownload.remove.text">
+            <de><![CDATA[Soll die Datei nicht mehr im Frontend-Profil des Kunden zum Download bereitgestellt werden?]]></de>
+            <en><![CDATA[Should the file no longer be made available for download in the customer's frontend profile?]]></en>
+        </locale>
+        <locale name="window.customer.userDownload.remove.information" html="true">
+            <de><![CDATA[Die Datei <b>[file]</b> ist im Anschluss nicht mehr zum Download im Frontend-Profil unter "Meine Downloads" verfügbar.]]></de>
+            <en><![CDATA[The file <b>[file]</b> can then no longer be downloaded by the customer in his frontend profile under "My Downloads".]]></en>
+        </locale>
+        <locale name="window.customer.userDownload.remove.btn.submit">
+            <de><![CDATA[Datei nicht mehr bereitstellen]]></de>
+            <en><![CDATA[Do not provide file anymore]]></en>
         </locale>
 
         <locale name="window.customer.creation.customerNo.title">
