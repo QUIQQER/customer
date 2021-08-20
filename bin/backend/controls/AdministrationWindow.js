@@ -12,7 +12,7 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
 ], function (QUI, QUIConfirm, Administration, QUILocale) {
     "use strict";
 
-    var lg = 'quiqqer/customer';
+    const lg = 'quiqqer/customer';
 
     return new Class({
 
@@ -52,7 +52,7 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
          * event: on open
          */
         $onOpen: function () {
-            var self = this;
+            const self = this;
 
             this.getContent().set('html', '');
             this.getContent().setStyle('padding', 0);
@@ -108,9 +108,18 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
          * submit the window
          */
         submit: function () {
-            var ids = this.$Admin.getSelectedCustomerIds();
+            let ids = this.$Admin.getSelectedCustomerIds();
 
             if (!ids.length) {
+                return;
+            }
+
+            if (this.$Admin.$CustomerPanel) {
+                this.$Admin.$CustomerPanel.update().then(() => {
+                    this.fireEvent('submit', [this, ids]);
+                    this.close();
+                });
+
                 return;
             }
 
