@@ -96,24 +96,83 @@ class Utils extends QUI\Utils\Singleton
      */
     public function getEmailByCustomer(QUI\Interfaces\Users\User $Customer)
     {
-        if (!empty($Customer->getAttribute('email'))) {
-            return $Customer->getAttribute('email');
+        $email = $this->getEmailByQuiqqerUser($Customer);
+
+        if (!empty($email)) {
+            return $email;
         }
 
-        if (\method_exists($Customer, 'getStandardAddress')) {
-            try {
-                /** @var QUI\Users\Address $StandardAddress */
-                $StandardAddress = $Customer->getStandardAddress();
-                $mailAddresses   = $StandardAddress->getMailList();
+        $email = $this->getEmailByStandardAddress($Customer);
 
-                if (!empty($mailAddresses)) {
-                    return \current($mailAddresses);
-                }
-            } catch (\Exception $Exception) {
-                QUI\System\Log::writeDebugException($Exception);
+        if (!empty($email)) {
+            return $email;
+        }
+
+        return $this->getEmailByContactPersonAddress($Customer);
+    }
+
+    /**
+     * Get e-mail address of the CONTACT PERSON of a customer user in the following order:
+     *
+     * 1. Email address of contact address
+     * 2. Email address of default address
+     * 3. Email address of QUIQQER user
+     *
+     * @param QUI\Interfaces\Users\User $Customer
+     * @return string|false - Email address or false if no address exists
+     */
+    public function getContactEmailByCustomer(QUI\Interfaces\Users\User $Customer)
+    {
+        $email = $this->getEmailByContactPersonAddress($Customer);
+
+        if (!empty($email)) {
+            return $email;
+        }
+
+        $email = $this->getEmailByStandardAddress($Customer);
+
+        if (!empty($email)) {
+            return $email;
+        }
+
+        return $this->getEmailByQuiqqerUser($Customer);
+    }
+
+    /**
+     * Get customer e-mail address from customer standard address.
+     *
+     * @param QUI\Interfaces\Users\User $Customer
+     * @return string|false
+     */
+    protected function getEmailByStandardAddress(QUI\Interfaces\Users\User $Customer)
+    {
+        if (!\method_exists($Customer, 'getStandardAddress')) {
+            return false;
+        }
+
+        try {
+            /** @var QUI\Users\Address $StandardAddress */
+            $StandardAddress = $Customer->getStandardAddress();
+            $mailAddresses   = $StandardAddress->getMailList();
+
+            if (!empty($mailAddresses)) {
+                return \current($mailAddresses);
             }
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeDebugException($Exception);
         }
 
+        return false;
+    }
+
+    /**
+     * Get customer e-mail address from customer contact address
+     *
+     * @param QUI\Interfaces\Users\User $Customer
+     * @return string|false
+     */
+    protected function getEmailByContactPersonAddress(QUI\Interfaces\Users\User $Customer)
+    {
         try {
             $contactPersonAddressId = $Customer->getAttribute('quiqqer.erp.customer.contact.person');
 
@@ -131,6 +190,29 @@ class Utils extends QUI\Utils\Singleton
             }
         } catch (\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
+        }
+
+        return false;
+    }
+
+    /**
+     * Get customer e-mail address directly from QUIQQER user
+     *
+     * @param QUI\Interfaces\Users\User $Customer
+     * @return string|false
+     */
+    protected function getEmailByQuiqqerUser(QUI\Interfaces\Users\User $Customer)
+    {
+        if (!($Customer instanceof QUI\Users\User)) {
+            try {
+                $Customer = QUI::getUsers()->get($Customer->getId());
+            } catch (\Exception $Exception) {
+                QUI\System\Log::writeException($Exception);
+            }
+        }
+
+        if (!empty($Customer->getAttribute('email'))) {
+            return $Customer->getAttribute('email');
         }
 
         return false;
