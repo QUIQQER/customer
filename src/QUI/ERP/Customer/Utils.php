@@ -87,8 +87,8 @@ class Utils extends QUI\Utils\Singleton
     /**
      * Get e-mail address of a customer user in the following order:
      *
-     * 1. Email address of QUIQQER user
-     * 2. Email address of default address
+     * 1. Email address of default address
+     * 2. Email address of QUIQQER user
      * 3. Email address of contact address
      *
      * @param QUI\Interfaces\Users\User $Customer
@@ -96,13 +96,13 @@ class Utils extends QUI\Utils\Singleton
      */
     public function getEmailByCustomer(QUI\Interfaces\Users\User $Customer)
     {
-        $email = $this->getEmailByQuiqqerUser($Customer);
+        $email = $this->getEmailByStandardAddress($Customer);
 
         if (!empty($email)) {
             return $email;
         }
 
-        $email = $this->getEmailByStandardAddress($Customer);
+        $email = $this->getEmailByCustomerObject($Customer);
 
         if (!empty($email)) {
             return $email;
@@ -135,7 +135,7 @@ class Utils extends QUI\Utils\Singleton
             return $email;
         }
 
-        return $this->getEmailByQuiqqerUser($Customer);
+        return $this->getEmailByCustomerObject($Customer);
     }
 
     /**
@@ -196,21 +196,13 @@ class Utils extends QUI\Utils\Singleton
     }
 
     /**
-     * Get customer e-mail address directly from QUIQQER user
+     * Get customer e-mail address directly from customer object
      *
      * @param QUI\Interfaces\Users\User $Customer
      * @return string|false
      */
-    protected function getEmailByQuiqqerUser(QUI\Interfaces\Users\User $Customer)
+    protected function getEmailByCustomerObject(QUI\Interfaces\Users\User $Customer)
     {
-        if (!($Customer instanceof QUI\Users\User)) {
-            try {
-                $Customer = QUI::getUsers()->get($Customer->getId());
-            } catch (\Exception $Exception) {
-                QUI\System\Log::writeException($Exception);
-            }
-        }
-
         if (!empty($Customer->getAttribute('email'))) {
             return $Customer->getAttribute('email');
         }
