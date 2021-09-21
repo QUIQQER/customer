@@ -118,6 +118,38 @@ class Customers extends Singleton
     }
 
     /**
+     * Get a customer by customer no.
+     *
+     * @param string $customerNo
+     * @return QUI\Users\User
+     *
+     * @throws Exception
+     * @throws QUI\Exception
+     */
+    public function getCustomerByCustomerNo(string $customerNo): QUI\Users\User
+    {
+        $NumberRange = new NumberRange();
+        $prefix      = $NumberRange->getCustomerNoPrefix();
+        $customerNo  = \str_replace($prefix, '', $customerNo);
+
+        $result = QUI::getDataBase()->fetch([
+            'select'   => 'id',
+            'from'     => QUI::getUsers()::table(),
+            'where_or' => [
+                'customerId' => $customerNo,
+                'id'         => $customerNo
+            ],
+            'limit'    => 1
+        ]);
+
+        if (empty($result)) {
+            throw new Exception('Customer with customer no. '.$customerNo.' not found.', 404);
+        }
+
+        return QUI::getUsers()->get($result[0]['id']);
+    }
+
+    /**
      * @return int
      *
      * @throws Exception
