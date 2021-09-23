@@ -1,0 +1,12 @@
+.quiqqer-discount-SelectItem-inactive {
+    color: #ff0000;
+}
+
+.quiqqer-customer-files-select-item-title {
+    display: inline-block;
+}
+
+.quiqqer-customer-files-select-item-options {
+    display: inline-block;
+    float: right;
+}

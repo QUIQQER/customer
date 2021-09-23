@@ -12,7 +12,7 @@
 QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_files_getList',
     function ($customerId) {
-        return QUI\ERP\Customer\CustomerFiles::getFileList($customerId);
+        return QUI\ERP\Customer\CustomerFiles::getFileList((int)$customerId);
     },
     ['customerId'],
     'Permission::checkAdminUser'

@@ -1,6 +1,9 @@
 /**
  * @module package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInformation
  * @author www.pcsg.de (Henning Leutz)
+ * @author www.pcsg.de (Patrick Müller)
+ *
+ * @event onSelect [selectedRows, this]
  */
 define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles', [
 
@@ -36,11 +39,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
             'openDeleteDialog',
             'download',
             '$onClickDownload',
-            '$onClickUserDownload'
+            '$onClickUserDownload',
+            'getSelectedFiles',
+            '$buildGrid'
         ],
 
         options: {
-            userId: false
+            userId    : false,
+            selectMode: true // files cannot be uploaded, deleted or edited
         },
 
         initialize: function (options) {
@@ -51,6 +57,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
             this.Loader                  = new QUILoader();
             this.$GridParent             = null;
             this.$userDownloadsInstalled = false;
+            this.$selectMode             = this.getAttribute('selectMode');
 
             this.addEvents({
                 onInject: this.$onInject
@@ -74,8 +81,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
          * @return {HTMLDivElement}
          */
         create: function () {
-            var self = this;
-
             this.$Elm = this.parent();
             this.$Elm.set('html', '');
             this.$Elm.set('data-quiid', this.getId());
@@ -105,8 +110,27 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
                 QUIPackages.isInstalled('quiqqer/user-downloads').then((isInstalled) => {
                     this.$userDownloadsInstalled = isInstalled;
 
-                    this.$Grid = new Grid(this.$GridContainer, {
-                        buttons    : [{
+                    var buttons = [];
+                    var columns = [{
+                        header   : QUILocale.get(lgQUIQQER, 'type'),
+                        dataIndex: 'icon_node',
+                        dataType : 'node',
+                        width    : 40
+                    }, {
+                        header   : QUILocale.get(lgQUIQQER, 'file'),
+                        dataIndex: 'basename',
+                        dataType : 'string',
+                        width    : 300
+                    }, {
+                        header   : QUILocale.get(lgQUIQQER, 'size'),
+                        dataIndex: 'filesize_formatted',
+                        dataType : 'string',
+                        width    : 100
+                    }];
+
+                    // Add edit options if not in select mode
+                    if (!this.$selectMode) {
+                        buttons = [{
                             name     : 'upload',
                             text     : QUILocale.get(lg, 'customer.files.upload.button'),
                             disabled : true,
@@ -124,39 +148,36 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
                             events   : {
                                 onClick: this.openDeleteDialog
                             }
-                        }],
-                        columnModel: [{
-                            header   : QUILocale.get(lgQUIQQER, 'type'),
-                            dataIndex: 'icon_node',
-                            dataType : 'node',
-                            width    : 40
-                        }, {
-                            header   : QUILocale.get(lgQUIQQER, 'file'),
-                            dataIndex: 'basename',
-                            dataType : 'string',
-                            width    : 300
-                        }, {
-                            header   : QUILocale.get(lgQUIQQER, 'size'),
-                            dataIndex: 'filesize_formatted',
-                            dataType : 'string',
-                            width    : 100
-                        }, {
+                        }];
+
+                        columns.push({
                             header   : QUILocale.get(lg, 'window.customer.upload.tbl.header.actions'),
                             dataIndex: 'actions',
                             dataType : 'node',
                             width    : 250
-                        }]
+                        });
+                    }
+
+                    this.$Grid = new Grid(this.$GridContainer, {
+                        buttons    : buttons,
+                        columnModel: columns
                     });
 
                     this.$Grid.addEvent('click', () => {
                         this.getPermissions().then((permissions) => {
-                            if (permissions.fileEdit) {
+                            if (!this.$selectMode && permissions.fileEdit) {
                                 this.$Grid.getButton('delete').enable();
                             }
                         });
                     });
 
-                    this.$Grid.addEvent('dblClick', this.download);
+                    if (this.$selectMode) {
+                        this.$Grid.addEvent('dblClick', () => {
+                            this.fireEvent('select', [this.$Grid.getSelectedData()[0], this]);
+                        });
+                    } else {
+                        this.$Grid.addEvent('dblClick', this.download);
+                    }
 
                     resolve();
                 });
@@ -182,7 +203,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
          */
         refresh: function () {
             this.getPermissions().then((permissions) => {
-                if (permissions.fileUpload) {
+                if (!this.$selectMode && permissions.fileUpload) {
                     this.$Grid.getButton('upload').enable();
                 }
 
@@ -194,6 +215,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
                                 margin: '5px 0'
                             }
                         });
+
+                        if (this.$selectMode) {
+                            continue;
+                        }
 
                         const ButtonContainer = new Element('div', {
                             'class': 'quiqqer-customer-userfiles-actions'
@@ -533,6 +558,19 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
             (function () {
                 document.getElements('#' + id).destroy();
             }).delay(20000, this);
+        },
+
+        /**
+         * Get list of selected files
+         *
+         * @return {Array}
+         */
+        getSelectedFiles: function() {
+            if (!this.$Grid) {
+                return [];
+            }
+
+            return this.$Grid.getSelectedData();
         }
     });
 });

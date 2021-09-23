@@ -116,6 +116,10 @@ class CustomerFiles
             return \strnatcmp($a['basename'], $b['basename']);
         });
 
+        foreach ($result as $k => $file) {
+            $result[$k]['hash'] = \hash('sha256', $file['basename']);
+        }
+
         return $result;
     }
 
@@ -180,6 +184,27 @@ class CustomerFiles
             $file,
             $customerDir.DIRECTORY_SEPARATOR.$fileInfo['basename']
         );
+    }
+
+    /**
+     * Get file data by file hash
+     *
+     * @param int $customerId
+     * @param string $fileHash
+     * @return false|array - File data or false if file is not found in customer files
+     *
+     * @throws QUI\Permissions\Exception
+     */
+    public static function getFileByHash(int $customerId, string $fileHash) {
+        $files = self::getFileList($customerId);
+
+        foreach ($files as $file) {
+            if ($file['hash'] === $fileHash) {
+                return $file;
+            }
+        }
+
+        return false;
     }
 
     // region Download entry
