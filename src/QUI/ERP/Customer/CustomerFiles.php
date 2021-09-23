@@ -195,7 +195,8 @@ class CustomerFiles
      *
      * @throws QUI\Permissions\Exception
      */
-    public static function getFileByHash(int $customerId, string $fileHash) {
+    public static function getFileByHash(int $customerId, string $fileHash)
+    {
         $files = self::getFileList($customerId);
 
         foreach ($files as $file) {
