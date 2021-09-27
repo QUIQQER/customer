@@ -12,7 +12,12 @@ QUI::$Ajax->registerFunction(
     function ($customerId, $searchString) {
         $files        = QUI\ERP\Customer\CustomerFiles::getFileList((int)$customerId);
         $results      = [];
-        $searchString = \mb_strtolower($searchString);
+        $searchString = \trim(\mb_strtolower($searchString));
+
+        // Return all files if search string is empty
+        if (empty($searchString)) {
+            return $files;
+        }
 
         foreach ($files as $file) {
             if (\mb_strpos(\mb_strtolower($file['basename']), $searchString) !== false) {

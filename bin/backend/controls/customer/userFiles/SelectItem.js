@@ -27,12 +27,16 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectI
 
         Binds: [
             'refresh',
-            '$getFileData'
+            '$getFileData',
+            '$onClickDownload'
         ],
 
         initialize: function (options) {
             this.parent(options);
             this.setAttribute('icon', 'fa fa-file-text-o');
+
+            this.$Download = null;
+            this.$File     = null;
         },
 
         /**
@@ -44,6 +48,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectI
             });
 
             this.$getFileData(this.getAttribute('id')).then((File) => {
+                this.$File = File;
+
                 this.$Text.set({
                     html: Mustache.render(templateEntry, {
                         title             : File.basename,
@@ -52,6 +58,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectI
                         titleAttachToEmail: QUILocale.get(lg, 'controls.userFiles.SelectItem.tpl.titleAttachToEmail')
                     })
                 });
+
+                this.$Download = new Element('span', {
+                    'class': 'qui-elements-selectItem-download fa fa-download',
+                    title  : QUILocale.get(lg, 'controls.userFiles.SelectItem.btn.download.title'),
+                    events : {
+                        click: this.$onClickDownload
+                    }
+                }).inject(this.$Destroy, 'before');
 
                 const ParentSelect = this.getAttribute('Parent');
                 ParentSelect.fireEvent('change', [ParentSelect]);
@@ -96,6 +110,36 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectI
                     onError   : reject
                 });
             });
+        },
+
+        /**
+         * Direct download customer file
+         *
+         * @return {void}
+         */
+        $onClickDownload: function () {
+            const uid = String.uniqueID();
+            const id  = 'download-customer-file-' + uid;
+
+            new Element('iframe', {
+                src   : URL_OPT_DIR + 'quiqqer/customer/bin/backend/download.php?' + Object.toQueryString({
+                    file      : this.$File.filename,
+                    extension : this.$File.extension,
+                    customerId: this.getAttribute('Parent').getAttribute('userId')
+                }),
+                id    : id,
+                styles: {
+                    position: 'absolute',
+                    top     : -200,
+                    left    : -200,
+                    width   : 50,
+                    height  : 50
+                }
+            }).inject(document.body);
+
+            (function () {
+                document.getElements('#' + id).destroy();
+            }).delay(20000, this);
         }
     });
 });

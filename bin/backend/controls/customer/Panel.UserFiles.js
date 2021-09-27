@@ -46,7 +46,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
 
         options: {
             userId    : false,
-            selectMode: true // files cannot be uploaded, deleted or edited
+            selectMode: false // files cannot be deleted or edited
         },
 
         initialize: function (options) {
@@ -110,7 +110,16 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
                 QUIPackages.isInstalled('quiqqer/user-downloads').then((isInstalled) => {
                     this.$userDownloadsInstalled = isInstalled;
 
-                    var buttons = [];
+                    var buttons = [{
+                        name     : 'upload',
+                        text     : QUILocale.get(lg, 'customer.files.upload.button'),
+                        disabled : true,
+                        textimage: 'fa fa-upload',
+                        events   : {
+                            onClick: this.openUpload
+                        }
+                    }];
+
                     var columns = [{
                         header   : QUILocale.get(lgQUIQQER, 'type'),
                         dataIndex: 'icon_node',
@@ -130,17 +139,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
 
                     // Add edit options if not in select mode
                     if (!this.$selectMode) {
-                        buttons = [{
-                            name     : 'upload',
-                            text     : QUILocale.get(lg, 'customer.files.upload.button'),
-                            disabled : true,
-                            textimage: 'fa fa-upload',
-                            events   : {
-                                onClick: this.openUpload
-                            }
-                        }, {
-                            type: 'separator'
-                        }, {
+                        buttons.push({
                             name     : 'delete',
                             text     : QUILocale.get(lgQUIQQER, 'delete'),
                             disabled : true,
@@ -148,7 +147,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
                             events   : {
                                 onClick: this.openDeleteDialog
                             }
-                        }];
+                        });
 
                         columns.push({
                             header   : QUILocale.get(lg, 'window.customer.upload.tbl.header.actions'),
@@ -203,7 +202,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
          */
         refresh: function () {
             this.getPermissions().then((permissions) => {
-                if (!this.$selectMode && permissions.fileUpload) {
+                if (permissions.fileUpload) {
                     this.$Grid.getButton('upload').enable();
                 }
 
@@ -565,7 +564,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
          *
          * @return {Array}
          */
-        getSelectedFiles: function() {
+        getSelectedFiles: function () {
             if (!this.$Grid) {
                 return [];
             }

@@ -10,3 +10,25 @@
     display: inline-block;
     float: right;
 }
+
+.qui-elements-selectItem-download {
+    cursor: pointer;
+    float: left;
+    line-height: 30px;
+    text-align: center;
+    visibility: hidden;
+    width: 30px;
+}
+
+.qui-elements-selectItem:hover .qui-elements-selectItem-download {
+    visibility: visible;
+}
+
+.qui-elements-selectItem-download:hover {
+    background: #2F8FC6;
+    color: #FFFFFF;
+}
+
+.qui-elements-selectItem-text {
+    width: calc(100% - 90px) !important;
+}

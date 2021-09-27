@@ -328,6 +328,10 @@ Best regards
 
     <groups name="quiqqer/customer" datatype="js">
 
+        <locale name="controls.userFiles.SelectItem.btn.download.title">
+            <de><![CDATA[Datei herunterladen]]></de>
+            <en><![CDATA[Download file]]></en>
+        </locale>
         <locale name="controls.userFiles.SelectItem.tpl.labelAttachToEmail">
             <de><![CDATA[ist E-Mail-Anhang]]></de>
             <en><![CDATA[is email attachment]]></en>

@@ -56,10 +56,14 @@ try {
     $Customer    = QUI::getUsers()->get($customerId);
     $customerDir = QUI\ERP\Customer\CustomerFiles::getFolderPath($Customer);
 
-    $filePath = $customerDir.DIRECTORY_SEPARATOR.$file.'.'.$extension;
+    if (!empty($extension) && $extension !== 'false') {
+        $file .= '.'.$extension;
+    }
+
+    $filePath = $customerDir.DIRECTORY_SEPARATOR.$file;
 
     if (\file_exists($filePath)) {
-        QUI\Utils\System\File::send($filePath, 0, $file.'.'.$extension);
+        QUI\Utils\System\File::send($filePath, 0, $file);
     }
 } catch (\Exception $Exception) {
     QUI\System\Log::addDebug($Exception->getMessage());
