@@ -11,10 +11,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Window'
     'qui/controls/windows/Confirm',
     'package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
     'Locale',
+    'Users',
 
     'css!package/quiqqer/customer/bin/backend/controls/customer/userFiles/Window.css'
 
-], function (QUIConfirm, CustomerFiles, QUILocale) {
+], function (QUIConfirm, CustomerFiles, QUILocale, QUIUsers) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -35,7 +36,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Window'
             maxHeight: 600,
             maxWidth : 800,
             icon     : 'fa fa-file-text-o',
-            title    : QUILocale.get(lg, 'control.userFiles.window.title'),
             autoclose: false,
 
             cancel_button: {
@@ -69,19 +69,53 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Window'
          * Event: onOpen
          */
         $onOpen: function (Win) {
-            var Content = Win.getContent();
+            const Content = Win.getContent();
+            const userId  = this.getAttribute('userId');
+            const User    = QUIUsers.get(userId);
 
             Content.set('html', '');
 
-            this.$FileList = new CustomerFiles({
-                selectMode: true,
-                userId    : this.getAttribute('userId'),
-                events    : {
-                    onSelect: () => {
-                        this.submit();
-                    }
+            this.Loader.show();
+
+            User.loadIfNotLoaded().then(() => {
+                const userStringParts = [];
+
+                if (User.getAttribute('firstname')) {
+                    userStringParts.push(User.getAttribute('firstname'));
                 }
-            }).inject(Content);
+
+                if (User.getAttribute('lastname')) {
+                    userStringParts.push(User.getAttribute('lastname'));
+                }
+
+                let userString = userStringParts.join(' ');
+
+                userString += ' - ' + User.getAttribute('email');
+
+                if (User.getAttribute('customerId')) {
+                    userString += ' (' + User.getAttribute('customerId') + ')';
+                } else {
+                    userString += ' (' + userId + ')';
+                }
+
+                this.setAttribute('title', QUILocale.get(lg, 'control.userFiles.window.title', {
+                    user: userString
+                }));
+
+                this.refresh();
+
+                this.$FileList = new CustomerFiles({
+                    selectMode: true,
+                    userId    : userId,
+                    events    : {
+                        onSelect: () => {
+                            this.submit();
+                        }
+                    }
+                }).inject(Content);
+
+                this.Loader.hide();
+            });
         },
 
         /**

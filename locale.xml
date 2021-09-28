@@ -338,15 +338,14 @@ Best regards
         </locale>
         <locale name="controls.userFiles.SelectItem.tpl.titleAttachToEmail">
             <de><![CDATA[Diese Datei soll automatisch angehangen werden, wenn dieses Dokument per E-Mail versendet wird.]]></de>
-            <en><![CDATA[This file shall be automatically attached when this document is sent via email.]]></en>
         </locale>
         <locale name="controls.userFiles.Select.search_placeholder">
             <de><![CDATA[Kunden-Dateien durchsuchen...]]></de>
             <en><![CDATA[Search customer files...]]></en>
         </locale>
         <locale name="control.userFiles.window.title">
-            <de><![CDATA[Liste von Kunden-Dateien]]></de>
-            <en><![CDATA[List of customer files]]></en>
+            <de><![CDATA[Liste von Dateien von Kunde "[user]"]]></de>
+            <en><![CDATA[List of files of customer "[user]"]]></en>
         </locale>
         <locale name="control.userFiles.window.btn.select">
             <de><![CDATA[Dateien auswählen]]></de>

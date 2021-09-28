@@ -111,7 +111,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select'
                     }
                 }).open();
 
-                Btn.setAttribute('icon', 'fa fa-search');
+                Btn.setAttribute('icon', 'fa fa-list-alt');
             });
         },
 
