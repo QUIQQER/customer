@@ -130,7 +130,7 @@ class Customers extends Singleton
     {
         $NumberRange = new NumberRange();
         $prefix      = $NumberRange->getCustomerNoPrefix();
-        $customerNo  = \str_replace($prefix, '', $customerNo);
+        $customerNo  = preg_replace('#^'.$prefix.'#im', '', $customerNo);
 
         $result = QUI::getDataBase()->fetch([
             'select'   => 'id',
