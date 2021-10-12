@@ -21,31 +21,16 @@ class CustomerFiles
 
     /**
      * @param QUI\Interfaces\Users\User $User
-     * @throws QUI\Exception
-     */
-    public static function createFolder(QUI\Interfaces\Users\User $User)
-    {
-        if (!$User->getId()) {
-            return;
-        }
-
-        $customerDir = self::getFolderPath($User);
-
-        if (empty($customerDir)) {
-            throw new QUI\Exception('Could not create customer folder');
-        }
-
-        if (!\is_dir($customerDir)) {
-            QUI\Utils\System\File::mkdir($customerDir);
-        }
-    }
-
-    /**
-     * @param QUI\Interfaces\Users\User $User
      * @return string
+     *
+     * @throws QUI\Exception
      */
     public static function getFolderPath(QUI\Interfaces\Users\User $User): string
     {
+        if (!$User->getId()) {
+            throw new QUI\Exception('Users without ID cannot have a customer file folder.');
+        }
+
         try {
             $Package = QUI::getPackageManager()->getInstalledPackage('quiqqer/customer');
             $varDir  = $Package->getVarDir();
@@ -53,7 +38,15 @@ class CustomerFiles
             return '';
         }
 
-        return $varDir.$User->getId();
+        $fileDir = $varDir.$User->getId();
+
+        QUI\Utils\System\File::mkdir($fileDir);
+
+        if (!\is_dir($fileDir) || !\is_readable($fileDir)) {
+            throw new QUI\Exception('Users without ID cannot have a customer file folder.');
+        }
+
+        return $fileDir;
     }
 
     /**
@@ -70,8 +63,6 @@ class CustomerFiles
 
         try {
             $Customer = QUI::getUsers()->get($customerId);
-
-            self::createFolder($Customer);
         } catch (QUI\Exception $Exception) {
             return [];
         }
