@@ -6,13 +6,14 @@
  */
 define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select', [
 
+    'qui/QUI',
     'qui/controls/elements/Select',
     'package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectItem',
 
     'Locale',
     'Ajax'
 
-], function (QUIElementSelect, SelectItem, QUILocale, QUIAjax) {
+], function (QUI, QUIElementSelect, SelectItem, QUILocale, QUIAjax) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -37,7 +38,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select'
         ],
 
         options: {
-            userId: false
+            userId           : false,
+            confirmItemDelete: false // item deletion requires confirmation
         },
 
         initialize: function (options) {
@@ -125,14 +127,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select'
             const fileHashes = this.$Input.value.split(',');
 
             for (let fileHash of fileHashes) {
-                const Item = this.getElm().getElement('.quiqqer-customer-files-select-item[data-hash="' + fileHash + '"]')
+                const Item = this.getElm().getElement('.quiqqer-customer-files-select-item[data-hash="' + fileHash + '"]');
 
                 if (Item) {
+                    const ItemControl = QUI.Controls.getById(Item.getParent('.qui-elements-selectItem').get('data-quiid'));
+
                     valueItems.push({
                         hash   : Item.get('data-hash'),
-                        options: {
-                            attachToEmail: Item.getElement('input[name="attachToEmail"]').checked
-                        }
+                        options: ItemControl.getItemOptions()
                     });
                 }
             }
@@ -171,6 +173,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select'
          * @param {Object} ItemControl
          */
         $onAddItem: function (SelectControl, itemId, ItemControl) {
+            ItemControl.setAttributes({
+                confirmDelete: this.getAttribute('confirmItemDelete')
+            });
+
             ItemControl.addEvent('onItemAddCompleted', (File, SelectItemControl) => {
                 for (let Entry of this.$ImportedValue) {
                     if (File.hash === Entry.hash) {

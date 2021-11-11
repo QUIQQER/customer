@@ -146,7 +146,7 @@
             <de><![CDATA[Datei "[file]" wurde von [editUser] aus den Downloads im Frontend-Profil des Kunden entfernt.]]></de>
             <en><![CDATA[File "[file]" was removed from the downloadas  in the customer's frontend profile by [editUser].]]></en>
         </locale>
-        
+
         <locale name="exception.ajax.backend.general">
             <de><![CDATA[Bei der Anfrage ist ein unerwarteter Fehler aufgetreten. Bitte prüfen Sie die Fehler-Logs oder wenden sich an einen Administrator.]]></de>
             <en><![CDATA[An unexpected error occurred during the request. Please check the error logs or contact an administrator.]]></en>
@@ -159,7 +159,7 @@
             <de><![CDATA[Die Datei "[file]" ist nun nicht mehr für den Kunden zum Download verfügbar.]]></de>
             <en><![CDATA[The file "[file]" is now not anymore available for download by the customer.]]></en>
         </locale>
-        
+
         <locale name="DownloadEntry.title">
             <de><![CDATA[Ihre Kunden-Downloads]]></de>
             <en><![CDATA[Your customer downloads]]></en>
@@ -332,6 +332,10 @@ Best regards
             <de><![CDATA[Datei herunterladen]]></de>
             <en><![CDATA[Download file]]></en>
         </locale>
+        <locale name="controls.userFiles.SelectItem.btn.attachment.title">
+            <de><![CDATA[Datei ist E-Mail-Anhang]]></de>
+            <en><![CDATA[File is email attachment]]></en>
+        </locale>
         <locale name="controls.userFiles.SelectItem.tpl.labelAttachToEmail">
             <de><![CDATA[ist E-Mail-Anhang]]></de>
             <en><![CDATA[is email attachment]]></en>
@@ -339,6 +343,23 @@ Best regards
         <locale name="controls.userFiles.SelectItem.tpl.titleAttachToEmail">
             <de><![CDATA[Diese Datei soll automatisch angehangen werden, wenn dieses Dokument per E-Mail versendet wird.]]></de>
         </locale>
+        <locale name="controls.userFiles.SelectItem.delete.title">
+            <de><![CDATA[Datei entfernen]]></de>
+            <en><![CDATA[Remove file]]></en>
+        </locale>
+        <locale name="controls.userFiles.SelectItem.delete.text">
+            <de><![CDATA[Datei entfernen]]></de>
+            <en><![CDATA[Remove file]]></en>
+        </locale>
+        <locale name="controls.userFiles.SelectItem.delete.information" html="true">
+            <de><![CDATA[Möchten Sie die Datei <b>"[file]"</b> wirklich entfernen? Die Datei wird nicht aus den Dateien des Kunden gelöscht, es wird lediglich die Verknüpfung zu diesem Dokument aufgehoben.]]></de>
+            <en><![CDATA[Are you sure you want to remove the file <b>"[file]"</b>? The file is not deleted from the customers files, only the link to this document is removed.]]></en>
+        </locale>
+        <locale name="controls.userFiles.SelectItem.delete.submit">
+            <de><![CDATA[Datei entfernen]]></de>
+            <en><![CDATA[Remove file]]></en>
+        </locale>
+
         <locale name="controls.userFiles.Select.search_placeholder">
             <de><![CDATA[Kunden-Dateien durchsuchen...]]></de>
             <en><![CDATA[Search customer files...]]></en>

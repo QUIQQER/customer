@@ -6,12 +6,8 @@
     display: inline-block;
 }
 
-.quiqqer-customer-files-select-item-options {
-    display: inline-block;
-    float: right;
-}
-
-.qui-elements-selectItem-download {
+.qui-elements-selectItem-download,
+.qui-elements-selectItem-attachment {
     cursor: pointer;
     float: left;
     line-height: 30px;
@@ -20,15 +16,17 @@
     width: 30px;
 }
 
-.qui-elements-selectItem:hover .qui-elements-selectItem-download {
-    visibility: visible;
+.qui-elements-selectItem:hover .qui-elements-selectItem-download,
+.qui-elements-selectItem:hover .qui-elements-selectItem-attachment {
+    visibility: visible !important;
 }
 
-.qui-elements-selectItem-download:hover {
-    background: #2F8FC6;
-    color: #FFFFFF;
+.qui-elements-selectItem-download:hover,
+.qui-elements-selectItem-attachment:hover {
+    background: #2F8FC6 !important;
+    color: #FFFFFF !important;
 }
 
 .qui-elements-selectItem-text {
-    width: calc(100% - 90px) !important;
+    width: calc(100% - 120px) !important;
 }
