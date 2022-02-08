@@ -28,5 +28,6 @@
 }
 
 .qui-elements-selectItem-text {
+    cursor: pointer;
     width: calc(100% - 120px) !important;
 }

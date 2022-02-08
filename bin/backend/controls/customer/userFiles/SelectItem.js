@@ -90,6 +90,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectI
 
                 this.$ParentSelect.fireEvent('change', [this.$ParentSelect]);
 
+                this.$Text.addEvent('dblclick', this.$onClickDownload);
+
                 this.fireEvent('itemAddCompleted', [File, this]);
             }).catch((e) => {
                 this.$Icon.removeClass('fa fa-file-text-o');
