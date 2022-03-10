@@ -4,12 +4,11 @@
  */
 define('package/quiqqer/customer/bin/backend/controls/customer/address/Window', [
 
-    'qui/QUI',
     'qui/controls/windows/Confirm',
     'Locale',
     'Users'
 
-], function (QUI, QUIConfirm, QUILocale, Users) {
+], function (QUIConfirm, QUILocale, Users) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -28,7 +27,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/address/Window', 
             icon     : 'fa fa-address-book-o',
             title    : QUILocale.get(lg, 'window.customer.address.select.title'),
             maxHeight: 300,
-            maxWidth : 500,
+            maxWidth : 550,
             autoclose: false
         },
 
@@ -48,14 +47,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/address/Window', 
             Win.Loader.show();
 
             Win.getContent()
-               .set('html', QUILocale.get(lg, 'window.customer.address.select.information'));
+                .set('html', QUILocale.get(lg, 'window.customer.address.select.information'));
 
             var Select = new Element('select', {
                 styles: {
                     display: 'block',
                     clear  : 'both',
                     margin : '1rem auto 0',
-                    width  : 300
+                    width  : 500
                 }
             }).inject(Win.getContent());
 
