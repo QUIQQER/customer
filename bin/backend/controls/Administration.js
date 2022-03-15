@@ -318,8 +318,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 onDblClick     : this.$gridDblClick,
                 onDblClickBegin: this.$gridDblClickBegin,
                 // onBlur    : this.$gridBlur,
-                editComplete   : this.$editComplete,
-                refresh        : this.refresh
+                editComplete: this.$editComplete,
+                refresh     : this.refresh
             });
 
             return this.$Elm;
@@ -686,7 +686,10 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                         showUserButton  : true,
                         showDeleteButton: false,
                         events          : {
-                            onError: function (Instance) {
+                            onLoaded : () => {
+                                self.fireEvent('customerOpenEnd', [this, userId, self.$CustomerPanel]);
+                            },
+                            onError: (Instance) => {
                                 if (!Instance.$User) {
                                     self.setAttribute('customerId', false);
                                 }
@@ -702,7 +705,6 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     }, {
                         callback: function () {
                             self.$CustomerPanel.fireEvent('show');
-                            self.fireEvent('customerOpenEnd', [this, userId, self.$CustomerPanel]);
                         }
                     });
 

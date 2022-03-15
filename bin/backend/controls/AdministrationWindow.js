@@ -57,6 +57,12 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
             this.getContent().set('html', '');
             this.getContent().setStyle('padding', 0);
 
+            const BtnSubmit = this.getButton('submit');
+
+            if (BtnSubmit) {
+                BtnSubmit.disable();
+            }
+
             this.$Admin = new Administration({
                 editable   : this.getAttribute('editable'),
                 customerId : this.getAttribute('customerId'),
@@ -83,6 +89,10 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
                     },
 
                     onCustomerOpenEnd: function () {
+                        if (BtnSubmit) {
+                            BtnSubmit.enable();
+                        }
+
                         self.Loader.hide();
                     },
 

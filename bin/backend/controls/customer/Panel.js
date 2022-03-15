@@ -1,6 +1,8 @@
 /**
  * @module package/quiqqer/customer/bin/backend/controls/customer/Panel
  * @author www.pcsg.de (Henning Leutz)
+ *
+ * @event onLoaded [this] - Fires when Panel has finished intitializing
  */
 define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
@@ -82,6 +84,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 page : 1,
                 limit: 10
             };
+
+            this.$init = true;
 
             this.addEvents({
                 onCreate : this.$onCreate,
@@ -422,9 +426,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             }).then(function () {
                 if (!self.$ActiveCat) {
                     self.getCategory('information').click();
-                }
+                } else {
+                    self.fireEvent('loaded', [self]);
+                    self.$init = false;
 
-                self.Loader.hide();
+                    self.Loader.hide();
+                }
             }).catch(function (Err) {
                 // user not found
                 self.fireEvent('error', [self, Err]);
@@ -605,6 +612,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
         /**
          * opens the user information
+         *
+         * @return {Promise}
          */
         $openInformation: function () {
             this.Loader.show();
@@ -679,7 +688,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             var address, delivery;
 
             // set data
-            UserLoaded.then(function () {
+            return UserLoaded.then(function () {
                 Form.elements.userId.value = self.$User.getId();
 
                 if (self.$User.getAttribute('customerId')) {
@@ -1049,6 +1058,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     }).open();
                 });
             }).then(function () {
+                if (self.$init) {
+                    self.fireEvent('loaded', [self]);
+                    self.$init = false;
+                }
+
                 self.Loader.hide();
             });
         },
