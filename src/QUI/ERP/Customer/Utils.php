@@ -209,4 +209,31 @@ class Utils extends QUI\Utils\Singleton
 
         return false;
     }
+
+    /**
+     * Get contact person address.
+     *
+     * @param QUI\Interfaces\Users\User $Customer
+     * @return QUI\ERP\Address|false
+     */
+    public function getContactPersonAddress(QUI\Interfaces\Users\User $Customer)
+    {
+        try {
+            $contactPersonAddressId = $Customer->getAttribute('quiqqer.erp.customer.contact.person');
+
+            if (!empty($contactPersonAddressId)) {
+                if (!($Customer instanceof QUI\Users\User)) {
+                    $Customer = QUI::getUsers()->get($Customer->getId());
+                }
+
+                $Address = new QUI\Users\Address($Customer, $contactPersonAddressId);
+
+                return new QUI\ERP\Address($Address->getAttributes(), $Customer);
+            }
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeDebugException($Exception);
+        }
+
+        return false;
+    }
 }
