@@ -69,10 +69,13 @@ class BackendSearchProvider implements ProviderInterface
             'backendSearch.group.customers.label'
         );
 
+        $NumberRange = new NumberRange();
+        $prefix      = $NumberRange->getCustomerNoPrefix();
+
         foreach ($results as $row) {
             try {
                 $userId     = $row['user_id'];
-                $customerId = !empty($row['customerId']) ? $row['customerId'] : $userId;
+                $customerId = !empty($row['customerId']) ? $prefix.$row['customerId'] : $userId;
 
                 if (!empty($row['company'])) {
                     $name = $row['company'];
