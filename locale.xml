@@ -134,9 +134,19 @@
             <de><![CDATA[Zahlungseingänge]]></de>
             <en><![CDATA[Incoming payments]]></en>
         </locale>
+
+        <locale name="backendSearch.group.customers.label">
+            <de><![CDATA[Kunden]]></de>
+            <en><![CDATA[Customers]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/customer" datatype="php">
+
+        <locale name="backendSearch.fallback_label.customer">
+            <de><![CDATA[Kunde]]></de>
+            <en><![CDATA[Customer]]></en>
+        </locale>
 
         <locale name="comment.DownloadEntry.add_file">
             <de><![CDATA[Datei "[file]" wurde von [editUser] im Frontend-Profil des Kunden zum Download zur Verfügung gestellt.]]></de>
