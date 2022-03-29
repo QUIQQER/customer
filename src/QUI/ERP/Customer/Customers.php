@@ -605,10 +605,10 @@ class Customers extends Singleton
         $comments = $User->getAttribute('comments');
         $comments = \json_decode($comments, true);
 
-        if ($comments) {
+        if (\is_array($comments)) {
             $Comments = new QUI\ERP\Comments($comments);
         } else {
-            $Comments = new QUI\ERP\Comments($comments);
+            $Comments = new QUI\ERP\Comments();
         }
 
         return $Comments;
