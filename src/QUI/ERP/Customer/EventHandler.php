@@ -30,39 +30,6 @@ class EventHandler
         }
 
         self::createCustomerGroup();
-        self::updateOpenItemsRecords();
-    }
-
-    /**
-     * Update open items records of all customers
-     *
-     * @return void
-     */
-    protected static function updateOpenItemsRecords(): void
-    {
-        $CustomerGroup = Customers::getInstance()->getCustomerGroup();
-        $Users         = QUI::getUsers();
-
-        foreach ($CustomerGroup->getUserIds() as $userId) {
-            try {
-                $User = $Users->get($userId);
-            } catch (\Exception $Exception) {
-                QUI\System\Log::writeException($Exception);
-                continue;
-            }
-
-            try {
-                $User = QUI\ERP\User::convertUserToErpUser($User);
-            } catch (\Exception $Exception) {
-                QUI\System\Log::writeDebugException($Exception);
-            }
-
-            try {
-                QUI\ERP\Customer\OpenItemsList\Handler::updateOpenItemsRecord($User);
-            } catch (\Exception $Exception) {
-                QUI\System\Log::writeException($Exception);
-            }
-        }
     }
 
     /**
