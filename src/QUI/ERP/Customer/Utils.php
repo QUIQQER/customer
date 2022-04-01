@@ -174,13 +174,13 @@ class Utils extends QUI\Utils\Singleton
     protected function getEmailByContactPersonAddress(QUI\Interfaces\Users\User $Customer)
     {
         try {
+            if (!($Customer instanceof QUI\Users\User)) {
+                $Customer = QUI::getUsers()->get($Customer->getId());
+            }
+
             $contactPersonAddressId = $Customer->getAttribute('quiqqer.erp.customer.contact.person');
 
             if (!empty($contactPersonAddressId)) {
-                if (!($Customer instanceof QUI\Users\User)) {
-                    $Customer = QUI::getUsers()->get($Customer->getId());
-                }
-
                 $ContactAddress = new QUI\Users\Address($Customer, $contactPersonAddressId);
                 $mailAddresses  = $ContactAddress->getMailList();
 
