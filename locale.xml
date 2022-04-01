@@ -362,7 +362,8 @@ Best regards
             <en><![CDATA[Remove file]]></en>
         </locale>
         <locale name="controls.userFiles.SelectItem.delete.information" html="true">
-            <de><![CDATA[Möchten Sie die Datei <b>"[file]"</b> wirklich entfernen? Die Datei wird nicht aus den Dateien des Kunden gelöscht, es wird lediglich die Verknüpfung zu diesem Dokument aufgehoben.]]></de>
+            <de>
+                <![CDATA[Möchten Sie die Datei <b>"[file]"</b> wirklich entfernen? Die Datei wird nicht aus den Dateien des Kunden gelöscht, es wird lediglich die Verknüpfung zu diesem Dokument aufgehoben.]]></de>
             <en><![CDATA[Are you sure you want to remove the file <b>"[file]"</b>? The file is not deleted from the customers files, only the link to this document is removed.]]></en>
         </locale>
         <locale name="controls.userFiles.SelectItem.delete.submit">
@@ -543,7 +544,8 @@ Best regards
             <en><![CDATA[Shall this file be made available to download in the customers frontend profile?]]></en>
         </locale>
         <locale name="window.customer.userDownload.add.information" html="true">
-            <de><![CDATA[Die Datei <b>[file]</b> kann im Anschluss vom Kunden in seinem Frontend-Profil unter "Meine Downloads" heruntergeladen werden. Dies ist nur möglich, wenn der Kunde eingeloggt ist.]]></de>
+            <de>
+                <![CDATA[Die Datei <b>[file]</b> kann im Anschluss vom Kunden in seinem Frontend-Profil unter "Meine Downloads" heruntergeladen werden. Dies ist nur möglich, wenn der Kunde eingeloggt ist.]]></de>
             <en><![CDATA[The file <b>[file]</b> can then be downloaded by the customer in his frontend profile under "My Downloads". This is only possible if the customer is logged in.]]></en>
         </locale>
         <locale name="window.customer.userDownload.add.btn.submit">
@@ -646,6 +648,10 @@ Best regards
         <locale name="window.customer.select.button">
             <de><![CDATA[Kunden übernehmen]]></de>
             <en><![CDATA[Select customer]]></en>
+        </locale>
+        <locale name="window.customer.address.select.default_prefix">
+            <de><![CDATA[[Standard]]]></de>
+            <en><![CDATA[[default]]]></en>
         </locale>
 
 

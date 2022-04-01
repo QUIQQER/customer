@@ -64,9 +64,15 @@ define('package/quiqqer/customer/bin/backend/controls/customer/address/Window', 
                 self.$addressList = addresses;
 
                 for (var i = 0, len = addresses.length; i < len; i++) {
+                    let text = addresses[i].text;
+
+                    if (addresses[i].default) {
+                        text = QUILocale.get(lg, 'window.customer.address.select.default_prefix') + ' ' + text;
+                    }
+
                     new Element('option', {
                         value: addresses[i].id,
-                        html : addresses[i].text
+                        html : text
                     }).inject(Select);
                 }
 
