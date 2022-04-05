@@ -88,7 +88,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectI
                     this.$Destroy.addEvent('click', this.$onClickDelete);
                 }
 
-                this.$ParentSelect.fireEvent('change', [this.$ParentSelect]);
+                //this.$ParentSelect.fireEvent('change', [this.$ParentSelect]);
 
                 this.$Text.addEvent('dblclick', this.$onClickDownload);
 
@@ -218,7 +218,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectI
                 events   : {
                     onSubmit: (Win) => {
                         this.destroy();
-                        this.$ParentSelect.fireEvent('change', [this.$ParentSelect]);
+                        //this.$ParentSelect.fireEvent('change', [this.$ParentSelect]);
 
                         Win.close();
                     }

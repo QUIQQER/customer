@@ -8,12 +8,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select'
 
     'qui/QUI',
     'qui/controls/elements/Select',
-    'package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectItem',
 
+    'utils/Controls',
     'Locale',
     'Ajax'
 
-], function (QUI, QUIElementSelect, SelectItem, QUILocale, QUIAjax) {
+], function (QUI, QUIElementSelect, QUIControlUtils, QUILocale, QUIAjax) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -118,28 +118,49 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select'
         },
 
         /**
-         * Return the value
+         * Get files
          *
-         * @returns {String}
+         * @return {Promise}
          */
-        getValue: function () {
-            const valueItems = [];
+        getFiles: function () {
             const fileHashes = this.$Input.value.split(',');
 
-            for (let fileHash of fileHashes) {
-                const Item = this.getElm().getElement('.quiqqer-customer-files-select-item[data-hash="' + fileHash + '"]');
+            const loadItem = (fileHash) => {
+                return new Promise((resolve) => {
+                    const waitForItemLoad = setInterval((fileHash) => {
+                        const Item = this.getElm().getElement(
+                            '.quiqqer-customer-files-select-item[data-hash="' + fileHash + '"]'
+                        );
 
-                if (Item) {
-                    const ItemControl = QUI.Controls.getById(Item.getParent('.qui-elements-selectItem').get('data-quiid'));
+                        if (!Item) {
+                            return;
+                        }
 
-                    valueItems.push({
-                        hash   : Item.get('data-hash'),
-                        options: ItemControl.getItemOptions()
-                    });
+                        const ItemControl = QUI.Controls.getById(
+                            Item.getParent('.qui-elements-selectItem').get('data-quiid')
+                        );
+
+                        clearInterval(waitForItemLoad);
+
+                        resolve({
+                            hash   : Item.get('data-hash'),
+                            options: ItemControl.getItemOptions()
+                        });
+                    }, 200, fileHash);
+                });
+            };
+
+            const itemPromises = [];
+
+            return new Promise((resolve) => {
+                for (let fileHash of fileHashes) {
+                    itemPromises.push(loadItem(fileHash));
                 }
-            }
 
-            return JSON.encode(valueItems);
+                Promise.all(itemPromises).then((valueItems) => {
+                    resolve(JSON.encode(valueItems));
+                });
+            });
         },
 
         /**
