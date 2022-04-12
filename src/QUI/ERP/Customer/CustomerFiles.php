@@ -86,6 +86,10 @@ class CustomerFiles
                 ];
             }
 
+            $filePath = $customerDir.DIRECTORY_SEPARATOR.$file;
+
+            $info['uploadTime'] = \filemtime($filePath);
+
             if ($info['filesize'] !== '---') {
                 $info['filesize_formatted'] = QUI\Utils\System\File::formatSize($info['filesize']);
             }
@@ -94,10 +98,7 @@ class CustomerFiles
             $info['userDownload'] = false;
 
             if ($userDownloadsInstalled) {
-                $info['userDownload'] = self::isFileInDownloadEntry(
-                    $customerId,
-                    $customerDir.DIRECTORY_SEPARATOR.$file
-                );
+                $info['userDownload'] = self::isFileInDownloadEntry($customerId, $filePath);
             }
 
             $result[] = $info;

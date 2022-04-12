@@ -135,6 +135,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
                         dataIndex: 'filesize_formatted',
                         dataType : 'string',
                         width    : 100
+                    }, {
+                        header   : QUILocale.get(lg, 'window.customer.tbl.header.uploadTime'),
+                        dataIndex: 'uploadTime',
+                        dataType : 'string',
+                        width    : 100
                     }];
 
                     // Add edit options if not in select mode

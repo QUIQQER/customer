@@ -653,6 +653,10 @@ Best regards
             <de><![CDATA[[Standard]]]></de>
             <en><![CDATA[[default]]]></en>
         </locale>
+        <locale name="window.customer.tbl.header.uploadTime">
+            <de><![CDATA[Upload am]]></de>
+            <en><![CDATA[Upload at]]></en>
+        </locale>
 
 
         <locale name="panel.title">

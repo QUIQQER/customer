@@ -12,7 +12,16 @@
 QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_files_getList',
     function ($customerId) {
-        return QUI\ERP\Customer\CustomerFiles::getFileList((int)$customerId);
+        $files  = QUI\ERP\Customer\CustomerFiles::getFileList((int)$customerId);
+        $Locale = QUI::getLocale();
+
+        foreach ($files as $k => $file) {
+            $file['uploadTime'] = $Locale->formatDate($file['uploadTime']);
+
+            $files[$k] = $file;
+        }
+
+        return $files;
     },
     ['customerId'],
     'Permission::checkAdminUser'
