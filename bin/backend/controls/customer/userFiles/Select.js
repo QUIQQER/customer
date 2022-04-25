@@ -199,7 +199,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select'
             });
 
             ItemControl.addEvent('onItemAddCompleted', (File, SelectItemControl) => {
-                for (let Entry of this.$ImportedValue) {
+                for (let Entry of Object.values(this.$ImportedValue)) {
                     if (File.hash === Entry.hash) {
                         SelectItemControl.setItemOptions(Entry.options);
                         return;
