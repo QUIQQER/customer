@@ -154,7 +154,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select'
 
             return new Promise((resolve) => {
                 for (let fileHash of fileHashes) {
-                    itemPromises.push(loadItem(fileHash));
+                    if (fileHash) {
+                        itemPromises.push(loadItem(fileHash));
+                    }
                 }
 
                 Promise.all(itemPromises).then((valueItems) => {
