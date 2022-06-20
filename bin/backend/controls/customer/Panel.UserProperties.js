@@ -87,6 +87,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
                         }
                     }).inject(Form, 'top');
 
+                    if (Form.elements.passwordMail) {
+                        Form.elements.passwordMail.disabled = true;
+                        Form.elements.passwordMail.title = QUILocale.get(lg, 'customer.password.disabled');
+                    }
+
                     self.fireEvent('load', [self]);
                     return;
                 }
@@ -98,9 +103,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
                 Form.elements.password2.set('disabled', false);
 
                 // dates & informations
-                var lastEdit  = parseInt(User.getAttribute('lastvisit'));
+                var lastEdit = parseInt(User.getAttribute('lastvisit'));
                 var Formatter = QUILocale.getDateTimeFormatter();
-                var LastEdit  = new window.Date(lastEdit * 1000);
+                var LastEdit = new window.Date(lastEdit * 1000);
 
                 if (lastEdit) {
                     try {
