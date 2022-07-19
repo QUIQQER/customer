@@ -59,7 +59,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
                 width : '100%'
             });
 
-            var Container = new Element('div', {
+            const Container = new Element('div', {
                 styles: {
                     height: '100%',
                     width : '100%'
@@ -67,102 +67,119 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
             }).inject(this.$Elm);
 
             this.$Grid = new Grid(Container, {
-                columnModel   : [{
-                    header   : QUILocale.get(lgQUIQQER, 'id'),
-                    dataIndex: 'id',
-                    dataType : 'string',
-                    width    : 60
-                }, {
-                    header   : QUILocale.get(lgQUIQQER, 'salutation'),
-                    dataIndex: 'salutation',
-                    dataType : 'string',
-                    width    : 60,
-                    editable : true,
-                    className: 'clickable'
-                }, {
-                    header   : QUILocale.get(lgQUIQQER, 'firstname'),
-                    dataIndex: 'firstname',
-                    dataType : 'string',
-                    width    : 100,
-                    editable : true,
-                    className: 'clickable'
-                }, {
-                    header   : QUILocale.get(lgQUIQQER, 'lastname'),
-                    dataIndex: 'lastname',
-                    dataType : 'string',
-                    width    : 100,
-                    editable : true,
-                    className: 'clickable'
-                }, {
-                    header   : QUILocale.get(lgQUIQQER, 'users.user.address.table.phone'),
-                    dataIndex: 'phone',
-                    dataType : 'string',
-                    width    : 100
-                }, {
-                    header   : QUILocale.get(lgQUIQQER, 'email'),
-                    dataIndex: 'mail',
-                    dataType : 'string',
-                    width    : 100
-                }, {
-                    header   : QUILocale.get(lgQUIQQER, 'company'),
-                    dataIndex: 'company',
-                    dataType : 'string',
-                    width    : 100,
-                    editable : true,
-                    className: 'clickable'
-                }, {
-                    header   : QUILocale.get(lgQUIQQER, 'street'),
-                    dataIndex: 'street_no',
-                    dataType : 'string',
-                    width    : 100,
-                    editable : true,
-                    className: 'clickable'
-                }, {
-                    header   : QUILocale.get(lgQUIQQER, 'zip'),
-                    dataIndex: 'zip',
-                    dataType : 'string',
-                    width    : 100,
-                    editable : true,
-                    className: 'clickable'
-                }, {
-                    header   : QUILocale.get(lgQUIQQER, 'city'),
-                    dataIndex: 'city',
-                    dataType : 'string',
-                    width    : 100,
-                    editable : true,
-                    className: 'clickable'
-                }, {
-                    header   : QUILocale.get(lgQUIQQER, 'country'),
-                    dataIndex: 'country',
-                    dataType : 'string',
-                    width    : 100
-                }],
-                buttons       : [{
-                    name     : 'add',
-                    text     : QUILocale.get(lgQUIQQER, 'users.user.address.table.btn.add'),
-                    textimage: 'fa fa-plus',
-                    events   : {
-                        onClick: this.$clickCreate
+                columnModel   : [
+                    {
+                        header   : QUILocale.get(lgQUIQQER, 'id'),
+                        dataIndex: 'id',
+                        dataType : 'string',
+                        width    : 60
+                    },
+                    {
+                        header   : QUILocale.get(lgQUIQQER, 'salutation'),
+                        dataIndex: 'salutation',
+                        dataType : 'string',
+                        width    : 60,
+                        editable : true,
+                        className: 'clickable'
+                    },
+                    {
+                        header   : QUILocale.get(lgQUIQQER, 'firstname'),
+                        dataIndex: 'firstname',
+                        dataType : 'string',
+                        width    : 100,
+                        editable : true,
+                        className: 'clickable'
+                    },
+                    {
+                        header   : QUILocale.get(lgQUIQQER, 'lastname'),
+                        dataIndex: 'lastname',
+                        dataType : 'string',
+                        width    : 100,
+                        editable : true,
+                        className: 'clickable'
+                    },
+                    {
+                        header   : QUILocale.get(lgQUIQQER, 'users.user.address.table.phone'),
+                        dataIndex: 'phone',
+                        dataType : 'string',
+                        width    : 100
+                    },
+                    {
+                        header   : QUILocale.get(lgQUIQQER, 'email'),
+                        dataIndex: 'mail',
+                        dataType : 'string',
+                        width    : 100
+                    },
+                    {
+                        header   : QUILocale.get(lgQUIQQER, 'company'),
+                        dataIndex: 'company',
+                        dataType : 'string',
+                        width    : 100,
+                        editable : true,
+                        className: 'clickable'
+                    },
+                    {
+                        header   : QUILocale.get(lgQUIQQER, 'street'),
+                        dataIndex: 'street_no',
+                        dataType : 'string',
+                        width    : 100,
+                        editable : true,
+                        className: 'clickable'
+                    },
+                    {
+                        header   : QUILocale.get(lgQUIQQER, 'zip'),
+                        dataIndex: 'zip',
+                        dataType : 'string',
+                        width    : 100,
+                        editable : true,
+                        className: 'clickable'
+                    },
+                    {
+                        header   : QUILocale.get(lgQUIQQER, 'city'),
+                        dataIndex: 'city',
+                        dataType : 'string',
+                        width    : 100,
+                        editable : true,
+                        className: 'clickable'
+                    },
+                    {
+                        header   : QUILocale.get(lgQUIQQER, 'country'),
+                        dataIndex: 'country',
+                        dataType : 'string',
+                        width    : 100
                     }
-                }, {
-                    type: 'separator'
-                }, {
-                    name     : 'edit',
-                    text     : QUILocale.get(lgQUIQQER, 'users.user.address.table.btn.edit'),
-                    textimage: 'fa fa-edit',
-                    disabled : true,
-                    events   : {
-                        onClick: this.$clickEdit
+                ],
+                buttons       : [
+                    {
+                        name     : 'add',
+                        text     : QUILocale.get(lgQUIQQER, 'users.user.address.table.btn.add'),
+                        textimage: 'fa fa-plus',
+                        events   : {
+                            onClick: this.$clickCreate
+                        }
+                    },
+                    {
+                        type: 'separator'
+                    },
+                    {
+                        name     : 'edit',
+                        text     : QUILocale.get(lgQUIQQER, 'users.user.address.table.btn.edit'),
+                        textimage: 'fa fa-edit',
+                        disabled : true,
+                        events   : {
+                            onClick: this.$clickEdit
+                        }
+                    },
+                    {
+                        name     : 'delete',
+                        text     : QUILocale.get(lgQUIQQER, 'users.user.address.table.btn.delete'),
+                        textimage: 'fa fa-trash',
+                        disabled : true,
+                        events   : {
+                            onClick: this.$clickDelete
+                        }
                     }
-                }, {
-                    name     : 'delete',
-                    text     : QUILocale.get(lgQUIQQER, 'users.user.address.table.btn.delete'),
-                    textimage: 'fa fa-trash',
-                    disabled : true,
-                    events   : {
-                        onClick: this.$clickDelete
-                    }
-                }],
+                ],
                 editable      : true,
                 editondblclick: true
             });
@@ -184,9 +201,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
          * event: on inject
          */
         $onInject: function () {
-            var self   = this;
-            var User   = Users.get(this.getAttribute('userId'));
-            var Loaded = Promise.resolve(User);
+            const self = this;
+            const User = Users.get(this.getAttribute('userId'));
+            let Loaded = Promise.resolve(User);
 
             if (!User.isLoaded()) {
                 Loaded = User.load();
@@ -204,7 +221,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
          * @return {Promise}
          */
         resize: function () {
-            var size = this.$Elm.getSize();
+            const size = this.$Elm.getSize();
 
             return Promise.all([
                 this.$Grid.setHeight(size.y),
@@ -216,12 +233,42 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
          * Refresh the address list
          */
         refresh: function () {
-            var self = this;
+            const self = this;
 
             this.$Grid.disable();
             this.$User.$addresses = false;
 
             return this.$User.getAddressList().then(function (addressList) {
+                let mail, phone, phoneText;
+                
+                const buildPhoneText = function (entry) {
+                    if (entry.no === '') {
+                        return;
+                    }
+                    phoneText = phoneText + ' ' + entry.no + ' (' + entry.type + '), ';
+                };
+
+                for (let i = 0, len = addressList.length; i < len; i++) {
+                    mail = addressList[i].mail;
+                    phone = addressList[i].phone;
+
+                    try {
+                        mail = JSON.decode(mail);
+                        addressList[i].mail = mail.join(', ');
+                    } catch (e) {
+                    }
+
+                    try {
+                        phoneText = '';
+                        phone = JSON.decode(phone);
+                        phone.forEach(buildPhoneText);
+
+                        addressList[i].phone = phoneText;
+                    } catch (e) {
+
+                    }
+                }
+
                 self.$Grid.setData({
                     data: addressList
                 });
@@ -237,7 +284,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
          * @param addressId
          */
         editAddress: function (addressId) {
-            var self = this;
+            const self = this;
 
             this.$Grid.disable();
 
@@ -265,8 +312,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
          * event: on grid click
          */
         $onGridClick: function () {
-            var buttons = this.$Grid.getButtons(),
-                sels    = this.$Grid.getSelectedIndices();
+            const buttons = this.$Grid.getButtons(),
+                  sels    = this.$Grid.getSelectedIndices();
 
             buttons.each(function (Btn) {
                 if (Btn.getAttribute('name') !== 'add') {
@@ -310,9 +357,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
          * event: edit grid complete
          */
         $editComplete: function (data) {
-            var self      = this,
-                rowData   = this.$Grid.getDataByRow(data.row),
-                attribute = data.columnModel.dataIndex;
+            const self      = this,
+                  rowData   = this.$Grid.getDataByRow(data.row),
+                  attribute = data.columnModel.dataIndex;
 
             switch (attribute) {
                 case 'firstname':
@@ -357,9 +404,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
          * event: on click at delete address
          */
         $clickDelete: function () {
-            var self     = this;
-            var selected = this.$Grid.getSelectedData();
-            var ids      = selected.map(function (entry) {
+            const self = this;
+            const selected = this.$Grid.getSelectedData();
+            const ids = selected.map(function (entry) {
                 return entry.id;
             });
 
@@ -383,7 +430,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
         $clickCreate: function () {
             this.$Grid.disable();
 
-            var self = this;
+            const self = this;
 
             QUIAjax.post('ajax_users_address_save', function (addressId) {
                 self.editAddress(addressId);
