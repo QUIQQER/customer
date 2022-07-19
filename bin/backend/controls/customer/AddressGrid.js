@@ -69,6 +69,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
             this.$Grid = new Grid(Container, {
                 columnModel   : [
                     {
+                        header   : '&nbsp;',
+                        dataIndex: 'default',
+                        dataType : 'node',
+                        width    : 40
+                    },
+                    {
                         header   : QUILocale.get(lgQUIQQER, 'id'),
                         dataIndex: 'id',
                         dataType : 'string',
@@ -240,7 +246,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
 
             return this.$User.getAddressList().then(function (addressList) {
                 let mail, phone, phoneText;
-                
+
                 const buildPhoneText = function (entry) {
                     if (entry.no === '') {
                         return;
@@ -249,6 +255,18 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
                 };
 
                 for (let i = 0, len = addressList.length; i < len; i++) {
+                    if (addressList[i].default) {
+                        addressList[i].default = new Element('span', {
+                            html   : '',
+                            'class': 'fa fa-check'
+                        });
+                    } else {
+                        addressList[i].default = new Element('span', {
+                            html   : '&nbsp;',
+                            'class': ''
+                        });
+                    }
+
                     mail = addressList[i].mail;
                     phone = addressList[i].phone;
 
@@ -265,7 +283,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
 
                         addressList[i].phone = phoneText;
                     } catch (e) {
-
                     }
                 }
 
