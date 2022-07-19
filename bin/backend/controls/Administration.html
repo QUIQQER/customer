@@ -9,7 +9,7 @@
             />
             <input type="submit"
                    name="submit"
-                   value="Search"
+                   value="{{search}}"
                    class="qui-button"
             />
         </label>
@@ -20,49 +20,49 @@
 
         <div class="quiqqer-customer-administration-search-filter" style="display: none">
             <section class="quiqqer-customer-administration-search-filter-checks">
-                <span class="title">Felder bei der Suche beachten</span>
+                <span class="title">{{title}}:</span>
 
                 <label>
                     <input type="checkbox" name="userId"/>
-                    <span>Benutzer-ID</span>
+                    <span>{{userId}}</span>
                 </label>
 
                 <label>
                     <input type="checkbox" name="username"/>
-                    <span>Benutzername</span>
+                    <span>{{username}}</span>
                 </label>
 
                 <label>
                     <input type="checkbox" name="firstname"/>
-                    <span>Vorname</span>
+                    <span>{{firstname}}</span>
                 </label>
 
                 <label>
                     <input type="checkbox" name="lastname"/>
-                    <span>Nachname</span>
+                    <span>{{lastname}}</span>
                 </label>
 
                 <label>
                     <input type="checkbox" name="email"/>
-                    <span>E-Mail</span>
+                    <span>{{email}}</span>
                 </label>
 
                 <label>
                     <input type="checkbox" name="group"/>
-                    <span>Gruppe</span>
+                    <span>{{group}}</span>
                 </label>
             </section>
 
             <section class="quiqqer-customer-administration-search-filter-specs">
-                <span class="title">Erstellungsdatum</span>
+                <span class="title">{{c_date}}</span>
 
                 <label>
-                    <span>von</span>
+                    <span>{{from}}</span>
                     <input type="date" name="registration-from"/>
                 </label>
 
                 <label>
-                    <span>bis</span>
+                    <span>{{to}}</span>
                     <input type="date" name="registration-to"/>
                 </label>
             </section>

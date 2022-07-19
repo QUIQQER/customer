@@ -76,8 +76,12 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
                         self.$Title.getElement('[name="close"]').setStyle('display', 'none');
 
                         new Element('button', {
-                            'class': 'fa fa-angle-double-left qui-window-popup-title-close',
+                            'class': 'qui-window-popup-title-close quiqqer-customer-adminWindow-close',
                             name   : 'show-list',
+                            html   : '<span class="fa fa-angle-double-left"></span> ' +
+                                     '<span>' +
+                                     '' + QUILocale.get(lg, 'customer.window.backToList') +
+                                     '</span>',
                             events : {
                                 click: function () {
                                     self.$Title.getElement('[name="show-list"]').destroy();
@@ -126,14 +130,20 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
 
             if (this.$Admin.$CustomerPanel) {
                 this.$Admin.$CustomerPanel.update().then(() => {
-                    this.fireEvent('submit', [this, ids]);
+                    this.fireEvent('submit', [
+                        this,
+                        ids
+                    ]);
                     this.close();
                 });
 
                 return;
             }
 
-            this.fireEvent('submit', [this, ids]);
+            this.fireEvent('submit', [
+                this,
+                ids
+            ]);
             this.close();
         }
     });

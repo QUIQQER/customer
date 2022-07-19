@@ -76,14 +76,14 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             this.parent(options);
 
             this.$SearchContainer = null;
-            this.$SearchInput     = null;
-            this.$FilterButton    = null;
-            this.$customerGroup   = null;
+            this.$SearchInput = null;
+            this.$FilterButton = null;
+            this.$customerGroup = null;
 
-            this.$CustomerPanel  = null;
-            this.$GroupSwitch    = null;
-            this.$GridContainer  = null;
-            this.$Grid           = null;
+            this.$CustomerPanel = null;
+            this.$GroupSwitch = null;
+            this.$GridContainer = null;
+            this.$Grid = null;
             this.$EditableButton = null;
 
             this.addEvents({
@@ -109,15 +109,27 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             this.$Elm = new Element('div', {
                 'class': 'quiqqer-customer-administration',
                 html   : Mustache.render(template, {
-                    searchPlaceholder: QUILocale.get(lg, 'panel.search.placeholder')
+                    searchPlaceholder: QUILocale.get(lg, 'panel.search.placeholder'),
+
+                    title    : QUILocale.get(lg, 'panel.search.title'),
+                    search   : QUILocale.get('quiqqer/quiqqer', 'search'),
+                    userId   : QUILocale.get('quiqqer/quiqqer', 'user_id'),
+                    username : QUILocale.get('quiqqer/quiqqer', 'username'),
+                    firstname: QUILocale.get('quiqqer/quiqqer', 'firstname'),
+                    lastname : QUILocale.get('quiqqer/quiqqer', 'lastname'),
+                    email    : QUILocale.get('quiqqer/quiqqer', 'email'),
+                    group    : QUILocale.get('quiqqer/quiqqer', 'group'),
+                    c_date   : QUILocale.get('quiqqer/quiqqer', 'c_date'),
+                    from     : QUILocale.get('quiqqer/quiqqer', 'from'),
+                    to       : QUILocale.get('quiqqer/quiqqer', 'to')
                 })
             });
 
             this.$SearchContainer = this.$Elm.getElement('.quiqqer-customer-administration-search');
-            this.$GridContainer   = this.$Elm.getElement('.quiqqer-customer-administration-grid');
-            this.$SearchInput     = this.$Elm.getElement('[name="search"]');
-            this.$SubmitButton    = this.$Elm.getElement('[name="submit"]');
-            this.$FilterButton    = this.$Elm.getElement('button[name="filter"]');
+            this.$GridContainer = this.$Elm.getElement('.quiqqer-customer-administration-grid');
+            this.$SearchInput = this.$Elm.getElement('[name="search"]');
+            this.$SubmitButton = this.$Elm.getElement('[name="submit"]');
+            this.$FilterButton = this.$Elm.getElement('button[name="filter"]');
 
             this.$SearchContainer.getElement('form').addEvent('submit', function (event) {
                 event.stop();
@@ -156,7 +168,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     events : {
                         click: function () {
                             var activeClass = 'quiqqer-customer-administration-editableButton--active';
-                            var active      = self.$EditableButton.hasClass(activeClass);
+                            var active = self.$EditableButton.hasClass(activeClass);
 
                             if (active) {
                                 // deactivate
@@ -189,7 +201,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             this.$Container = new Element('div');
             this.$Container.inject(this.$GridContainer);
 
-            var columnModel = [];
+            let columnModel = [];
 
             if (this.getAttribute('submittable')) {
                 columnModel.push({
@@ -274,25 +286,28 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             });
 
             this.$Grid = new Grid(this.$Container, {
-                buttons: [{
-                    name     : 'add',
-                    textimage: 'fa fa-plus',
-                    text     : QUILocale.get(lg, 'customer.window.create.title'),
-                    events   : {
-                        onClick: self.openAddWindow
-                    }
-                }, {
-                    name     : 'delete',
-                    textimage: 'fa fa-trash',
-                    text     : QUILocale.get(lg, 'customer.window.delete.title'),
-                    disabled : true,
-                    styles   : {
-                        'float': 'right'
+                buttons: [
+                    {
+                        name     : 'add',
+                        textimage: 'fa fa-plus',
+                        text     : QUILocale.get(lg, 'customer.window.create.title'),
+                        events   : {
+                            onClick: self.openAddWindow
+                        }
                     },
-                    events   : {
-                        onClick: self.openDeleteWindow
+                    {
+                        name     : 'delete',
+                        textimage: 'fa fa-trash',
+                        text     : QUILocale.get(lg, 'customer.window.delete.title'),
+                        disabled : true,
+                        styles   : {
+                            'float': 'right'
+                        },
+                        events   : {
+                            onClick: self.openDeleteWindow
+                        }
                     }
-                }],
+                ],
 
                 columnModel      : columnModel,
                 pagination       : true,
@@ -442,7 +457,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 return Promise.resolve();
             }
 
-            var size = this.$GridContainer.getSize();
+            const size = this.$GridContainer.getSize();
 
             return Promise.all([
                 this.$Grid.setHeight(size.y - 40),
@@ -485,7 +500,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_search', function (result) {
                     var onChange = function (Switch) {
                         var userStatus = Switch.getStatus();
-                        var userId     = Switch.getAttribute('userId');
+                        var userId = Switch.getAttribute('userId');
 
                         self.$setStatus(userId, userStatus).catch(function () {
                             if (userStatus) {
@@ -496,13 +511,13 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                         });
                     };
 
-                    var click = function () {
+                    const click = function () {
                         (function () {
                             self.fireEvent('submit', [self]);
                         }).delay(200);
                     };
 
-                    for (var i = 0, len = result.data.length; i < len; i++) {
+                    for (let i = 0, len = result.data.length; i < len; i++) {
                         result.data[i].status = new QUISwitch({
                             status: result.data[i].status,
                             userId: result.data[i].id,
@@ -665,7 +680,10 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             var self = this;
 
-            this.fireEvent('customerOpenBegin', [this, userId]);
+            this.fireEvent('customerOpenBegin', [
+                this,
+                userId
+            ]);
 
             require([
                 'package/quiqqer/customer/bin/backend/controls/customer/Panel',
@@ -686,10 +704,14 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                         showUserButton  : true,
                         showDeleteButton: false,
                         events          : {
-                            onLoaded : () => {
-                                self.fireEvent('customerOpenEnd', [this, userId, self.$CustomerPanel]);
+                            onLoaded: () => {
+                                self.fireEvent('customerOpenEnd', [
+                                    this,
+                                    userId,
+                                    self.$CustomerPanel
+                                ]);
                             },
-                            onError: (Instance) => {
+                            onError : (Instance) => {
                                 if (!Instance.$User) {
                                     self.setAttribute('customerId', false);
                                 }
@@ -697,7 +719,11 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                         }
                     }).inject(Container);
 
-                    self.fireEvent('customerOpen', [this, userId, self.$CustomerPanel]);
+                    self.fireEvent('customerOpen', [
+                        this,
+                        userId,
+                        self.$CustomerPanel
+                    ]);
 
                     moofx(Container).animate({
                         left   : 0,
@@ -779,9 +805,9 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             if (this.getAttribute('editable') === false &&
                 (data.cell.get('data-index') === 'firstname' ||
-                    data.cell.get('data-index') === 'lastname' ||
-                    data.cell.get('data-index') === 'usergroup_display' ||
-                    data.cell.get('data-index') === 'email')) {
+                 data.cell.get('data-index') === 'lastname' ||
+                 data.cell.get('data-index') === 'usergroup_display' ||
+                 data.cell.get('data-index') === 'email')) {
                 this.$openCustomer(rowData.user_id);
                 return;
             }
@@ -864,7 +890,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          */
         $gridClick: function () {
             var selected = this.$Grid.getSelectedData();
-            var Delete   = this.$Grid.getButtons().filter(function (Btn) {
+            var Delete = this.$Grid.getButtons().filter(function (Btn) {
                 return Btn.getAttribute('name') === 'delete';
             })[0];
 
@@ -879,7 +905,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          * opens the add customer window
          */
         openAddWindow: function () {
-            var self = this;
+            const self = this;
 
             require([
                 'package/quiqqer/customer/bin/backend/controls/create/CustomerWindow'
@@ -899,7 +925,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          * opens the customer delete window
          */
         openDeleteWindow: function () {
-            var self = this;
+            const self = this;
 
             new QUIConfirm({
                 title      : QUILocale.get(lg, 'customer.window.delete.title'),
@@ -933,7 +959,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          * Toggle the filter
          */
         toggleFilter: function () {
-            var FilterContainer = this.getElm().getElement('.quiqqer-customer-administration-search-filter');
+            const FilterContainer = this.getElm().getElement('.quiqqer-customer-administration-search-filter');
 
             if (FilterContainer.getStyle('display') === 'none') {
                 this.openFilter();
@@ -946,8 +972,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          * Open the filter
          */
         openFilter: function () {
-            var self            = this,
-                FilterContainer = this.getElm().getElement('.quiqqer-customer-administration-search-filter');
+            const self            = this,
+                  FilterContainer = this.getElm().getElement('.quiqqer-customer-administration-search-filter');
 
             FilterContainer.setStyle('position', 'absolute');
             FilterContainer.setStyle('opacity', 0);
@@ -959,7 +985,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             FilterContainer.setStyle('paddingBottom', null);
             FilterContainer.setStyle('paddingTop', null);
 
-            var height = FilterContainer.getSize().y;
+            const height = FilterContainer.getSize().y;
 
             FilterContainer.setStyle('height', 0);
             FilterContainer.setStyle('paddingBottom', 0);
@@ -984,8 +1010,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          * Close the filter
          */
         closeFilter: function () {
-            var self            = this,
-                FilterContainer = this.getElm().getElement('.quiqqer-customer-administration-search-filter');
+            const self            = this,
+                  FilterContainer = this.getElm().getElement('.quiqqer-customer-administration-search-filter');
 
             moofx(FilterContainer).animate({
                 height       : 0,

@@ -11,7 +11,6 @@
 .quiqqer-customer-administration-search {
     background: #e1e4e9;
     clear: both;
-    height: 70px;
     width: 100%;
 }
 
@@ -120,4 +119,10 @@
     top: 0;
     width: 100%;
     z-index: 1;
+}
+
+.quiqqer-customer-adminWindow-close {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
+    width: initial;
 }
