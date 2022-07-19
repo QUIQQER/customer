@@ -74,13 +74,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
             this.setAttribute('#id', 'customer-panel-' + this.getAttribute('userId'));
 
-            this.$User               = null;
+            this.$User = null;
             this.$userInitAttributes = null;
-            this.$customerIdPrefix   = '';
-            this.$editCustomerNo     = false;
-            this.$currentCategory    = 'information';
+            this.$customerIdPrefix = '';
+            this.$editCustomerNo = false;
+            this.$currentCategory = 'information';
             this.$CommentsPagination = null;
-            this.$CommentsPage       = {
+            this.$CommentsPage = {
                 page : 1,
                 limit: 10
             };
@@ -366,9 +366,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.setAttribute('icon', 'fa fa-spinner fa-spin');
             this.refresh();
 
-            var self   = this;
+            var self = this;
             var userId = this.getAttribute('userId');
-            var User   = Users.get(this.getAttribute('userId'));
+            var User = Users.get(this.getAttribute('userId'));
             var Loaded = Promise.resolve(User);
 
             if (!User.isLoaded()) {
@@ -398,7 +398,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     return;
                 }
 
-                self.$User               = User;
+                self.$User = User;
                 self.$userInitAttributes = User.getAttributes();
 
                 // check installed
@@ -434,7 +434,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 }
             }).catch(function (Err) {
                 // user not found
-                self.fireEvent('error', [self, Err]);
+                self.fireEvent('error', [
+                    self,
+                    Err
+                ]);
                 self.destroy();
 
                 console.error(Err);
@@ -457,7 +460,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 return Promise.resolve();
             }
 
-            var self    = this;
+            var self = this;
             var address = false;
 
             this.setAttribute('icon', 'fa fa-spinner fa-spin');
@@ -539,7 +542,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                             labelPrefix          : QUILocale.get(lg, 'window.customer.creation.customerNo.labelPrefix'),
                         }));
 
-                        var PrefixInput     = Content.getElement('input[name="prefix"]');
+                        var PrefixInput = Content.getElement('input[name="prefix"]');
                         var CustomerNoInput = Content.getElement('input[name="customerId"]');
 
                         PrefixInput.value = self.$customerIdPrefix;
@@ -582,7 +585,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     },
                     onSubmit: function (Win) {
                         var CustomerNoInput = Win.getContent().getElement('input[name="customerId"]');
-                        var newCustomerNo   = CustomerNoInput.value.trim();
+                        var newCustomerNo = CustomerNoInput.value.trim();
 
                         if (newCustomerNo === '') {
                             CustomerNoInput.focus();
@@ -692,18 +695,21 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 Form.elements.userId.value = self.$User.getId();
 
                 if (self.$User.getAttribute('customerId')) {
-                    Form.elements.customerId.value = self.$customerIdPrefix + checkVal(self.$User.getAttribute('customerId'));
+                    Form.elements.customerId.value =
+                        self.$customerIdPrefix + checkVal(self.$User.getAttribute('customerId'));
                 }
 
                 // groups
                 Form.elements.groups.value = self.$User.getAttribute('usergroup');
-                Form.elements.group.value  = self.$User.getAttribute('mainGroup');
+                Form.elements.group.value = self.$User.getAttribute('mainGroup');
 
-                Form.elements['quiqqer.erp.customer.website'].value      = checkVal(self.$User.getAttribute('quiqqer.erp.customer.website'));
-                Form.elements['quiqqer.erp.customer.payment.term'].value = checkVal(self.$User.getAttribute('quiqqer.erp.customer.payment.term'));
+                Form.elements['quiqqer.erp.customer.website'].value =
+                    checkVal(self.$User.getAttribute('quiqqer.erp.customer.website'));
+                Form.elements['quiqqer.erp.customer.payment.term'].value =
+                    checkVal(self.$User.getAttribute('quiqqer.erp.customer.payment.term'));
 
                 // address
-                address  = parseInt(self.$User.getAttribute('address'));
+                address = parseInt(self.$User.getAttribute('address'));
                 delivery = self.$User.getAttribute('quiqqer.delivery.address');
 
                 if (!delivery && shippingInstalled) {
@@ -714,7 +720,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                 return Countries.getCountries();
             }).then(function (countries) {
-                var CountrySelect         = Form.elements['address-country'];
+                var CountrySelect = Form.elements['address-country'];
                 var CountrySelectDelivery = Form.elements['address-delivery-country'];
 
                 for (var code in countries) {
@@ -746,18 +752,18 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 }
 
                 Form.elements['address-salutation'].value = address.salutation;
-                Form.elements['address-firstname'].value  = address.firstname;
-                Form.elements['address-lastname'].value   = address.lastname;
-                Form.elements['address-street_no'].value  = address.street_no;
-                Form.elements['address-zip'].value        = address.zip;
-                Form.elements['address-country'].value    = address.country;
-                Form.elements['address-city'].value       = address.city;
-                Form.elements['address-company'].value    = address.company;
-                Form.elements['address-suffix'].value     = address.suffix;
+                Form.elements['address-firstname'].value = address.firstname;
+                Form.elements['address-lastname'].value = address.lastname;
+                Form.elements['address-street_no'].value = address.street_no;
+                Form.elements['address-zip'].value = address.zip;
+                Form.elements['address-country'].value = address.country;
+                Form.elements['address-city'].value = address.city;
+                Form.elements['address-company'].value = address.company;
+                Form.elements['address-suffix'].value = address.suffix;
 
                 try {
-                    var CBody  = self.getElm().getElement('.customer-information-communication-body');
-                    var phone  = JSON.decode(address.phone);
+                    var CBody = self.getElm().getElement('.customer-information-communication-body');
+                    var phone = JSON.decode(address.phone);
                     var emails = JSON.decode(address.mail);
 
                     if (self.$User.getAttribute('address-communication')) {
@@ -787,11 +793,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                         Row = new Element('tr', {
                             'data-type': phone[i].type,
                             html       : '<td>' +
-                                '<label class="field-container">' +
-                                '   <span class="field-container-item">' + QUILocale.get('quiqqer/quiqqer', phone[i].type) + '</span>' +
-                                '   <input name="address-communication" class="field-container-field"/>' +
-                                '</label>' +
-                                '</td>'
+                                         '<label class="field-container">' +
+                                         '   <span class="field-container-item">' +
+                                         QUILocale.get('quiqqer/quiqqer', phone[i].type) + '</span>' +
+                                         '   <input name="address-communication" class="field-container-field"/>' +
+                                         '</label>' +
+                                         '</td>'
                         });
 
                         Row.getElement('input').set('value', phone[i].no);
@@ -816,11 +823,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                         Row = new Element('tr', {
                             'data-type': 'email',
                             html       : '<td>' +
-                                '<label class="field-container">' +
-                                '   <span class="field-container-item">' + QUILocale.get('quiqqer/quiqqer', 'email') + '</span>' +
-                                '   <input name="address-communication" data-type="email" type="email" class="field-container-field"/>' +
-                                '</label>' +
-                                '</td>'
+                                         '<label class="field-container">' +
+                                         '   <span class="field-container-item">' +
+                                         QUILocale.get('quiqqer/quiqqer', 'email') + '</span>' +
+                                         '   <input name="address-communication" data-type="email" type="email" class="field-container-field"/>' +
+                                         '</label>' +
+                                         '</td>'
                         });
 
                         Row.getElement('input').set('value', emails[i]);
@@ -835,11 +843,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                             new Element('tr', {
                                 'data-type': 'tel',
                                 html       : '<td>' +
-                                    '<label class="field-container">' +
-                                    '   <span class="field-container-item">' + QUILocale.get('quiqqer/quiqqer', 'tel') + '</span>' +
-                                    '   <input name="address-communication" data-type="tel" class="field-container-field"/>' +
-                                    '</label>' +
-                                    '</td>'
+                                             '<label class="field-container">' +
+                                             '   <span class="field-container-item">' +
+                                             QUILocale.get('quiqqer/quiqqer', 'tel') + '</span>' +
+                                             '   <input name="address-communication" data-type="tel" class="field-container-field"/>' +
+                                             '</label>' +
+                                             '</td>'
                             })
                         );
                     }
@@ -849,11 +858,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                             new Element('tr', {
                                 'data-type': 'fax',
                                 html       : '<td>' +
-                                    '<label class="field-container">' +
-                                    '   <span class="field-container-item">' + QUILocale.get('quiqqer/quiqqer', 'fax') + '</span>' +
-                                    '   <input name="address-communication" data-type="fax" class="field-container-field"/>' +
-                                    '</label>' +
-                                    '</td>'
+                                             '<label class="field-container">' +
+                                             '   <span class="field-container-item">' +
+                                             QUILocale.get('quiqqer/quiqqer', 'fax') + '</span>' +
+                                             '   <input name="address-communication" data-type="fax" class="field-container-field"/>' +
+                                             '</label>' +
+                                             '</td>'
                             })
                         );
                     }
@@ -863,11 +873,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                             new Element('tr', {
                                 'data-type': 'mobile',
                                 html       : '<td>' +
-                                    '<label class="field-container">' +
-                                    '   <span class="field-container-item">' + QUILocale.get('quiqqer/quiqqer', 'mobile') + '</span>' +
-                                    '   <input name="address-communication" data-type="mobile" class="field-container-field"/>' +
-                                    '</label>' +
-                                    '</td>'
+                                             '<label class="field-container">' +
+                                             '   <span class="field-container-item">' +
+                                             QUILocale.get('quiqqer/quiqqer', 'mobile') + '</span>' +
+                                             '   <input name="address-communication" data-type="mobile" class="field-container-field"/>' +
+                                             '</label>' +
+                                             '</td>'
                             })
                         );
                     }
@@ -877,11 +888,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                             new Element('tr', {
                                 'data-type': 'email',
                                 html       : '<td>' +
-                                    '<label class="field-container">' +
-                                    '   <span class="field-container-item">' + QUILocale.get('quiqqer/quiqqer', 'email') + '</span>' +
-                                    '   <input name="address-communication" data-type="email" type="email" class="field-container-field"/>' +
-                                    '</label>' +
-                                    '</td>'
+                                             '<label class="field-container">' +
+                                             '   <span class="field-container-item">' +
+                                             QUILocale.get('quiqqer/quiqqer', 'email') + '</span>' +
+                                             '   <input name="address-communication" data-type="email" type="email" class="field-container-field"/>' +
+                                             '</label>' +
+                                             '</td>'
                             })
                         );
                     }
@@ -903,12 +915,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                 return self.getAddress(delivery).then(function (deliveryData) {
                     Form.elements['address-delivery-salutation'].value = deliveryData.salutation;
-                    Form.elements['address-delivery-firstname'].value  = deliveryData.firstname;
-                    Form.elements['address-delivery-lastname'].value   = deliveryData.lastname;
-                    Form.elements['address-delivery-street_no'].value  = deliveryData.street_no;
-                    Form.elements['address-delivery-zip'].value        = deliveryData.zip;
-                    Form.elements['address-delivery-country'].value    = deliveryData.country;
-                    Form.elements['address-delivery-city'].value       = deliveryData.city;
+                    Form.elements['address-delivery-firstname'].value = deliveryData.firstname;
+                    Form.elements['address-delivery-lastname'].value = deliveryData.lastname;
+                    Form.elements['address-delivery-street_no'].value = deliveryData.street_no;
+                    Form.elements['address-delivery-zip'].value = deliveryData.zip;
+                    Form.elements['address-delivery-country'].value = deliveryData.country;
+                    Form.elements['address-delivery-city'].value = deliveryData.city;
                 });
             }).then(function () {
                 // load comments
@@ -917,7 +929,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 // load pagination
                 return self.$getPagination();
             }).then(function (paginationHtml) {
-                var Content             = self.getContent();
+                var Content = self.getContent();
                 var PaginationContainer = Content.getElement('.comments-pagination');
 
                 PaginationContainer.set('html', paginationHtml);
@@ -1120,15 +1132,15 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         refreshAddressLists: function () {
             this.$User.$addresses = false; // workaround for refresh
 
-            var self            = this;
-            var DefaultAddress  = this.getContent().getElement('[name="address"]');
-            var InvoiceAddress  = this.getContent().getElement('[name="quiqqer.erp.address"]');
+            var self = this;
+            var DefaultAddress = this.getContent().getElement('[name="address"]');
+            var InvoiceAddress = this.getContent().getElement('[name="quiqqer.erp.address"]');
             var DeliveryAddress = this.getContent().getElement('[name="quiqqer.delivery.address"]');
 
             // set addresses
             return this.$User.getAddressList().then(function (addressList) {
-                DefaultAddress.innerHTML  = '';
-                InvoiceAddress.innerHTML  = '';
+                DefaultAddress.innerHTML = '';
+                InvoiceAddress.innerHTML = '';
                 DeliveryAddress.innerHTML = '';
 
                 new Element('option', {
@@ -1444,7 +1456,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             }
 
             var data = FormUtils.getFormData(Form);
-            var com  = Form.getElements('[name="address-communication"]');
+            var com = Form.getElements('[name="address-communication"]');
 
             if (typeof data.id !== 'undefined') {
                 delete data.id;

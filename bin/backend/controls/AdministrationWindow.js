@@ -87,6 +87,14 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
                                     self.$Title.getElement('[name="show-list"]').destroy();
                                     self.$Title.getElement('[name="close"]').setStyle('display', null);
                                     self.$Admin.closeCustomer();
+
+                                    const ExtraButton = self.$Admin.$CustomerPanel.getButtons('extra');
+
+                                    if (ExtraButton) {
+                                        ExtraButton.getMenu().then(function (Menu) {
+                                            Menu.hide();
+                                        });
+                                    }
                                 }
                             }
                         }).inject(self.$Title);
