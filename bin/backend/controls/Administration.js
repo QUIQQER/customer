@@ -39,7 +39,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
              CustomerHandler, Grid, Mustache, QUILocale, QUIAjax, Users, Permissions, template) {
     "use strict";
 
-    var lg = 'quiqqer/customer';
+    const lg = 'quiqqer/customer';
 
     return new Class({
 
@@ -103,8 +103,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          * Create the DOMNode element
          */
         create: function () {
-            var self     = this,
-                editable = this.getAttribute('editable');
+            const self = this;
 
             this.$Elm = new Element('div', {
                 'class': 'quiqqer-customer-administration',
@@ -167,8 +166,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     title  : QUILocale.get(lg, 'panel.search.editable.button.title'),
                     events : {
                         click: function () {
-                            var activeClass = 'quiqqer-customer-administration-editableButton--active';
-                            var active = self.$EditableButton.hasClass(activeClass);
+                            const activeClass = 'quiqqer-customer-administration-editableButton--active';
+                            const active = self.$EditableButton.hasClass(activeClass);
 
                             if (active) {
                                 // deactivate
@@ -657,7 +656,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          * @param userId
          */
         $editUserGroups: function (userId) {
-            var self = this;
+            const self = this;
 
             require([
                 'package/quiqqer/customer/bin/backend/controls/users/UserGroupsWindow'
@@ -681,7 +680,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 return;
             }
 
-            var self = this;
+            const self = this;
 
             this.fireEvent('customerOpenBegin', [
                 this,
@@ -693,7 +692,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 'utils/Panels'
             ], function (Panel, PanelUtils) {
                 if (self.isInWindow()) {
-                    var Container = new Element('div', {
+                    const Container = new Element('div', {
                         'class': 'quiqqer-customer-administration-customer',
                         styles : {
                             left   : -50,
@@ -756,8 +755,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 return;
             }
 
-            var self      = this,
-                Container = this.$CustomerPanel.getElm().getParent();
+            const self      = this,
+                  Container = this.$CustomerPanel.getElm().getParent();
 
             moofx(Container).animate({
                 left   : 50,
@@ -794,8 +793,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             }
 
             const isInWindow = !!this.getElm().getParent('.qui-window-popup');
-
-            var rowData = this.$Grid.getDataByRow(data.row);
+            const rowData = this.$Grid.getDataByRow(data.row);
 
             // if no editable, every dbl click opens the customer
             if (!this.getAttribute('editable')) {
@@ -909,8 +907,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          * event: on grid click
          */
         $gridClick: function () {
-            var selected = this.$Grid.getSelectedData();
-            var Delete = this.$Grid.getButtons().filter(function (Btn) {
+            const selected = this.$Grid.getSelectedData();
+            const Delete = this.$Grid.getButtons().filter(function (Btn) {
                 return Btn.getAttribute('name') === 'delete';
             })[0];
 
@@ -960,7 +958,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     onSubmit: function (Win) {
                         Win.Loader.show();
 
-                        var selected = self.$Grid.getSelectedData().map(function (entry) {
+                        const selected = self.$Grid.getSelectedData().map(function (entry) {
                             return entry.id;
                         });
 

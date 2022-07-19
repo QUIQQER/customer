@@ -31,10 +31,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
              FormUtils, Users, QUILocale, QUIAjax, Packages, Mustache, templateInformation, templateEditId) {
     "use strict";
 
-    var lg = 'quiqqer/customer';
+    const lg = 'quiqqer/customer';
 
-    var paymentsInstalled = false;
-    var shippingInstalled = false;
+    let paymentsInstalled = false;
+    let shippingInstalled = false;
 
     return new Class({
 
@@ -119,7 +119,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * Saves / Update the user
          */
         update: function () {
-            var self = this;
+            const self = this;
 
             this.Loader.show();
             this.$categoryUnload();
@@ -138,10 +138,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 return self.$User.load();
             }).then(function () {
                 // search all user panels and refresh it
-                var userPanels = QUI.Controls.getByType('controls/users/User');
-                var customerId = self.$User.getId();
+                const userPanels = QUI.Controls.getByType('controls/users/User');
+                const customerId = self.$User.getId();
 
-                for (var i = 0, len = userPanels.length; i < len; i++) {
+                for (let i = 0, len = userPanels.length; i < len; i++) {
                     if (userPanels[i].getUser().getId() === customerId) {
                         userPanels[i].refreshDisplay();
                     }
@@ -155,7 +155,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * open the use panel
          */
         openUser: function () {
-            var self = this;
+            const self = this;
 
             require([
                 'controls/users/User',
@@ -175,7 +175,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * event: on create
          */
         $onCreate: function () {
-            var self = this;
+            const self = this;
 
             this.getElm().addClass('quiqqer-customer-panel');
 
@@ -189,14 +189,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 }
             });
 
-            var ExtrasBtn = new QUIButtonMultiple({
+            const ExtrasBtn = new QUIButtonMultiple({
                 name     : 'extra',
                 textimage: 'fa fa-caret-down',
                 title    : QUILocale.get(lg, 'quiqqer.customer.panel.extras.title'),
                 events   : {
                     onClick: function () {
                         ExtrasBtn.getMenu().then(function (Menu) {
-                            var pos  = ExtrasBtn.getElm().getPosition(),
+                            let pos  = ExtrasBtn.getElm().getPosition(),
                                 size = ExtrasBtn.getElm().getSize();
 
                             Menu.setAttribute('corner', 'topRight');
@@ -343,9 +343,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.getContent().setStyle('opacity', 0);
 
             QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getCategories', function (result) {
-                var categories = result.categories;
+                const categories = result.categories;
 
-                for (var i = 0, len = categories.length; i < len; i++) {
+                for (let i = 0, len = categories.length; i < len; i++) {
                     categories[i].events = {
                         onActive: self.$onCustomerCategoryActive
                     };
@@ -366,19 +366,19 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.setAttribute('icon', 'fa fa-spinner fa-spin');
             this.refresh();
 
-            var self = this;
-            var userId = this.getAttribute('userId');
-            var User = Users.get(this.getAttribute('userId'));
-            var Loaded = Promise.resolve(User);
+            const self = this;
+            const userId = this.getAttribute('userId');
+            const User = Users.get(this.getAttribute('userId'));
+            let Loaded = Promise.resolve(User);
 
             if (!User.isLoaded()) {
                 Loaded = User.load();
             }
 
             // check if user panels exists
-            var userPanels = QUI.Controls.getByType('controls/users/User');
+            const userPanels = QUI.Controls.getByType('controls/users/User');
 
-            for (var i = 0, len = userPanels.length; i < len; i++) {
+            for (let i = 0, len = userPanels.length; i < len; i++) {
                 if (userPanels[i].getUser().getId() === userId) {
                     userPanels[i].destroy();
                 }
@@ -460,8 +460,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 return Promise.resolve();
             }
 
-            var self = this;
-            var address = false;
+            const self = this;
+            let address = false;
 
             this.setAttribute('icon', 'fa fa-spinner fa-spin');
             this.refresh();
@@ -472,7 +472,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 address = parseInt(this.$User.getAttribute('quiqqer.erp.address'));
             }
 
-            var GetAddress;
+            let GetAddress;
 
             if (!address) {
                 GetAddress = this.getAddressDefaultAddress();
@@ -481,7 +481,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             }
 
             return GetAddress.then(function (addressData) {
-                var titleData = [];
+                const titleData = [];
 
                 if (self.$User.getAttribute('customerId') !== '') {
                     titleData.push(self.$customerIdPrefix + self.$User.getAttribute('customerId'));
@@ -513,7 +513,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * Edit customer ID
          */
         $onEditCustomerIdClick: function () {
-            var self = this;
+            const self = this;
 
             new QUIConfirm({
                 maxHeight: 275,
@@ -533,7 +533,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 },
                 events       : {
                     onOpen  : function (Win) {
-                        var Content = Win.getContent();
+                        const Content = Win.getContent();
 
                         Content.addClass('quiqqer-customer-customerNo-edit');
 
@@ -542,8 +542,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                             labelPrefix          : QUILocale.get(lg, 'window.customer.creation.customerNo.labelPrefix'),
                         }));
 
-                        var PrefixInput = Content.getElement('input[name="prefix"]');
-                        var CustomerNoInput = Content.getElement('input[name="customerId"]');
+                        const PrefixInput = Content.getElement('input[name="prefix"]');
+                        const CustomerNoInput = Content.getElement('input[name="customerId"]');
 
                         PrefixInput.value = self.$customerIdPrefix;
 
@@ -551,7 +551,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                         Handler.getNewCustomerNo().then(function (nextCustomerNo) {
                             if (self.$User.getAttribute('customerId')) {
-                                var currentCustomerNo = self.$User.getAttribute('customerId');
+                                const currentCustomerNo = self.$User.getAttribute('customerId');
 
                                 CustomerNoInput.value = currentCustomerNo;
                                 Win.getButton('submit').disable();
@@ -584,8 +584,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                         CustomerNoInput.select();
                     },
                     onSubmit: function (Win) {
-                        var CustomerNoInput = Win.getContent().getElement('input[name="customerId"]');
-                        var newCustomerNo = CustomerNoInput.value.trim();
+                        const CustomerNoInput = Win.getContent().getElement('input[name="customerId"]');
+                        const newCustomerNo = CustomerNoInput.value.trim();
 
                         if (newCustomerNo === '') {
                             CustomerNoInput.focus();
@@ -621,7 +621,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         $openInformation: function () {
             this.Loader.show();
 
-            var Content = this.getContent();
+            const Content = this.getContent();
 
             Content.set('html', Mustache.render(templateInformation, {
                 detailsTitle           : QUILocale.get(lg, 'customer.panel,information.details'),
@@ -669,26 +669,26 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 events: {
                     onClick: this.$onEditCustomerIdClick
                 }
-            }).inject(Content.getElement('.customer-information-btn-editId'))
+            }).inject(Content.getElement('.customer-information-btn-editId'));
 
-            var UserLoaded = Promise.resolve();
+            let UserLoaded = Promise.resolve();
 
             if (!this.$User) {
                 UserLoaded = this.$onShow();
             }
 
-            var self = this,
-                Form = Content.getElement('form');
+            const self = this,
+                  Form = Content.getElement('form');
 
-            var checkVal = function (str) {
+            const checkVal = function (str) {
                 if (!str || str === 'false') {
                     return '';
                 }
 
                 return str;
-            };
+            }
 
-            var address, delivery;
+            let address, delivery;
 
             // set data
             return UserLoaded.then(function () {
@@ -720,10 +720,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                 return Countries.getCountries();
             }).then(function (countries) {
-                var CountrySelect = Form.elements['address-country'];
-                var CountrySelectDelivery = Form.elements['address-delivery-country'];
+                const CountrySelect = Form.elements['address-country'];
+                const CountrySelectDelivery = Form.elements['address-delivery-country'];
 
-                for (var code in countries) {
+                for (let code in countries) {
                     if (!countries.hasOwnProperty(code)) {
                         continue;
                     }
@@ -762,12 +762,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 Form.elements['address-suffix'].value = address.suffix;
 
                 try {
-                    var CBody = self.getElm().getElement('.customer-information-communication-body');
-                    var phone = JSON.decode(address.phone);
-                    var emails = JSON.decode(address.mail);
+                    const CBody = self.getElm().getElement('.customer-information-communication-body');
+                    let phone = JSON.decode(address.phone);
+                    let emails = JSON.decode(address.mail);
 
                     if (self.$User.getAttribute('address-communication')) {
-                        var addressEntries = self.$User.getAttribute('address-communication');
+                        let addressEntries = self.$User.getAttribute('address-communication');
 
                         phone = addressEntries.filter(function (e) {
                             return e.type !== 'email';
@@ -781,9 +781,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     }
 
 
-                    var i, len, Row;
+                    let i, len, Row;
 
-                    var rows   = [],
+                    let rows   = [],
                         tel    = false,
                         fax    = false,
                         email  = false,
@@ -929,8 +929,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 // load pagination
                 return self.$getPagination();
             }).then(function (paginationHtml) {
-                var Content = self.getContent();
-                var PaginationContainer = Content.getElement('.comments-pagination');
+                const Content = self.getContent();
+                const PaginationContainer = Content.getElement('.comments-pagination');
 
                 PaginationContainer.set('html', paginationHtml);
 
@@ -955,8 +955,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     return;
                 }
 
-                var PaymentSelect = self.getContent().getElement('[name="quiqqer.erp.standard.payment"]'),
-                    lang          = QUILocale.getCurrent();
+                const PaymentSelect = self.getContent().getElement('[name="quiqqer.erp.standard.payment"]'),
+                      lang          = QUILocale.getCurrent();
 
                 if (!PaymentSelect) {
                     return;
@@ -975,7 +975,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                         'package/quiqqer/payments/bin/backend/Payments'
                     ], function (Payments) {
                         Payments.getPayments().then(function (payments) {
-                            var i, len, text;
+                            let i, len, text;
+
                             for (i = 0, len = payments.length; i < len; i++) {
                                 text = '';
 
@@ -1002,8 +1003,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             }).then(function () {
                 return self.$refreshContactAddressList();
             }).then(function () {
-                var Select = Form.elements['quiqqer.erp.customer.contact.person'],
-                    Button = self.getElm().getElement('[name="edit-contact-person"]');
+                const Select = Form.elements['quiqqer.erp.customer.contact.person'],
+                      Button = self.getElm().getElement('[name="edit-contact-person"]');
 
                 if (self.$User.getAttribute('quiqqer.erp.customer.contact.person')) {
                     Select.value = self.$User.getAttribute('quiqqer.erp.customer.contact.person');
@@ -1052,7 +1053,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                         return;
                     }
 
-                    var addressId = parseInt(Select.value);
+                    const addressId = parseInt(Select.value);
 
                     new AddressEditWindow({
                         addressId: addressId,
@@ -1087,7 +1088,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @return {Promise}
          */
         editAddress: function (addressId) {
-            var self = this;
+            const self = this;
 
             require([
                 'package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow'
@@ -1113,7 +1114,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @return {Promise}
          */
         createAddress: function () {
-            var self = this;
+            const self = this;
 
             return new Promise(function (resolve) {
                 QUIAjax.post('ajax_users_address_save', resolve, {
@@ -1132,10 +1133,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
         refreshAddressLists: function () {
             this.$User.$addresses = false; // workaround for refresh
 
-            var self = this;
-            var DefaultAddress = this.getContent().getElement('[name="address"]');
-            var InvoiceAddress = this.getContent().getElement('[name="quiqqer.erp.address"]');
-            var DeliveryAddress = this.getContent().getElement('[name="quiqqer.delivery.address"]');
+            const self = this;
+            const DefaultAddress = this.getContent().getElement('[name="address"]');
+            const InvoiceAddress = this.getContent().getElement('[name="quiqqer.erp.address"]');
+            const DeliveryAddress = this.getContent().getElement('[name="quiqqer.delivery.address"]');
 
             // set addresses
             return this.$User.getAddressList().then(function (addressList) {
@@ -1158,7 +1159,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     value: ''
                 }).inject(DeliveryAddress);
 
-                for (var i = 0, len = addressList.length; i < len; i++) {
+                for (let i = 0, len = addressList.length; i < len; i++) {
                     new Element('option', {
                         html : addressList[i].text,
                         value: parseInt(addressList[i].id)
@@ -1175,7 +1176,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     }).inject(DeliveryAddress);
                 }
 
-                var attributes      = self.$User.getAttributes(),
+                let attributes      = self.$User.getAttributes(),
                     address         = parseInt(attributes.address),
                     invoiceAddress  = parseInt(attributes['quiqqer.erp.address']),
                     deliveryAddress = parseInt(attributes['quiqqer.delivery.address']);
@@ -1210,7 +1211,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             addressId = parseInt(addressId);
 
             return this.$User.getAddressList().then(function (addressList) {
-                for (var i = 0, len = addressList.length; i < len; i++) {
+                for (let i = 0, len = addressList.length; i < len; i++) {
                     if (parseInt(addressList[i].id) === addressId) {
                         return addressList[i];
                     }
@@ -1226,7 +1227,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @return {Promise}
          */
         getAddressDefaultAddress: function () {
-            var self = this;
+            const self = this;
 
             return new Promise(function (resolve) {
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getAddress', resolve, {
@@ -1242,13 +1243,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @return {Promise}
          */
         $openAddressManagement: function () {
-            var self = this;
+            const self = this;
 
             this.getContent().set('html', '');
 
             return new Promise(function (resolve) {
                 require(['package/quiqqer/customer/bin/backend/controls/customer/AddressGrid'], function (AddressGrid) {
-                    var Instance = new AddressGrid({
+                    const Instance = new AddressGrid({
                         userId: self.getAttribute('userId')
                     }).inject(self.getContent());
 
@@ -1269,7 +1270,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @return {Promise}
          */
         $openComments: function () {
-            var self = this;
+            const self = this;
 
             this.getContent().set('html', '');
 
@@ -1291,7 +1292,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @return {Promise}
          */
         $openHistory: function () {
-            var self = this;
+            const self = this;
 
             this.getContent().set('html', '');
 
@@ -1313,7 +1314,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @return {Promise}
          */
         $openUserInformation: function () {
-            var self = this;
+            const self = this;
 
             this.getContent().set('html', '');
 
@@ -1337,7 +1338,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @return {Promise}
          */
         $openUserProperty: function () {
-            var self = this;
+            const self = this;
 
             this.getContent().set('html', '');
 
@@ -1361,7 +1362,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @return {Promise}
          */
         $openFiles: function () {
-            var self = this;
+            const self = this;
 
             this.getContent().set('html', '');
 
@@ -1385,7 +1386,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @param {String} category - name of the category
          */
         $openCategory: function (category) {
-            var self = this;
+            const self = this;
 
             this.Loader.show();
             this.$categoryUnload();
@@ -1448,15 +1449,15 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * set the form data to the user
          */
         $categoryUnload: function () {
-            var Content = this.getContent(),
-                Form    = Content.getElement('form');
+            const Content = this.getContent(),
+                  Form    = Content.getElement('form');
 
             if (!Form) {
                 return;
             }
 
-            var data = FormUtils.getFormData(Form);
-            var com = Form.getElements('[name="address-communication"]');
+            const data = FormUtils.getFormData(Form);
+            const com = Form.getElements('[name="address-communication"]');
 
             if (typeof data.id !== 'undefined') {
                 delete data.id;
@@ -1487,7 +1488,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @return {Promise}
          */
         $hideCategory: function () {
-            var Content = this.getContent(),
+            let Content = this.getContent(),
                 Form    = Content.getElement('form');
 
             if (!Form) {
@@ -1522,7 +1523,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @return {Promise}
          */
         $showCategory: function () {
-            var Content = this.getContent(),
+            let Content = this.getContent(),
                 Form    = Content.getElement('form');
 
             if (!Form) {
@@ -1564,13 +1565,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @param event
          */
         $clickEditAddress: function (event) {
-            var Target = event.target;
+            let Target = event.target;
 
             if (Target.nodeName !== 'BUTTON') {
                 Target = Target.getParent('button');
             }
 
-            var Select = Target.getPrevious();
+            const Select = Target.getPrevious();
 
             if (Select.value === '') {
                 return;
@@ -1593,7 +1594,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * event: on delete click
          */
         $onDeleteClick: function () {
-            var uid = this.$User.getId();
+            const uid = this.$User.getId();
 
             new QUIConfirm({
                 name       : 'DeleteUser',
@@ -1623,7 +1624,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * User clicks on "open OpenItemList" btn
          */
         $onOpenOpenItemsListClick: function () {
-            var self = this;
+            const self = this;
 
             require([
                 'package/quiqqer/erp/bin/backend/controls/OutputDialog'
@@ -1639,7 +1640,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * Open "send mail to user" popup
          */
         $onClickSendMail: function () {
-            var self = this;
+            const self = this;
 
             require(['controls/users/mail/SendUserMail'], function (SendUserMail) {
                 new SendUserMail({
@@ -1659,9 +1660,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @param {Array} uids - user ids, which are deleted
          */
         $onUserDelete: function (Users, uids) {
-            var uid = parseInt(this.getAttribute('userId'));
+            const uid = parseInt(this.getAttribute('userId'));
 
-            for (var i = 0, len = uids.length; i < len; i++) {
+            for (let i = 0, len = uids.length; i < len; i++) {
                 if (uid === parseInt(uids[i])) {
                     this.destroy();
                     break;
@@ -1681,7 +1682,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 return;
             }
 
-            var Checkbox = this.getContent().getElement('[name="address-delivery"]');
+            const Checkbox = this.getContent().getElement('[name="address-delivery"]');
 
             if (Checkbox.checked) {
                 this.deliveryAddressClose();
@@ -1698,7 +1699,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 return;
             }
 
-            var Table = this.getContent().getElement('.delivery-address-table');
+            const Table = this.getContent().getElement('.delivery-address-table');
 
             if (!Table) {
                 return;
@@ -1719,7 +1720,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 return;
             }
 
-            var Table = this.getContent().getElement('.delivery-address-table');
+            const Table = this.getContent().getElement('.delivery-address-table');
 
             if (!Table) {
                 return;
@@ -1738,15 +1739,15 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @return {Promise<void>}
          */
         $refreshContactAddressList: function () {
-            var self = this;
+            const self = this;
 
             return this.$User.getAddressList().then(function (addresses) {
                 if (!self.getContent().getElement('form')) {
                     return;
                 }
 
-                var Form   = self.getContent().getElement('form'),
-                    Select = Form.elements['quiqqer.erp.customer.contact.person'];
+                const Form   = self.getContent().getElement('form'),
+                      Select = Form.elements['quiqqer.erp.customer.contact.person'];
 
                 Select.set('html', '');
 
@@ -1755,7 +1756,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     html : ''
                 }).inject(Select);
 
-                for (var i = 0, len = addresses.length; i < len; i++) {
+                for (let i = 0, len = addresses.length; i < len; i++) {
                     new Element('option', {
                         value: addresses[i].id,
                         html : addresses[i].text
@@ -1774,7 +1775,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @return {Promise}
          */
         getComments: function () {
-            var self = this;
+            const self = this;
 
             return new Promise(function (resolve) {
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getCommentsAndHistory', resolve, {
@@ -1792,13 +1793,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @return {Promise}
          */
         $loadComments() {
-            var self = this;
+            const self = this;
 
             this.Loader.show();
 
             return this.getComments().then(function (comments) {
                 require(['package/quiqqer/erp/bin/backend/controls/Comments'], function (Comments) {
-                    var Container = self.getContent().getElement('.comments');
+                    const Container = self.getContent().getElement('.comments');
 
                     if (!Container) {
                         return;
@@ -1806,7 +1807,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                     Container.set('html', '');
 
-                    var Control = new Comments();
+                    const Control = new Comments();
                     Control.inject(Container);
                     Control.unserialize(comments);
 
@@ -1833,7 +1834,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @return {Promise}
          */
         $getPagination: function () {
-            var self = this;
+            const self = this;
 
             return new Promise(function (resolve, reject) {
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getPagination', resolve, {
