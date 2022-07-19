@@ -344,7 +344,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          * event: on inject
          */
         $onInject: function () {
-            var self = this;
+            const self = this;
 
             this.$Grid.disable();
 
@@ -387,11 +387,11 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          * @param ids
          */
         $onUserChange: function (Users, ids) {
-            var i, len;
-            var data = this.$Grid.getData();
+            let i, len;
+            let data = this.$Grid.getData();
 
             if (typeOf(ids) === 'array') {
-                var tmp = {};
+                let tmp = {};
 
                 for (i = 0, len = ids.length; i < len; i++) {
                     tmp[ids[i]] = true;
@@ -469,12 +469,12 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          * Refresh the grid
          */
         refresh: function () {
-            var self          = this,
-                customerGroup = this.$GroupSwitch.getStatus(),
-                options       = this.$Grid.options,
-                Form          = this.$SearchContainer.getElement('form');
+            const self          = this,
+                  customerGroup = this.$GroupSwitch.getStatus(),
+                  options       = this.$Grid.options,
+                  Form          = this.$SearchContainer.getElement('form');
 
-            var params = {
+            let params = {
                 perPage      : options.perPage || 50,
                 page         : options.page || 1,
                 sortBy       : options.sortBy,
@@ -498,9 +498,9 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             return new Promise(function (resolve) {
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_search', function (result) {
-                    var onChange = function (Switch) {
-                        var userStatus = Switch.getStatus();
-                        var userId = Switch.getAttribute('userId');
+                    const onChange = function (Switch) {
+                        const userStatus = Switch.getStatus();
+                        const userId = Switch.getAttribute('userId');
 
                         self.$setStatus(userId, userStatus).catch(function () {
                             if (userStatus) {
@@ -511,16 +511,18 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                         });
                     };
 
-                    const click = function () {
-                        (function () {
-                            self.fireEvent('submit', [self]);
-                        }).delay(200);
+                    const edit = function (e) {
+                        e.stop();
+
+                        self.$openCustomer(
+                            parseInt(e.target.get('data-userid'))
+                        );
                     };
 
                     for (let i = 0, len = result.data.length; i < len; i++) {
                         result.data[i].status = new QUISwitch({
                             status: result.data[i].status,
-                            userId: result.data[i].id,
+                            userId: result.data[i].user_id,
                             events: {
                                 onChange: onChange
                             }
@@ -528,12 +530,13 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
                         if (self.getAttribute('submittable')) {
                             result.data[i].submit_button = new Element('span', {
-                                'class': 'fa fa-share',
-                                title  : QUILocale.get(lg, 'window.customer.select.button'),
-                                events : {
-                                    click: click
+                                'class'      : 'fa fa-edit',
+                                title        : QUILocale.get(lg, 'window.customer.edit.button'),
+                                'data-userid': result.data[i].user_id,
+                                events       : {
+                                    click: edit
                                 },
-                                styles : {
+                                styles       : {
                                     cursor   : 'pointer',
                                     textAlign: 'center',
                                     width    : 50
@@ -558,10 +561,10 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          * @param data
          */
         $editComplete: function (data) {
-            var self       = this,
-                rowData    = this.$Grid.getDataByRow(data.row),
-                attributes = {},
-                attribute  = data.columnModel.dataIndex;
+            const self       = this,
+                  rowData    = this.$Grid.getDataByRow(data.row),
+                  attributes = {},
+                  attribute  = data.columnModel.dataIndex;
 
             switch (attribute) {
                 case 'firstname':
@@ -599,7 +602,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          * @return {Promise}
          */
         $setStatus: function (userId, status) {
-            var self = this;
+            const self = this;
 
             this.$Grid.disable();
 
@@ -794,12 +797,14 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             // if no editable, every dbl click opens the customer
             if (!this.getAttribute('editable')) {
-                this.$openCustomer(rowData.user_id);
+                this.fireEvent('submit', [this]);
+                //this.$openCustomer(rowData.user_id);
                 return;
             }
 
             if (data.cell.get('data-index') === 'customerId' || data.cell.get('data-index') === 'regdate') {
-                this.$openCustomer(rowData.user_id);
+                this.fireEvent('submit', [this]);
+                //this.$openCustomer(rowData.user_id);
                 return;
             }
 
@@ -808,7 +813,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                  data.cell.get('data-index') === 'lastname' ||
                  data.cell.get('data-index') === 'usergroup_display' ||
                  data.cell.get('data-index') === 'email')) {
-                this.$openCustomer(rowData.user_id);
+                this.fireEvent('submit', [this]);
+                //this.$openCustomer(rowData.user_id);
                 return;
             }
 

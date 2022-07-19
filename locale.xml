@@ -663,6 +663,10 @@ Best regards
             <de><![CDATA[Kunden übernehmen]]></de>
             <en><![CDATA[Select customer]]></en>
         </locale>
+        <locale name="window.customer.edit.button">
+            <de><![CDATA[Kunden editieren]]></de>
+            <en><![CDATA[Edit customer]]></en>
+        </locale>
         <locale name="window.customer.address.select.default_prefix">
             <de><![CDATA[[Standard]]]></de>
             <en><![CDATA[[default]]]></en>
