@@ -793,18 +793,28 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 return;
             }
 
+            const isInWindow = !!this.getElm().getParent('.qui-window-popup');
+
             var rowData = this.$Grid.getDataByRow(data.row);
 
             // if no editable, every dbl click opens the customer
             if (!this.getAttribute('editable')) {
-                this.fireEvent('submit', [this]);
-                //this.$openCustomer(rowData.user_id);
+                if (isInWindow) {
+                    this.fireEvent('submit', [this]);
+                    return;
+                }
+
+                this.$openCustomer(rowData.user_id);
                 return;
             }
 
             if (data.cell.get('data-index') === 'customerId' || data.cell.get('data-index') === 'regdate') {
-                this.fireEvent('submit', [this]);
-                //this.$openCustomer(rowData.user_id);
+                if (isInWindow) {
+                    this.fireEvent('submit', [this]);
+                    return;
+                }
+
+                this.$openCustomer(rowData.user_id);
                 return;
             }
 
@@ -813,18 +823,22 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                  data.cell.get('data-index') === 'lastname' ||
                  data.cell.get('data-index') === 'usergroup_display' ||
                  data.cell.get('data-index') === 'email')) {
-                this.fireEvent('submit', [this]);
-                //this.$openCustomer(rowData.user_id);
+                if (isInWindow) {
+                    this.fireEvent('submit', [this]);
+                    return;
+                }
+
+                this.$openCustomer(rowData.user_id);
                 return;
             }
 
 
             if (data.cell.get('data-index') === 'usergroup_display') {
-                var self     = this,
-                    Cell     = data.cell,
-                    position = Cell.getPosition();
+                const self     = this,
+                      Cell     = data.cell,
+                      position = Cell.getPosition();
 
-                var Menu = new ContextMenu({
+                const Menu = new ContextMenu({
                     events: {
                         onBlur: function () {
                             Menu.hide();
