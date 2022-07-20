@@ -769,6 +769,10 @@ Best regards
             <de><![CDATA[Standard Zahlungsziel]]></de>
             <en><![CDATA[Default term of payment]]></en>
         </locale>
+        <locale name="customer.panel,information.shipping">
+            <de><![CDATA[Standard Versandart]]></de>
+            <en><![CDATA[Default shipping]]></en>
+        </locale>
 
         <locale name="customer.panel,information.commentsAndHistory">
             <de><![CDATA[Kommentare & Verlauf]]></de>

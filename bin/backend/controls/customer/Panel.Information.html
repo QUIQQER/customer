@@ -272,6 +272,20 @@
             </td>
         </tr>
         {{/payments}}
+        {{#shipping}}
+        <tr class="quiqqer-customer-address-select">
+            <td>
+                <label class="field-container">
+                    <span class="field-container-item">
+                        {{textStandardShipping}}
+                    </span>
+                    <select name="quiqqer.erp.standard.shippingType" class="field-container-field">
+                        <option value="">---</option>
+                    </select>
+                </label>
+            </td>
+        </tr>
+        {{/shipping}}
         </tbody>
     </table>
 

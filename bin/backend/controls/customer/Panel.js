@@ -146,6 +146,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                         userPanels[i].refreshDisplay();
                     }
                 }
+
                 self.$openCategory(self.$currentCategory);
                 self.Loader.hide();
             });
@@ -645,12 +646,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 titleCommunication     : QUILocale.get(lg, 'customer.panel,information.communication'),
                 titleCommentsAndHistory: QUILocale.get(lg, 'customer.panel,information.commentsAndHistory'),
 
-                titleExtra     : QUILocale.get(lg, 'customer.panel,information.extra'),
-                textPaymentTerm: QUILocale.get(lg, 'customer.panel,information.paymentTerm'),
-                textMail       : QUILocale.get('quiqqer/quiqqer', 'email'),
-                textTel        : QUILocale.get('quiqqer/quiqqer', 'tel'),
-                textFax        : QUILocale.get('quiqqer/quiqqer', 'fax'),
-                textInternet   : QUILocale.get(lg, 'customer.panel,information.extra.homepage'),
+                titleExtra          : QUILocale.get(lg, 'customer.panel,information.extra'),
+                textPaymentTerm     : QUILocale.get(lg, 'customer.panel,information.paymentTerm'),
+                textStandardShipping: QUILocale.get(lg, 'customer.panel,information.shipping'),
+                textMail            : QUILocale.get('quiqqer/quiqqer', 'email'),
+                textTel             : QUILocale.get('quiqqer/quiqqer', 'tel'),
+                textFax             : QUILocale.get('quiqqer/quiqqer', 'fax'),
+                textInternet        : QUILocale.get(lg, 'customer.panel,information.extra.homepage'),
 
                 // payments
                 payments           : paymentsInstalled,
@@ -686,7 +688,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 }
 
                 return str;
-            }
+            };
 
             let address, delivery;
 
@@ -705,6 +707,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                 Form.elements['quiqqer.erp.customer.website'].value =
                     checkVal(self.$User.getAttribute('quiqqer.erp.customer.website'));
+
                 Form.elements['quiqqer.erp.customer.payment.term'].value =
                     checkVal(self.$User.getAttribute('quiqqer.erp.customer.payment.term'));
 
@@ -998,6 +1001,30 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                                 PaymentSelect.value = self.$User.getAttribute('quiqqer.erp.standard.payment');
                             }
                         }).then(resolve);
+                    });
+                });
+            }).then(function () {
+                if (!shippingInstalled) {
+                    return;
+                }
+
+                return new Promise(function (resolve) {
+                    require(['package/quiqqer/shipping/bin/backend/Shipping'], function (Shipping) {
+                        Shipping.getShippingList().then(function (shippingList) {
+                            const ShippingSelect = self.getContent().getElement('[name="quiqqer.erp.standard.shippingType"]');
+
+                            for (let i = 0, len = shippingList.length; i < len; i++) {
+                                new Element('option', {
+                                    html : shippingList[i].currentTitle + ' (' + shippingList[i].currentWorkingTitle +
+                                           ')',
+                                    value: shippingList[i].id
+                                }).inject(ShippingSelect);
+                            }
+
+                            ShippingSelect.value = self.$User.getAttribute('quiqqer.erp.standard.shippingType');
+
+                            resolve();
+                        });
                     });
                 });
             }).then(function () {
