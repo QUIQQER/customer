@@ -1,3 +1,8 @@
+.quiqqer-customer-address-edit form {
+    display: inline-block;
+    width: 100%;
+}
+
 .quiqqer-customer-address-edit .data-table {
     margin-bottom: 20px !important;
 }

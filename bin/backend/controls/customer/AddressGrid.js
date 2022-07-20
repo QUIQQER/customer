@@ -421,7 +421,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
          * event: on click at delete address
          */
         $clickDelete: function () {
-            const self = this;
             const selected = this.$Grid.getSelectedData();
             const ids = selected.map(function (entry) {
                 return entry.id;
@@ -429,12 +428,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
 
             require([
                 'package/quiqqer/customer/bin/backend/controls/customer/AddressDeleteWindow'
-            ], function (AddressDeleteWindow) {
+            ], (AddressDeleteWindow) => {
                 new AddressDeleteWindow({
                     addressId: ids,
                     events   : {
-                        onSubmit: function () {
-                            self.refresh();
+                        onSubmit: () => {
+                            this.refresh();
                         }
                     }
                 }).open();
@@ -445,18 +444,17 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
          * event: on click at create address
          */
         $clickCreate: function () {
-            this.$Grid.disable();
-
-            const self = this;
-
-            QUIAjax.post('ajax_users_address_save', function (addressId) {
-                self.editAddress(addressId);
-                self.refresh();
-                self.$Grid.enable();
-            }, {
-                uid : self.$User.getId(),
-                aid : 0,
-                data: '[]'
+            require([
+                'package/quiqqer/customer/bin/backend/controls/customer/AddressCreateWindow'
+            ], (AddressCreateWindow) => {
+                new AddressCreateWindow({
+                    userId: this.$User.getId(),
+                    events: {
+                        onSubmit: () => {
+                            this.refresh();
+                        }
+                    }
+                }).open();
             });
         },
 

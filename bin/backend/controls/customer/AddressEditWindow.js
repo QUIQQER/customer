@@ -43,7 +43,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow
          * event: on open
          */
         $onOpen: function () {
-            var self = this;
+            const self = this;
 
             this.Loader.show();
             this.getContent().set('html', '');
@@ -72,7 +72,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow
          * submit
          */
         submit: function () {
-            var self = this;
+            const self = this;
 
             this.Loader.show();
 

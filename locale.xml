@@ -1127,8 +1127,22 @@ Best regards
             <de><![CDATA[Felder bei der Suche beachten]]></de>
             <en><![CDATA[Fields for the search]]></en>
         </locale>
-
+        <locale name="address.telFaxMobile">
+            <de><![CDATA[Telefon / Fax / Mobil]]></de>
+            <en><![CDATA[Phone / Fax / Mobile]]></en>
+        </locale>
+        <locale name="address.email">
+            <de><![CDATA[E-Mail]]></de>
+            <en><![CDATA[E mail]]></en>
+        </locale>
+        <locale name="address.general">
+            <de><![CDATA[Allgemein]]></de>
+            <en><![CDATA[General]]></en>
+        </locale>
+        <locale name="address.create.title">
+            <de><![CDATA[Neue Adresse anlegen]]></de>
+            <en><![CDATA[Create new address]]></en>
+        </locale>
 
     </groups>
-
 </locales>

@@ -1,0 +1,12 @@
+.quiqqer-customer-window-create-address form {
+    display: inline-block;
+    width: 100%;
+}
+
+.quiqqer-customer-window-create-address .data-table:last-child {
+    margin-bottom: 0;
+}
+
+.quiqqer-customer-window-create-address th > button {
+    float: right;
+}
