@@ -959,7 +959,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                         Win.Loader.show();
 
                         const selected = self.$Grid.getSelectedData().map(function (entry) {
-                            return entry.id;
+                            return entry.user_id;
                         });
 
                         Users.deleteUsers(selected).then(function () {
