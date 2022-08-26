@@ -19,7 +19,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
 ], function (QUIControl, QUIElementSelect, QUILocale, QUIAjax) {
     "use strict";
 
-    var lg = 'quiqqer/customer';
+    const lg = 'quiqqer/customer';
 
     /**
      * @class package/quiqqer/customer/bin/backend/controls/customer/Select
@@ -57,9 +57,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
 
             this.addEvents({
                 onSearchButtonClick: this.$onSearchButtonClick,
-                onCreate           : function () {
+                onCreate           : () => {
                     this.getElm().addClass('quiqqer-customer-select');
-                }.bind(this)
+                }
             });
         },
 
@@ -72,10 +72,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
         userSearch: function (value) {
             return new Promise(function (resolve) {
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_search', function (result) {
-                    var i, len;
+                    let i, len;
 
-                    var data       = [],
-                        userResult = result.data;
+                    const data       = [],
+                          userResult = result.data;
 
                     for (i = 0, len = userResult.length; i < len; i++) {
                         data.push({
@@ -106,8 +106,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
          * @param {Object} Btn
          */
         $onSearchButtonClick: function (Select, Btn) {
-            var self    = this,
-                oldIcon = Btn.getAttribute('icon');
+            const self    = this,
+                  oldIcon = Btn.getAttribute('icon');
 
             Btn.setAttribute('icon', 'fa fa-spinner fa-spin');
             Btn.disable();
@@ -123,7 +123,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
                     customerId    : self.getValue(),
                     events        : {
                         onSubmit: function (Win, userIds) {
-                            for (var i = 0, len = userIds.length; i < len; i++) {
+                            for (let i = 0, len = userIds.length; i < len; i++) {
                                 self.addItem(userIds[i]);
                             }
                         }
