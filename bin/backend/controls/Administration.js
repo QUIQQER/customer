@@ -719,7 +719,9 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                                 }
                             }
                         }
-                    }).inject(Container);
+                    });
+
+                    self.$CustomerPanel.inject(Container);
 
                     self.fireEvent('customerOpen', [
                         this,
