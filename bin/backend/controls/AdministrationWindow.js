@@ -100,6 +100,12 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
                         }).inject(self.$Title);
                     },
 
+                    onCustomerSelect: function () {
+                        if (BtnSubmit) {
+                            BtnSubmit.enable();
+                        }
+                    },
+
                     onCustomerOpenEnd: function () {
                         if (BtnSubmit) {
                             BtnSubmit.enable();
@@ -117,6 +123,10 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
                     },
 
                     onRefreshEnd: function () {
+                        if (BtnSubmit) {
+                            BtnSubmit.disable();
+                        }
+                        
                         self.Loader.hide();
                     }
                 }

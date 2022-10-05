@@ -919,6 +919,11 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             if (selected.length === 1) {
                 Delete.enable();
             }
+
+            this.fireEvent('onCustomerSelect', [
+                this,
+                selected
+            ]);
         },
 
         /**
