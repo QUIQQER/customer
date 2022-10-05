@@ -57,15 +57,17 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
             this.getContent().set('html', '');
             this.getContent().setStyle('padding', 0);
 
-            const BtnSubmit = this.getButton('submit');
+            const BtnSubmit  = this.getButton('submit');
+            const customerId = this.getAttribute('customerId');
 
-            if (BtnSubmit) {
+            // If a customer is opened directly with the window, disable the submit btn until customer is fully loaded
+            if (BtnSubmit && customerId) {
                 BtnSubmit.disable();
             }
 
             this.$Admin = new Administration({
                 editable   : this.getAttribute('editable'),
-                customerId : this.getAttribute('customerId'),
+                customerId : customerId,
                 submittable: true,
                 events     : {
                     onCustomerOpenBegin: function () {
@@ -79,9 +81,9 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
                             'class': 'qui-window-popup-title-close quiqqer-customer-adminWindow-close',
                             name   : 'show-list',
                             html   : '<span class="fa fa-angle-double-left"></span> ' +
-                                     '<span>' +
-                                     '' + QUILocale.get(lg, 'customer.window.backToList') +
-                                     '</span>',
+                                '<span>' +
+                                '' + QUILocale.get(lg, 'customer.window.backToList') +
+                                '</span>',
                             events : {
                                 click: function () {
                                     self.$Title.getElement('[name="show-list"]').destroy();
