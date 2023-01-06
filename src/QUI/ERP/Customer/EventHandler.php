@@ -10,6 +10,13 @@ use QUI;
 use QUI\Package\Package;
 use QUI\Users\Manager;
 
+use function array_merge;
+use function file_exists;
+use function is_array;
+use function json_decode;
+use function md5;
+use function trim;
+
 /**
  * Class EventHandler
  *
@@ -86,7 +93,7 @@ class EventHandler
             $Config  = $Package->getConfig();
             $groupId = $Config->getValue('customer', 'groupId');
 
-            echo '<script>var QUIQQER_CUSTOMER_GROUP = '.$groupId.'</script>';
+            echo '<script>const QUIQQER_CUSTOMER_GROUP = ' . $groupId . '</script>';
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
@@ -111,20 +118,20 @@ class EventHandler
 
             foreach ($list as $entry) {
                 $plugin  = $entry['name'];
-                $userXml = OPT_DIR.$plugin.'/customer.xml';
+                $userXml = OPT_DIR . $plugin . '/customer.xml';
 
-                if (!\file_exists($userXml)) {
+                if (!file_exists($userXml)) {
                     continue;
                 }
 
-                $customerAttr = \array_merge(
+                $customerAttr = array_merge(
                     $customerAttr,
                     self::readAttributesFromUserXML($userXml)
                 );
             }
         }
 
-        $attributes = \array_merge($attributes, $customerAttr);
+        $attributes = array_merge($attributes, $customerAttr);
     }
 
 
@@ -138,7 +145,7 @@ class EventHandler
      */
     protected static function readAttributesFromUserXML(string $file): array
     {
-        $cache = 'quiqqer/package/customer/user-extra-attributes/'.\md5($file);
+        $cache = 'quiqqer/package/customer/user-extra-attributes/' . md5($file);
 
         try {
             return QUI\Cache\Manager::get($cache);
@@ -170,7 +177,7 @@ class EventHandler
             }
 
             $attributes[] = [
-                'name'    => \trim($Attribute->nodeValue),
+                'name'    => trim($Attribute->nodeValue),
                 'encrypt' => !!$Attribute->getAttribute('encrypt')
             ];
         }
@@ -216,9 +223,9 @@ class EventHandler
         // comments
         if ($User->getAttribute('comments')) {
             $comments = $User->getAttribute('comments');
-            $json     = \json_decode($comments, true);
+            $json     = json_decode($comments, true);
 
-            if (\is_array($json)) {
+            if (is_array($json)) {
                 $data['comments'] = $comments;
             }
         }
