@@ -8,6 +8,7 @@ namespace QUI\ERP\Customer;
 
 use QUI;
 use QUI\Utils\Singleton;
+use function array_walk;
 
 /**
  * Class Search
@@ -459,25 +460,35 @@ class Search extends Singleton
         if (!empty($this->search)) {
             $searchWhere = [];
 
-            foreach ($searchFilters as $filter) {
-                if ($filter === 'userId') {
-                    $filter = 'users.id';
-                }
+            // Prepare searched columns
+            array_walk($searchFilters, function (&$filter) {
+                switch ($filter) {
+                    case 'userId':
+                        $filter = 'users.id';
+                        break;
 
-                if ($filter === 'group') {
-                    $filter = 'users.usergroup';
-                }
+                    case 'group':
+                        $filter = 'users.usergroup';
+                        break;
 
-                if ($filter === 'company') {
-                    $filter = 'ad.company';
-                }
+                    case 'company':
+                        $filter = 'ad.company';
+                        break;
 
-                if (\strpos($filter, 'users.') === false && \strpos($filter, 'ad.') === false) {
-                    $filter = 'users.'.$filter;
-                }
+                    case 'users.customerId':
 
-                if ($filter === 'users.customerId') {
-                    $searchWhere[]      = $filter.' LIKE :customer_id_no_prefix';
+                        break;
+
+                    default:
+                        if (\strpos($filter, 'users.') === false && \strpos($filter, 'ad.') === false) {
+                            $filter = 'users.'.$filter;
+                        }
+                }
+            });
+
+            foreach ($searchFilters as $column) {
+                if ($column === 'users.customerId') {
+                    $searchWhere[]      = $column.' LIKE :customer_id_no_prefix';
                     $customerIdNoPrefix = \mb_substr($this->search, $prefixLength);
 
                     $binds['customer_id_no_prefix'] = [
@@ -486,15 +497,41 @@ class Search extends Singleton
                     ];
                 }
 
-                $searchWhere[] = $filter.' LIKE :search';
+                $searchWhere[] = $column.' LIKE :search';
             }
-
-            $where[] = '('.\implode(' OR ', $searchWhere).')';
 
             $binds['search'] = [
                 'value' => '%'.$this->search.'%',
                 'type'  => \PDO::PARAM_STR
             ];
+
+            // Split search
+            $searchTermsSplit = explode(" ", $this->search);
+
+            if (count($searchTermsSplit) > 1) {
+                $searchWhereSplit = [];
+
+                foreach ($searchTermsSplit as $k => $searchTerm) {
+                    $searchWhereSplitTerm = [];
+
+                    foreach ($searchFilters as $column) {
+                        $searchWhereSplitTerm[] = $column.' LIKE :searchSplit'.$k;
+                    }
+
+                    $searchWhereSplit[] = '('.\implode(' OR ', $searchWhereSplitTerm).')';
+                }
+
+                $searchWhere[] = '('.\implode(' AND ', $searchWhereSplit).')';
+
+                foreach ($searchTermsSplit as $k => $searchTerm) {
+                    $binds['searchSplit'.$k] = [
+                        'value' => '%'.$searchTerm.'%',
+                        'type'  => \PDO::PARAM_STR
+                    ];
+                }
+            }
+
+            $where[] = '('.\implode(' OR ', $searchWhere).')';
         }
 
         $whereQuery = 'WHERE '.\implode(' AND ', $where);
