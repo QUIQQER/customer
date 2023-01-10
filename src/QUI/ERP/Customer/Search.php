@@ -475,10 +475,6 @@ class Search extends Singleton
                         $filter = 'ad.company';
                         break;
 
-                    case 'users.customerId':
-
-                        break;
-
                     default:
                         if (\strpos($filter, 'users.') === false && \strpos($filter, 'ad.') === false) {
                             $filter = 'users.'.$filter;
