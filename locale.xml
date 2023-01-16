@@ -224,7 +224,7 @@
         <locale name="customer.settings.customerLogin.description">
             <de><![CDATA[
             Wenn diese Option deaktiviert ist, lassen sich Nutzer aus der Kundengruppe nicht aktivieren.
-            Wenn diese Option aktiv ist, kann in jedem Kunden in den Benutzereigenschaften bestimmt werde das sich
+            Wenn diese Option aktiv ist, kann in jedem Kunden in den Benutzereigenschaften bestimmt werden, dass sich
             der Kunde am System anmelden kann. So wird ein Kunde beim Speichern automatisch aktiviert.
             ]]></de>
             <en><![CDATA[
