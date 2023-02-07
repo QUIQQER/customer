@@ -133,7 +133,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select'
                         );
 
                         if (!Item) {
-                            return;
+                            return resolve(false);
                         }
 
                         const ItemControl = QUI.Controls.getById(
