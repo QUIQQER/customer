@@ -124,5 +124,6 @@
 .quiqqer-customer-adminWindow-close {
     font-family: 'Open Sans', sans-serif;
     font-size: 12px;
+    padding-right: 10px;
     width: initial;
 }
