@@ -17,5 +17,7 @@
            fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerOrderPaidStatusChanged"/>
     <event on="onQuiqqerInvoiceTemporaryInvoicePostEnd"
            fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerInvoiceTemporaryInvoicePostEnd"/>
-    <event on="onQuiqqerOrderCreated" fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerOrderCreated"/>
+    <event on="onQuiqqerOrderCreated" fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerOrderChanged"/>
+    <event on="onQuiqqerOrderDelete" fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerOrderChanged"/>
+
 </events>

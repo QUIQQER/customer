@@ -167,12 +167,13 @@ class Events
 
     /**
      * quiqqer/order: onQuiqqerOrderCreated
+     * quiqqer/order: onQuiqqerOrderDelete
      *
-     * Update open records of user if an order is created
+     * Update open records of user if an order changes
      *
      * @param QUI\ERP\Order\Order $Order
      */
-    public static function onQuiqqerOrderCreated(QUI\ERP\Order\Order $Order)
+    public static function onQuiqqerOrderChanged(QUI\ERP\Order\Order $Order)
     {
         try {
             $Conf           = QUI::getPackage('quiqqer/customer')->getConfig();
