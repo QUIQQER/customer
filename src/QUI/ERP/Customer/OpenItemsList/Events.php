@@ -11,6 +11,8 @@ use QUI\ERP\Order\Settings;
 use QUI\ERP\Order\Order;
 use QUI\ERP\Order\Handler as OrderHandler;
 
+use function json_decode;
+
 /**
  * Class Events
  *
@@ -31,14 +33,14 @@ class Events
         // Get invoice by hash
         try {
             $Invoice = InvoiceHandler::getInstance()->getInvoiceByHash($Transaction->getHash());
-            $User    = $Invoice->getCustomer();
+            $User = $Invoice->getCustomer();
         } catch (\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
 
             // Get order by hash
             try {
                 $Order = OrderHandler::getInstance()->getOrderByHash($Transaction->getHash());
-                $User  = $Order->getCustomer();
+                $User = $Order->getCustomer();
             } catch (\Exception $Exception) {
                 QUI\System\Log::writeDebugException($Exception);
                 return;
@@ -167,16 +169,71 @@ class Events
 
     /**
      * quiqqer/order: onQuiqqerOrderCreated
-     * quiqqer/order: onQuiqqerOrderDelete
+     *
+     * Update open records of user if an order changes
+     *
+     * @param int $orderId
+     * @param array $orderAttributes
+     * @return void
+     */
+    public static function onQuiqqerOrderDelete(int $orderId, array $orderAttributes): void
+    {
+        try {
+            $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
+            $considerOrders = $Conf->get('openItems', 'considerOrders');
+
+            if (empty($considerOrders)) {
+                return;
+            }
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+            return;
+        }
+
+        // Do not track order that also are tracked via invoice
+        if (Settings::getInstance()->createInvoiceOnOrder()) {
+            return;
+        }
+
+        try {
+            // Prefer LIVE user instead of invoice user
+            $User = self::getLiveErpUser($orderAttributes['customerId']);
+
+            if (!$User) {
+                $customerData = json_decode($orderAttributes['customer'], true);
+                $customerData['isCompany'] = !empty($customerData['company']);
+
+                if (!empty($customerData['address']['country'])) {
+                    $customerData['country'] = $customerData['address']['country'];
+                } else {
+                    $customerData['country'] = QUI\ERP\Defaults::getCountry()->getCode();
+                }
+
+                $User = new QUI\ERP\User($customerData);
+            }
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeDebugException($Exception);
+            return;
+        }
+
+        try {
+            Handler::updateOpenItemsRecord($User);
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
+    }
+
+    /**
+     * quiqqer/order: onQuiqqerOrderCreated
      *
      * Update open records of user if an order changes
      *
      * @param QUI\ERP\Order\Order $Order
      */
-    public static function onQuiqqerOrderChanged(QUI\ERP\Order\Order $Order)
+    public static function onQuiqqerOrderCreated(QUI\ERP\Order\Order $Order)
     {
         try {
-            $Conf           = QUI::getPackage('quiqqer/customer')->getConfig();
+            $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
             $considerOrders = $Conf->get('openItems', 'considerOrders');
 
             if (empty($considerOrders)) {
