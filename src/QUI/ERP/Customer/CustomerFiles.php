@@ -33,12 +33,12 @@ class CustomerFiles
 
         try {
             $Package = QUI::getPackageManager()->getInstalledPackage('quiqqer/customer');
-            $varDir  = $Package->getVarDir();
+            $varDir = $Package->getVarDir();
         } catch (QUI\Exception $Exception) {
             return '';
         }
 
-        $fileDir = $varDir.$User->getId();
+        $fileDir = $varDir . $User->getId();
 
         QUI\Utils\System\File::mkdir($fileDir);
 
@@ -67,26 +67,26 @@ class CustomerFiles
             return [];
         }
 
-        $customerDir            = self::getFolderPath($Customer);
-        $files                  = QUI\Utils\System\File::readDir($customerDir);
-        $result                 = [];
+        $customerDir = self::getFolderPath($Customer);
+        $files = QUI\Utils\System\File::readDir($customerDir);
+        $result = [];
         $userDownloadsInstalled = QUI::getPackageManager()->isInstalled('quiqqer/user-downloads');
 
         foreach ($files as $file) {
             try {
                 $info = QUI\Utils\System\File::getInfo(
-                    $customerDir.DIRECTORY_SEPARATOR.$file
+                    $customerDir . DIRECTORY_SEPARATOR . $file
                 );
             } catch (\Exception $Exception) {
                 $info = [
-                    'basename'           => $file,
-                    'filesize'           => '---',
+                    'basename' => $file,
+                    'filesize' => '---',
                     'filesize_formatted' => '---',
-                    'extension'          => ''
+                    'extension' => ''
                 ];
             }
 
-            $filePath = $customerDir.DIRECTORY_SEPARATOR.$file;
+            $filePath = $customerDir . DIRECTORY_SEPARATOR . $file;
 
             $info['uploadTime'] = \filemtime($filePath);
 
@@ -94,7 +94,7 @@ class CustomerFiles
                 $info['filesize_formatted'] = QUI\Utils\System\File::formatSize($info['filesize']);
             }
 
-            $info['icon']         = QUI\Projects\Media\Utils::getIconByExtension($info['extension']);
+            $info['icon'] = QUI\Projects\Media\Utils::getIconByExtension($info['extension']);
             $info['userDownload'] = false;
 
             if ($userDownloadsInstalled) {
@@ -136,7 +136,7 @@ class CustomerFiles
         $customerDir = self::getFolderPath($Customer);
 
         foreach ($files as $fileName) {
-            $file = $customerDir.DIRECTORY_SEPARATOR.$fileName;
+            $file = $customerDir . DIRECTORY_SEPARATOR . $fileName;
 
             if (\file_exists($file)) {
                 \unlink($file);
@@ -174,7 +174,7 @@ class CustomerFiles
 
         rename(
             $file,
-            $customerDir.DIRECTORY_SEPARATOR.$fileInfo['basename']
+            $customerDir . DIRECTORY_SEPARATOR . $fileInfo['basename']
         );
     }
 
@@ -222,38 +222,38 @@ class CustomerFiles
 
         $fileList = self::getFileList($customerId);
         $fileName = false;
-        $fileExt  = false;
+        $fileExt = false;
 
         foreach ($fileList as $entry) {
             if ($entry['basename'] === $file) {
                 $fileName = $entry['filename'];
-                $fileExt  = $entry['extension'];
+                $fileExt = $entry['extension'];
                 break;
             }
         }
 
         if (!$fileName || !$fileExt) {
-            throw new QUI\Exception('File '.$file.' was not found in user files.');
+            throw new QUI\Exception('File ' . $file . ' was not found in user files.');
         }
 
         $DownloadEntry = self::createDownloadEntry($customerId);
-        $langs         = QUI::availableLanguages();
+        $langs = QUI::availableLanguages();
 
-        $downloadUrl = URL_OPT_DIR.'quiqqer/customer/bin/backend/download.php?';
-        $query       = \http_build_query([
-            'file'       => $fileName,
-            'extension'  => $fileExt,
+        $downloadUrl = URL_OPT_DIR . 'quiqqer/customer/bin/backend/download.php?';
+        $query = \http_build_query([
+            'file' => $fileName,
+            'extension' => $fileExt,
             'customerId' => $customerId
         ]);
 
         $DownloadEntry->addUrl(
-            $downloadUrl.$query,
+            $downloadUrl . $query,
             \array_fill_keys($langs, $file)
         );
 
         $DownloadEntry->update();
 
-        $User     = QUI::getUsers()->get($customerId);
+        $User = QUI::getUsers()->get($customerId);
         $EditUser = QUI::getUserBySession();
 
         Customers::getInstance()->addCommentToUser(
@@ -262,8 +262,8 @@ class CustomerFiles
                 'quiqqer/customer',
                 'comment.DownloadEntry.add_file',
                 [
-                    'editUser' => $EditUser->getName().' (#'.$EditUser->getId().')',
-                    'file'     => $file
+                    'editUser' => $EditUser->getName() . ' (#' . $EditUser->getId() . ')',
+                    'file' => $file
                 ]
             )
         );
@@ -286,30 +286,30 @@ class CustomerFiles
 
         $fileList = self::getFileList($customerId);
         $fileName = false;
-        $fileExt  = false;
+        $fileExt = false;
 
         foreach ($fileList as $entry) {
             if ($entry['basename'] === $file) {
                 $fileName = $entry['filename'];
-                $fileExt  = $entry['extension'];
+                $fileExt = $entry['extension'];
                 break;
             }
         }
 
         if (!$fileName || !$fileExt) {
-            throw new QUI\Exception('File '.$file.' was not found in user files.');
+            throw new QUI\Exception('File ' . $file . ' was not found in user files.');
         }
 
         $DownloadEntry = self::getDownloadEntry($customerId);
 
-        $downloadUrl = URL_OPT_DIR.'quiqqer/customer/bin/backend/download.php?';
-        $query       = \http_build_query([
-            'file'       => $fileName,
-            'extension'  => $fileExt,
+        $downloadUrl = URL_OPT_DIR . 'quiqqer/customer/bin/backend/download.php?';
+        $query = \http_build_query([
+            'file' => $fileName,
+            'extension' => $fileExt,
             'customerId' => $customerId
         ]);
 
-        $DownloadEntry->removeUrl($downloadUrl.$query);
+        $DownloadEntry->removeUrl($downloadUrl . $query);
         $DownloadEntry->update();
 
         $itemCount = \count($DownloadEntry->getUrls()) + \count($DownloadEntry->getQuiqqerMediaUrls());
@@ -318,7 +318,7 @@ class CustomerFiles
             self::deleteDownloadEntry($customerId);
         }
 
-        $User     = QUI::getUsers()->get($customerId);
+        $User = QUI::getUsers()->get($customerId);
         $EditUser = QUI::getUserBySession();
 
         Customers::getInstance()->addCommentToUser(
@@ -327,8 +327,8 @@ class CustomerFiles
                 'quiqqer/customer',
                 'comment.DownloadEntry.remove_file',
                 [
-                    'editUser' => $EditUser->getName().' (#'.$EditUser->getId().')',
-                    'file'     => $file
+                    'editUser' => $EditUser->getName() . ' (#' . $EditUser->getId() . ')',
+                    'file' => $file
                 ]
             )
         );
@@ -360,14 +360,14 @@ class CustomerFiles
 
         $pathInfo = \pathinfo($filePath);
         $fileName = $pathInfo['filename'];
-        $fileExt  = !empty($pathInfo['extension']) ? $pathInfo['extension'] : false;
+        $fileExt = !empty($pathInfo['extension']) ? $pathInfo['extension'] : false;
 
         foreach ($DownloadEntry->getUrls() as $entry) {
             $url = \urldecode($entry['url']);
 
-            if (\mb_strpos($url, 'file='.$fileName) !== false) {
+            if (\mb_strpos($url, 'file=' . $fileName) !== false) {
                 if ($fileExt) {
-                    if (\mb_strpos($url, 'extension='.$fileExt) !== false) {
+                    if (\mb_strpos($url, 'extension=' . $fileExt) !== false) {
                         return true;
                     }
                 } else {
@@ -393,7 +393,7 @@ class CustomerFiles
             throw new QUI\Exception('This feature requires quiqqer/user-downloads to be installed.');
         }
 
-        $Customer        = QUI::getUsers()->get($customerId);
+        $Customer = QUI::getUsers()->get($customerId);
         $downloadEntryId = $Customer->getAttribute(self::USER_ATTRIBUTE_DOWNLOAD_ENTRY_ID);
 
         if (empty($downloadEntryId)) {
@@ -423,9 +423,9 @@ class CustomerFiles
             return $DownloadEntry;
         }
 
-        $User          = QUI::getUsers()->get($customerId);
+        $User = QUI::getUsers()->get($customerId);
         $DownloadEntry = new DownloadEntry($User);
-        $Locale        = QUI::getLocale();
+        $Locale = QUI::getLocale();
 
         foreach (QUI::availableLanguages() as $lang) {
             $DownloadEntry->setTitle($lang, $Locale->getByLang($lang, 'quiqqer/customer', 'DownloadEntry.title'));

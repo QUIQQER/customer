@@ -1,27 +1,28 @@
 <?php
 
-use QUI\Utils\Security\Orthos;
-use QUI\ERP\Customer\OpenItemsList\Handler;
-use QUI\Cache\Manager as QUICacheManager;
-
 /**
  * Search open items list
  *
  * @param array $searchParams - GRID search params
  * @return array
  */
+
+use QUI\Cache\Manager as QUICacheManager;
+use QUI\ERP\Customer\OpenItemsList\Handler;
+use QUI\Utils\Security\Orthos;
+
 QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_OpenItemsList_getUserOpenItems',
     function ($userId, $searchParams, $forceRefresh) {
         try {
-            $userId    = (int)$userId;
-            $cacheName = 'quiqqer/customer/openitems/'.$userId;
-            $refresh   = true;
+            $userId = (int)$userId;
+            $cacheName = 'quiqqer/customer/openitems/' . $userId;
+            $refresh = true;
 
             if (empty($forceRefresh)) {
                 try {
                     $openItems = QUICacheManager::get($cacheName);
-                    $refresh   = false;
+                    $refresh = false;
                 } catch (\Exception $Exception) {
                     // nothing - refresh cache
                 }
@@ -29,7 +30,7 @@ QUI::$Ajax->registerFunction(
 
             if ($refresh) {
                 $OpenItemsList = Handler::getOpenItemsList(QUI::getUsers()->get($userId));
-                $openItems     = $OpenItemsList->getItems();
+                $openItems = $OpenItemsList->getItems();
 
                 QUICacheManager::set($cacheName, $openItems);
             }
@@ -148,50 +149,50 @@ QUI::$Ajax->registerFunction(
                 $perPage = (int)$searchParams['perPage'];
             }
 
-            $offset     = ($page - 1) * $perPage;
+            $offset = ($page - 1) * $perPage;
             $totalCount = \count($openItems);
-            $openItems  = \array_splice($openItems, $offset, $perPage);
+            $openItems = \array_splice($openItems, $offset, $perPage);
 
             // Parse data for GRID display
             $items = [];
 
             /** @var \QUI\ERP\Customer\OpenItemsList\Item $Item */
             foreach ($openItems as $Item) {
-                $documentType      = $Item->getDocumentType();
+                $documentType = $Item->getDocumentType();
                 $documentTypeTitle = QUI::getLocale()->get(
                     'quiqqer/customer',
-                    'OpenItemsList.documentType.'.$documentType
+                    'OpenItemsList.documentType.' . $documentType
                 );
 
                 $items[] = [
-                    'documentId'        => $Item->getDocumentId(),
-                    'documentNo'        => $Item->getDocumentNo(),
-                    'documentType'      => $documentType,
+                    'documentId' => $Item->getDocumentId(),
+                    'documentNo' => $Item->getDocumentNo(),
+                    'documentType' => $documentType,
                     'documentTypeTitle' => $documentTypeTitle,
-                    'date'              => $Item->getDateFormatted(),
-                    'dueDate'           => $Item->getDueDateFormatted(),
-                    'net'               => $Item->getAmountTotalNetFormatted(),
-                    'vat'               => $Item->getAmountTotalVatFormatted(),
-                    'gross'             => $Item->getAmountTotalSumFormatted(),
-                    'paid'              => $Item->getAmountPaidFormatted(),
-                    'open'              => $Item->getAmountOpenFormatted(),
-                    'dunningLevel'      => $Item->getDunningLevel() ?: '-',
-                    'daysDue'           => $Item->getDaysDue(),
-                    'daysOpen'          => $Item->getDaysOpen()
+                    'date' => $Item->getDateFormatted(),
+                    'dueDate' => $Item->getDueDateFormatted(),
+                    'net' => $Item->getAmountTotalNetFormatted(),
+                    'vat' => $Item->getAmountTotalVatFormatted(),
+                    'gross' => $Item->getAmountTotalSumFormatted(),
+                    'paid' => $Item->getAmountPaidFormatted(),
+                    'open' => $Item->getAmountOpenFormatted(),
+                    'dunningLevel' => $Item->getDunningLevel() ?: '-',
+                    'daysDue' => $Item->getDaysDue(),
+                    'daysOpen' => $Item->getDaysOpen()
                 ];
             }
 
             return [
-                'data'  => $items,
-                'page'  => $page,
+                'data' => $items,
+                'page' => $page,
                 'total' => $totalCount
             ];
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
             return [
-                'data'  => [],
-                'page'  => 1,
+                'data' => [],
+                'page' => 1,
                 'total' => 0
             ];
         }

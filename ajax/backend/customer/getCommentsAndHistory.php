@@ -8,12 +8,13 @@
  * @param int $pageSize - Pagination page size
  * @return array
  */
+
 QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_customer_getCommentsAndHistory',
     function ($uid, $page, $limit) {
-        $User     = QUI::getUsers()->get($uid);
+        $User = QUI::getUsers()->get($uid);
         $Comments = QUI\ERP\Comments::getCommentsByUser($User);
-        $History  = QUI\ERP\Comments::getHistoryByUser($User);
+        $History = QUI\ERP\Comments::getHistoryByUser($User);
 
         $comments = \array_merge(
             $Comments->toArray(),
@@ -34,8 +35,8 @@ QUI::$Ajax->registerFunction(
             return $comments;
         }
 
-        $page   = !empty($page) ? (int)$page : 1;
-        $limit  = !empty($limit) ? (int)$limit : 10;
+        $page = !empty($page) ? (int)$page : 1;
+        $limit = !empty($limit) ? (int)$limit : 10;
         $offset = ($page - 1) * $limit;
 
         return \array_slice($comments, $offset, $limit);
