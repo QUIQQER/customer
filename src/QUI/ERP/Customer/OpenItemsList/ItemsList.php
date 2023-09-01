@@ -43,45 +43,45 @@ class ItemsList
         $this->items[] = $Item;
 
         // Calculate total amounts
-        $Currency     = $Item->getCurrency();
+        $Currency = $Item->getCurrency();
         $currencyCode = $Currency->getCode();
 
         if (empty($this->totalAmountsByCurrency[$currencyCode])) {
             $this->totalAmountsByCurrency[$currencyCode] = [
-                'netTotal'           => 0,
-                'netTotalFormatted'  => '',
-                'vatTotal'           => 0,
-                'vatTotalFormatted'  => '',
-                'sumTotal'           => 0,
-                'sumTotalFormatted'  => '',
-                'dueTotal'           => 0,
-                'dueTotalFormatted'  => '',
-                'paidTotal'          => 0,
+                'netTotal' => 0,
+                'netTotalFormatted' => '',
+                'vatTotal' => 0,
+                'vatTotalFormatted' => '',
+                'sumTotal' => 0,
+                'sumTotalFormatted' => '',
+                'dueTotal' => 0,
+                'dueTotalFormatted' => '',
+                'paidTotal' => 0,
                 'paidTotalFormatted' => ''
             ];
         }
 
-        $this->totalAmountsByCurrency[$currencyCode]['netTotal']          += $Item->getAmountTotalNet();
+        $this->totalAmountsByCurrency[$currencyCode]['netTotal'] += $Item->getAmountTotalNet();
         $this->totalAmountsByCurrency[$currencyCode]['netTotalFormatted'] = $Currency->format(
             $this->totalAmountsByCurrency[$currencyCode]['netTotal']
         );
 
-        $this->totalAmountsByCurrency[$currencyCode]['sumTotal']          += $Item->getAmountTotalSum();
+        $this->totalAmountsByCurrency[$currencyCode]['sumTotal'] += $Item->getAmountTotalSum();
         $this->totalAmountsByCurrency[$currencyCode]['sumTotalFormatted'] = $Currency->format(
             $this->totalAmountsByCurrency[$currencyCode]['sumTotal']
         );
 
-        $this->totalAmountsByCurrency[$currencyCode]['dueTotal']          += $Item->getAmountOpen();
+        $this->totalAmountsByCurrency[$currencyCode]['dueTotal'] += $Item->getAmountOpen();
         $this->totalAmountsByCurrency[$currencyCode]['dueTotalFormatted'] = $Currency->format(
             $this->totalAmountsByCurrency[$currencyCode]['dueTotal']
         );
 
-        $this->totalAmountsByCurrency[$currencyCode]['paidTotal']          += $Item->getAmountPaid();
+        $this->totalAmountsByCurrency[$currencyCode]['paidTotal'] += $Item->getAmountPaid();
         $this->totalAmountsByCurrency[$currencyCode]['paidTotalFormatted'] = $Currency->format(
             $this->totalAmountsByCurrency[$currencyCode]['paidTotal']
         );
 
-        $this->totalAmountsByCurrency[$currencyCode]['vatTotal']          += $Item->getAmountTotalVat();
+        $this->totalAmountsByCurrency[$currencyCode]['vatTotal'] += $Item->getAmountTotalVat();
         $this->totalAmountsByCurrency[$currencyCode]['vatTotalFormatted'] = $Currency->format(
             $this->totalAmountsByCurrency[$currencyCode]['vatTotal']
         );
@@ -194,12 +194,12 @@ class ItemsList
         }
 
         $Engine->assign([
-            'this'    => $this,
+            'this' => $this,
             'isEmpty' => \count($this->items) === 0
         ]);
 
-        $body = '<style>'.\file_get_contents(\dirname(__FILE__).'/ItemList.css').'</style>';
-        $body .= $Engine->fetch(\dirname(__FILE__).'/ItemList.html');
+        $body = '<style>' . \file_get_contents(\dirname(__FILE__) . '/ItemList.css') . '</style>';
+        $body .= $Engine->fetch(\dirname(__FILE__) . '/ItemList.html');
 
         return $body;
     }

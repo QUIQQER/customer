@@ -42,9 +42,9 @@ class Customers extends Singleton
          * Check if $customerId equals the next customerId in the NumberRange.
          * If so, then set then increase the next customerId by 1.
          */
-        $NumberRange    = new NumberRange();
+        $NumberRange = new NumberRange();
         $nextCustomerNo = $NumberRange->getNextCustomerNo();
-        $customerId     = (int)$customerId;
+        $customerId = (int)$customerId;
 
         if ((int)$customerId >= $nextCustomerNo) {
             $NumberRange->setRange($customerId + 1);
@@ -129,21 +129,21 @@ class Customers extends Singleton
     public function getCustomerByCustomerNo(string $customerNo): QUI\Users\User
     {
         $NumberRange = new NumberRange();
-        $prefix      = $NumberRange->getCustomerNoPrefix();
-        $customerNo  = preg_replace('#^'.$prefix.'#im', '', $customerNo);
+        $prefix = $NumberRange->getCustomerNoPrefix();
+        $customerNo = preg_replace('#^' . $prefix . '#im', '', $customerNo);
 
         $result = QUI::getDataBase()->fetch([
-            'select'   => 'id',
-            'from'     => QUI::getUsers()::table(),
+            'select' => 'id',
+            'from' => QUI::getUsers()::table(),
             'where_or' => [
                 'customerId' => $customerNo,
-                'id'         => $customerNo
+                'id' => $customerNo
             ],
-            'limit'    => 1
+            'limit' => 1
         ]);
 
         if (empty($result)) {
-            throw new Exception('Customer with customer no. '.$customerNo.' not found.', 404);
+            throw new Exception('Customer with customer no. ' . $customerNo . ' not found.', 404);
         }
 
         return QUI::getUsers()->get($result[0]['id']);
@@ -158,7 +158,7 @@ class Customers extends Singleton
     public function getCustomerGroupId(): int
     {
         $Package = QUI::getPackage('quiqqer/customer');
-        $Config  = $Package->getConfig();
+        $Config = $Package->getConfig();
         $groupId = (int)\trim($Config->getValue('customer', 'groupId'));
 
         if (empty($groupId)) {
@@ -180,7 +180,7 @@ class Customers extends Singleton
     {
         try {
             $Package = QUI::getPackage('quiqqer/customer');
-            $Config  = $Package->getConfig();
+            $Config = $Package->getConfig();
         } catch (QUI\Exception $Exception) {
             return false;
         }
@@ -278,9 +278,11 @@ class Customers extends Singleton
     {
         $User = QUI::getUsers()->get($userId);
 
-        if (!empty($attributes['password1'])
+        if (
+            !empty($attributes['password1'])
             && !empty($attributes['password2'])
-            && $attributes['password1'] === $attributes['password2']) {
+            && $attributes['password1'] === $attributes['password2']
+        ) {
             $User->setPassword($attributes['password1']);
 
             unset($attributes['password1']);
@@ -292,11 +294,13 @@ class Customers extends Singleton
          * then also change the username.
          */
         if (!empty($attributes['customerId'])) {
-            $newCustomerId     = $attributes['customerId'];
+            $newCustomerId = $attributes['customerId'];
             $currentCustomerId = $User->getAttribute('customerId');
 
-            if ($currentCustomerId !== $newCustomerId &&
-                $User->getUsername() === $currentCustomerId) {
+            if (
+                $currentCustomerId !== $newCustomerId &&
+                $User->getUsername() === $currentCustomerId
+            ) {
                 $attributes['username'] = $newCustomerId;
             }
         }
@@ -311,7 +315,7 @@ class Customers extends Singleton
         $this->saveDeliveryAddress($User, $attributes);
 
         if (isset($attributes['address-communication'])) {
-            $Address  = $User->getStandardAddress();
+            $Address = $User->getStandardAddress();
             $mailList = $Address->getMailList();
 
             if (!empty($mailList)) {
@@ -356,7 +360,7 @@ class Customers extends Singleton
         // company flag
         // default address
         try {
-            $Address   = QUI\ERP\Utils\User::getUserERPAddress($User);
+            $Address = QUI\ERP\Utils\User::getUserERPAddress($User);
             $isCompany = $Address->getAttribute('company');
             $isCompany = !empty($isCompany);
 
@@ -415,9 +419,9 @@ class Customers extends Singleton
         ];
 
         foreach ($addressAttributes as $addressAttribute) {
-            if (isset($attributes['address-'.$addressAttribute])) {
-                $Address->setAttribute($addressAttribute, $attributes['address-'.$addressAttribute]);
-                unset($attributes['address-'.$addressAttribute]);
+            if (isset($attributes['address-' . $addressAttribute])) {
+                $Address->setAttribute($addressAttribute, $attributes['address-' . $addressAttribute]);
+                unset($attributes['address-' . $addressAttribute]);
             }
         }
 
@@ -495,7 +499,7 @@ class Customers extends Singleton
         ];
 
         foreach ($addressAttributes as $addressAttribute) {
-            if (!empty($attributes['address-delivery-'.$addressAttribute])) {
+            if (!empty($attributes['address-delivery-' . $addressAttribute])) {
                 $isEmpty = false;
                 break;
             }
@@ -509,7 +513,7 @@ class Customers extends Singleton
         // address save
         try {
             $addressId = $User->getAttribute('quiqqer.delivery.address');
-            $Address   = $User->getAddress($addressId);
+            $Address = $User->getAddress($addressId);
         } catch (QUI\Exception $Exception) {
             // create one
             $Address = $User->addAddress([]);
@@ -518,9 +522,9 @@ class Customers extends Singleton
         }
 
         foreach ($addressAttributes as $addressAttribute) {
-            if (isset($attributes['address-delivery-'.$addressAttribute])) {
-                $Address->setAttribute($addressAttribute, $attributes['address-delivery-'.$addressAttribute]);
-                unset($attributes['address-delivery-'.$addressAttribute]);
+            if (isset($attributes['address-delivery-' . $addressAttribute])) {
+                $Address->setAttribute($addressAttribute, $attributes['address-delivery-' . $addressAttribute]);
+                unset($attributes['address-delivery-' . $addressAttribute]);
             }
         }
 

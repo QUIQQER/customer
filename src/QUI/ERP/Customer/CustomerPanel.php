@@ -25,7 +25,7 @@ class CustomerPanel extends Singleton
             $files = [];
 
             $PackageHandler = QUI::getPackageManager();
-            $packages       = $PackageHandler->getInstalled();
+            $packages = $PackageHandler->getInstalled();
 
             foreach ($packages as $package) {
                 try {
@@ -39,8 +39,8 @@ class CustomerPanel extends Singleton
                     continue;
                 }
 
-                $packageDir  = $Package->getDir();
-                $customerXml = $packageDir.'/customer.xml';
+                $packageDir = $Package->getDir();
+                $customerXml = $packageDir . '/customer.xml';
 
                 if (\file_exists($customerXml)) {
                     $files[] = $customerXml;
@@ -64,7 +64,7 @@ class CustomerPanel extends Singleton
 
 
         // category translation
-        $categories           = $result['categories'];
+        $categories = $result['categories'];
         $result['categories'] = [];
 
         foreach ($categories as $key => $category) {
@@ -99,7 +99,7 @@ class CustomerPanel extends Singleton
         $files = [];
 
         $PackageHandler = QUI::getPackageManager();
-        $packages       = $PackageHandler->getInstalled();
+        $packages = $PackageHandler->getInstalled();
 
         foreach ($packages as $package) {
             try {
@@ -113,8 +113,8 @@ class CustomerPanel extends Singleton
                 continue;
             }
 
-            $packageDir  = $Package->getDir();
-            $customerXml = $packageDir.'/customer.xml';
+            $packageDir = $Package->getDir();
+            $customerXml = $packageDir . '/customer.xml';
 
             if (\file_exists($customerXml)) {
                 $files[] = $customerXml;

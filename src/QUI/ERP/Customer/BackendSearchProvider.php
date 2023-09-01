@@ -31,7 +31,7 @@ class BackendSearchProvider implements ProviderInterface
         return [
             'searchdata' => \json_encode([
                 'require' => 'package/quiqqer/customer/bin/backend/controls/customer/Panel',
-                'params'  => [
+                'params' => [
                     'userId' => (int)$id
                 ]
             ])
@@ -47,7 +47,8 @@ class BackendSearchProvider implements ProviderInterface
      */
     public function search($search, $params = [])
     {
-        if (isset($params['filterGroups'])
+        if (
+            isset($params['filterGroups'])
             && !\in_array(self::TYPE, $params['filterGroups'])
         ) {
             return [];
@@ -70,12 +71,12 @@ class BackendSearchProvider implements ProviderInterface
         );
 
         $NumberRange = new NumberRange();
-        $prefix      = $NumberRange->getCustomerNoPrefix();
+        $prefix = $NumberRange->getCustomerNoPrefix();
 
         foreach ($results as $row) {
             try {
-                $userId     = $row['user_id'];
-                $customerId = !empty($row['customerId']) ? $prefix.$row['customerId'] : $userId;
+                $userId = $row['user_id'];
+                $customerId = !empty($row['customerId']) ? $prefix . $row['customerId'] : $userId;
 
                 if (!empty($row['company'])) {
                     $name = $row['company'];
@@ -98,15 +99,15 @@ class BackendSearchProvider implements ProviderInterface
                     );
                 }
 
-                $name .= ' ('.$customerId.')';
+                $name .= ' (' . $customerId . ')';
 
                 $result[] = [
-                    'id'          => (int)$userId,
-                    'title'       => $name,
+                    'id' => (int)$userId,
+                    'title' => $name,
                     'description' => '',
-                    'icon'        => 'fa fa-user-o',
-                    'group'       => self::TYPE,
-                    'groupLabel'  => $groupLabel
+                    'icon' => 'fa fa-user-o',
+                    'group' => self::TYPE,
+                    'groupLabel' => $groupLabel
                 ];
             } catch (\Exception $Exception) {
                 QUI\System\Log::writeException($Exception);

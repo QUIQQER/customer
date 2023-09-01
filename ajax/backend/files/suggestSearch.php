@@ -7,11 +7,12 @@
  * @param string $searchString
  * @return array
  */
+
 QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_files_suggestSearch',
     function ($customerId, $searchString) {
-        $files        = QUI\ERP\Customer\CustomerFiles::getFileList((int)$customerId);
-        $results      = [];
+        $files = QUI\ERP\Customer\CustomerFiles::getFileList((int)$customerId);
+        $results = [];
         $searchString = \trim(\mb_strtolower($searchString));
 
         // Return all files if search string is empty

@@ -7,6 +7,7 @@
  * @param string $fileHash
  * @return array|false - File details or false if file not found
  */
+
 QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_files_get',
     function ($customerId, $fileHash) {
