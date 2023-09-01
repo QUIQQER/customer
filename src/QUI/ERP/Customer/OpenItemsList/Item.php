@@ -111,7 +111,7 @@ class Item
      */
     public function __construct($documentId, string $documentType)
     {
-        $this->documentId   = $documentId;
+        $this->documentId = $documentId;
         $this->documentType = $documentType;
     }
 
@@ -172,7 +172,7 @@ class Item
             return 0;
         }
 
-        $Now  = \date_create();
+        $Now = \date_create();
         $Diff = $Now->diff($this->Date);
 
         return $Diff->days + 1;

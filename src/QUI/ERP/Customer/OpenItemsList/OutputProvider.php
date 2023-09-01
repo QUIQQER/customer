@@ -69,12 +69,12 @@ class OutputProvider implements OutputProviderInterface
     {
         /** @var QUI\ERP\User $ERPUser */
         $ERPUser = self::getEntity($entityId);
-        $Locale  = $ERPUser->getLocale();
-        $Date    = \date_create();
+        $Locale = $ERPUser->getLocale();
+        $Date = \date_create();
 
         return $Locale->get('quiqqer/customer', 'OutputProvider.download_filename', [
             'date' => $Date->format('Y-m-d'),
-            'uid'  => $ERPUser->getId()
+            'uid' => $ERPUser->getId()
         ]);
     }
 
@@ -105,17 +105,17 @@ class OutputProvider implements OutputProviderInterface
     public static function getTemplateData($entityId)
     {
         /** @var User $ERPUser */
-        $ERPUser     = self::getEntity($entityId);
+        $ERPUser = self::getEntity($entityId);
         $QuiqqerUser = QUI::getUsers()->get($ERPUser->getId());
-        $Address     = $QuiqqerUser->getStandardAddress();
+        $Address = $QuiqqerUser->getStandardAddress();
 
         $Address->clearMail();
         $Address->clearPhone();
 
         return [
-            'Address'       => $Address,
+            'Address' => $Address,
             'OpenItemsList' => Handler::getOpenItemsList($ERPUser),
-            'Customer'      => $ERPUser
+            'Customer' => $ERPUser
         ];
     }
 
@@ -171,7 +171,7 @@ class OutputProvider implements OutputProviderInterface
     {
         /** @var User $ERPUser */
         $ERPUser = self::getEntity($entityId);
-        $Locale  = $ERPUser->getLocale();
+        $Locale = $ERPUser->getLocale();
 
         return QUI::getLocale()->get('quiqqer/customer', 'mail.OpenItemsList.subject', [
             'date' => $Locale->formatDate(time())
@@ -190,10 +190,10 @@ class OutputProvider implements OutputProviderInterface
     {
         /** @var User $ERPUser */
         $ERPUser = self::getEntity($entityId);
-        $Locale  = $ERPUser->getLocale();
+        $Locale = $ERPUser->getLocale();
 
         return QUI::getLocale()->get('quiqqer/customer', 'mail.OpenItemsList.body', [
-            'date'         => $Locale->formatDate(time()),
+            'date' => $Locale->formatDate(time()),
             'customerName' => $ERPUser->getName()
         ]);
     }

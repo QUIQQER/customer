@@ -8,23 +8,24 @@
 define('QUIQQER_SYSTEM', true);
 define('QUIQQER_AJAX', true);
 
-if (!isset($_REQUEST['file'])
+if (
+    !isset($_REQUEST['file'])
     || !isset($_REQUEST['customerId'])
     || !isset($_REQUEST['extension'])
 ) {
     exit;
 }
 
-require_once dirname(__FILE__, 5).'/header.php';
+require_once dirname(__FILE__, 5) . '/header.php';
 
 use QUI\Utils\Security\Orthos;
 
-$User          = QUI::getUserBySession();
+$User = QUI::getUserBySession();
 $isBackendUser = $User->canUseBackend();
 
-$Request    = QUI::getRequest();
-$file       = Orthos::clear($Request->query->get('file'));
-$extension  = Orthos::clear($Request->query->get('extension'));
+$Request = QUI::getRequest();
+$file = Orthos::clear($Request->query->get('file'));
+$extension = Orthos::clear($Request->query->get('extension'));
 $customerId = (int)$Request->query->get('customerId');
 
 if ($isBackendUser) {
@@ -40,7 +41,7 @@ if ($isBackendUser) {
     if (typeof parent.require !== "undefined") {
         parent.require(["qui/QUI"], function(QUI) {
             QUI.getMessageHandler().then(function(MH) {
-                MH.addError("'.htmlspecialchars($message).'");
+                MH.addError("' . htmlspecialchars($message) . '");
             });
         });
     }
@@ -53,16 +54,16 @@ if ($isBackendUser) {
 }
 
 try {
-    $Customer    = QUI::getUsers()->get($customerId);
+    $Customer = QUI::getUsers()->get($customerId);
     $customerDir = QUI\ERP\Customer\CustomerFiles::getFolderPath($Customer);
 
     if (!empty($extension) && $extension !== 'false') {
-        $file .= '.'.$extension;
+        $file .= '.' . $extension;
     }
 
-    $filePath = $customerDir.DIRECTORY_SEPARATOR.$file;
+    $filePath = $customerDir . DIRECTORY_SEPARATOR . $file;
 
-    if (\file_exists($filePath)) {
+    if (file_exists($filePath)) {
         QUI\Utils\System\File::send($filePath, 0, $file);
     }
 } catch (\Exception $Exception) {

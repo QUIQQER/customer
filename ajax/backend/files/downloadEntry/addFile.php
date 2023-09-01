@@ -1,12 +1,13 @@
 <?php
 
-use QUI\ERP\Customer\CustomerFiles;
-
 /**
  * Add a file to the user download entry
  *
  * @return array
  */
+
+use QUI\ERP\Customer\CustomerFiles;
+
 QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_files_downloadEntry_addFile',
     function ($file, $customerId) {

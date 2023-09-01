@@ -22,8 +22,8 @@ QUI::$Ajax->registerFunction(
             return $User->getName();
         }
 
-        $userData    = $User->getAttributes();
-        $Address     = $User->getStandardAddress();
+        $userData = $User->getAttributes();
+        $Address = $User->getStandardAddress();
         $addressData = [];
 
         if ($Address && (empty($userData['firstname']) || empty($userData['lastname']))) {
@@ -38,7 +38,7 @@ QUI::$Ajax->registerFunction(
             }
 
             if (!empty($name)) {
-                $addressData[] = \implode(' ', $name);
+                $addressData[] = implode(' ', $name);
             }
         }
 
@@ -46,10 +46,15 @@ QUI::$Ajax->registerFunction(
             $addressData[] = $Address->getText();
         }
 
-        $result = \implode(' - ', $addressData);
-        $result = \trim($result, ' - ');
-        $result = \trim($result);
-        $result = $User->getUsername().': '.$result;
+        $result = implode(' - ', $addressData);
+        $result = trim($result, ' - ');
+        $result = trim($result);
+
+        if (!empty($result)) {
+            $result = $User->getUsername() . ': ' . $result;
+        } else {
+            $result = $User->getUsername();
+        }
 
         return $result;
     },

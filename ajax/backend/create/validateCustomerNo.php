@@ -1,14 +1,15 @@
 <?php
 
-use QUI\ERP\Customer\NumberRange;
-use QUI\Utils\Security\Orthos;
-
 /**
  * Validate customer no.
  *
  * @param string|int $customerNo
  * @return integer
  */
+
+use QUI\ERP\Customer\NumberRange;
+use QUI\Utils\Security\Orthos;
+
 QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_create_validateCustomerNo',
     function ($customerNo) {
@@ -21,7 +22,7 @@ QUI::$Ajax->registerFunction(
             return;
         }
 
-        $sql = "SELECT `id` FROM ".QUI::getUsers()::table();
+        $sql = "SELECT `id` FROM " . QUI::getUsers()::table();
         $sql .= " WHERE `username` = '$customerNo' OR (`customerId` = '$customerNo'";
         $sql .= " AND `usergroup` LIKE '%,$customerGroupId,%')";
         $sql .= " LIMIT 1";
@@ -33,13 +34,13 @@ QUI::$Ajax->registerFunction(
         }
 
         $NumberRange = new NumberRange();
-        $prefix      = $NumberRange->getCustomerNoPrefix();
+        $prefix = $NumberRange->getCustomerNoPrefix();
 
         throw new \QUI\ERP\Customer\Exception([
             'quiqqer/customer',
             'exception.customer_no_already_exists',
             [
-                'customerNo' => $prefix.$customerNo
+                'customerNo' => $prefix . $customerNo
             ]
         ]);
     },

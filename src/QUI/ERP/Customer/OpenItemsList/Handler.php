@@ -2,16 +2,14 @@
 
 namespace QUI\ERP\Customer\OpenItemsList;
 
+use QUI;
+use QUI\ERP\Accounting\Dunning\Handler as DunningsHandler;
 use QUI\ERP\Accounting\Invoice\Handler as InvoiceHandler;
 use QUI\ERP\Accounting\Invoice\Invoice;
 use QUI\ERP\Accounting\Invoice\Utils\Invoice as InvoiceUtils;
-use QUI\ERP\User as ERPUser;
-use QUI;
-use QUI\ERP\Accounting\Dunning\Handler as DunningsHandler;
+use QUI\ERP\Order\Handler as OrderHandler;
 use QUI\Utils\Grid;
 use QUI\Utils\Security\Orthos;
-use QUI\ERP\Customer\Customers;
-use QUI\ERP\Order\Handler as OrderHandler;
 
 /**
  * Class Handler
@@ -28,11 +26,11 @@ class Handler
     /**
      * Permissions
      */
-    const PERMISSION_OPENITEMS_VIEW        = 'quiqqer.customer.OpenItemsList.view';
+    const PERMISSION_OPENITEMS_VIEW = 'quiqqer.customer.OpenItemsList.view';
     const PERMISSION_OPENITEMS_ADD_PAYMENT = 'quiqqer.customer.OpenItemsList.addPayment';
 
     const DOCUMENT_TYPE_INVOICE = 'invoice';
-    const DOCUMENT_TYPE_ORDER   = 'order';
+    const DOCUMENT_TYPE_ORDER = 'order';
 
     /**
      * Generate an open items list for a user
@@ -55,7 +53,7 @@ class Handler
         }
 
         try {
-            $Conf           = QUI::getPackage('quiqqer/customer')->getConfig();
+            $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
             $considerOrders = $Conf->get('openItems', 'considerOrders');
 
             if (!empty($considerOrders)) {
@@ -92,10 +90,10 @@ class Handler
 
         $result = QUI::getDataBase()->fetch([
             'select' => ['id'],
-            'from'   => $Invoices->invoiceTable(),
-            'where'  => [
+            'from' => $Invoices->invoiceTable(),
+            'where' => [
                 'paid_status' => [
-                    'type'  => 'NOT IN',
+                    'type' => 'NOT IN',
                     'value' => [
                         QUI\ERP\Constants::PAYMENT_STATUS_PAID,
                         QUI\ERP\Constants::PAYMENT_STATUS_CANCELED,
@@ -107,7 +105,7 @@ class Handler
 //                    'value' => \date('Y-m-d H:i:s')
 //                ],
                 'customer_id' => $User->getId(),
-                'type'        => InvoiceHandler::TYPE_INVOICE
+                'type' => InvoiceHandler::TYPE_INVOICE
             ]
         ]);
 
@@ -155,7 +153,7 @@ class Handler
 //        $Item->setAmountTotal($Invoice->getAttribute('sum'));
 
         // VAT
-        $vat    = \json_decode($Invoice->getAttribute('vat_array'), true);
+        $vat = \json_decode($Invoice->getAttribute('vat_array'), true);
         $vatSum = 0;
 
         foreach ($vat as $vatEntry) {
@@ -190,7 +188,7 @@ class Handler
         }
 
         // Days due
-        $Now            = \date_create();
+        $Now = \date_create();
         $TimeForPayment = \date_create($Invoice->getAttribute('time_for_payment'));
 
         if ($Now < $TimeForPayment) {
@@ -231,10 +229,10 @@ class Handler
 
         $result = QUI::getDataBase()->fetch([
             'select' => ['id'],
-            'from'   => $Orders->table(),
-            'where'  => [
+            'from' => $Orders->table(),
+            'where' => [
                 'paid_status' => [
-                    'type'  => 'NOT IN',
+                    'type' => 'NOT IN',
                     'value' => [
                         QUI\ERP\Constants::PAYMENT_STATUS_PAID,
                         QUI\ERP\Constants::PAYMENT_STATUS_CANCELED,
@@ -242,8 +240,8 @@ class Handler
                         QUI\ERP\Constants::PAYMENT_STATUS_PLAN
                     ]
                 ],
-                'customerId'  => $User->getId(),
-                'invoice_id'  => null
+                'customerId' => $User->getId(),
+                'invoice_id' => null
             ]
         ]);
 
@@ -284,7 +282,7 @@ class Handler
         $Item->setAmountOpen($paidStatus['toPay']);
 
         $OrderArticles = $Order->getArticles();
-        $calculations  = $OrderArticles->getCalculations();
+        $calculations = $OrderArticles->getCalculations();
 
         $Item->setAmountTotalNet($calculations['nettoSum']);
         $Item->setAmountTotalSum($calculations['sum']);
@@ -350,7 +348,7 @@ class Handler
     public static function updateOpenItemsRecord(QUI\Interfaces\Users\User $User): void
     {
         $OpenItemsList = self::getOpenItemsList($User);
-        $items         = $OpenItemsList->getItems();
+        $items = $OpenItemsList->getItems();
 
         // If no open items exist -> Delete entry from db
         if (empty($items)) {
@@ -375,21 +373,21 @@ class Handler
             QUI::getDataBase()->replace(
                 self::getTable(),
                 [
-                    'userId'           => $User->getId(),
-                    'customerId'       => $customerId,
-                    'net_sum'          => $values['netTotal'],
-                    'total_sum'        => $values['sumTotal'],
-                    'open_sum'         => $values['dueTotal'],
-                    'paid_sum'         => $values['paidTotal'],
-                    'vat_sum'          => $values['vatTotal'],
+                    'userId' => $User->getId(),
+                    'customerId' => $customerId,
+                    'net_sum' => $values['netTotal'],
+                    'total_sum' => $values['sumTotal'],
+                    'open_sum' => $values['dueTotal'],
+                    'paid_sum' => $values['paidTotal'],
+                    'vat_sum' => $values['vatTotal'],
                     'open_items_count' => \count($OpenItemsList->getItemsByCurrencyCode($currency)),
-                    'currency'         => $currency
+                    'currency' => $currency
                 ]
             );
         }
 
         // Clear cache used in backend administration
-        QUI\Cache\Manager::clear('quiqqer/customer/openitems/'.$User->getId());
+        QUI\Cache\Manager::clear('quiqqer/customer/openitems/' . $User->getId());
     }
 
     /**
@@ -400,11 +398,11 @@ class Handler
      */
     public static function searchOpenItems(array $searchParams)
     {
-        $Grid       = new Grid($searchParams);
+        $Grid = new Grid($searchParams);
         $gridParams = $Grid->parseDBParams($searchParams);
 
-        $binds     = [];
-        $where     = [];
+        $binds = [];
+        $where = [];
         $countOnly = !empty($searchParams['count']);
 
         if ($countOnly) {
@@ -413,7 +411,7 @@ class Handler
             $sql = "SELECT *";
         }
 
-        $sql .= " FROM `".self::getTable()."`";
+        $sql .= " FROM `" . self::getTable() . "`";
 
         if (!empty($searchParams['search'])) {
             $searchColumns = [
@@ -424,30 +422,30 @@ class Handler
             $whereOr = [];
 
             foreach ($searchColumns as $searchColumn) {
-                $whereOr[] = '`'.$searchColumn.'` LIKE :search';
+                $whereOr[] = '`' . $searchColumn . '` LIKE :search';
             }
 
             if (!empty($whereOr)) {
-                $where[] = '('.implode(' OR ', $whereOr).')';
+                $where[] = '(' . implode(' OR ', $whereOr) . ')';
 
                 $binds['search'] = [
-                    'value' => '%'.$searchParams['search'].'%',
-                    'type'  => \PDO::PARAM_STR
+                    'value' => '%' . $searchParams['search'] . '%',
+                    'type' => \PDO::PARAM_STR
                 ];
             }
         }
 
         if (!empty($searchParams['currency'])) {
-            $where[] = '`currency` = \''.Orthos::clear($searchParams['currency']).'\'';
+            $where[] = '`currency` = \'' . Orthos::clear($searchParams['currency']) . '\'';
         }
 
         if (!empty($searchParams['userId'])) {
-            $where[] = '`userId` = '.(int)$searchParams['userId'];
+            $where[] = '`userId` = ' . (int)$searchParams['userId'];
         }
 
         // build WHERE query string
         if (!empty($where)) {
-            $sql .= " WHERE ".implode(" AND ", $where);
+            $sql .= " WHERE " . implode(" AND ", $where);
         }
 
         // ORDER
@@ -480,29 +478,31 @@ class Handler
                     break;
             }
 
-            $order = "ORDER BY ".$sortOn;
+            $order = "ORDER BY " . $sortOn;
 
-            if (isset($searchParams['sortBy']) &&
+            if (
+                isset($searchParams['sortBy']) &&
                 !empty($searchParams['sortBy'])
             ) {
-                $order .= " ".Orthos::clear($searchParams['sortBy']);
+                $order .= " " . Orthos::clear($searchParams['sortBy']);
             } else {
                 $order .= " ASC";
             }
 
-            $sql .= " ".$order;
+            $sql .= " " . $order;
         } else {
             $sql .= " ORDER BY `userId` DESC";
         }
 
         // LIMIT
-        if (!empty($gridParams['limit'])
+        if (
+            !empty($gridParams['limit'])
             && !$countOnly
         ) {
-            $sql .= " LIMIT ".$gridParams['limit'];
+            $sql .= " LIMIT " . $gridParams['limit'];
         } else {
             if (!$countOnly) {
-                $sql .= " LIMIT ".(int)20;
+                $sql .= " LIMIT " . (int)20;
             }
         }
 
@@ -510,7 +510,7 @@ class Handler
 
         // bind search values
         foreach ($binds as $var => $bind) {
-            $Stmt->bindValue(':'.$var, $bind['value'], $bind['type']);
+            $Stmt->bindValue(':' . $var, $bind['value'], $bind['type']);
         }
 
         try {
@@ -550,7 +550,7 @@ class Handler
             ];
 
             foreach ($sumColumns as $column) {
-                $row['display_'.$column] = $Currency->format($row[$column]);
+                $row['display_' . $column] = $Currency->format($row[$column]);
             }
 
             try {
@@ -578,26 +578,26 @@ class Handler
      */
     public static function getTotals(array $entries, QUI\ERP\Currency\Currency $Currency)
     {
-        $net   = 0;
-        $vat   = 0;
+        $net = 0;
+        $vat = 0;
         $gross = 0;
-        $paid  = 0;
-        $open  = 0;
+        $paid = 0;
+        $open = 0;
 
         foreach ($entries as $entry) {
-            $net   += $entry['net_sum'];
-            $vat   += $entry['vat_sum'];
+            $net += $entry['net_sum'];
+            $vat += $entry['vat_sum'];
             $gross += $entry['total_sum'];
-            $paid  += $entry['paid_sum'];
-            $open  += $entry['open_sum'];
+            $paid += $entry['paid_sum'];
+            $open += $entry['open_sum'];
         }
 
         return [
-            'display_net'   => $Currency->format($net),
-            'display_vat'   => $Currency->format($vat),
+            'display_net' => $Currency->format($net),
+            'display_vat' => $Currency->format($vat),
             'display_gross' => $Currency->format($gross),
-            'display_paid'  => $Currency->format($paid),
-            'display_open'  => $Currency->format($open)
+            'display_paid' => $Currency->format($paid),
+            'display_open' => $Currency->format($open)
         ];
     }
 

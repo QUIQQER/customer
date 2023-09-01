@@ -8,6 +8,7 @@ namespace QUI\ERP\Customer;
 
 use QUI;
 use QUI\Utils\Singleton;
+
 use function array_walk;
 
 /**
@@ -120,7 +121,7 @@ class Search extends Singleton
 
         // result
         $result = $this->parseListForGrid($users);
-        $Grid   = new QUI\Utils\Grid();
+        $Grid = new QUI\Utils\Grid();
         $Grid->setAttribute('page', ($this->limit[0] / $this->limit[1]) + 1);
 
         return $Grid->parseResult($result, $count);
@@ -149,11 +150,11 @@ class Search extends Singleton
         );
 
         $NumberRange = new NumberRange();
-        $prefix      = $NumberRange->getCustomerNoPrefix();
+        $prefix = $NumberRange->getCustomerNoPrefix();
 
         $result = [];
         $Groups = QUI::getGroups();
-        $Users  = QUI::getUsers();
+        $Users = QUI::getUsers();
 
         foreach ($data as $entry) {
             $entry['usergroup'] = \trim($entry['usergroup'], ',');
@@ -185,14 +186,14 @@ class Search extends Singleton
             if (empty($entry['customerId'])) {
                 $entry['customerId'] = $entry['user_id'];
             } else {
-                $entry['customerId'] = $prefix.$entry['customerId'];
+                $entry['customerId'] = $prefix . $entry['customerId'];
             }
 
             $addressData = [];
-            $Address     = null;
+            $Address = null;
 
             try {
-                $User    = $Users->get((int)$entry['user_id']);
+                $User = $Users->get((int)$entry['user_id']);
                 $Address = $User->getStandardAddress();
             } catch (QUI\Exception $Exception) {
             }
@@ -202,12 +203,12 @@ class Search extends Singleton
 
                 if ($Address->getAttribute('firstname')) {
                     $entry['firstname'] = $Address->getAttribute('firstname');
-                    $name[]             = $Address->getAttribute('firstname');
+                    $name[] = $Address->getAttribute('firstname');
                 }
 
                 if ($Address->getAttribute('lastname')) {
                     $entry['lastname'] = $Address->getAttribute('lastname');
-                    $name[]            = $Address->getAttribute('lastname');
+                    $name[] = $Address->getAttribute('lastname');
                 }
 
                 if (!empty($name)) {
@@ -244,20 +245,20 @@ class Search extends Singleton
             }
 
             $result[] = [
-                'id'         => (int)$entry['id'],
+                'id' => (int)$entry['id'],
                 'customerId' => $entry['customerId'],
-                'status'     => !!$entry['active'],
-                'user_id'    => (int)$entry['user_id'],
-                'username'   => $entry['username'],
-                'firstname'  => $entry['firstname'],
-                'lastname'   => $entry['lastname'],
-                'company'    => $entry['company'],
-                'email'      => $entry['email'],
-                'regdate'    => $DateFormatterLong->format($entry['regdate']),
+                'status' => !!$entry['active'],
+                'user_id' => (int)$entry['user_id'],
+                'username' => $entry['username'],
+                'firstname' => $entry['firstname'],
+                'lastname' => $entry['lastname'],
+                'company' => $entry['company'],
+                'email' => $entry['email'],
+                'regdate' => $DateFormatterLong->format($entry['regdate']),
 
                 'usergroup_display' => $groups,
-                'usergroup'         => $entry['usergroup'],
-                'address_display'   => \implode(' - ', $addressData)
+                'usergroup' => $entry['usergroup'],
+                'address_display' => \implode(' - ', $addressData)
             ];
         }
 
@@ -288,7 +289,7 @@ class Search extends Singleton
 
         if ($this->limit && isset($this->limit[0]) && isset($this->limit[1])) {
             $start = $this->limit[0];
-            $end   = $this->limit[1];
+            $end = $this->limit[1];
             $limit = " LIMIT {$start},{$end}";
         }
 
@@ -343,7 +344,7 @@ class Search extends Singleton
             if ($this->onlyCustomer) {
                 try {
                     $customerGroup = Customers::getInstance()->getCustomerGroupId();
-                    $where         = " WHERE users.usergroup LIKE '%,{$customerGroup},%'";
+                    $where = " WHERE users.usergroup LIKE '%,{$customerGroup},%'";
                 } catch (QUI\Exception $Exception) {
                     QUI\System\Log::addError($Exception->getMessage());
                 }
@@ -377,11 +378,11 @@ class Search extends Singleton
         if ($this->onlyCustomer) {
             try {
                 $customerGroup = Customers::getInstance()->getCustomerGroupId();
-                $where[]       = 'users.usergroup LIKE :customerGroupId';
+                $where[] = 'users.usergroup LIKE :customerGroupId';
 
                 $binds['customerGroupId'] = [
-                    'value' => '%,'.$customerGroup.',%',
-                    'type'  => \PDO::PARAM_STR
+                    'value' => '%,' . $customerGroup . ',%',
+                    'type' => \PDO::PARAM_STR
                 ];
             } catch (QUI\Exception $Exception) {
                 QUI\System\Log::addError($Exception->getMessage());
@@ -395,51 +396,51 @@ class Search extends Singleton
                 continue;
             }
 
-            $bind = 'filter'.$fc;
+            $bind = 'filter' . $fc;
 
             if ($filter === 'regdate_from') {
-                $where[] = 'users.regdate >= :'.$bind;
+                $where[] = 'users.regdate >= :' . $bind;
 
                 $binds[$bind] = [
                     'value' => (int)\strtotime($value),
-                    'type'  => \PDO::PARAM_INT
+                    'type' => \PDO::PARAM_INT
                 ];
                 continue;
             }
 
             if ($filter === 'regdate_to') {
-                $where[] = 'users.regdate <= :'.$bind;
+                $where[] = 'users.regdate <= :' . $bind;
 
                 $binds[$bind] = [
                     'value' => (int)\strtotime($value),
-                    'type'  => \PDO::PARAM_INT
+                    'type' => \PDO::PARAM_INT
                 ];
                 continue;
             }
 
             switch ($filter) {
                 case 'lastvisit_from':
-                    $where[] = 'users.lastvisit >= :'.$bind;
+                    $where[] = 'users.lastvisit >= :' . $bind;
                     break;
 
                 case 'lastvisit_to':
-                    $where[] = 'vlastvisit <= :'.$bind;
+                    $where[] = 'vlastvisit <= :' . $bind;
                     break;
 
                 case 'lastedit_from':
-                    $where[] = 'users.lastedit >= :'.$bind;
+                    $where[] = 'users.lastedit >= :' . $bind;
                     break;
 
                 case 'lastedit_to':
-                    $where[] = 'users.lastedit <= :'.$bind;
+                    $where[] = 'users.lastedit <= :' . $bind;
                     break;
 
                 case 'expire_from':
-                    $where[] = 'users.expire >= :'.$bind;
+                    $where[] = 'users.expire >= :' . $bind;
                     break;
 
                 case 'expire_to':
-                    $where[] = 'users.expire <= :'.$bind;
+                    $where[] = 'users.expire <= :' . $bind;
                     break;
 
                 default:
@@ -448,13 +449,13 @@ class Search extends Singleton
 
             $binds[$bind] = [
                 'value' => $value,
-                'type'  => \PDO::PARAM_STR
+                'type' => \PDO::PARAM_STR
             ];
 
             $fc++;
         }
 
-        $NumberRange  = new NumberRange();
+        $NumberRange = new NumberRange();
         $prefixLength = \mb_strlen($NumberRange->getCustomerNoPrefix());
 
         if (!empty($this->search)) {
@@ -477,28 +478,28 @@ class Search extends Singleton
 
                     default:
                         if (\strpos($filter, 'users.') === false && \strpos($filter, 'ad.') === false) {
-                            $filter = 'users.'.$filter;
+                            $filter = 'users.' . $filter;
                         }
                 }
             });
 
             foreach ($searchFilters as $column) {
                 if ($column === 'users.customerId') {
-                    $searchWhere[]      = $column.' LIKE :customer_id_no_prefix';
+                    $searchWhere[] = $column . ' LIKE :customer_id_no_prefix';
                     $customerIdNoPrefix = \mb_substr($this->search, $prefixLength);
 
                     $binds['customer_id_no_prefix'] = [
-                        'value' => '%'.$customerIdNoPrefix.'%',
-                        'type'  => \PDO::PARAM_STR
+                        'value' => '%' . $customerIdNoPrefix . '%',
+                        'type' => \PDO::PARAM_STR
                     ];
                 }
 
-                $searchWhere[] = $column.' LIKE :search';
+                $searchWhere[] = $column . ' LIKE :search';
             }
 
             $binds['search'] = [
-                'value' => '%'.$this->search.'%',
-                'type'  => \PDO::PARAM_STR
+                'value' => '%' . $this->search . '%',
+                'type' => \PDO::PARAM_STR
             ];
 
             // Split search
@@ -511,26 +512,26 @@ class Search extends Singleton
                     $searchWhereSplitTerm = [];
 
                     foreach ($searchFilters as $column) {
-                        $searchWhereSplitTerm[] = $column.' LIKE :searchSplit'.$k;
+                        $searchWhereSplitTerm[] = $column . ' LIKE :searchSplit' . $k;
                     }
 
-                    $searchWhereSplit[] = '('.\implode(' OR ', $searchWhereSplitTerm).')';
+                    $searchWhereSplit[] = '(' . \implode(' OR ', $searchWhereSplitTerm) . ')';
                 }
 
-                $searchWhere[] = '('.\implode(' AND ', $searchWhereSplit).')';
+                $searchWhere[] = '(' . \implode(' AND ', $searchWhereSplit) . ')';
 
                 foreach ($searchTermsSplit as $k => $searchTerm) {
-                    $binds['searchSplit'.$k] = [
-                        'value' => '%'.$searchTerm.'%',
-                        'type'  => \PDO::PARAM_STR
+                    $binds['searchSplit' . $k] = [
+                        'value' => '%' . $searchTerm . '%',
+                        'type' => \PDO::PARAM_STR
                     ];
                 }
             }
 
-            $where[] = '('.\implode(' OR ', $searchWhere).')';
+            $where[] = '(' . \implode(' OR ', $searchWhere) . ')';
         }
 
-        $whereQuery = 'WHERE '.\implode(' AND ', $where);
+        $whereQuery = 'WHERE ' . \implode(' AND ', $where);
 
         if (!\count($where)) {
             $whereQuery = '';
@@ -580,7 +581,7 @@ class Search extends Singleton
      */
     protected function executeQueryParams($queryData = []): array
     {
-        $PDO   = QUI::getDataBase()->getPDO();
+        $PDO = QUI::getDataBase()->getPDO();
         $binds = $queryData['binds'];
         $query = $queryData['query'];
 
@@ -623,7 +624,7 @@ class Search extends Singleton
 
         switch ($col) {
             case 'id':
-                $this->order = 'user_id '.$direction;
+                $this->order = 'user_id ' . $direction;
                 break;
 
             case 'email':
@@ -636,16 +637,16 @@ class Search extends Singleton
             case 'deleted':
             case 'su':
             case 'customerId':
-                $this->order = 'users.`'.$col.'` '.$direction;
+                $this->order = 'users.`' . $col . '` ' . $direction;
                 break;
 
             case 'firstname':
             case 'lastname':
-                $this->order = 'users.`'.$col.'` '.$direction.', ad.`'.$col.'` '.$direction;
+                $this->order = 'users.`' . $col . '` ' . $direction . ', ad.`' . $col . '` ' . $direction;
                 break;
 
             case 'company':
-                $this->order = 'ad.`'.$col.'` '.$direction;
+                $this->order = 'ad.`' . $col . '` ' . $direction;
                 break;
         }
     }

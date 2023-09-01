@@ -1,21 +1,21 @@
 <?php
 
-use QUI\Utils\Security\Orthos;
-use QUI\Controls\Navigating\Pagination;
-
 /**
  * Get pagination control for navigating customer comments / history
  *
  * @param array $attributes
  * @return string - HTML of pagination control
  */
+
+use QUI\Controls\Navigating\Pagination;
+
 QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_customer_getPagination',
     function ($uid) {
         try {
-            $User     = QUI::getUsers()->get((int)$uid);
+            $User = QUI::getUsers()->get((int)$uid);
             $Comments = QUI\ERP\Comments::getCommentsByUser($User);
-            $History  = QUI\ERP\Comments::getHistoryByUser($User);
+            $History = QUI\ERP\Comments::getHistoryByUser($User);
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             return '';
@@ -31,16 +31,16 @@ QUI::$Ajax->registerFunction(
         }
 
         $Pagination = new Pagination([
-            'count'   => \count($comments),
+            'count' => \count($comments),
             'useAjax' => true,
-            'limit'   => 10
+            'limit' => 10
         ]);
 
-        $Output  = new QUI\Output();
+        $Output = new QUI\Output();
         $control = $Pagination->create();
-        $css     = QUI\Control\Manager::getCSS();
+        $css = QUI\Control\Manager::getCSS();
 
-        return $Output->parse($css.$control);
+        return $Output->parse($css . $control);
     },
     ['uid'],
     'Permission::checkAdminUser'
