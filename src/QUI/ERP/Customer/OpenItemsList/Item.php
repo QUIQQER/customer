@@ -103,6 +103,8 @@ class Item
      */
     protected $Locale;
 
+    protected ?string $globalProcessId;
+
     /**
      * Item constructor.
      *
@@ -490,5 +492,15 @@ class Item
     public function setCurrency(Currency $Currency)
     {
         $this->Currency = $Currency;
+    }
+
+    public function getGlobalProcessId(): ?string
+    {
+        return $this->globalProcessId;
+    }
+
+    public function setGlobalProcessId(?string $globalProcessId): void
+    {
+        $this->globalProcessId = $globalProcessId;
     }
 }
