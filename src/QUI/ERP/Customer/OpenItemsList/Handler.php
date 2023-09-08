@@ -11,6 +11,8 @@ use QUI\ERP\Order\Handler as OrderHandler;
 use QUI\Utils\Grid;
 use QUI\Utils\Security\Orthos;
 
+use function in_array;
+
 /**
  * Class Handler
  *
@@ -47,9 +49,13 @@ class Handler
 
         // Fetch open invoices
         $invoices = self::getOpenInvoices($User);
+        $addedGlobalProcessIds = [];
 
         foreach ($invoices as $Invoice) {
-            $List->addItem(self::parseInvoiceToOpenItem($Invoice));
+            $InvoiceItem = self::parseInvoiceToOpenItem($Invoice);
+            $List->addItem($InvoiceItem);
+
+            $addedGlobalProcessIds[] = $InvoiceItem->getGlobalProcessId();
         }
 
         try {
@@ -60,7 +66,12 @@ class Handler
                 $orders = self::getOpenOrders($User);
 
                 foreach ($orders as $Order) {
-                    $List->addItem(self::parseOrderToOpenItem($Order));
+                    $OrderItem = self::parseOrderToOpenItem($Order);
+
+                    // Only add an order if there is no invoice with an identical global process id
+                    if (!in_array($OrderItem->getGlobalProcessId(), $addedGlobalProcessIds)) {
+                        $List->addItem($OrderItem);
+                    }
                 }
             }
         } catch (\Exception $Exception) {
@@ -143,6 +154,7 @@ class Handler
         $Item->setDocumentNo($Invoice->getId());
         $Item->setDate(\date_create($Invoice->getAttribute('c_date')));
         $Item->setDueDate(\date_create($Invoice->getAttribute('time_for_payment')));
+        $Item->setGlobalProcessId($Invoice->getGlobalProcessId());
 
         // Invoice amounts
         $paidStatus = $Invoice->getPaidStatusInformation();
@@ -271,6 +283,7 @@ class Handler
         // Basic data
         $Item->setDocumentNo($Order->getPrefixedId());
         $Item->setDate(\date_create($Order->getAttribute('c_date')));
+        $Item->setGlobalProcessId($Order->getHash());
 
         if (!empty($Order->getAttribute('payment_time'))) {
             $Item->setDueDate(\date_create($Order->getAttribute('payment_time')));
