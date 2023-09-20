@@ -1,0 +1,22 @@
+{if $canView}
+<section class="quiqqer-frontendUsers-userdata-section quiqqer-erp-userProfile-vat"
+         data-qui=""
+>
+    <header>
+        <h2>{locale group="quiqqer/customer" var="customer.contactPerson"}</h2>
+    </header>
+
+    <label class="quiqqer-order-customerData-edit-vatId">
+        <select name="quiqqer.erp.customer.contact.person" {if !$canEdit}disabled{/if}>
+        {foreach $addressList as $Address}
+
+        {assign var=selected value=''}
+        {if $currentContactPerson === $Address->getId()}
+        {assign var=selected value='selected="selected"'}
+        {/if}
+        <option value="{$Address->getId()}" {$selected}>{$Address->getText()}</option>
+        {/foreach}
+        </select>
+    </label>
+</section>
+{/if}
