@@ -31,4 +31,13 @@
         <defaultvalue>0</defaultvalue>
     </permission>
 
+    <permission name="quiqqer.customer.FrontendUsers.contactPerson.view" type="bool">
+        <defaultvalue>1</defaultvalue>
+        <everyonePermission>0</everyonePermission>
+    </permission>
+    <permission name="quiqqer.customer.FrontendUsers.contactPerson.edit" type="bool">
+        <defaultvalue>1</defaultvalue>
+        <everyonePermission>0</everyonePermission>
+    </permission>
+
 </permissions>
