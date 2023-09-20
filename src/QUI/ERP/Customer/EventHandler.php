@@ -9,8 +9,11 @@ namespace QUI\ERP\Customer;
 use QUI;
 use QUI\Package\Package;
 use QUI\Users\Manager;
+use Quiqqer\Engine\Collector;
 
 use function array_merge;
+use function array_values;
+use function dirname;
 use function file_exists;
 use function is_array;
 use function json_decode;
@@ -48,7 +51,7 @@ class EventHandler
     {
         try {
             $Package = QUI::getPackage('quiqqer/customer');
-            $Config  = $Package->getConfig();
+            $Config = $Package->getConfig();
             $groupId = $Config->getValue('customer', 'groupId');
 
             if (!empty($groupId)) {
@@ -90,7 +93,7 @@ class EventHandler
 
         try {
             $Package = QUI::getPackageManager()->getInstalledPackage('quiqqer/customer');
-            $Config  = $Package->getConfig();
+            $Config = $Package->getConfig();
             $groupId = $Config->getValue('customer', 'groupId');
 
             echo '<script>const QUIQQER_CUSTOMER_GROUP = ' . $groupId . '</script>';
@@ -117,7 +120,7 @@ class EventHandler
             $list = QUI::getPackageManager()->getInstalled();
 
             foreach ($list as $entry) {
-                $plugin  = $entry['name'];
+                $plugin = $entry['name'];
                 $userXml = OPT_DIR . $plugin . '/customer.xml';
 
                 if (!file_exists($userXml)) {
@@ -152,7 +155,7 @@ class EventHandler
         } catch (QUI\Exception $Exception) {
         }
 
-        $Dom  = QUI\Utils\Text\XML::getDomFromXml($file);
+        $Dom = QUI\Utils\Text\XML::getDomFromXml($file);
         $Attr = $Dom->getElementsByTagName('attributes');
 
         if (!$Attr->length) {
@@ -161,7 +164,7 @@ class EventHandler
 
         /* @var $Attributes \DOMElement */
         $Attributes = $Attr->item(0);
-        $list       = $Attributes->getElementsByTagName('attribute');
+        $list = $Attributes->getElementsByTagName('attribute');
 
         if (!$list->length) {
             return [];
@@ -177,7 +180,7 @@ class EventHandler
             }
 
             $attributes[] = [
-                'name'    => trim($Attribute->nodeValue),
+                'name' => trim($Attribute->nodeValue),
                 'encrypt' => !!$Attribute->getAttribute('encrypt')
             ];
         }
@@ -187,13 +190,50 @@ class EventHandler
         return $attributes;
     }
 
+    public static function onUserSaveBegin(QUI\Users\User $User)
+    {
+        if (!QUI::getUsers()->isUser($User)) {
+            return;
+        }
+
+        if (QUI::isBackend()) {
+            return;
+        }
+
+        $Request = QUI::getRequest()->request;
+        $data = $Request->all();
+
+        if (empty($data)) {
+            return;
+        }
+
+        if (isset($data['data'])) {
+            $data = json_decode($data['data'], true);
+        }
+
+        if (isset($data['quiqqer.erp.customer.contact.person'])) {
+            if (QUI\Permissions\Permission::hasPermission('quiqqer.customer.FrontendUsers.contactPerson.edit')) {
+                try {
+                    $User->getAddress($data['quiqqer.erp.customer.contact.person']);
+                    $User->setAttribute(
+                        'quiqqer.erp.customer.contact.person',
+                        (int)$data['quiqqer.erp.customer.contact.person']
+                    );
+                } catch (QUI\Exception $exception) {
+                }
+            }
+
+            unset($data['quiqqer.erp.customer.contact.person']);
+        }
+    }
+
     /**
      * @param QUI\Users\User $User
      */
     public static function onUserSaveEnd(QUI\Users\User $User)
     {
         $attributes = $User->getAttributes();
-        $data       = [];
+        $data = [];
 
         if (isset($attributes['mainGroup'])) {
             try {
@@ -207,7 +247,7 @@ class EventHandler
         }
 
         $newNextCustomerNo = false;
-        $NumberRange       = new NumberRange();
+        $NumberRange = new NumberRange();
 
         if (isset($attributes['customerId'])) {
             $data['customerId'] = $attributes['customerId'];
@@ -223,7 +263,7 @@ class EventHandler
         // comments
         if ($User->getAttribute('comments')) {
             $comments = $User->getAttribute('comments');
-            $json     = json_decode($comments, true);
+            $json = json_decode($comments, true);
 
             if (is_array($json)) {
                 $data['comments'] = $comments;
@@ -271,8 +311,8 @@ class EventHandler
 
         try {
             $Package = QUI::getPackage('quiqqer/customer');
-            $Config  = $Package->getConfig();
-            $login   = (int)$Config->getValue('customer', 'customerLogin');
+            $Config = $Package->getConfig();
+            $login = (int)$Config->getValue('customer', 'customerLogin');
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::addError($Exception->getMessage());
 
@@ -297,7 +337,7 @@ class EventHandler
     public static function onQuiqqerOrderCustomerDataSaveEnd(
         QUI\ERP\Order\Controls\OrderProcess\CustomerData $Step
     ) {
-        $Order    = $Step->getOrder();
+        $Order = $Step->getOrder();
         $Customer = $Order->getCustomer();
 
         try {
@@ -308,6 +348,63 @@ class EventHandler
             );
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::addDebug($Exception->getMessage());
+        }
+    }
+
+    /**
+     * Handle the frontend user data event
+     *
+     * @param Collector $Collector - The collector object
+     * @param QUI\Users\User $User - The user object
+     * @param mixed $Address - The address data
+     * @return void
+     */
+    public static function onFrontendUserDataMiddle(
+        Collector $Collector,
+        QUI\Users\User $User,
+        $Address
+    ) {
+        try {
+            $Engine = QUI::getTemplateManager()->getEngine();
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+
+            return;
+        }
+
+        $canEdit = QUI\Permissions\Permission::hasPermission('quiqqer.customer.FrontendUsers.contactPerson.edit');
+        $canView = QUI\Permissions\Permission::hasPermission('quiqqer.customer.FrontendUsers.contactPerson.view');
+
+        $addressList = $User->getAddressList();
+        $addressList = array_values($addressList);
+
+        $currentContactPerson = $User->getAttribute('quiqqer.erp.customer.contact.person');
+
+        if (empty($currentContactPerson) && count($addressList)) {
+            $currentContactPerson = $addressList[0]->getId();
+        }
+
+        $Engine->assign([
+            'canEdit' => $canEdit,
+            'canView' => $canView,
+
+            'User' => $User,
+            'Address' => $Address,
+            'addressList' => $addressList,
+            'currentContactPerson' => (int)$currentContactPerson,
+
+            'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
+            'isB2C' => QUI\ERP\Utils\Shop::isB2C(),
+            'isB2B' => QUI\ERP\Utils\Shop::isB2B(),
+            'isOnlyB2B' => QUI\ERP\Utils\Shop::isOnlyB2B()
+        ]);
+
+        try {
+            $Collector->append(
+                $Engine->fetch(dirname(__FILE__) . '/FrontendUsers/ContactPerson.html')
+            );
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
         }
     }
 }

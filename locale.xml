@@ -139,6 +139,24 @@
             <de><![CDATA[Kunden]]></de>
             <en><![CDATA[Customers]]></en>
         </locale>
+
+        <locale name="customer.contactPerson">
+            <de><![CDATA[Ansprechpartner]]></de>
+            <en><![CDATA[Contact person]]></en>
+        </locale>
+
+        <locale name="permission.quiqqer.customer.FrontendUsers.contactPerson._header">
+            <de><![CDATA[Ansprechpartner]]></de>
+            <en><![CDATA[Contact person]]></en>
+        </locale>
+        <locale name="permission.quiqqer.customer.FrontendUsers.contactPerson.view">
+            <de><![CDATA[Darf Ansprechpartner im Frontend Profil sehen]]></de>
+            <en><![CDATA[May see contact person in frontend profile]]></en>
+        </locale>
+        <locale name="permission.quiqqer.customer.FrontendUsers.contactPerson.edit">
+            <de><![CDATA[Darf Ansprechpartner im Frontend Profil editieren]]></de>
+            <en><![CDATA[May edit contact person in frontend profile]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/customer" datatype="php">
@@ -717,72 +735,72 @@ Best regards
             <de><![CDATA[Kunde: [data]]]></de>
             <en><![CDATA[Customer: [data]]]></en>
         </locale>
-        <locale name="customer.panel,information.details">
+        <locale name="customer.panel.information.details">
             <de><![CDATA[Details]]></de>
             <en><![CDATA[Details]]></en>
         </locale>
-        <locale name="customer.panel,information.address">
+        <locale name="customer.panel.information.address">
             <de><![CDATA[Adresse]]></de>
             <en><![CDATA[Address]]></en>
         </locale>
-        <locale name="customer.panel,information.erp.addresses">
+        <locale name="customer.panel.information.erp.addresses">
             <de><![CDATA[ERP Adressen]]></de>
             <en><![CDATA[ERP addresses]]></en>
         </locale>
-        <locale name="customer.panel,information.invoice.address">
+        <locale name="customer.panel.information.invoice.address">
             <de><![CDATA[Rechnungsadresse]]></de>
             <en><![CDATA[Invoice address]]></en>
         </locale>
-        <locale name="customer.panel,information.delivery.address">
+        <locale name="customer.panel.information.delivery.address">
             <de><![CDATA[Lieferadresse]]></de>
             <en><![CDATA[Delivery address]]></en>
         </locale>
-        <locale name="customer.panel,information.countryZipCity">
+        <locale name="customer.panel.information.countryZipCity">
             <de><![CDATA[Land / Plz / Ort]]></de>
             <en><![CDATA[Country / Zip / City]]></en>
         </locale>
-        <locale name="customer.panel,information.allocation">
+        <locale name="customer.panel.information.allocation">
             <de><![CDATA[Zuweisung]]></de>
             <en><![CDATA[Allocation]]></en>
         </locale>
-        <locale name="customer.panel,information.group">
+        <locale name="customer.panel.information.group">
             <de><![CDATA[Hauptgruppe]]></de>
             <en><![CDATA[Main group]]></en>
         </locale>
-        <locale name="customer.panel,information.groups">
+        <locale name="customer.panel.information.groups">
             <de><![CDATA[Gruppen]]></de>
             <en><![CDATA[Groups]]></en>
         </locale>
-        <locale name="customer.panel,information.communication">
+        <locale name="customer.panel.information.communication">
             <de><![CDATA[Kommunikation]]></de>
             <en><![CDATA[Communication]]></en>
         </locale>
-        <locale name="customer.panel,information.extra">
+        <locale name="customer.panel.information.extra">
             <de><![CDATA[Extra]]></de>
             <en><![CDATA[Extra]]></en>
         </locale>
-        <locale name="customer.panel,information.extra.homepage">
+        <locale name="customer.panel.information.extra.homepage">
             <de><![CDATA[Webseite]]></de>
             <en><![CDATA[Homepage]]></en>
         </locale>
-        <locale name="customer.panel,information.paymentTerm">
+        <locale name="customer.panel.information.paymentTerm">
             <de><![CDATA[Standard Zahlungsziel]]></de>
             <en><![CDATA[Default term of payment]]></en>
         </locale>
-        <locale name="customer.panel,information.shipping">
+        <locale name="customer.panel.information.shipping">
             <de><![CDATA[Standard Versandart]]></de>
             <en><![CDATA[Default shipping]]></en>
         </locale>
 
-        <locale name="customer.panel,information.commentsAndHistory">
+        <locale name="customer.panel.information.commentsAndHistory">
             <de><![CDATA[Kommentare & Verlauf]]></de>
             <en><![CDATA[Comments & history]]></en>
         </locale>
-        <locale name="customer.panel,information.standard.payments">
+        <locale name="customer.panel.information.standard.payments">
             <de><![CDATA[Standard Zahlungsweise]]></de>
             <en><![CDATA[Standard payment]]></en>
         </locale>
-        <locale name="customer.panel,information.contactPerson">
+        <locale name="customer.panel.information.contactPerson">
             <de><![CDATA[Ansprechpartner]]></de>
             <en><![CDATA[Contact person]]></en>
         </locale>
