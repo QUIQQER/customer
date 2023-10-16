@@ -208,12 +208,13 @@ class Customers extends Singleton
     /**
      * Add a user to the customer group
      *
-     * @param {string|bool} $userId
+     * @param string|bool $userId
+     * @param QUI\Interfaces\Users\User|null $PermissionUser
      *
      * @throws QUI\Exception
      * @throws QUI\Users\Exception
      */
-    public function addUserToCustomerGroup($userId)
+    public function addUserToCustomerGroup($userId, QUI\Interfaces\Users\User $PermissionUser = null)
     {
         if (!$userId) {
             return;
@@ -238,13 +239,13 @@ class Customers extends Singleton
         }
 
         $User->addToGroup($customerGroup);
-        $User->save();
+        $User->save($PermissionUser);
     }
 
     /**
      * Remove a user from the customer group
      *
-     * @param {string|bool} $userId
+     * @param string|bool $userId
      *
      * @throws QUI\Exception
      * @throws QUI\Users\Exception
