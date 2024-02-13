@@ -10,6 +10,7 @@ use QUI\ERP\Accounting\Invoice\Utils\Invoice as InvoiceUtils;
 use QUI\ERP\Order\Handler as OrderHandler;
 use QUI\Utils\Grid;
 use QUI\Utils\Security\Orthos;
+use QUI\ERP\Order\ProcessingStatus\Handler as OrderStatusHandler;
 
 use function in_array;
 
@@ -55,7 +56,7 @@ class Handler
             $InvoiceItem = self::parseInvoiceToOpenItem($Invoice);
             $List->addItem($InvoiceItem);
 
-            $addedGlobalProcessIds[] = $InvoiceItem->getGlobalProcessId();
+            $addedGlobalProcessIds[] = $Invoice->getGlobalProcessId();
         }
 
         try {
@@ -69,7 +70,7 @@ class Handler
                     $OrderItem = self::parseOrderToOpenItem($Order);
 
                     // Only add an order if there is no invoice with an identical global process id
-                    if (!in_array($OrderItem->getGlobalProcessId(), $addedGlobalProcessIds)) {
+                    if (!in_array($Order->getGlobalProcessId(), $addedGlobalProcessIds)) {
                         $List->addItem($OrderItem);
                     }
                 }
@@ -237,24 +238,40 @@ class Handler
             return [];
         }
 
+        $where = [
+            'paid_status' => [
+                'type' => 'NOT IN',
+                'value' => [
+                    QUI\ERP\Constants::PAYMENT_STATUS_PAID,
+                    QUI\ERP\Constants::PAYMENT_STATUS_CANCELED,
+                    QUI\ERP\Constants::PAYMENT_STATUS_DEBIT,
+                    QUI\ERP\Constants::PAYMENT_STATUS_PLAN
+                ]
+            ],
+            'customerId' => $User->getId(),
+            'invoice_id' => null
+        ];
+
         $Orders = OrderHandler::getInstance();
+        $OrderStatusHandler = new OrderStatusHandler();
+
+        try {
+            $CancelledStatus = $OrderStatusHandler->getCancelledStatus();
+
+            if ($CancelledStatus->getId()) {
+                $where['status'] = [
+                    'type' => 'NOT',
+                    'value' => $CancelledStatus->getId()
+                ];
+            }
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeException($Exception);
+        }
 
         $result = QUI::getDataBase()->fetch([
             'select' => ['id'],
             'from' => $Orders->table(),
-            'where' => [
-                'paid_status' => [
-                    'type' => 'NOT IN',
-                    'value' => [
-                        QUI\ERP\Constants::PAYMENT_STATUS_PAID,
-                        QUI\ERP\Constants::PAYMENT_STATUS_CANCELED,
-                        QUI\ERP\Constants::PAYMENT_STATUS_DEBIT,
-                        QUI\ERP\Constants::PAYMENT_STATUS_PLAN
-                    ]
-                ],
-                'customerId' => $User->getId(),
-                'invoice_id' => null
-            ]
+            'where' => $where
         ]);
 
         $orders = [];
@@ -283,7 +300,7 @@ class Handler
         // Basic data
         $Item->setDocumentNo($Order->getPrefixedId());
         $Item->setDate(\date_create($Order->getAttribute('c_date')));
-        $Item->setGlobalProcessId($Order->getHash());
+        $Item->setGlobalProcessId($Order->getGlobalProcessId());
 
         if (!empty($Order->getAttribute('payment_time'))) {
             $Item->setDueDate(\date_create($Order->getAttribute('payment_time')));
