@@ -90,4 +90,3 @@ class UpdateOpenItemsRecords extends QUI\System\Console\Tool
         exit(1);
     }
 }
-
