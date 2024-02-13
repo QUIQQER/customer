@@ -36,7 +36,7 @@
             </params>
 
             <categories>
-                <category name="customer" index="5">
+                <category name="customer">
                     <text>
                         <locale group="quiqqer/customer" var="window.erp.customer.title"/>
                     </text>
