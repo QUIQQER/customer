@@ -71,8 +71,10 @@ class Handler
                     $OrderItem = self::parseOrderToOpenItem($Order);
 
                     // Only add an order if there is no invoice with an identical global process id
-                    if (!in_array($Order->getGlobalProcessId(), $addedGlobalProcessIds) &&
-                        !self::isOrderLinkedToInvoiceEligibleAsOpenItem($OrderItem)) {
+                    if (
+                        !in_array($Order->getGlobalProcessId(), $addedGlobalProcessIds) &&
+                        !self::isOrderLinkedToInvoiceEligibleAsOpenItem($OrderItem)
+                    ) {
                         $List->addItem($OrderItem);
                     }
                 }
