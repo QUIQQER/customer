@@ -72,8 +72,8 @@ class Handler
 
                     // Only add an order if there is no invoice with an identical global process id
                     if (
-                        !in_array($Order->getGlobalProcessId(), $addedGlobalProcessIds) &&
-                        !self::isOrderLinkedToInvoiceEligibleAsOpenItem($OrderItem)
+                        !in_array($Order->getGlobalProcessId(), $addedGlobalProcessIds)/* &&
+                        !self::isOrderLinkedToInvoiceEligibleAsOpenItem($OrderItem)*/
                     ) {
                         $List->addItem($OrderItem);
                     }
@@ -90,34 +90,34 @@ class Handler
 
     // region Invoices
 
-    /**
-     * Check if an order is linked to an invoice and if so, if this invoice is already paid or otherwise
-     * irrelevant
-     *
-     * @param Item $OrderItem
-     * @return bool
-     */
-    protected static function isOrderLinkedToInvoiceEligibleAsOpenItem(Item $OrderItem): bool
-    {
-        $Invoices = InvoiceHandler::getInstance();
-
-        $invoiceStatusCodes = [
-            QUI\ERP\Constants::PAYMENT_STATUS_PAID,
-            QUI\ERP\Constants::PAYMENT_STATUS_DEBIT
-        ];
-
-        $sql = "SELECT SUM(`sum`) as invoice_sum FROM " . $Invoices->invoiceTable();
-        $sql .= " WHERE `paid_status` IN(" . implode(",", $invoiceStatusCodes) . ")";
-        $sql .= " AND `global_process_id` = '" . $OrderItem->getGlobalProcessId() . "'";
-        $sql .= " GROUP BY `sum`";
-        $sql .= " HAVING `invoice_sum` >= " . $OrderItem->getAmountTotalSum();
-
-        $result = QUI::getDataBase()->fetchSQL($sql);
-
-        $amount = current(current($result));
-
-        return $amount >= $OrderItem->getAmountTotalSum();
-    }
+//    /**
+//     * Check if an order is linked to an invoice and if so, if this invoice is already paid or otherwise
+//     * irrelevant
+//     *
+//     * @param Item $OrderItem
+//     * @return bool
+//     */
+//    protected static function isOrderLinkedToInvoiceEligibleAsOpenItem(Item $OrderItem): bool
+//    {
+//        $Invoices = InvoiceHandler::getInstance();
+//
+//        $invoiceStatusCodes = [
+//            QUI\ERP\Constants::PAYMENT_STATUS_PAID,
+//            QUI\ERP\Constants::PAYMENT_STATUS_DEBIT
+//        ];
+//
+//        $sql = "SELECT SUM(`sum`) as invoice_sum FROM " . $Invoices->invoiceTable();
+//        $sql .= " WHERE `paid_status` IN(" . implode(",", $invoiceStatusCodes) . ")";
+//        $sql .= " AND `global_process_id` = '" . $OrderItem->getGlobalProcessId() . "'";
+//        $sql .= " GROUP BY `sum`";
+//        $sql .= " HAVING `invoice_sum` >= " . $OrderItem->getAmountTotalSum();
+//
+//        $result = QUI::getDataBase()->fetchSQL($sql);
+//
+//        $amount = current(current($result));
+//
+//        return $amount >= $OrderItem->getAmountTotalSum();
+//    }
 
     /**
      * Get all open invoices of a user
