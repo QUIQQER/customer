@@ -9,7 +9,6 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
     'qui/controls/desktop/Panel',
     'qui/controls/buttons/Button',
-    'qui/controls/buttons/Separator',
     'qui/controls/contextmenu/Item',
     'controls/grid/Grid',
 
@@ -24,8 +23,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
     'css!package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems.css',
     'css!package/quiqqer/erp/bin/backend/payment-status.css'
 
-], function (QUIPanel, QUIButton, QUISeparator, QUIContextMenuItem, Grid, AddPaymentWindow,
-             QUILocale, QUIAjax, Mustache, templateTotal, templateUserRecords) {
+], function (QUIPanel, QUIButton, QUIContextMenuItem, Grid, AddPaymentWindow, QUILocale, QUIAjax, Mustache,
+    templateTotal, templateUserRecords) {
     "use strict";
 
     var lg = 'quiqqer/customer';
@@ -644,35 +643,6 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
         },
 
         /**
-         * Add a payment to an process
-         *
-         * @param {String|Number} hash
-         * @param {String|Number} amount
-         * @param {String} paymentMethod
-         * @param {String|Number} date
-         *
-         * @return {Promise}
-         */
-        addPayment: function (hash, amount, paymentMethod, date) {
-            var self = this;
-
-            this.Loader.show();
-
-            return Processes.addPaymentToProcess(
-                hash,
-                amount,
-                paymentMethod,
-                date
-            ).then(function () {
-                return self.refresh();
-            }).then(function () {
-                self.Loader.hide();
-            }).catch(function (err) {
-                console.error(err);
-            });
-        },
-
-        /**
          * Opens a temporary process
          *
          * @param {String|Number} processId
@@ -897,6 +867,10 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     dataIndex: 'documentId',
                     dataType : 'string',
                     hidden   : true
+                }, {
+                    dataIndex: 'hash',
+                    dataType : 'string',
+                    hidden   : true
                 }]
             });
 
@@ -1004,7 +978,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     return;
             }
 
-            var submitTransaction = function (Win, Data) {
+            const submitTransaction = function (Win, Data) {
                 Win.Loader.show();
 
                 switch (erpEntity) {
@@ -1047,11 +1021,49 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 }
             };
 
+            const linkTransaction = (txId, Win) => {
+                Win.Loader.show();
+
+                switch (erpEntity) {
+                    case 'Invoice':
+                        require(['package/quiqqer/invoice/bin/Invoices'], (Invoices) => {
+                            Invoices.linkTransaction(
+                                Row.hash,
+                                txId
+                            ).then(() => {
+                                Win.close();
+
+                                this.$refreshUserEntry(this.$currentRecordsUserId).then(() => {
+                                    this.$refreshUserRecords(this.$GridDetails, true);
+                                });
+                            }).catch(() => {
+                                Win.Loader.hide();
+                            });
+                        });
+                        break;
+
+                    case 'Order':
+                        require(['package/quiqqer/order/bin/backend/Orders'], (Orders) => {
+                            Orders.linkTransaction(Row.hash, txId).then(() => {
+                                Win.close();
+
+                                this.$refreshUserEntry(this.$currentRecordsUserId).then(() => {
+                                    this.$refreshUserRecords(this.$GridDetails, true);
+                                });
+                            }).catch(() => {
+                                Win.Loader.hide();
+                            });
+                        });
+                        break;
+                }
+            };
+
             new AddPaymentWindow({
                 entityId  : Row.documentNo,
                 entityType: erpEntity,
                 events    : {
-                    onSubmit: submitTransaction
+                    onSubmit        : submitTransaction,
+                    onSubmitExisting: linkTransaction
                 }
             }).open();
         },
