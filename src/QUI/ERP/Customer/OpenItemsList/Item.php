@@ -103,7 +103,8 @@ class Item
      */
     protected $Locale;
 
-    protected ?string $globalProcessId;
+    protected ?string $globalProcessId = null;
+    protected ?string $hash = null;
 
     /**
      * Item constructor.
@@ -502,5 +503,21 @@ class Item
     public function setGlobalProcessId(?string $globalProcessId): void
     {
         $this->globalProcessId = $globalProcessId;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getHash(): ?string
+    {
+        return $this->hash;
+    }
+
+    /**
+     * @param string|null $hash
+     */
+    public function setHash(?string $hash): void
+    {
+        $this->hash = $hash;
     }
 }

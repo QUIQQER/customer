@@ -10,6 +10,7 @@ use QUI\ERP\Accounting\Payments\Transactions\Transaction;
 use QUI\ERP\Order\Handler as OrderHandler;
 use QUI\ERP\Order\Order;
 use QUI\ERP\Order\Settings;
+use QUI\ERP\Order\AbstractOrder;
 
 use function json_decode;
 

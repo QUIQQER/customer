@@ -165,6 +165,7 @@ QUI::$Ajax->registerFunction(
                 );
 
                 $items[] = [
+                    'hash' => $Item->getHash(),
                     'documentId' => $Item->getDocumentId(),
                     'documentNo' => $Item->getDocumentNo(),
                     'documentType' => $documentType,
