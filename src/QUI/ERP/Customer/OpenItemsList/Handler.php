@@ -189,6 +189,7 @@ class Handler
         $Item->setDate(\date_create($Invoice->getAttribute('c_date')));
         $Item->setDueDate(\date_create($Invoice->getAttribute('time_for_payment')));
         $Item->setGlobalProcessId($Invoice->getGlobalProcessId());
+        $Item->setHash($Invoice->getHash());
 
         // Invoice amounts
         $paidStatus = $Invoice->getPaidStatusInformation();
@@ -334,6 +335,7 @@ class Handler
         $Item->setDocumentNo($Order->getPrefixedId());
         $Item->setDate(\date_create($Order->getAttribute('c_date')));
         $Item->setGlobalProcessId($Order->getGlobalProcessId());
+        $Item->setHash($Order->getHash());
 
         if (!empty($Order->getAttribute('payment_time'))) {
             $Item->setDueDate(\date_create($Order->getAttribute('payment_time')));
