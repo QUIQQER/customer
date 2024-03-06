@@ -278,8 +278,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 accordionLiveRenderer: this.$onClickOpenUserRecords,
                 exportData           : true,
                 exportTypes          : {
-                    csv : 'CSV',
-                    json: 'JSON'
+                    csv : true,
+                    json: true
                 },
                 buttons              : [{
                     name     : 'showOpenItemsList',
