@@ -916,10 +916,6 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     self.$refreshUserRecordsButtons();
                 }
             });
-
-            var size = ParentNode.getSize();
-
-            self.$GridDetails.setHeight(size.y - 120);
         },
 
         /**

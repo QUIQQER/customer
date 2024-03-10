@@ -201,8 +201,8 @@
 
 /** Open items grid
  ================================================= */
-.quiqqer-customer-openitems-userrecords-list {
-    height: 400px !important;
+.quiqqer-customer-openitems-userrecords {
+    height: 400px;
 }
 
 .quiqqer-customer-openitems-userrecords-list div.bDiv > ul {
