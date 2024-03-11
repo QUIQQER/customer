@@ -278,8 +278,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 accordionLiveRenderer: this.$onClickOpenUserRecords,
                 exportData           : true,
                 exportTypes          : {
-                    csv : 'CSV',
-                    json: 'JSON'
+                    csv : true,
+                    json: true
                 },
                 buttons              : [{
                     name     : 'showOpenItemsList',
@@ -916,10 +916,6 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     self.$refreshUserRecordsButtons();
                 }
             });
-
-            var size = ParentNode.getSize();
-
-            self.$GridDetails.setHeight(size.y - 120);
         },
 
         /**
