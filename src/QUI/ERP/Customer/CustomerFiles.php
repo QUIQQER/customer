@@ -68,12 +68,12 @@ class CustomerFiles
     /**
      * Return the file list from the customer
      *
-     * @param $customerId
+     * @param int|string $customerId
      * @return array
      *
      * @throws QUI\Permissions\Exception|QUI\Exception
      */
-    public static function getFileList($customerId): array
+    public static function getFileList(int|string $customerId): array
     {
         Permission::checkPermission('quiqqer.customer.fileView');
 
@@ -165,11 +165,12 @@ class CustomerFiles
      *
      * @param $customerId
      * @param $file
+     * @return string - Hash of the file
      *
      * @throws QUI\Exception
      * @throws QUI\Permissions\Exception
      */
-    public static function addFileToCustomer($customerId, $file): void
+    public static function addFileToCustomer($customerId, $file): string
     {
         Permission::checkPermission('quiqqer.customer.fileUpload');
 
@@ -182,8 +183,7 @@ class CustomerFiles
             $fileInfo = QUI\Utils\System\File::getInfo($file);
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::addDebug($Exception->getMessage());
-
-            return;
+            throw $Exception;
         }
 
         $customerDir = self::getFolderPath($Customer);
@@ -192,6 +192,8 @@ class CustomerFiles
             $file,
             $customerDir . DIRECTORY_SEPARATOR . $fileInfo['basename']
         );
+
+        return hash('sha256', $fileInfo['basename']);
     }
 
     /**
