@@ -2,18 +2,26 @@
 
 namespace QUI\ERP\Customer\OpenItemsList;
 
+use Exception;
+use PDO;
 use QUI;
 use QUI\ERP\Accounting\Dunning\Handler as DunningsHandler;
 use QUI\ERP\Accounting\Invoice\Handler as InvoiceHandler;
 use QUI\ERP\Accounting\Invoice\Invoice;
 use QUI\ERP\Accounting\Invoice\Utils\Invoice as InvoiceUtils;
 use QUI\ERP\Order\Handler as OrderHandler;
+use QUI\ERP\Order\ProcessingStatus\Handler as OrderStatusHandler;
 use QUI\Utils\Grid;
 use QUI\Utils\Security\Orthos;
-use QUI\ERP\Order\ProcessingStatus\Handler as OrderStatusHandler;
 
+use function array_column;
+use function array_sum;
+use function count;
+use function date_create;
 use function implode;
 use function in_array;
+use function json_decode;
+use function usort;
 
 /**
  * Class Handler
@@ -41,12 +49,12 @@ class Handler
      *
      * @param QUI\Interfaces\Users\User $User
      * @return ItemsList
+     * @throws QUI\Exception
      */
-    public static function getOpenItemsList(QUI\Interfaces\Users\User $User)
+    public static function getOpenItemsList(QUI\Interfaces\Users\User $User): ItemsList
     {
         $List = new ItemsList();
-
-        $List->setDate(\date_create());
+        $List->setDate(date_create());
 //        $List->setUser($User);
 
         // Fetch open invoices
@@ -79,7 +87,7 @@ class Handler
                     }
                 }
             }
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
 
@@ -124,8 +132,9 @@ class Handler
      *
      * @param QUI\Interfaces\Users\User $User
      * @return Invoice[]
+     * @throws QUI\Database\Exception
      */
-    protected static function getOpenInvoices(QUI\Interfaces\Users\User $User)
+    protected static function getOpenInvoices(QUI\Interfaces\Users\User $User): array
     {
         if (!QUI::getPackageManager()->isInstalled('quiqqer/invoice')) {
             return [];
@@ -166,7 +175,7 @@ class Handler
                 }
 
                 $invoices[] = $Invoices->get($row['id']);
-            } catch (\Exception $Exception) {
+            } catch (Exception $Exception) {
                 QUI\System\Log::writeException($Exception);
             }
         }
@@ -179,17 +188,18 @@ class Handler
      *
      * @param Invoice $Invoice
      * @return Item
+     * @throws QUI\Exception
      */
-    protected static function parseInvoiceToOpenItem(Invoice $Invoice)
+    protected static function parseInvoiceToOpenItem(Invoice $Invoice): Item
     {
-        $Item = new Item($Invoice->getCleanId(), self::DOCUMENT_TYPE_INVOICE);
+        $Item = new Item($Invoice->getId(), self::DOCUMENT_TYPE_INVOICE);
 
         // Basic data
         $Item->setDocumentNo($Invoice->getId());
-        $Item->setDate(\date_create($Invoice->getAttribute('c_date')));
-        $Item->setDueDate(\date_create($Invoice->getAttribute('time_for_payment')));
+        $Item->setDate(date_create($Invoice->getAttribute('c_date')));
+        $Item->setDueDate(date_create($Invoice->getAttribute('time_for_payment')));
         $Item->setGlobalProcessId($Invoice->getGlobalProcessId());
-        $Item->setHash($Invoice->getHash());
+        $Item->setHash($Invoice->getUUID());
 
         // Invoice amounts
         $paidStatus = $Invoice->getPaidStatusInformation();
@@ -200,7 +210,7 @@ class Handler
 //        $Item->setAmountTotal($Invoice->getAttribute('sum'));
 
         // VAT
-        $vat = \json_decode($Invoice->getAttribute('vat_array'), true);
+        $vat = json_decode($Invoice->getAttribute('vat_array'), true);
         $vatSum = 0;
 
         foreach ($vat as $vatEntry) {
@@ -215,13 +225,13 @@ class Handler
 
         if (!empty($transactions)) {
             // Sort by date
-            \usort($transactions, function ($TransactionA, $TransactionB) {
+            usort($transactions, function ($TransactionA, $TransactionB) {
                 /**
                  * @var QUI\ERP\Accounting\Payments\Transactions\Transaction $TransactionA
                  * @var QUI\ERP\Accounting\Payments\Transactions\Transaction $TransactionB
                  */
-                $DateA = \date_create($TransactionA->getDate());
-                $DateB = \date_create($TransactionB->getDate());
+                $DateA = date_create($TransactionA->getDate());
+                $DateB = date_create($TransactionB->getDate());
 
                 if ($DateA === $DateB) {
                     return 0;
@@ -230,13 +240,13 @@ class Handler
                 return $DateA > $DateB ? -1 : 1;
             });
 
-            $LatestTransactionDate = \date_create($transactions[0]->getDate());
+            $LatestTransactionDate = date_create($transactions[0]->getDate());
             $Item->setLastPaymentDate($LatestTransactionDate);
         }
 
         // Days due
-        $Now = \date_create();
-        $TimeForPayment = \date_create($Invoice->getAttribute('time_for_payment'));
+        $Now = date_create();
+        $TimeForPayment = date_create($Invoice->getAttribute('time_for_payment'));
 
         if ($Now < $TimeForPayment) {
             $Item->setDaysDue(0);
@@ -246,7 +256,7 @@ class Handler
 
         // Check if dunning exist
         if (QUI::getPackageManager()->isInstalled('quiqqer/dunning')) {
-            $DunningProcess = DunningsHandler::getInstance()->getDunningProcessByInvoiceId($Invoice->getCleanId());
+            $DunningProcess = DunningsHandler::getInstance()->getDunningProcessByInvoiceId($Invoice->getId());
 
             if ($DunningProcess && $DunningProcess->getCurrentDunning()) {
                 $Item->setDunningLevel($DunningProcess->getCurrentDunning()->getDunningLevel()->getLevel());
@@ -265,8 +275,9 @@ class Handler
      *
      * @param QUI\Interfaces\Users\User $User
      * @return QUI\ERP\Order\Order[]
+     * @throws QUI\Database\Exception
      */
-    protected static function getOpenOrders(QUI\Interfaces\Users\User $User)
+    protected static function getOpenOrders(QUI\Interfaces\Users\User $User): array
     {
         if (!QUI::getPackageManager()->isInstalled('quiqqer/order')) {
             return [];
@@ -298,7 +309,7 @@ class Handler
                     'value' => $CancelledStatus->getId()
                 ];
             }
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
 
@@ -313,7 +324,7 @@ class Handler
         foreach ($result as $row) {
             try {
                 $orders[] = $Orders->get($row['id']);
-            } catch (\Exception $Exception) {
+            } catch (Exception $Exception) {
                 QUI\System\Log::writeException($Exception);
             }
         }
@@ -326,19 +337,21 @@ class Handler
      *
      * @param QUI\ERP\Order\Order $Order
      * @return Item
+     *
+     * @throws QUI\Exception
      */
-    protected static function parseOrderToOpenItem(QUI\ERP\Order\Order $Order)
+    protected static function parseOrderToOpenItem(QUI\ERP\Order\Order $Order): Item
     {
         $Item = new Item($Order->getCleanId(), self::DOCUMENT_TYPE_ORDER);
 
         // Basic data
-        $Item->setDocumentNo($Order->getPrefixedId());
-        $Item->setDate(\date_create($Order->getAttribute('c_date')));
+        $Item->setDocumentNo($Order->getPrefixedNumber());
+        $Item->setDate(date_create($Order->getAttribute('c_date')));
         $Item->setGlobalProcessId($Order->getGlobalProcessId());
-        $Item->setHash($Order->getHash());
+        $Item->setHash($Order->getUUID());
 
         if (!empty($Order->getAttribute('payment_time'))) {
-            $Item->setDueDate(\date_create($Order->getAttribute('payment_time')));
+            $Item->setDueDate(date_create($Order->getAttribute('payment_time')));
         }
 
         // Invoice amounts
@@ -353,24 +366,24 @@ class Handler
         $Item->setAmountTotalSum($calculations['sum']);
 
         if (!empty($calculations['vatArray'])) {
-            $Item->setAmountTotalVat(\array_sum(\array_column($calculations['vatArray'], 'sum')));
+            $Item->setAmountTotalVat(array_sum(array_column($calculations['vatArray'], 'sum')));
         }
 
         $Item->setCurrency($Order->getCurrency());
 
         // Latest transaction date
         $Transactions = QUI\ERP\Accounting\Payments\Transactions\Handler::getInstance();
-        $transactions = $Transactions->getTransactionsByHash($Order->getHash());
+        $transactions = $Transactions->getTransactionsByHash($Order->getUUID());
 
         if (!empty($transactions)) {
             // Sort by date
-            \usort($transactions, function ($TransactionA, $TransactionB) {
+            usort($transactions, function ($TransactionA, $TransactionB) {
                 /**
                  * @var QUI\ERP\Accounting\Payments\Transactions\Transaction $TransactionA
                  * @var QUI\ERP\Accounting\Payments\Transactions\Transaction $TransactionB
                  */
-                $DateA = \date_create($TransactionA->getDate());
-                $DateB = \date_create($TransactionB->getDate());
+                $DateA = date_create($TransactionA->getDate());
+                $DateB = date_create($TransactionB->getDate());
 
                 if ($DateA === $DateB) {
                     return 0;
@@ -379,7 +392,7 @@ class Handler
                 return $DateA > $DateB ? -1 : 1;
             });
 
-            $LatestTransactionDate = \date_create($transactions[0]->getDate());
+            $LatestTransactionDate = date_create($transactions[0]->getDate());
             $Item->setLastPaymentDate($LatestTransactionDate);
         }
 
@@ -445,7 +458,7 @@ class Handler
                     'open_sum' => $values['dueTotal'],
                     'paid_sum' => $values['paidTotal'],
                     'vat_sum' => $values['vatTotal'],
-                    'open_items_count' => \count($OpenItemsList->getItemsByCurrencyCode($currency)),
+                    'open_items_count' => count($OpenItemsList->getItemsByCurrencyCode($currency)),
                     'currency' => $currency
                 ]
             );
@@ -461,7 +474,7 @@ class Handler
      * @param array $searchParams
      * @return array|int
      */
-    public static function searchOpenItems(array $searchParams)
+    public static function searchOpenItems(array $searchParams): int|array
     {
         $Grid = new Grid($searchParams);
         $gridParams = $Grid->parseDBParams($searchParams);
@@ -490,12 +503,12 @@ class Handler
                 $whereOr[] = '`' . $searchColumn . '` LIKE :search';
             }
 
-            if (!empty($whereOr)) {
+            if (count($whereOr)) {
                 $where[] = '(' . implode(' OR ', $whereOr) . ')';
 
                 $binds['search'] = [
                     'value' => '%' . $searchParams['search'] . '%',
-                    'type' => \PDO::PARAM_STR
+                    'type' => PDO::PARAM_STR
                 ];
             }
         }
@@ -545,10 +558,7 @@ class Handler
 
             $order = "ORDER BY " . $sortOn;
 
-            if (
-                isset($searchParams['sortBy']) &&
-                !empty($searchParams['sortBy'])
-            ) {
+            if (!empty($searchParams['sortBy'])) {
                 $order .= " " . Orthos::clear($searchParams['sortBy']);
             } else {
                 $order .= " ASC";
@@ -560,14 +570,11 @@ class Handler
         }
 
         // LIMIT
-        if (
-            !empty($gridParams['limit'])
-            && !$countOnly
-        ) {
+        if (!empty($gridParams['limit']) && !$countOnly) {
             $sql .= " LIMIT " . $gridParams['limit'];
         } else {
             if (!$countOnly) {
-                $sql .= " LIMIT " . (int)20;
+                $sql .= " LIMIT " . 20;
             }
         }
 
@@ -580,8 +587,8 @@ class Handler
 
         try {
             $Stmt->execute();
-            $result = $Stmt->fetchAll(\PDO::FETCH_ASSOC);
-        } catch (\Exception $Exception) {
+            $result = $Stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             return [];
         }
@@ -623,7 +630,7 @@ class Handler
                 $Customer = QUI\ERP\User::convertUserToErpUser($Customer);
 
                 $row['customer_name'] = $Customer->getInvoiceName();
-            } catch (\Exception $Exception) {
+            } catch (Exception $Exception) {
                 QUI\System\Log::writeException($Exception);
                 $row['customer_name'] = '-';
             }
@@ -641,7 +648,7 @@ class Handler
      * @param QUI\ERP\Currency\Currency $Currency
      * @return array - Totals prepared for backend display
      */
-    public static function getTotals(array $entries, QUI\ERP\Currency\Currency $Currency)
+    public static function getTotals(array $entries, QUI\ERP\Currency\Currency $Currency): array
     {
         $net = 0;
         $vat = 0;

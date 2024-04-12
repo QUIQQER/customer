@@ -19,18 +19,16 @@ QUI::$Ajax->registerFunction(
         }
 
         if (!($File instanceof QUI\QDOM)) {
-            return true;
+            return false;
         }
 
         $file = $File->getAttribute('filepath');
 
-        if (!\file_exists($file)) {
-            return true;
+        if (!file_exists($file)) {
+            return false;
         }
 
-        QUI\ERP\Customer\CustomerFiles::addFileToCustomer($customerId, $file);
-
-        return true;
+        return QUI\ERP\Customer\CustomerFiles::addFileToCustomer($customerId, $file);
     },
     ['File', 'customerId'],
     'Permission::checkAdminUser'
