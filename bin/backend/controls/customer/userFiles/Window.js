@@ -15,15 +15,15 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Window'
 
     'css!package/quiqqer/customer/bin/backend/controls/customer/userFiles/Window.css'
 
-], function (QUIConfirm, CustomerFiles, QUILocale, QUIUsers) {
-    "use strict";
+], function(QUIConfirm, CustomerFiles, QUILocale, QUIUsers) {
+    'use strict';
 
     var lg = 'quiqqer/customer';
 
     return new Class({
 
         Extends: QUIConfirm,
-        Type   : 'package/quiqqer/customer/bin/backend/controls/customer/userFiles/Window',
+        Type: 'package/quiqqer/customer/bin/backend/controls/customer/userFiles/Window',
 
         Binds: [
             '$onOpen',
@@ -34,21 +34,21 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Window'
             userId: false,
 
             maxHeight: 600,
-            maxWidth : 800,
-            icon     : 'fa fa-file-text-o',
+            maxWidth: 800,
+            icon: 'fa fa-file-text-o',
             autoclose: false,
 
             cancel_button: {
-                text     : QUILocale.get('quiqqer/system', 'cancel'),
+                text: QUILocale.get('quiqqer/system', 'cancel'),
                 textimage: 'fa fa-remove'
             },
-            ok_button    : {
-                text     : QUILocale.get(lg, 'control.userFiles.window.btn.select'),
+            ok_button: {
+                text: QUILocale.get(lg, 'control.userFiles.window.btn.select'),
                 textimage: 'fa fa-check'
             }
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.parent(options);
 
             this.$Search = null;
@@ -60,7 +60,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Window'
             this.$FileList = null;
 
             this.addEvents({
-                onOpen  : this.$onOpen,
+                onOpen: this.$onOpen,
                 onSubmit: this.$onSubmit
             });
         },
@@ -68,10 +68,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Window'
         /**
          * Event: onOpen
          */
-        $onOpen: function (Win) {
+        $onOpen: function(Win) {
             const Content = Win.getContent();
-            const userId  = this.getAttribute('userId');
-            const User    = QUIUsers.get(userId);
+            const userId = this.getAttribute('userId');
+            const User = QUIUsers.get(userId);
 
             Content.set('html', '');
 
@@ -106,8 +106,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Window'
 
                 this.$FileList = new CustomerFiles({
                     selectMode: true,
-                    userId    : userId,
-                    events    : {
+                    userId: userId,
+                    events: {
                         onSelect: () => {
                             this.submit();
                         }
@@ -115,13 +115,23 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Window'
                 }).inject(Content);
 
                 this.Loader.hide();
+            }).catch((err) => {
+                console.error(err);
+
+                if (typeof err.getMessage === 'function') {
+                    QUI.getMessageHandler().then((MH) => {
+                        MH.addError(err.getMessage());
+                    });
+                }
+
+                this.close();
             });
         },
 
         /**
          * Event: onSubmit
          */
-        $onSubmit: function () {
+        $onSubmit: function() {
             if (this.$FileList) {
                 this.fireEvent('select', [this.$FileList.getSelectedFiles(), this]);
             }

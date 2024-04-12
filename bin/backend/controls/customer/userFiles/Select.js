@@ -7,16 +7,17 @@
 define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select', [
 
     'qui/QUI',
-    'qui/controls/elements/Select',
+    'qui/controls/Control',
+    'controls/grid/Grid',
 
     'utils/Controls',
     'Locale',
     'Ajax'
 
-], function (QUI, QUIElementSelect, QUIControlUtils, QUILocale, QUIAjax) {
-    "use strict";
+], function(QUI, QUIControl, Grid, QUIControlUtils, QUILocale, QUIAjax) {
+    'use strict';
 
-    var lg = 'quiqqer/customer';
+    const lg = 'quiqqer/customer';
 
     /**
      * @class controls/usersAndGroups/Input
@@ -28,60 +29,53 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select'
      */
     return new Class({
 
-        Extends: QUIElementSelect,
-        Type   : 'package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select',
+        Extends: QUIControl,
+        Type: 'package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select',
 
         Binds: [
-            'searchCustomerFiles',
-            '$onSearchButtonClick',
-            '$onAddItem'
+            '$onInject',
+            'openCustomerFiles'
         ],
 
         options: {
-            userId           : false,
+            userId: false,
             confirmItemDelete: false // item deletion requires confirmation
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.parent(options);
 
             this.$ImportedValue = {};
-
-            this.setAttribute('Search', this.searchCustomerFiles);
-            this.setAttribute('icon', 'fa fa-search');
-            this.setAttribute('child', 'package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectItem');
-
-            this.setAttribute(
-                'placeholder',
-                QUILocale.get(lg, 'controls.userFiles.Select.search_placeholder')
-            );
+            this.$Grid = null;
 
             this.addEvents({
-                onSearchButtonClick: this.$onSearchButtonClick,
-                onAddItem          : this.$onAddItem
+                onInject: this.$onInject
             });
+        },
+
+        $onInject: function() {
+
         },
 
         /**
          * trigger a users search and open a discount dropdown for selection
          *
-         * @method package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select#search
          * @return {Promise}
          */
-        searchCustomerFiles: function () {
+        searchCustomerFiles: function() {
             const value = this.$Search.value.trim();
 
             return new Promise((resolve, reject) => {
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_files_suggestSearch', resolve, {
-                    'package'   : 'quiqqer/customer',
-                    customerId  : this.getAttribute('userId'),
+                    'package': 'quiqqer/customer',
+                    customerId: this.getAttribute('userId'),
                     searchString: value,
-                    onError     : reject
+                    onError: reject
                 });
             }).then((files) => {
-                return files.map(function (File) {
+                return files.map(function(File) {
                     return {
-                        id   : File.hash,
+                        id: File.hash,
                         title: File.basename
                     };
                 });
@@ -89,14 +83,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select'
         },
 
         /**
-         * event : on search button click
-         *
-         * @param {Object} self - select object
-         * @param {Object} Btn - button object
+         * open customer file window
          */
-        $onSearchButtonClick: function (self, Btn) {
-            Btn.setAttribute('icon', 'fa fa-spinner fa-spin');
-
+        openCustomerFiles: function() {
             require([
                 'package/quiqqer/customer/bin/backend/controls/customer/userFiles/Window'
             ], (Window) => {
@@ -105,16 +94,35 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select'
                     events: {
                         onSelect: (selectedFiles, Win) => {
                             for (let File of selectedFiles) {
-                                this.addItem(File.hash);
+                                this.addFile(File.hash);
                             }
 
                             Win.close();
                         }
                     }
                 }).open();
-
-                Btn.setAttribute('icon', 'fa fa-list-alt');
             });
+        },
+
+        /**
+         * Get file info
+         *
+         * @param {String} fileHash
+         * @return {Promise}
+         */
+        $getFileData: function(fileHash) {
+            return new Promise((resolve, reject) => {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_files_get', resolve, {
+                    'package': 'quiqqer/customer',
+                    customerId: this.getAttribute('userId'),
+                    fileHash: fileHash,
+                    onError: reject
+                });
+            });
+        },
+
+        $triggerOnChange: function() {
+
         },
 
         /**
@@ -122,9 +130,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select'
          *
          * @return {Promise}
          */
-        getFiles: function () {
+        getFiles: function() {
             const fileHashes = this.$Input.value.split(',');
-
+            console.log(fileHashes);
             const loadItem = (fileHash) => {
                 return new Promise((resolve) => {
                     const waitForItemLoad = setInterval((fileHash) => {
@@ -143,7 +151,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select'
                         clearInterval(waitForItemLoad);
 
                         resolve({
-                            hash   : Item.get('data-hash'),
+                            hash: Item.get('data-hash'),
                             options: ItemControl.getItemOptions()
                         });
                     }, 200, fileHash);
@@ -170,7 +178,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select'
          *
          * @param {String} value
          */
-        importValue: function (value) {
+        importValue: function(value) {
             if (!value) {
                 return;
             }
@@ -195,7 +203,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Select'
          * @param {String|Number} itemId
          * @param {Object} ItemControl
          */
-        $onAddItem: function (SelectControl, itemId, ItemControl) {
+        $onAddItem: function(SelectControl, itemId, ItemControl) {
             ItemControl.setAttributes({
                 confirmDelete: this.getAttribute('confirmItemDelete')
             });
