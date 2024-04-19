@@ -347,8 +347,8 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             this.$Grid.disable();
 
-            if (parseInt(this.getAttribute('customerId'))) {
-                this.$openCustomer(parseInt(this.getAttribute('customerId')));
+            if (this.getAttribute('customerId')) {
+                this.$openCustomer(this.getAttribute('customerId'));
             } else {
                 if (this.isInWindow() && this.$SearchInput) {
                     this.$SearchInput.focus();
@@ -433,7 +433,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             }
 
             return this.$Grid.getSelectedData().map(function (entry) {
-                return parseInt(entry.user_id);
+                return entry.user_uuid;
             });
         },
 
@@ -513,15 +513,13 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     const edit = function (e) {
                         e.stop();
 
-                        self.$openCustomer(
-                            parseInt(e.target.get('data-userid'))
-                        );
+                        self.$openCustomer(e.target.get('data-userid'));
                     };
 
                     for (let i = 0, len = result.data.length; i < len; i++) {
                         result.data[i].status = new QUISwitch({
                             status: result.data[i].status,
-                            userId: result.data[i].user_id,
+                            userId: result.data[i].user_uuid,
                             events: {
                                 onChange: onChange
                             }
@@ -531,7 +529,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                             result.data[i].submit_button = new Element('span', {
                                 'class'      : 'fa fa-edit',
                                 title        : QUILocale.get(lg, 'window.customer.edit.button'),
-                                'data-userid': result.data[i].user_id,
+                                'data-userid': result.data[i].user_uuid,
                                 events       : {
                                     click: edit
                                 },
@@ -804,7 +802,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     return;
                 }
 
-                this.$openCustomer(rowData.user_id);
+                this.$openCustomer(rowData.user_uuid);
                 return;
             }
 
@@ -814,7 +812,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     return;
                 }
 
-                this.$openCustomer(rowData.user_id);
+                this.$openCustomer(rowData.user_uuid);
                 return;
             }
 
@@ -828,7 +826,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                     return;
                 }
 
-                this.$openCustomer(rowData.user_id);
+                this.$openCustomer(rowData.user_uuid);
                 return;
             }
 
@@ -891,7 +889,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                         text  : QUILocale.get(lg, 'administration.contextMenu.user'),
                         events: {
                             onClick: function () {
-                                self.$openCustomer(rowData.user_id);
+                                self.$openCustomer(rowData.user_uuid);
                             }
                         }
                     })
@@ -966,7 +964,7 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                         Win.Loader.show();
 
                         const selected = self.$Grid.getSelectedData().map(function (entry) {
-                            return entry.user_id;
+                            return entry.user_uuid;
                         });
 
                         Users.deleteUsers(selected).then(function () {

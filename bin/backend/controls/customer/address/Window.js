@@ -71,7 +71,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/address/Window', 
                     }
 
                     new Element('option', {
-                        value: addresses[i].id,
+                        value: addresses[i].uuid,
                         html : text
                     }).inject(Select);
                 }
@@ -131,7 +131,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/address/Window', 
          * @method qui/controls/windows/Confirm#submit
          */
         submit: function () {
-            var addressId = parseInt(this.getElm().getElement('select').value);
+            var addressId = this.getElm().getElement('select').value;
             var address   = this.$addressList.filter(function (address) {
                 return address.id === addressId;
             });

@@ -9,36 +9,36 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
     'package/quiqqer/customer/bin/backend/controls/Administration',
     'Locale'
 
-], function (QUI, QUIConfirm, Administration, QUILocale) {
-    "use strict";
+], function(QUI, QUIConfirm, Administration, QUILocale) {
+    'use strict';
 
     const lg = 'quiqqer/customer';
 
     return new Class({
 
         Extends: QUIConfirm,
-        Type   : 'package/quiqqer/customer/bin/backend/controls/AdministrationWindow',
+        Type: 'package/quiqqer/customer/bin/backend/controls/AdministrationWindow',
 
         Binds: [
             '$onOpen'
         ],
 
         options: {
-            maxWidth  : 1200,
-            maxHeight : 800,
-            editable  : false,
+            maxWidth: 1200,
+            maxHeight: 800,
+            editable: false,
             customerId: false
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.parent(options);
 
             this.setAttributes({
-                title    : QUILocale.get(lg, 'window.customer.select.title'),
-                icon     : 'fa fa-user-o',
+                title: QUILocale.get(lg, 'window.customer.select.title'),
+                icon: 'fa fa-user-o',
                 autoclose: false,
                 ok_button: {
-                    text     : QUILocale.get(lg, 'window.customer.select.button'),
+                    text: QUILocale.get(lg, 'window.customer.select.button'),
                     textimage: 'fa fa-user-o'
                 }
             });
@@ -51,7 +51,7 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
         /**
          * event: on open
          */
-        $onOpen: function () {
+        $onOpen: function() {
             const self = this;
 
             this.getContent().set('html', '');
@@ -66,26 +66,26 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
             }
 
             this.$Admin = new Administration({
-                editable   : this.getAttribute('editable'),
-                customerId : customerId,
+                editable: this.getAttribute('editable'),
+                customerId: customerId,
                 submittable: true,
-                events     : {
-                    onCustomerOpenBegin: function () {
+                events: {
+                    onCustomerOpenBegin: function() {
                         self.Loader.show();
                     },
 
-                    onCustomerOpen: function () {
+                    onCustomerOpen: function() {
                         self.$Title.getElement('[name="close"]').setStyle('display', 'none');
 
                         new Element('button', {
                             'class': 'qui-window-popup-title-close quiqqer-customer-adminWindow-close',
-                            name   : 'show-list',
-                            html   : '<span class="fa fa-angle-double-left"></span> ' +
-                                     '<span>' +
-                                     '' + QUILocale.get(lg, 'customer.window.backToList') +
-                                     '</span>',
-                            events : {
-                                click: function () {
+                            name: 'show-list',
+                            html: '<span class="fa fa-angle-double-left"></span> ' +
+                                '<span>' +
+                                '' + QUILocale.get(lg, 'customer.window.backToList') +
+                                '</span>',
+                            events: {
+                                click: function() {
                                     self.$Title.getElement('[name="show-list"]').destroy();
                                     self.$Title.getElement('[name="close"]').setStyle('display', null);
                                     self.$Admin.closeCustomer();
@@ -93,7 +93,7 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
                                     const ExtraButton = self.$Admin.$CustomerPanel.getButtons('extra');
 
                                     if (ExtraButton) {
-                                        ExtraButton.getMenu().then(function (Menu) {
+                                        ExtraButton.getMenu().then(function(Menu) {
                                             Menu.hide();
                                         });
                                     }
@@ -102,13 +102,13 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
                         }).inject(self.$Title);
                     },
 
-                    onCustomerSelect: function () {
+                    onCustomerSelect: function() {
                         if (BtnSubmit) {
                             BtnSubmit.enable();
                         }
                     },
 
-                    onCustomerOpenEnd: function () {
+                    onCustomerOpenEnd: function() {
                         if (BtnSubmit) {
                             BtnSubmit.enable();
                         }
@@ -116,11 +116,11 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
                         self.Loader.hide();
                     },
 
-                    onSubmit: function () {
+                    onSubmit: function() {
                         self.submit();
                     },
 
-                    onRefreshBegin: function () {
+                    onRefreshBegin: function() {
                         self.Loader.show();
                     },
 
@@ -141,7 +141,7 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
         /**
          * submit the window
          */
-        submit: function () {
+        submit: function() {
             let ids = this.$Admin.getSelectedCustomerIds();
 
             if (!ids.length) {
@@ -154,6 +154,7 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
                         this,
                         ids
                     ]);
+                    
                     this.close();
                 });
 
@@ -164,6 +165,7 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
                 this,
                 ids
             ]);
+
             this.close();
         }
     });

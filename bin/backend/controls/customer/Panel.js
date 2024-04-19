@@ -468,11 +468,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             this.setAttribute('icon', 'fa fa-spinner fa-spin');
             this.refresh();
 
-            if (parseInt(this.$User.getAttribute('address'))) {
-                address = parseInt(this.$User.getAttribute('address'));
+            if (this.$User.getAttribute('address')) {
+                address = this.$User.getAttribute('address');
             } else {
                 if (this.$User.getAttribute('quiqqer.erp.address')) {
-                    address = parseInt(this.$User.getAttribute('quiqqer.erp.address'));
+                    address = this.$User.getAttribute('quiqqer.erp.address');
                 }
             }
 
@@ -717,7 +717,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     checkVal(self.$User.getAttribute('quiqqer.erp.customer.payment.term'));
 
                 // address
-                address = parseInt(self.$User.getAttribute('address'));
+                address = self.$User.getAttribute('address');
                 delivery = self.$User.getAttribute('quiqqer.delivery.address');
 
                 if (!delivery && shippingInstalled) {
@@ -1071,7 +1071,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                         require(['package/quiqqer/customer/bin/backend/Handler'], function(Handler) {
                             Handler.addAddressToCustomer(self.$User.getId()).then(function(addressId) {
                                 new AddressEditWindow({
-                                    addressId: parseInt(addressId),
+                                    addressId: addressId,
                                     events: {
                                         onSubmit: function() {
                                             // refresh list
@@ -1090,7 +1090,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                         return;
                     }
 
-                    const addressId = parseInt(Select.value);
+                    const addressId = Select.value;
 
                     new AddressEditWindow({
                         addressId: addressId,
@@ -1199,24 +1199,24 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 for (let i = 0, len = addressList.length; i < len; i++) {
                     new Element('option', {
                         html: addressList[i].text,
-                        value: parseInt(addressList[i].id)
+                        value: addressList[i].id
                     }).inject(DefaultAddress);
 
                     new Element('option', {
                         html: addressList[i].text,
-                        value: parseInt(addressList[i].id)
+                        value: addressList[i].id
                     }).inject(InvoiceAddress);
 
                     new Element('option', {
                         html: addressList[i].text,
-                        value: parseInt(addressList[i].id)
+                        value: addressList[i].id
                     }).inject(DeliveryAddress);
                 }
 
                 let attributes = self.$User.getAttributes(),
                     address = parseInt(attributes.address),
-                    invoiceAddress = parseInt(attributes['quiqqer.erp.address']),
-                    deliveryAddress = parseInt(attributes['quiqqer.delivery.address']);
+                    invoiceAddress = attributes['quiqqer.erp.address'],
+                    deliveryAddress = attributes['quiqqer.delivery.address'];
 
                 if (address) {
                     DefaultAddress.value = address;
@@ -1241,15 +1241,17 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
         /**
          *
-         * @param {Integer} addressId
+         * @param {Integer|String} addressId
          * @return {Promise}
          */
         getAddress: function(addressId) {
-            addressId = parseInt(addressId);
-
             return this.$User.getAddressList().then(function(addressList) {
                 for (let i = 0, len = addressList.length; i < len; i++) {
-                    if (parseInt(addressList[i].id) === addressId) {
+                    if (addressList[i].uuid === addressId) {
+                        return addressList[i];
+                    }
+
+                    if (parseInt(addressList[i].id) === parseInt(addressId)) {
                         return addressList[i];
                     }
                 }

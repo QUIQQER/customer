@@ -7,6 +7,8 @@ use QUI\ERP\Output\OutputProviderInterface;
 use QUI\Interfaces\Users\User;
 use QUI\Locale;
 
+use function date_create;
+
 /**
  * Class OutputProvider
  *
@@ -65,16 +67,16 @@ class OutputProvider implements OutputProviderInterface
      *
      * @throws QUI\Exception
      */
-    public static function getDownloadFileName($entityId)
+    public static function getDownloadFileName($entityId): string
     {
         /** @var QUI\ERP\User $ERPUser */
         $ERPUser = self::getEntity($entityId);
         $Locale = $ERPUser->getLocale();
-        $Date = \date_create();
+        $Date = date_create();
 
         return $Locale->get('quiqqer/customer', 'OutputProvider.download_filename', [
             'date' => $Date->format('Y-m-d'),
-            'uid' => $ERPUser->getId()
+            'uid' => $ERPUser->getUUID()
         ]);
     }
 
@@ -102,11 +104,11 @@ class OutputProvider implements OutputProviderInterface
      *
      * @throws QUI\Exception
      */
-    public static function getTemplateData($entityId)
+    public static function getTemplateData($entityId): array
     {
         /** @var User $ERPUser */
         $ERPUser = self::getEntity($entityId);
-        $QuiqqerUser = QUI::getUsers()->get($ERPUser->getId());
+        $QuiqqerUser = QUI::getUsers()->get($ERPUser->getUUID());
         $Address = $QuiqqerUser->getStandardAddress();
 
         $Address->clearMail();
@@ -136,7 +138,7 @@ class OutputProvider implements OutputProviderInterface
             /** @var User $ERPUser */
             $ERPUser = self::getEntity($entityId);
 
-            return $ERPUser->getId() === $User->getId();
+            return $ERPUser->getUUID() === $User->getUUID();
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 

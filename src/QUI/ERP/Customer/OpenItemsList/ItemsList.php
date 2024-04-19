@@ -2,8 +2,15 @@
 
 namespace QUI\ERP\Customer\OpenItemsList;
 
+use DateTime;
+use Exception;
 use QUI;
 use QUI\Users\User;
+
+use function count;
+use function dirname;
+use function file_get_contents;
+use function usort;
 
 /**
  * Class ItemsList
@@ -15,22 +22,22 @@ class ItemsList
     /**
      * @var array
      */
-    protected $totalAmountsByCurrency = [];
+    protected array $totalAmountsByCurrency = [];
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
-    protected $Date;
+    protected DateTime $Date;
 
     /**
      * @var User
      */
-    protected $User;
+    protected User $User;
 
     /**
      * @var Item[]
      */
-    protected $items = [];
+    protected array $items = [];
 
     /**
      * Add an open item to the list
@@ -38,7 +45,7 @@ class ItemsList
      * @param Item $Item
      * @return void
      */
-    public function addItem(Item $Item)
+    public function addItem(Item $Item): void
     {
         $this->items[] = $Item;
 
@@ -87,7 +94,7 @@ class ItemsList
         );
 
         // Sort items by date ASC
-        \usort($this->items, function ($ItemA, $ItemB) {
+        usort($this->items, function ($ItemA, $ItemB) {
             /**
              * @var Item $ItemA
              * @var Item $ItemB
@@ -112,9 +119,9 @@ class ItemsList
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getDate(): \DateTime
+    public function getDate(): DateTime
     {
         return $this->Date;
     }
@@ -132,9 +139,9 @@ class ItemsList
     }
 
     /**
-     * @param \DateTime $Date
+     * @param DateTime $Date
      */
-    public function setDate(\DateTime $Date)
+    public function setDate(DateTime $Date): void
     {
         $this->Date = $Date;
     }
@@ -142,7 +149,7 @@ class ItemsList
     /**
      * @param User $User
      */
-    public function setUser(User $User)
+    public function setUser(User $User): void
     {
         $this->User = $User;
     }
@@ -187,7 +194,7 @@ class ItemsList
     {
         try {
             $Engine = QUI::getTemplateManager()->getEngine();
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
             return '';
@@ -195,11 +202,11 @@ class ItemsList
 
         $Engine->assign([
             'this' => $this,
-            'isEmpty' => \count($this->items) === 0
+            'isEmpty' => count($this->items) === 0
         ]);
 
-        $body = '<style>' . \file_get_contents(\dirname(__FILE__) . '/ItemList.css') . '</style>';
-        $body .= $Engine->fetch(\dirname(__FILE__) . '/ItemList.html');
+        $body = '<style>' . file_get_contents(dirname(__FILE__) . '/ItemList.css') . '</style>';
+        $body .= $Engine->fetch(dirname(__FILE__) . '/ItemList.html');
 
         return $body;
     }

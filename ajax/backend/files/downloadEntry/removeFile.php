@@ -13,7 +13,7 @@ QUI::$Ajax->registerFunction(
     function ($file, $customerId) {
         try {
             CustomerFiles::removeFileFromDownloadEntry((int)$customerId, $file);
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
             throw new QUI\Exception([

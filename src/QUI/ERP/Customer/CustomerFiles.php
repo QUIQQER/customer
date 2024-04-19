@@ -18,6 +18,7 @@ use function is_dir;
 use function is_readable;
 use function mb_strpos;
 use function pathinfo;
+use function rename;
 use function strnatcmp;
 use function unlink;
 use function urldecode;
@@ -55,6 +56,14 @@ class CustomerFiles
         }
 
         $fileDir = $varDir . $User->getId();
+
+        // if dir with id exists, rename it to hash folder
+        if (is_dir($fileDir)) {
+            $fileUuidDir = $varDir . $User->getUUID();
+
+            rename($fileDir, $fileUuidDir);
+            $fileDir = $fileUuidDir;
+        }
 
         QUI\Utils\System\File::mkdir($fileDir);
 
@@ -163,14 +172,14 @@ class CustomerFiles
     /**
      * Add a file to the customer
      *
-     * @param $customerId
+     * @param steing|int $customerId
      * @param $file
      * @return string - Hash of the file
      *
      * @throws QUI\Exception
      * @throws QUI\Permissions\Exception
      */
-    public static function addFileToCustomer($customerId, $file): string
+    public static function addFileToCustomer(string|int $customerId, $file): string
     {
         Permission::checkPermission('quiqqer.customer.fileUpload');
 
@@ -199,14 +208,14 @@ class CustomerFiles
     /**
      * Get file data by file hash
      *
-     * @param int $customerId
+     * @param int|string $customerId
      * @param string $fileHash
      * @return false|array - File data or false if file is not found in customer files
      *
      * @throws QUI\Permissions\Exception
      * @throws Exception
      */
-    public static function getFileByHash(int $customerId, string $fileHash): bool|array
+    public static function getFileByHash(int|string $customerId, string $fileHash): bool|array
     {
         $files = self::getFileList($customerId);
 
@@ -226,14 +235,14 @@ class CustomerFiles
      *
      * This makes the file available for download in the user's frontend profile!
      *
-     * @param int $customerId
+     * @param int|string $customerId
      * @param string $file - The filename of the file (excluding the path!); file must already exist
      * in the user files (i.e. added via addFileToCustomer())
      * @return void
      *
      * @throws QUI\Exception
      */
-    public static function addFileToDownloadEntry(int $customerId, string $file): void
+    public static function addFileToDownloadEntry(int|string $customerId, string $file): void
     {
         if (!QUI::getPackageManager()->isInstalled('quiqqer/user-downloads')) {
             throw new QUI\Exception('This feature requires quiqqer/user-downloads to be installed.');
@@ -281,7 +290,7 @@ class CustomerFiles
                 'quiqqer/customer',
                 'comment.DownloadEntry.add_file',
                 [
-                    'editUser' => $EditUser->getName() . ' (#' . $EditUser->getId() . ')',
+                    'editUser' => $EditUser->getName() . ' (#' . $EditUser->getUUID() . ')',
                     'file' => $file
                 ]
             )
@@ -291,13 +300,13 @@ class CustomerFiles
     /**
      * Removes a customer file from the customer's download entry.
      *
-     * @param int $customerId
+     * @param int|string $customerId
      * @param string $file - File name
      * @return void
      *
      * @throws QUI\Exception
      */
-    public static function removeFileFromDownloadEntry(int $customerId, string $file): void
+    public static function removeFileFromDownloadEntry(int|string $customerId, string $file): void
     {
         if (!QUI::getPackageManager()->isInstalled('quiqqer/user-downloads')) {
             throw new QUI\Exception('This feature requires quiqqer/user-downloads to be installed.');
@@ -346,7 +355,7 @@ class CustomerFiles
                 'quiqqer/customer',
                 'comment.DownloadEntry.remove_file',
                 [
-                    'editUser' => $EditUser->getName() . ' (#' . $EditUser->getId() . ')',
+                    'editUser' => $EditUser->getName() . ' (#' . $EditUser->getUUID() . ')',
                     'file' => $file
                 ]
             )
@@ -354,13 +363,13 @@ class CustomerFiles
     }
 
     /**
-     * Check if a file is avaiable for the customer to download via frontend profile
+     * Check if a file is available for the customer to download via frontend profile
      *
-     * @param int $customerId
+     * @param int|string $customerId
      * @param string $filePath - Fully qualified file path
      * @return bool
      */
-    public static function isFileInDownloadEntry(int $customerId, string $filePath): bool
+    public static function isFileInDownloadEntry(int|string $customerId, string $filePath): bool
     {
         if (!QUI::getPackageManager()->isInstalled('quiqqer/user-downloads')) {
             return false;
@@ -399,14 +408,14 @@ class CustomerFiles
     }
 
     /**
-     * Get customer DownloadEntry for customer fiels or false if no entry exists
+     * Get customer DownloadEntry for customer fields or false if no entry exists
      *
-     * @param int $customerId
+     * @param int|string $customerId
      * @return DownloadEntry|false
      *
      * @throws QUI\Exception
      */
-    public static function getDownloadEntry(int $customerId): bool|DownloadEntry
+    public static function getDownloadEntry(int|string $customerId): bool|DownloadEntry
     {
         if (!QUI::getPackageManager()->isInstalled('quiqqer/user-downloads')) {
             throw new QUI\Exception('This feature requires quiqqer/user-downloads to be installed.');
@@ -425,12 +434,12 @@ class CustomerFiles
     /**
      * Create a DownloadEntry for customer files.
      *
-     * @param int $customerId
+     * @param int|string $customerId
      * @return DownloadEntry
      *
      * @throws QUI\Exception
      */
-    public static function createDownloadEntry(int $customerId): DownloadEntry
+    public static function createDownloadEntry(int|string $customerId): DownloadEntry
     {
         if (!QUI::getPackageManager()->isInstalled('quiqqer/user-downloads')) {
             throw new QUI\Exception('This feature requires quiqqer/user-downloads to be installed.');
@@ -465,16 +474,16 @@ class CustomerFiles
     /**
      * Delete customer DownloadEntry.
      *
-     * This makes ALL customer files that have been made available for download in the frontendusers profile
+     * This makes ALL customer files that have been made available for download in the frontend users profile
      * UNAVAILABLE for the customer.
      *
-     * @param int $customerId
+     * @param int|string $customerId
      *
      * @throws QUI\Database\Exception
      * @throws QUI\Exception
      * @throws QUI\UserDownloads\Exception
      */
-    public static function deleteDownloadEntry(int $customerId): void
+    public static function deleteDownloadEntry(int|string $customerId): void
     {
         if (!QUI::getPackageManager()->isInstalled('quiqqer/user-downloads')) {
             throw new QUI\Exception('This feature requires quiqqer/user-downloads to be installed.');

@@ -7,7 +7,19 @@
 namespace QUI\ERP\Customer;
 
 use QUI;
+use QUI\Exception;
+use QUI\ExceptionStack;
+use QUI\Groups\Group;
 use QUI\Utils\Singleton;
+
+use function array_filter;
+use function array_merge;
+use function explode;
+use function is_array;
+use function json_decode;
+use function json_encode;
+use function reset;
+use function trim;
 
 /**
  * Class Customers
@@ -20,7 +32,7 @@ class Customers extends Singleton
     /**
      * @var null|QUI\Groups\Group
      */
-    protected $Group = null;
+    protected ?QUI\Groups\Group $Group = null;
 
     /**
      * @param $customerId
@@ -32,7 +44,7 @@ class Customers extends Singleton
      * @throws QUI\Exception
      * @throws QUI\Permissions\Exception
      */
-    public function createCustomer($customerId, $address = [], $groupIds = []): QUI\Users\User
+    public function createCustomer($customerId, array $address = [], array $groupIds = []): QUI\Users\User
     {
         QUI\Permissions\Permission::checkPermission('quiqqer.customer.create');
 
@@ -40,7 +52,7 @@ class Customers extends Singleton
 
         /**
          * Check if $customerId equals the next customerId in the NumberRange.
-         * If so, then set then increase the next customerId by 1.
+         * If so, it increases the next customerId by 1.
          */
         $NumberRange = new NumberRange();
         $nextCustomerNo = $NumberRange->getNextCustomerNo();
@@ -57,7 +69,7 @@ class Customers extends Singleton
         if (!empty($address)) {
             try {
                 $Address = $User->getStandardAddress();
-            } catch (QUI\Exception $Exception) {
+            } catch (QUI\Exception) {
                 $Address = $User->addAddress();
             }
 
@@ -159,7 +171,7 @@ class Customers extends Singleton
     {
         $Package = QUI::getPackage('quiqqer/customer');
         $Config = $Package->getConfig();
-        $groupId = (int)\trim($Config->getValue('customer', 'groupId'));
+        $groupId = trim($Config->getValue('customer', 'groupId'));
 
         if (empty($groupId)) {
             throw new Exception([
@@ -168,7 +180,7 @@ class Customers extends Singleton
             ]);
         }
 
-        return (int)$groupId;
+        return $groupId;
     }
 
     /**
@@ -181,7 +193,7 @@ class Customers extends Singleton
         try {
             $Package = QUI::getPackage('quiqqer/customer');
             $Config = $Package->getConfig();
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             return false;
         }
 
@@ -191,10 +203,9 @@ class Customers extends Singleton
     /**
      * Return the customer group
      *
-     * @return QUI\Groups\Group
+     * @return Group|null
      *
      * @throws Exception
-     * @throws QUI\Exception
      */
     public function getCustomerGroup(): ?QUI\Groups\Group
     {
@@ -208,14 +219,16 @@ class Customers extends Singleton
     /**
      * Add a user to the customer group
      *
-     * @param string|bool $userId
+     * @param bool|int|string $userId
      * @param QUI\Interfaces\Users\User|null $PermissionUser
      *
      * @throws QUI\Exception
      * @throws QUI\Users\Exception
      */
-    public function addUserToCustomerGroup($userId, QUI\Interfaces\Users\User $PermissionUser = null)
-    {
+    public function addUserToCustomerGroup(
+        bool|int|string $userId,
+        QUI\Interfaces\Users\User $PermissionUser = null
+    ): void {
         if (!$userId) {
             return;
         }
@@ -232,7 +245,7 @@ class Customers extends Singleton
             return;
         }
 
-        $User = QUI::getUsers()->get((int)$userId);
+        $User = QUI::getUsers()->get($userId);
 
         if ($User->isInGroup($customerGroup)) {
             return;
@@ -245,12 +258,12 @@ class Customers extends Singleton
     /**
      * Remove a user from the customer group
      *
-     * @param string|bool $userId
+     * @param bool|int|string $userId
      *
      * @throws QUI\Exception
      * @throws QUI\Users\Exception
      */
-    public function removeUserFromCustomerGroup($userId)
+    public function removeUserFromCustomerGroup(bool|int|string $userId): void
     {
         $customerGroup = null;
 
@@ -264,18 +277,22 @@ class Customers extends Singleton
             return;
         }
 
-        $User = QUI::getUsers()->get((int)$userId);
+        $User = QUI::getUsers()->get($userId);
         $User->removeGroup($customerGroup);
         $User->save();
     }
 
     /**
-     * @param $userId
+     * @param bool|int|string $userId
      * @param array $attributes
      *
-     * @throws QUI\Exception
+     * @throws Exception
+     * @throws QUI\Database\Exception
+     * @throws ExceptionStack
+     * @throws QUI\Permissions\Exception
+     * @throws QUI\Users\Exception
      */
-    public function setAttributesToCustomer($userId, array $attributes)
+    public function setAttributesToCustomer(bool|int|string $userId, array $attributes): void
     {
         $User = QUI::getUsers()->get($userId);
 
@@ -320,7 +337,7 @@ class Customers extends Singleton
             $mailList = $Address->getMailList();
 
             if (!empty($mailList)) {
-                $User->setAttribute('email', \reset($mailList));
+                $User->setAttribute('email', reset($mailList));
             }
         }
 
@@ -336,11 +353,11 @@ class Customers extends Singleton
         }
 
         if (isset($attributes['groups'])) {
-            if (\strpos($attributes['groups'], ',') !== false) {
-                $attributes['groups'] = \explode(',', $attributes['groups']);
+            if (str_contains($attributes['groups'], ',')) {
+                $attributes['groups'] = explode(',', $attributes['groups']);
             }
 
-            $groups = \array_merge($groups, $attributes['groups']);
+            $groups = array_merge($groups, $attributes['groups']);
         }
 
         if (!empty($groups)) {
@@ -366,7 +383,7 @@ class Customers extends Singleton
             $isCompany = !empty($isCompany);
 
             $User->setCompanyStatus($isCompany);
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         $User->save();
@@ -403,7 +420,7 @@ class Customers extends Singleton
      * @throws QUI\Permissions\Exception
      * @throws QUI\Users\Exception
      */
-    protected function changeAddress(QUI\Users\User $User, array $attributes)
+    protected function changeAddress(QUI\Users\User $User, array $attributes): void
     {
         $Address = $User->getStandardAddress();
 
@@ -428,7 +445,7 @@ class Customers extends Singleton
 
         // tel, fax, mobile
         if (!empty($attributes['address-communication'])) {
-            $emails = \array_filter($attributes['address-communication'], function ($entry) {
+            $emails = array_filter($attributes['address-communication'], function ($entry) {
                 if (!isset($entry['type'])) {
                     return false;
                 }
@@ -439,7 +456,7 @@ class Customers extends Singleton
             $mailHasChanged = false;
 
             foreach ($emails as $entry) {
-                if (isset($entry['no']) && !empty($entry['no'])) {
+                if (!empty($entry['no'])) {
                     $Address->editMail(0, $entry['no']);
                     $mailHasChanged = true;
                 }
@@ -451,7 +468,7 @@ class Customers extends Singleton
             }
 
 
-            $phones = \array_filter($attributes['address-communication'], function ($entry) {
+            $phones = array_filter($attributes['address-communication'], function ($entry) {
                 if (!isset($entry['type'])) {
                     return false;
                 }
@@ -482,7 +499,7 @@ class Customers extends Singleton
      * @throws QUI\Permissions\Exception
      * @throws QUI\Users\Exception
      */
-    protected function saveDeliveryAddress(QUI\Users\User $User, $attributes)
+    protected function saveDeliveryAddress(QUI\Users\User $User, $attributes): void
     {
         // check if all is empty
         $isEmpty = true;
@@ -515,11 +532,11 @@ class Customers extends Singleton
         try {
             $addressId = $User->getAttribute('quiqqer.delivery.address');
             $Address = $User->getAddress($addressId);
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             // create one
-            $Address = $User->addAddress([]);
+            $Address = $User->addAddress();
 
-            $User->setAttribute('quiqqer.delivery.address', $Address->getId());
+            $User->setAttribute('quiqqer.delivery.address', $Address->getUUID());
         }
 
         foreach ($addressAttributes as $addressAttribute) {
@@ -543,7 +560,7 @@ class Customers extends Singleton
      *
      * @throws QUI\Exception
      */
-    public function addCommentToUser(QUI\Users\User $User, string $comment)
+    public function addCommentToUser(QUI\Users\User $User, string $comment): void
     {
         QUI\Permissions\Permission::checkPermission('quiqqer.customer.editComments');
 
@@ -575,11 +592,11 @@ class Customers extends Singleton
         $commentId,
         $commentSource,
         $message
-    ) {
+    ): void {
         QUI\Permissions\Permission::checkPermission('quiqqer.customer.editComments');
 
         $comments = $User->getAttribute('comments');
-        $comments = \json_decode($comments, true);
+        $comments = json_decode($comments, true);
 
         foreach ($comments as $key => $comment) {
             if (empty($comment['id']) || empty($comment['source'])) {
@@ -597,7 +614,7 @@ class Customers extends Singleton
             $comments[$key]['message'] = $message;
         }
 
-        $User->setAttribute('comments', \json_encode($comments));
+        $User->setAttribute('comments', json_encode($comments));
         $User->save();
     }
 
@@ -608,9 +625,9 @@ class Customers extends Singleton
     public function getUserComments(QUI\Users\User $User): QUI\ERP\Comments
     {
         $comments = $User->getAttribute('comments');
-        $comments = \json_decode($comments, true);
+        $comments = json_decode($comments, true);
 
-        if (\is_array($comments)) {
+        if (is_array($comments)) {
             $Comments = new QUI\ERP\Comments($comments);
         } else {
             $Comments = new QUI\ERP\Comments();

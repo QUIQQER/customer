@@ -5,6 +5,8 @@ namespace QUI\ERP\Customer;
 use QUI;
 use QUI\ERP\Api\NumberRangeInterface;
 
+use function preg_match_all;
+
 /**
  * Class NumberRange
  *
@@ -17,7 +19,7 @@ class NumberRange implements NumberRangeInterface
      *
      * @return string
      */
-    public function getTitle($Locale = null)
+    public function getTitle($Locale = null): string
     {
         if ($Locale === null) {
             $Locale = QUI::getLocale();
@@ -34,13 +36,13 @@ class NumberRange implements NumberRangeInterface
      *
      * Otherwise, it is determined by fetching the highest current customerId from database.
      *
-     * @return int|string
+     * @return int
      */
-    public function getRange()
+    public function getRange(): int
     {
         // Get from config
         try {
-            $Conf                     = QUI::getPackage('quiqqer/customer')->getConfig();
+            $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
             $nextCustomerNoFromConfig = $Conf->get('customer', 'nextCustomerNo');
 
             if (!empty($nextCustomerNoFromConfig)) {
@@ -52,8 +54,8 @@ class NumberRange implements NumberRangeInterface
 
         // Determine from current customer numbers in user table
         try {
-            $tbl    = QUI::getUsers()::table();
-            $sql    = "SELECT * FROM $tbl WHERE `customerId` REGEXP '.*[0-9]+$' ORDER BY cast(`customerId` as UNSIGNED) DESC LIMIT 1";
+            $tbl = QUI::getUsers()::table();
+            $sql = "SELECT * FROM $tbl WHERE `customerId` REGEXP '.*[0-9]+$' ORDER BY cast(`customerId` as UNSIGNED) DESC LIMIT 1";
             $result = QUI::getDataBase()->fetchSQL($sql);
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
@@ -64,7 +66,7 @@ class NumberRange implements NumberRangeInterface
             return 1;
         }
 
-        \preg_match_all('#([^\d]*)([0-9]+)#', $result[0]['customerId'], $matches);
+        preg_match_all('#([^\d]*)([0-9]+)#', $result[0]['customerId'], $matches);
         return (int)$matches[2][0] + 1;
     }
 
@@ -72,7 +74,7 @@ class NumberRange implements NumberRangeInterface
      * @param int $range
      * @return void
      */
-    public function setRange($range)
+    public function setRange(int $range): void
     {
         try {
             $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
@@ -88,7 +90,7 @@ class NumberRange implements NumberRangeInterface
      *
      * @return int|string
      */
-    public function getNextCustomerNo()
+    public function getNextCustomerNo(): int|string
     {
         return $this->getRange();
     }
@@ -101,7 +103,7 @@ class NumberRange implements NumberRangeInterface
     public function getCustomerNoPrefix(): string
     {
         try {
-            $Conf   = QUI::getPackage('quiqqer/customer')->getConfig();
+            $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
             $prefix = $Conf->get('customer', 'customerNoPrefix');
 
             if (!empty($prefix)) {

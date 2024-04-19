@@ -159,7 +159,7 @@ class Handler
 //                    'value' => \date('Y-m-d H:i:s')
 //                ],
                 'customer_id' => $User->getId(),
-                'type' => InvoiceHandler::TYPE_INVOICE
+                'type' => QUI\ERP\Constants::TYPE_INVOICE
             ]
         ]);
 
@@ -433,7 +433,7 @@ class Handler
             QUI::getDataBase()->delete(
                 self::getTable(),
                 [
-                    'userId' => $User->getId()
+                    'userId' => $User->getUUID()
                 ]
             );
 
@@ -451,7 +451,7 @@ class Handler
             QUI::getDataBase()->replace(
                 self::getTable(),
                 [
-                    'userId' => $User->getId(),
+                    'userId' => $User->getUUID(),
                     'customerId' => $customerId,
                     'net_sum' => $values['netTotal'],
                     'total_sum' => $values['sumTotal'],

@@ -16,14 +16,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
 
     'css!package/quiqqer/customer/bin/backend/controls/customer/Select.css'
 
-], function (QUIControl, QUIElementSelect, QUILocale, QUIAjax) {
-    "use strict";
+], function(QUIControl, QUIElementSelect, QUILocale, QUIAjax) {
+    'use strict';
 
     const lg = 'quiqqer/customer';
 
     /**
-     * @class package/quiqqer/customer/bin/backend/controls/customer/Select
-     *
      * @param {Object} options
      * @param {HTMLInputElement} [Input]  - (optional), if no input given, one would be created
      *
@@ -32,7 +30,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
     return new Class({
 
         Extends: QUIElementSelect,
-        Type   : 'package/quiqqer/customer/bin/backend/controls/customer/Select',
+        Type: 'package/quiqqer/customer/bin/backend/controls/customer/Select',
 
         Binds: [
             '$onSearchButtonClick',
@@ -43,7 +41,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
             showAddressName: true
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.parent(options);
 
             this.setAttribute('Search', this.userSearch);
@@ -57,7 +55,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
 
             this.addEvents({
                 onSearchButtonClick: this.$onSearchButtonClick,
-                onCreate           : () => {
+                onCreate: () => {
                     this.getElm().addClass('quiqqer-customer-select');
                 }
             });
@@ -69,19 +67,17 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
          * @param {String} value
          * @returns {Promise}
          */
-        userSearch: function (value) {
-            return new Promise(function (resolve) {
-                QUIAjax.get('package_quiqqer_customer_ajax_backend_search', function (result) {
-                    let i, len;
+        userSearch: function(value) {
+            return new Promise(function(resolve) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_search', function(result) {
+                    const data = [],
+                        userResult = result.data;
 
-                    const data       = [],
-                          userResult = result.data;
-
-                    for (i = 0, len = userResult.length; i < len; i++) {
+                    for (let i = 0, len = userResult.length; i < len; i++) {
                         data.push({
-                            id   : userResult[i].user_id,
+                            id: userResult[i].user_uuid,
                             title: userResult[i].username + ': ' + userResult[i].address_display,
-                            icon : 'fa fa fa-user-o'
+                            icon: 'fa fa fa-user-o'
                         });
                     }
 
@@ -91,9 +87,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
                     // search   : value,
                     fields: false,
                     params: JSON.encode({
-                        perPage     : 5,
+                        perPage: 5,
                         onlyCustomer: true,
-                        search      : value
+                        search: value
                     })
                 });
             });
@@ -105,24 +101,24 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
          * @param {Object} Select
          * @param {Object} Btn
          */
-        $onSearchButtonClick: function (Select, Btn) {
-            const self    = this,
-                  oldIcon = Btn.getAttribute('icon');
+        $onSearchButtonClick: function(Select, Btn) {
+            const self = this,
+                oldIcon = Btn.getAttribute('icon');
 
             Btn.setAttribute('icon', 'fa fa-spinner fa-spin');
             Btn.disable();
 
             require([
                 'package/quiqqer/customer/bin/backend/controls/AdministrationWindow'
-            ], function (Window) {
+            ], function(Window) {
                 new Window({
-                    autoclose     : true,
-                    multiple      : self.getAttribute('multiple'),
-                    search        : self.getAttribute('search'),
+                    autoclose: true,
+                    multiple: self.getAttribute('multiple'),
+                    search: self.getAttribute('search'),
                     searchSettings: self.getAttribute('searchSettings'),
-                    customerId    : self.getValue(),
-                    events        : {
-                        onSubmit: function (Win, userIds) {
+                    customerId: self.getValue(),
+                    events: {
+                        onSubmit: function(Win, userIds) {
                             for (let i = 0, len = userIds.length; i < len; i++) {
                                 self.addItem(userIds[i]);
                             }
