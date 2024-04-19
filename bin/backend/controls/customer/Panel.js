@@ -1214,7 +1214,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 }
 
                 let attributes = self.$User.getAttributes(),
-                    address = parseInt(attributes.address),
+                    address = attributes.address,
                     invoiceAddress = attributes['quiqqer.erp.address'],
                     deliveryAddress = attributes['quiqqer.delivery.address'];
 
@@ -1618,7 +1618,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 return;
             }
 
-            this.editAddress(parseInt(Select.value));
+            this.editAddress(Select.value);
         },
 
         /**
@@ -1701,10 +1701,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @param {Array} uids - user ids, which are deleted
          */
         $onUserDelete: function(Users, uids) {
-            const uid = parseInt(this.getAttribute('userId'));
+            const uid = this.getAttribute('userId');
 
             for (let i = 0, len = uids.length; i < len; i++) {
-                if (uid === parseInt(uids[i])) {
+                if (uid === uids[i]) {
                     this.destroy();
                     break;
                 }
