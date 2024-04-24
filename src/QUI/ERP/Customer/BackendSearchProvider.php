@@ -30,7 +30,7 @@ class BackendSearchProvider implements ProviderInterface
      * @param int $id
      * @inheritdoc
      */
-    public function getEntry($id)
+    public function getEntry(int $id)
     {
         return [
             'searchdata' => json_encode([
@@ -49,7 +49,7 @@ class BackendSearchProvider implements ProviderInterface
      * @param array $params
      * @return array
      */
-    public function search($search, $params = []): array
+    public function search(string $search, array $params = []): array
     {
         if (
             isset($params['filterGroups'])

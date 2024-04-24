@@ -26,7 +26,7 @@ class OutputProvider implements OutputProviderInterface
      *
      * @return string
      */
-    public static function getEntityType()
+    public static function getEntityType(): string
     {
         return 'OpenItemsList';
     }
@@ -34,10 +34,10 @@ class OutputProvider implements OutputProviderInterface
     /**
      * Get title for the output entity
      *
-     * @param Locale $Locale (optional) - If ommitted use \QUI::getLocale()
-     * @return mixed
+     * @param Locale|null $Locale $Locale (optional) - If ommitted use \QUI::getLocale()
+     * @return string
      */
-    public static function getEntityTypeTitle(Locale $Locale = null)
+    public static function getEntityTypeTitle(Locale $Locale = null): string
     {
         if (empty($Locale)) {
             $Locale = QUI::getLocale();
@@ -49,12 +49,12 @@ class OutputProvider implements OutputProviderInterface
     /**
      * Get the entity the output is created for
      *
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @return mixed
      *
      * @throws QUI\Exception
      */
-    public static function getEntity($entityId)
+    public static function getEntity(int|string $entityId): mixed
     {
         return QUI\ERP\User::convertUserToErpUser(QUI::getUsers()->get($entityId));
     }
@@ -62,12 +62,12 @@ class OutputProvider implements OutputProviderInterface
     /**
      * Get download filename (without file extension)
      *
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @return string
      *
      * @throws QUI\Exception
      */
-    public static function getDownloadFileName($entityId): string
+    public static function getDownloadFileName(int|string $entityId): string
     {
         /** @var QUI\ERP\User $ERPUser */
         $ERPUser = self::getEntity($entityId);
@@ -83,12 +83,12 @@ class OutputProvider implements OutputProviderInterface
     /**
      * Get output Locale by entity
      *
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @return Locale
      *
      * @throws QUI\Exception
      */
-    public static function getLocale($entityId)
+    public static function getLocale(int|string $entityId): Locale
     {
         /** @var User $ERPUser */
         $ERPUser = self::getEntity($entityId);
@@ -99,12 +99,12 @@ class OutputProvider implements OutputProviderInterface
     /**
      * Fill the OutputTemplate with appropriate entity data
      *
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @return array
      *
      * @throws QUI\Exception
      */
-    public static function getTemplateData($entityId): array
+    public static function getTemplateData(int|string $entityId): array
     {
         /** @var User $ERPUser */
         $ERPUser = self::getEntity($entityId);
@@ -124,11 +124,11 @@ class OutputProvider implements OutputProviderInterface
     /**
      * Checks if $User has permission to download the document of $entityId
      *
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @param User $User
      * @return bool
      */
-    public static function hasDownloadPermission($entityId, User $User)
+    public static function hasDownloadPermission(int|string $entityId, User $User): bool
     {
         if (!QUI::getUsers()->isAuth($User) || QUI::getUsers()->isNobodyUser($User)) {
             return false;
@@ -149,12 +149,12 @@ class OutputProvider implements OutputProviderInterface
     /**
      * Get e-mail address of the document recipient
      *
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @return string|false - E-Mail address or false if no e-mail address available
      *
      * @throws QUI\Exception
      */
-    public static function getEmailAddress($entityId)
+    public static function getEmailAddress(int|string $entityId): bool|string
     {
         /** @var User $ERPUser */
         $ERPUser = self::getEntity($entityId);
@@ -164,12 +164,12 @@ class OutputProvider implements OutputProviderInterface
     /**
      * Get e-mail subject when document is sent via mail
      *
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @return string
      *
      * @throws QUI\Exception
      */
-    public static function getMailSubject($entityId)
+    public static function getMailSubject(int|string $entityId): string
     {
         /** @var User $ERPUser */
         $ERPUser = self::getEntity($entityId);
@@ -183,12 +183,12 @@ class OutputProvider implements OutputProviderInterface
     /**
      * Get e-mail body when document is sent via mail
      *
-     * @param string|int $entityId
+     * @param int|string $entityId
      * @return string
      *
      * @throws QUI\Exception
      */
-    public static function getMailBody($entityId)
+    public static function getMailBody(int|string $entityId): string
     {
         /** @var User $ERPUser */
         $ERPUser = self::getEntity($entityId);
