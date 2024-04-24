@@ -17,9 +17,9 @@
   },
   "require": {
     "php": "^7|^8",
-    "quiqqer\/quiqqer": "^1.4|dev-master|dev-dev",
-    "quiqqer\/erp": "^2|^3|dev-master|dev-dev",
-    "quiqqer/user-downloads": "^1|dev-master|dev-dev"
+    "quiqqer\/quiqqer": "^2",
+    "quiqqer\/erp": "^3.2",
+    "quiqqer/user-downloads": "^1"
   },
   "autoload": {
     "psr-4": {
