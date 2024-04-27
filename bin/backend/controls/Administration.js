@@ -345,10 +345,11 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
          */
         $onInject: function() {
             const self = this;
+            const customerId = this.getAttribute('customerId');
 
             this.$Grid.disable();
 
-            if (this.getAttribute('customerId')) {
+            if (customerId && customerId !== '0') {
                 this.$openCustomer(this.getAttribute('customerId'));
             } else {
                 if (this.isInWindow() && this.$SearchInput) {
