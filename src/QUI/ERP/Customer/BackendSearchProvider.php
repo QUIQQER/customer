@@ -21,7 +21,7 @@ class BackendSearchProvider implements ProviderInterface
     /**
      * @inheritdoc
      */
-    public function buildCache()
+    public function buildCache(): void
     {
         // customers are searched live
     }
@@ -30,13 +30,13 @@ class BackendSearchProvider implements ProviderInterface
      * @param int $id
      * @inheritdoc
      */
-    public function getEntry(int $id)
+    public function getEntry(int $id): array
     {
         return [
             'searchdata' => json_encode([
                 'require' => 'package/quiqqer/customer/bin/backend/controls/customer/Panel',
                 'params' => [
-                    'userId' => (int)$id
+                    'userId' => $id
                 ]
             ])
         ];
