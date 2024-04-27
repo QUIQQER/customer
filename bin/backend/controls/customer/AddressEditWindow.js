@@ -11,13 +11,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow
 
     'css!package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow.css'
 
-], function (QUI, QUIConfirm, AddressEdit, QUILocale) {
-    "use strict";
+], function(QUI, QUIConfirm, AddressEdit, QUILocale) {
+    'use strict';
 
     return new Class({
 
         Extends: QUIConfirm,
-        Type   : 'package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow',
+        Type: 'package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow',
 
         Binds: [
             '$onOpen'
@@ -26,12 +26,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow
         options: {
             addressId: false,
             maxHeight: 700,
-            maxWidth : 600,
+            maxWidth: 600,
             autoclose: false,
-            icon     : 'fa fa-share'
+            icon: 'fa fa-share'
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.parent(options);
 
             this.addEvents({
@@ -42,7 +42,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow
         /**
          * event: on open
          */
-        $onOpen: function () {
+        $onOpen: function() {
             const self = this;
 
             this.Loader.show();
@@ -51,12 +51,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow
 
             this.$Address = new AddressEdit({
                 addressId: this.getAttribute('addressId'),
-                events   : {
-                    onLoad: function () {
+                events: {
+                    onLoad: function() {
                         self.setAttribute('title', QUILocale.get('quiqqer/customer', 'address.edit.window.title', {
-                            id       : self.$Address.getAddressId(),
+                            id: self.$Address.getAddressId(),
                             firstname: self.$Address.getFirstname(),
-                            lastname : self.$Address.getLastname()
+                            lastname: self.$Address.getLastname()
                         }));
 
                         self.refresh();
@@ -71,12 +71,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow
         /**
          * submit
          */
-        submit: function () {
+        submit: function() {
             const self = this;
 
             this.Loader.show();
 
-            this.$Address.update().then(function () {
+            this.$Address.update().then(function() {
                 self.fireEvent('submit', [self]);
                 self.close();
             });

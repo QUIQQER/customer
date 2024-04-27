@@ -23,16 +23,17 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
     'css!package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems.css',
     'css!package/quiqqer/erp/bin/backend/payment-status.css'
 
-], function (QUIPanel, QUIButton, QUIContextMenuItem, Grid, AddPaymentWindow, QUILocale, QUIAjax, Mustache,
-    templateTotal, templateUserRecords) {
-    "use strict";
+], function(QUIPanel, QUIButton, QUIContextMenuItem, Grid, AddPaymentWindow, QUILocale, QUIAjax, Mustache,
+    templateTotal, templateUserRecords
+) {
+    'use strict';
 
     var lg = 'quiqqer/customer';
 
     return new Class({
 
         Extends: QUIPanel,
-        Type   : 'package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems',
+        Type: 'package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems',
 
         Binds: [
             'refresh',
@@ -58,29 +59,29 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             '$onGridDblClick'
         ],
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.setAttributes({
-                icon : 'fa fa-money',
+                icon: 'fa fa-money',
                 title: QUILocale.get(lg, 'panels.OpenItems.title')
             });
 
             this.parent(options);
 
-            this.$Grid     = null;
-            this.$Total    = null;
-            this.$Search   = null;
+            this.$Grid = null;
+            this.$Total = null;
+            this.$Search = null;
             this.$Currency = null;
 
             this.$currentSearch = '';
-            this.$searchDelay   = null;
-            this.$periodFilter  = null;
-            this.$loaded        = false;
+            this.$searchDelay = null;
+            this.$periodFilter = null;
+            this.$loaded = false;
 
-            this.$GridDetails              = null;
-            this.$currentRecordsUserId     = false;
-            this.$UserRecordsSearch        = null;
+            this.$GridDetails = null;
+            this.$currentRecordsUserId = false;
+            this.$UserRecordsSearch = null;
             this.$currentUserRecordsSearch = '';
-            this.$refreshTotalsOnly        = false;
+            this.$refreshTotalsOnly = false;
 
             this.addEvents({
                 onCreate: this.$onCreate,
@@ -93,7 +94,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
         /**
          * Refresh the grid
          */
-        refresh: function () {
+        refresh: function() {
             var self = this;
 
             this.Loader.show();
@@ -109,15 +110,15 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             this.showTotal();
 
             this.$search({
-                perPage : this.$Grid.options.perPage,
-                page    : this.$Grid.options.page,
-                sortBy  : this.$Grid.options.sortBy,
-                sortOn  : sortOn,
-                search  : this.$currentSearch,
+                perPage: this.$Grid.options.perPage,
+                page: this.$Grid.options.page,
+                sortBy: this.$Grid.options.sortBy,
+                sortOn: sortOn,
+                search: this.$currentSearch,
                 currency: this.$Currency.getAttribute('value')
-            }).then(function (result) {
+            }).then(function(result) {
                 if (!this.$refreshTotalsOnly) {
-                    result.grid.data = result.grid.data.map(function (entry) {
+                    result.grid.data = result.grid.data.map(function(entry) {
                         return self.$parseGridRow(entry);
                     });
 
@@ -128,11 +129,11 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 this.$Total.set(
                     'html',
                     Mustache.render(templateTotal, Object.merge({}, result.totals, {
-                        headerNet  : QUILocale.get(lg, 'panel.OpenItems.grid.net'),
-                        headerVat  : QUILocale.get(lg, 'panel.OpenItems.grid.vat'),
+                        headerNet: QUILocale.get(lg, 'panel.OpenItems.grid.net'),
+                        headerVat: QUILocale.get(lg, 'panel.OpenItems.grid.vat'),
                         headerGross: QUILocale.get(lg, 'panel.OpenItems.grid.gross'),
-                        headerPaid : QUILocale.get(lg, 'panel.OpenItems.grid.paid'),
-                        headerOpen : QUILocale.get(lg, 'panel.OpenItems.grid.open')
+                        headerPaid: QUILocale.get(lg, 'panel.OpenItems.grid.paid'),
+                        headerOpen: QUILocale.get(lg, 'panel.OpenItems.grid.open')
                     }))
                 );
 
@@ -143,7 +144,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 this.$refreshTotalsOnly = false;
 
                 this.Loader.hide();
-            }.bind(this)).catch(function (err) {
+            }.bind(this)).catch(function(err) {
                 console.error(err);
                 this.Loader.hide();
             }.bind(this));
@@ -155,12 +156,12 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          * @param {Number} userId
          * @return {Promise}
          */
-        $refreshUserEntry: function (userId) {
+        $refreshUserEntry: function(userId) {
             var self = this;
 
             return this.$search({
                 userId: userId
-            }).then(function (result) {
+            }).then(function(result) {
                 var entries = self.$Grid.getData();
 
                 for (var i = 0, len = entries.length; i < len; i++) {
@@ -179,7 +180,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
                 this.$refreshTotalsOnly = true;
                 this.refresh();
-            }.bind(this)).catch(function (err) {
+            }.bind(this)).catch(function(err) {
                 console.error(err);
                 this.Loader.hide();
             }.bind(this));
@@ -189,15 +190,15 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          * refresh the button status
          * disabled or enabled
          */
-        $refreshButtonStatus: function () {
+        $refreshButtonStatus: function() {
             if (!this.$Grid) {
                 return;
             }
 
             var selected = this.$Grid.getSelectedData(),
-                buttons  = this.$Grid.getButtons();
+                buttons = this.$Grid.getButtons();
 
-            var PDF = buttons.filter(function (Button) {
+            var PDF = buttons.filter(function(Button) {
                 return Button.getAttribute('name') === 'showOpenItemsList';
             })[0];
 
@@ -212,16 +213,16 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
         /**
          * event : on create
          */
-        $onCreate: function () {
+        $onCreate: function() {
             var self = this;
 
             // currency
             this.$Currency = new QUIButton({
-                name     : 'currency',
-                disabled : true,
+                name: 'currency',
+                disabled: true,
                 showIcons: false,
-                events   : {
-                    onChange: function (Menu, Item) {
+                events: {
+                    onChange: function(Menu, Item) {
                         self.$Currency.setAttribute('value', Item.getAttribute('value'));
                         self.$Currency.setAttribute('text', Item.getAttribute('value'));
                         self.refresh();
@@ -232,24 +233,24 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             this.addButton(this.$Currency);
 
             this.$Search = new Element('input', {
-                type       : 'search',
-                name       : 'search-value',
+                type: 'search',
+                name: 'search-value',
                 placeholder: QUILocale.get(lg, 'panels.OpenItems.search.placeholder'),
-                styles     : {
+                styles: {
                     'float': 'right',
-                    margin : '10px 0 0 0',
-                    width  : 200
+                    margin: '10px 0 0 0',
+                    width: 200
                 },
-                events     : {
-                    keyup : this.$onSearchKeyUp,
+                events: {
+                    keyup: this.$onSearchKeyUp,
                     search: this.$onSearchKeyUp,
-                    click : this.$onSearchKeyUp
+                    click: this.$onSearchKeyUp
                 }
             });
 
             this.addButton({
-                name  : 'search',
-                icon  : 'fa fa-search',
+                name: 'search',
+                icon: 'fa fa-search',
                 styles: {
                     'float': 'right'
                 },
@@ -262,98 +263,102 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
             // Grid
             this.getContent().setStyles({
-                padding : 10,
+                padding: 10,
                 position: 'relative'
             });
 
             var Container = new Element('div').inject(this.getContent());
 
             this.$Grid = new Grid(Container, {
-                pagination           : true,
-                serverSort           : true,
-                accordion            : true,
-                autoSectionToggle    : true,
-                openAccordionOnClick : false,
-                toggleiconTitle      : QUILocale.get(lg, 'panels.OpenItems.grid.toggle_title'),
+                pagination: true,
+                serverSort: true,
+                accordion: true,
+                autoSectionToggle: true,
+                openAccordionOnClick: false,
+                toggleiconTitle: QUILocale.get(lg, 'panels.OpenItems.grid.toggle_title'),
                 accordionLiveRenderer: this.$onClickOpenUserRecords,
-                exportData           : true,
-                exportTypes          : {
-                    csv : true,
+                exportData: true,
+                exportTypes: {
+                    csv: true,
                     json: true
                 },
-                buttons              : [{
-                    name     : 'showOpenItemsList',
-                    text     : QUILocale.get(lg, 'panels.OpenItems.btn.showOpenItemsList'),
-                    textimage: 'fa fa-print',
-                    disabled : true,
-                    events   : {
-                        onClick: this.$onClickShowOpenItemsList
+                buttons: [
+                    {
+                        name: 'showOpenItemsList',
+                        text: QUILocale.get(lg, 'panels.OpenItems.btn.showOpenItemsList'),
+                        textimage: 'fa fa-print',
+                        disabled: true,
+                        events: {
+                            onClick: this.$onClickShowOpenItemsList
+                        }
                     }
-                }],
-                columnModel          : [{
-                    header         : '&nbsp;',
-                    dataIndex      : 'opener',
-                    dataType       : 'int',
-                    width          : 30,
-                    showNotInExport: true,
-                    export         : false
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.userId'),
-                    dataIndex: 'customerId',
-                    dataType : 'string',
-                    width    : 150
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.customerName'),
-                    dataIndex: 'customer_name',
-                    dataType : 'integer',
-                    width    : 200,
-                    className: 'clickable'
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.openItemsCount'),
-                    dataIndex: 'open_items_count',
-                    dataType : 'integer',
-                    width    : 100
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.net'),
-                    dataIndex: 'display_net_sum',
-                    dataType : 'string',
-                    width    : 100,
-                    className: 'payment-status-amountCell'
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.vat'),
-                    dataIndex: 'display_vat_sum',
-                    dataType : 'string',
-                    width    : 100,
-                    className: 'payment-status-amountCell'
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.gross'),
-                    dataIndex: 'display_total_sum',
-                    dataType : 'string',
-                    width    : 100,
-                    className: 'payment-status-amountCell'
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.paid'),
-                    dataIndex: 'display_paid_sum',
-                    dataType : 'string',
-                    width    : 100,
-                    className: 'payment-status-amountCell'
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.open'),
-                    dataIndex: 'display_open_sum',
-                    dataType : 'string',
-                    width    : 100,
-                    className: 'payment-status-amountCell'
-                }, {
-                    dataIndex: 'userId',
-                    dataType : 'integer',
-                    hidden   : true
-                }]
+                ],
+                columnModel: [
+                    {
+                        header: '&nbsp;',
+                        dataIndex: 'opener',
+                        dataType: 'int',
+                        width: 30,
+                        showNotInExport: true,
+                        export: false
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.userId'),
+                        dataIndex: 'customerId',
+                        dataType: 'string',
+                        width: 150
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.customerName'),
+                        dataIndex: 'customer_name',
+                        dataType: 'integer',
+                        width: 200,
+                        className: 'clickable'
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.openItemsCount'),
+                        dataIndex: 'open_items_count',
+                        dataType: 'integer',
+                        width: 100
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.net'),
+                        dataIndex: 'display_net_sum',
+                        dataType: 'string',
+                        width: 100,
+                        className: 'payment-status-amountCell'
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.vat'),
+                        dataIndex: 'display_vat_sum',
+                        dataType: 'string',
+                        width: 100,
+                        className: 'payment-status-amountCell'
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.gross'),
+                        dataIndex: 'display_total_sum',
+                        dataType: 'string',
+                        width: 100,
+                        className: 'payment-status-amountCell'
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.paid'),
+                        dataIndex: 'display_paid_sum',
+                        dataType: 'string',
+                        width: 100,
+                        className: 'payment-status-amountCell'
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.open'),
+                        dataIndex: 'display_open_sum',
+                        dataType: 'string',
+                        width: 100,
+                        className: 'payment-status-amountCell'
+                    }, {
+                        dataIndex: 'userId',
+                        dataType: 'integer',
+                        hidden: true
+                    }
+                ]
             });
 
             this.$Grid.addEvents({
-                onRefresh : this.refresh,
-                onClick   : this.$refreshButtonStatus,
-                onDblClick: function (data) {
+                onRefresh: this.refresh,
+                onClick: this.$refreshButtonStatus,
+                onDblClick: function(data) {
                     self.$onGridDblClick(data, self.$Grid);
                 }
             });
@@ -369,7 +374,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          * @param {object} data - cell data
          * @param {Object} Grid
          */
-        $onGridDblClick: function (data, Grid) {
+        $onGridDblClick: function(data, Grid) {
             if (typeof data === 'undefined' || typeof data.cell === 'undefined') {
                 return Promise.resolve();
             }
@@ -380,9 +385,9 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 return Promise.resolve();
             }
 
-            var self     = this,
-                Cell     = data.cell,
-                rowData  = Grid.getDataByRow(data.row),
+            var self = this,
+                Cell = data.cell,
+                rowData = Grid.getDataByRow(data.row),
                 position = Cell.getPosition();
 
             switch (Cell.get('data-index')) {
@@ -390,10 +395,10 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     require([
                         'qui/controls/contextmenu/Menu',
                         'qui/controls/contextmenu/Item'
-                    ], function (QUIMenu, QUIMenuItem) {
+                    ], function(QUIMenu, QUIMenuItem) {
                         var Menu = new QUIMenu({
                             events: {
-                                onBlur: function () {
+                                onBlur: function() {
                                     Menu.hide();
                                     Menu.destroy();
                                 }
@@ -402,10 +407,10 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
                         Menu.appendChild(
                             new QUIMenuItem({
-                                icon  : 'fa fa-list-ul',
-                                text  : QUILocale.get(lg, 'panel.OpenItems.grid.openOpenPositions'),
+                                icon: 'fa fa-list-ul',
+                                text: QUILocale.get(lg, 'panel.OpenItems.grid.openOpenPositions'),
                                 events: {
-                                    onClick: function () {
+                                    onClick: function() {
                                         self.$Grid.accordianOpen(data.element);
                                     }
                                 }
@@ -414,13 +419,16 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
                         Menu.appendChild(
                             new QUIMenuItem({
-                                icon  : 'fa fa-user-o',
-                                text  : QUILocale.get(lg, 'panel.OpenItems.grid.openCustomer'),
+                                icon: 'fa fa-user-o',
+                                text: QUILocale.get(lg, 'panel.OpenItems.grid.openCustomer'),
                                 events: {
-                                    onClick: function () {
-                                        require(['package/quiqqer/customer/bin/backend/Handler'], function (CustomerHandler) {
-                                            CustomerHandler.openCustomer(rowData.userId);
-                                        });
+                                    onClick: function() {
+                                        require(
+                                            ['package/quiqqer/customer/bin/backend/Handler'],
+                                            function(CustomerHandler) {
+                                                CustomerHandler.openCustomer(rowData.userId);
+                                            }
+                                        );
                                     }
                                 }
                             })
@@ -442,7 +450,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
         /**
          * event : on resize
          */
-        $onResize: function () {
+        $onResize: function() {
             if (!this.$Grid) {
                 return;
             }
@@ -462,7 +470,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
         /**
          * event: on inject
          */
-        $onInject: function () {
+        $onInject: function() {
             var self = this;
 
             this.$loaded = true;
@@ -470,7 +478,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             QUIAjax.get([
                 'package_quiqqer_currency_ajax_getAllowedCurrencies',
                 'package_quiqqer_currency_ajax_getDefault'
-            ], function (currencies, currency) {
+            ], function(currencies, currency) {
                 var i, len, entry, text;
 
                 if (!currencies.length) {
@@ -487,9 +495,9 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
                     self.$Currency.appendChild(
                         new QUIContextMenuItem({
-                            name : entry.code,
+                            name: entry.code,
                             value: entry.code,
-                            text : text
+                            text: text
                         })
                     );
                 }
@@ -503,7 +511,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 'package': 'quiqqer/currency'
             });
 
-            this.$Currency.getContextMenu(function (ContextMenu) {
+            this.$Currency.getContextMenu(function(ContextMenu) {
                 ContextMenu.setAttribute('showIcons', false);
             });
         },
@@ -513,8 +521,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
         /**
          * event : on PDF Export button click
          */
-        $onClickShowOpenItemsList: function () {
-            var self         = this;
+        $onClickShowOpenItemsList: function() {
+            var self = this;
             var selectedData = this.$Grid.getSelectedData();
 
             if (!selectedData.length) {
@@ -525,12 +533,12 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
             require([
                 'package/quiqqer/erp/bin/backend/controls/OutputDialog'
-            ], function (OutputDialog) {
+            ], function(OutputDialog) {
                 new OutputDialog({
-                    entityId  : selectedData[0].userId,
+                    entityId: selectedData[0].userId,
                     entityType: 'OpenItemsList',
-                    events    : {
-                        onOpen: function () {
+                    events: {
+                        onOpen: function() {
                             self.Loader.hide();
                         }
                     }
@@ -544,7 +552,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          * @param {object} data - cell data
          * @return {Promise}
          */
-        $onClickOpenProcess: function (data) {
+        $onClickOpenProcess: function(data) {
             // @todo auf Lieferanten ummünzen
 
             if (typeof data !== 'undefined' &&
@@ -552,19 +560,19 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 (data.cell.get('data-index') === 'customer_id' ||
                     data.cell.get('data-index') === 'customer_name')) {
 
-                var self     = this,
-                    Cell     = data.cell,
+                var self = this,
+                    Cell = data.cell,
                     position = Cell.getPosition(),
-                    rowData  = this.$Grid.getDataByRow(data.row);
+                    rowData = this.$Grid.getDataByRow(data.row);
 
-                return new Promise(function (resolve) {
+                return new Promise(function(resolve) {
                     require([
                         'qui/controls/contextmenu/Menu',
                         'qui/controls/contextmenu/Item'
-                    ], function (QUIMenu, QUIMenuItem) {
+                    ], function(QUIMenu, QUIMenuItem) {
                         var Menu = new QUIMenu({
                             events: {
-                                onBlur: function () {
+                                onBlur: function() {
                                     Menu.hide();
                                     Menu.destroy();
                                 }
@@ -573,10 +581,10 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
                         Menu.appendChild(
                             new QUIMenuItem({
-                                icon  : rowData.display_type.className,
-                                text  : QUILocale.get(lg, 'panels.OpenItems.contextMenu.open.process'),
+                                icon: rowData.display_type.className,
+                                text: QUILocale.get(lg, 'panels.OpenItems.contextMenu.open.process'),
                                 events: {
-                                    onClick: function () {
+                                    onClick: function() {
                                         self.openProcess(rowData.hash);
                                     }
                                 }
@@ -585,13 +593,16 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
                         Menu.appendChild(
                             new QUIMenuItem({
-                                icon  : 'fa fa-user-o',
-                                text  : QUILocale.get(lg, 'panels.OpenItems.contextMenu.open.user'),
+                                icon: 'fa fa-user-o',
+                                text: QUILocale.get(lg, 'panels.OpenItems.contextMenu.open.user'),
                                 events: {
-                                    onClick: function () {
-                                        require(['package/quiqqer/customer/bin/backend/Handler'], function (CustomerHandler) {
-                                            CustomerHandler.openCustomer(rowData.customer_id);
-                                        });
+                                    onClick: function() {
+                                        require(
+                                            ['package/quiqqer/customer/bin/backend/Handler'],
+                                            function(CustomerHandler) {
+                                                CustomerHandler.openCustomer(rowData.customer_id);
+                                            }
+                                        );
                                     }
                                 }
                             })
@@ -625,15 +636,15 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          * @param {Number} processId - ID of the process
          * @return {Promise}
          */
-        openProcess: function (processId) {
-            return new Promise(function (resolve) {
+        openProcess: function(processId) {
+            return new Promise(function(resolve) {
                 require([
                     'package/quiqqer/customer/bin/backend/controls/OpenItems/Process',
                     'utils/Panels'
-                ], function (ProcessPanel, PanelUtils) {
+                ], function(ProcessPanel, PanelUtils) {
                     var Panel = new ProcessPanel({
                         processId: processId,
-                        '#id'    : 'process-' + processId
+                        '#id': 'process-' + processId
                     });
 
                     PanelUtils.openPanelInTasks(Panel);
@@ -648,11 +659,11 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          * @param {String|Number} processId
          * @return {Promise}
          */
-        openTemporaryProcess: function (processId) {
-            return new Promise(function (resolve) {
+        openTemporaryProcess: function(processId) {
+            return new Promise(function(resolve) {
                 require([
                     'package/quiqqer/customer/bin/backend/utils/Panels'
-                ], function (PanelUtils) {
+                ], function(PanelUtils) {
                     PanelUtils.openTemporaryProcess(processId).then(resolve);
                 });
             });
@@ -663,7 +674,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          *
          * @param {DOMEvent} event
          */
-        $onSearchKeyUp: function (event) {
+        $onSearchKeyUp: function(event) {
             if (event.key === 'up' ||
                 event.key === 'down' ||
                 event.key === 'left' ||
@@ -677,9 +688,9 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
             if (event.type === 'click') {
                 // workaround, cancel needs time to clear
-                (function () {
+                (function() {
                     if (this.$currentSearch !== this.$Search.value) {
-                        this.$searchDelay = (function () {
+                        this.$searchDelay = (function() {
                             this.refresh();
                         }).delay(250, this);
                     }
@@ -691,7 +702,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             }
 
             if (event.key === 'enter') {
-                this.$searchDelay = (function () {
+                this.$searchDelay = (function() {
                     this.refresh();
                 }).delay(250, this);
                 return;
@@ -704,7 +715,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          * @param {Object} Data
          * @return {Object}
          */
-        $parseGridRow: function (Data) {
+        $parseGridRow: function(Data) {
             Data.opener = '&nbsp;';
 
             if (Data.overdue) {
@@ -713,10 +724,10 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
             Data.statusBox = new Element('span', {
                 'class': 'processing-status',
-                html   : Data.status_title,
-                styles : {
+                html: Data.status_title,
+                styles: {
                     'border-color': Data.status_color,
-                    color         : Data.status_color
+                    color: Data.status_color
                 }
             });
 
@@ -729,12 +740,12 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          * @param {Object} SearchParams
          * @return {Promise}
          */
-        $search: function (SearchParams) {
-            return new Promise(function (resolve, reject) {
+        $search: function(SearchParams) {
+            return new Promise(function(resolve, reject) {
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_OpenItemsList_search', resolve, {
-                    'package'   : 'quiqqer/customer',
+                    'package': 'quiqqer/customer',
                     searchParams: JSON.encode(SearchParams),
-                    onError     : reject
+                    onError: reject
                 });
             });
         },
@@ -746,9 +757,9 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          *
          * @param {Object} data
          */
-        $onClickOpenUserRecords: function (data) {
-            var self       = this,
-                Row        = self.$Grid.getDataByRow(data.row),
+        $onClickOpenUserRecords: function(data) {
+            var self = this,
+                Row = self.$Grid.getDataByRow(data.row),
                 ParentNode = data.parent;
 
             if (Row.userId === this.$currentRecordsUserId) {
@@ -770,145 +781,149 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             }
 
             this.$GridDetails = new Grid(GridParent, {
-                pagination          : true,
-                serverSort          : true,
-                accordion           : false,
-                autoSectionToggle   : false,
+                pagination: true,
+                serverSort: true,
+                accordion: false,
+                autoSectionToggle: false,
                 openAccordionOnClick: false,
-                toggleiconTitle     : '',
+                toggleiconTitle: '',
                 // @todo Export aktivieren?
                 //exportData          : true,
                 //exportTypes         : {
                 //    csv : 'CSV',
                 //    json: 'JSON'
                 //},
-                buttons    : [{
-                    name     : 'addTransaction',
-                    text     : QUILocale.get(lg, 'panels.OpenItems.details.btn.addTransaction'),
-                    textimage: 'fa fa-money',
-                    disabled : true,
-                    events   : {
-                        onClick: this.$onClickAddTransaction
+                buttons: [
+                    {
+                        name: 'addTransaction',
+                        text: QUILocale.get(lg, 'panels.OpenItems.details.btn.addTransaction'),
+                        textimage: 'fa fa-money',
+                        disabled: true,
+                        events: {
+                            onClick: this.$onClickAddTransaction
+                        }
+                    }, {
+                        name: 'open',
+                        text: QUILocale.get(lg, 'panels.OpenItems.details.btn.open'),
+                        textimage: 'fa fa-file-o',
+                        disabled: true,
+                        events: {
+                            onClick: this.$onClickOpenDocument
+                        }
                     }
-                }, {
-                    name     : 'open',
-                    text     : QUILocale.get(lg, 'panels.OpenItems.details.btn.open'),
-                    textimage: 'fa fa-file-o',
-                    disabled : true,
-                    events   : {
-                        onClick: this.$onClickOpenDocument
+                ],
+                columnModel: [
+                    {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.date'),
+                        dataIndex: 'date',
+                        dataType: 'string',
+                        width: 100
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.details.documentNo'),
+                        dataIndex: 'documentNo',
+                        dataType: 'string',
+                        width: 125
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.details.documentType'),
+                        dataIndex: 'documentTypeTitle',
+                        dataType: 'string',
+                        width: 85
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.net'),
+                        dataIndex: 'net',
+                        dataType: 'string',
+                        width: 100,
+                        className: 'payment-status-amountCell'
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.vat'),
+                        dataIndex: 'vat',
+                        dataType: 'string',
+                        width: 100,
+                        className: 'payment-status-amountCell'
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.gross'),
+                        dataIndex: 'gross',
+                        dataType: 'string',
+                        width: 100,
+                        className: 'payment-status-amountCell'
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.paid'),
+                        dataIndex: 'paid',
+                        dataType: 'string',
+                        width: 100,
+                        className: 'payment-status-amountCell'
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.open'),
+                        dataIndex: 'open',
+                        dataType: 'string',
+                        width: 100,
+                        className: 'payment-status-amountCell'
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.details.daysOpen'),
+                        dataIndex: 'daysOpen',
+                        dataType: 'integer',
+                        width: 75
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.details.daysDue'),
+                        dataIndex: 'daysDue',
+                        dataType: 'integer',
+                        width: 75
+                    }, {
+                        header: QUILocale.get(lg, 'panel.OpenItems.grid.details.dunningLevel'),
+                        dataIndex: 'dunningLevel',
+                        dataType: 'integer',
+                        width: 75
+                    }, {
+                        dataIndex: 'documentType',
+                        dataType: 'string',
+                        hidden: true
+                    }, {
+                        dataIndex: 'documentId',
+                        dataType: 'string',
+                        hidden: true
+                    }, {
+                        dataIndex: 'hash',
+                        dataType: 'string',
+                        hidden: true
                     }
-                }],
-                columnModel: [{
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.date'),
-                    dataIndex: 'date',
-                    dataType : 'string',
-                    width    : 100
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.documentNo'),
-                    dataIndex: 'documentNo',
-                    dataType : 'string',
-                    width    : 125
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.documentType'),
-                    dataIndex: 'documentTypeTitle',
-                    dataType : 'string',
-                    width    : 85
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.net'),
-                    dataIndex: 'net',
-                    dataType : 'string',
-                    width    : 100,
-                    className: 'payment-status-amountCell'
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.vat'),
-                    dataIndex: 'vat',
-                    dataType : 'string',
-                    width    : 100,
-                    className: 'payment-status-amountCell'
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.gross'),
-                    dataIndex: 'gross',
-                    dataType : 'string',
-                    width    : 100,
-                    className: 'payment-status-amountCell'
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.paid'),
-                    dataIndex: 'paid',
-                    dataType : 'string',
-                    width    : 100,
-                    className: 'payment-status-amountCell'
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.open'),
-                    dataIndex: 'open',
-                    dataType : 'string',
-                    width    : 100,
-                    className: 'payment-status-amountCell'
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.daysOpen'),
-                    dataIndex: 'daysOpen',
-                    dataType : 'integer',
-                    width    : 75
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.daysDue'),
-                    dataIndex: 'daysDue',
-                    dataType : 'integer',
-                    width    : 75
-                }, {
-                    header   : QUILocale.get(lg, 'panel.OpenItems.grid.details.dunningLevel'),
-                    dataIndex: 'dunningLevel',
-                    dataType : 'integer',
-                    width    : 75
-                }, {
-                    dataIndex: 'documentType',
-                    dataType : 'string',
-                    hidden   : true
-                }, {
-                    dataIndex: 'documentId',
-                    dataType : 'string',
-                    hidden   : true
-                }, {
-                    dataIndex: 'hash',
-                    dataType : 'string',
-                    hidden   : true
-                }]
+                ]
             });
 
             var GridBtnBar = this.$GridDetails.getElm().getElement('.tDiv');
 
             new QUIButton({
-                name  : 'searchUserRecords',
-                icon  : 'fa fa-search',
+                name: 'searchUserRecords',
+                icon: 'fa fa-search',
                 styles: {
-                    float : 'right',
+                    float: 'right',
                     margin: 4
                 },
                 events: {
-                    onClick: function () {
+                    onClick: function() {
                         self.$refreshUserRecords(self.$GridDetails);
                     }
                 }
             }).inject(GridBtnBar);
 
             this.$UserRecordsSearch = new Element('input', {
-                'class'    : 'quiqqer-customer-openitems-userrecords-search',
-                'type'     : 'search',
-                placeholder: QUILocale.get(lg, 'panels.OpenItems.details.tpl.placeholderSearch'),
+                'class': 'quiqqer-customer-openitems-userrecords-search',
+                'type': 'search',
+                placeholder: QUILocale.get(lg, 'panels.OpenItems.details.tpl.placeholderSearch')
             }).inject(this.$GridDetails.getElm().getElement('.tDiv'));
 
             this.$UserRecordsSearch.addEvents({
-                keyup : this.$onUserRecordsSearchKeyUp,
+                keyup: this.$onUserRecordsSearchKeyUp,
                 search: this.$onUserRecordsSearchKeyUp,
-                click : this.$onUserRecordsSearchKeyUp
+                click: this.$onUserRecordsSearchKeyUp
             });
 
             this.$GridDetails.addEvents({
-                onRefresh : this.$refreshUserRecords,
-                onClick   : this.$refreshUserRecordsButtons,
+                onRefresh: this.$refreshUserRecords,
+                onClick: this.$refreshUserRecordsButtons,
                 onDblClick: this.$onClickAddTransaction
             });
 
-            this.$refreshUserRecords(this.$GridDetails, true).then(function () {
+            this.$refreshUserRecords(this.$GridDetails, true).then(function() {
                 var entries = self.$GridDetails.getData();
 
                 if (entries.length) {
@@ -921,19 +936,19 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
         /**
          * Refresh grid button status of user open items records details
          */
-        $refreshUserRecordsButtons: function () {
+        $refreshUserRecordsButtons: function() {
             if (!this.$GridDetails) {
                 return;
             }
 
             var selected = this.$GridDetails.getSelectedData(),
-                buttons  = this.$GridDetails.getButtons();
+                buttons = this.$GridDetails.getButtons();
 
-            var OpenDocument = buttons.filter(function (Button) {
+            var OpenDocument = buttons.filter(function(Button) {
                 return Button.getAttribute('name') === 'open';
             })[0];
 
-            var AddTransaction = buttons.filter(function (Button) {
+            var AddTransaction = buttons.filter(function(Button) {
                 return Button.getAttribute('name') === 'addTransaction';
             })[0];
 
@@ -950,8 +965,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
         /**
          * If the user clicks the "add transaction to open item record" button
          */
-        $onClickAddTransaction: function () {
-            var self     = this,
+        $onClickAddTransaction: function() {
+            var self = this,
                 selected = this.$GridDetails.getSelectedData();
 
             if (!selected.length) {
@@ -974,42 +989,42 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     return;
             }
 
-            const submitTransaction = function (Win, Data) {
+            const submitTransaction = function(Win, Data) {
                 Win.Loader.show();
 
                 switch (erpEntity) {
                     case 'Invoice':
-                        require(['package/quiqqer/invoice/bin/Invoices'], function (Invoices) {
+                        require(['package/quiqqer/invoice/bin/Invoices'], function(Invoices) {
                             Invoices.addPaymentToInvoice(
                                 Row.documentNo,
                                 Data.amount,
                                 Data.payment_method
-                            ).then(function () {
+                            ).then(function() {
                                 Win.close();
 
-                                self.$refreshUserEntry(self.$currentRecordsUserId).then(function () {
+                                self.$refreshUserEntry(self.$currentRecordsUserId).then(function() {
                                     self.$refreshUserRecords(self.$GridDetails, true);
                                 });
-                            }).catch(function (err) {
+                            }).catch(function(err) {
                                 Win.Loader.hide();
                             });
                         });
                         break;
 
                     case 'Order':
-                        require(['package/quiqqer/order/bin/backend/Orders'], function (Orders) {
+                        require(['package/quiqqer/order/bin/backend/Orders'], function(Orders) {
                             Orders.addPaymentToOrder(
                                 Row.documentId,
                                 Data.amount,
                                 Data.payment_method,
                                 Data.date
-                            ).then(function () {
+                            ).then(function() {
                                 Win.close();
 
-                                self.$refreshUserEntry(self.$currentRecordsUserId).then(function () {
+                                self.$refreshUserEntry(self.$currentRecordsUserId).then(function() {
                                     self.$refreshUserRecords(self.$GridDetails, true);
                                 });
-                            }).catch(function (err) {
+                            }).catch(function(err) {
                                 Win.Loader.hide();
                             });
                         });
@@ -1055,10 +1070,10 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             };
 
             new AddPaymentWindow({
-                entityId  : Row.documentNo,
+                entityId: Row.documentNo,
                 entityType: erpEntity,
-                events    : {
-                    onSubmit        : submitTransaction,
+                events: {
+                    onSubmit: submitTransaction,
                     onSubmitExisting: linkTransaction
                 }
             }).open();
@@ -1067,8 +1082,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
         /**
          * If the user clicks the "open open item record document" button
          */
-        $onClickOpenDocument: function () {
-            var self     = this,
+        $onClickOpenDocument: function() {
+            var self = this,
                 selected = this.$GridDetails.getSelectedData();
 
             if (!selected.length) {
@@ -1081,18 +1096,18 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 case 'invoice':
                     this.Loader.show();
 
-                    require(['package/quiqqer/invoice/bin/backend/utils/Panels'], function (InvoicePanels) {
-                        InvoicePanels.openInvoice(Row.documentNo).then(function () {
+                    require(['package/quiqqer/invoice/bin/backend/utils/Panels'], function(InvoicePanels) {
+                        InvoicePanels.openInvoice(Row.documentNo).then(function() {
                             self.Loader.hide();
                         });
                     });
                     break;
 
                 case 'order':
-                    require(['package/quiqqer/order/bin/backend/controls/panels/Orders'], function (Orders) {
+                    require(['package/quiqqer/order/bin/backend/controls/panels/Orders'], function(Orders) {
                         var Handler = new Orders();
 
-                        Handler.openOrder(Row.documentId).then(function () {
+                        Handler.openOrder(Row.documentId).then(function() {
                             self.Loader.hide();
                         });
                     });
@@ -1108,7 +1123,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          *
          * @param {DOMEvent} event
          */
-        $onUserRecordsSearchKeyUp: function (event) {
+        $onUserRecordsSearchKeyUp: function(event) {
             if (event.key === 'up' ||
                 event.key === 'down' ||
                 event.key === 'left' ||
@@ -1122,9 +1137,9 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
             if (event.type === 'click') {
                 // workaround, cancel needs time to clear
-                (function () {
+                (function() {
                     if (this.$UserRecordsSearch.value !== this.$currentUserRecordsSearch) {
-                        this.$searchDelay = (function () {
+                        this.$searchDelay = (function() {
                             this.$refreshUserRecords(this.$GridDetails);
                         }).delay(250, this);
                     }
@@ -1136,7 +1151,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             }
 
             if (event.key === 'enter') {
-                this.$searchDelay = (function () {
+                this.$searchDelay = (function() {
                     this.$refreshUserRecords(this.$GridDetails);
                 }).delay(250, this);
             }
@@ -1151,14 +1166,14 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          *
          * @return {Promise}
          */
-        $refreshUserRecords: function (Grid, forceRefresh) {
+        $refreshUserRecords: function(Grid, forceRefresh) {
             if (!this.$GridDetails) {
                 return;
             }
 
             forceRefresh = forceRefresh || false;
 
-            var self   = this;
+            var self = this;
             var sortOn = this.$GridDetails.options.sortOn;
 
             switch (sortOn) {
@@ -1178,13 +1193,13 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 this.$currentRecordsUserId,
                 {
                     perPage: this.$GridDetails.options.perPage,
-                    page   : this.$GridDetails.options.page,
-                    sortBy : this.$GridDetails.options.sortBy,
-                    sortOn : sortOn,
-                    search : this.$currentUserRecordsSearch
+                    page: this.$GridDetails.options.page,
+                    sortBy: this.$GridDetails.options.sortBy,
+                    sortOn: sortOn,
+                    search: this.$currentUserRecordsSearch
                 },
                 forceRefresh
-            ).then(function (result) {
+            ).then(function(result) {
                 self.$GridDetails.setData(result);
                 self.Loader.hide();
 
@@ -1200,14 +1215,14 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          * @param {Boolean} forceRefresh
          * @return {Promise}
          */
-        $getUserOpenItems: function (userId, SearchParams, forceRefresh) {
-            return new Promise(function (resolve, reject) {
+        $getUserOpenItems: function(userId, SearchParams, forceRefresh) {
+            return new Promise(function(resolve, reject) {
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_OpenItemsList_getUserOpenItems', resolve, {
-                    'package'   : 'quiqqer/customer',
-                    userId      : userId,
+                    'package': 'quiqqer/customer',
+                    userId: userId,
                     searchParams: JSON.encode(SearchParams),
                     forceRefresh: forceRefresh ? 1 : 0,
-                    onError     : reject
+                    onError: reject
                 });
             });
         },
@@ -1219,17 +1234,17 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
         /**
          * Show the total display
          */
-        showTotal: function () {
+        showTotal: function() {
             this.getContent().setStyle('overflow', 'hidden');
 
-            return new Promise(function (resolve) {
+            return new Promise(function(resolve) {
                 this.$Total.setStyles({
                     display: 'inline-block',
                     opacity: 0
                 });
 
                 moofx(this.$Total).animate({
-                    bottom : 1,
+                    bottom: 1,
                     opacity: 1
                 }, {
                     duration: 200,

@@ -154,7 +154,7 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationWindow', [
                         this,
                         ids
                     ]);
-                    
+
                     this.close();
                 });
 

@@ -9,39 +9,39 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationPanel', [
     'package/quiqqer/customer/bin/backend/controls/Administration',
     'Locale'
 
-], function (QUI, QUIPanel, Administration, QUILocale) {
-    "use strict";
+], function(QUI, QUIPanel, Administration, QUILocale) {
+    'use strict';
 
     var lg = 'quiqqer/customer';
 
     return new Class({
 
         Extends: QUIPanel,
-        Type   : 'package/quiqqer/customer/bin/backend/controls/AdministrationPanel',
+        Type: 'package/quiqqer/customer/bin/backend/controls/AdministrationPanel',
 
         Binds: [
             '$onInject'
         ],
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.parent(options);
 
             this.setAttributes({
                 title: QUILocale.get(lg, 'panel.title'),
-                icon : 'fa fa-user-o',
-                name : 'customer-administration'
+                icon: 'fa fa-user-o',
+                name: 'customer-administration'
             });
 
             this.addEvents({
-                onInject : this.$onInject,
-                onResize : function () {
+                onInject: this.$onInject,
+                onResize: function() {
                     if (this.$Administration) {
                         this.$Administration.resize();
                     }
 
                     this.Loader.hide();
                 }.bind(this),
-                onDestroy: function () {
+                onDestroy: function() {
                     if (this.$Administration) {
                         this.$Administration.destroy();
                     }
@@ -52,7 +52,7 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationPanel', [
         /**
          * Create the DOMNode element
          */
-        $onInject: function () {
+        $onInject: function() {
             var self = this;
 
             this.Loader.show();
@@ -60,14 +60,14 @@ define('package/quiqqer/customer/bin/backend/controls/AdministrationPanel', [
             this.getContent().setStyle('padding', 0);
 
             this.$Administration = new Administration({
-                editable          : false,
+                editable: false,
                 showEditableButton: true,
-                events            : {
-                    onRefreshBegin: function () {
+                events: {
+                    onRefreshBegin: function() {
                         self.Loader.show();
                     },
 
-                    onRefreshEnd: function () {
+                    onRefreshEnd: function() {
                         self.Loader.hide();
                     }
                 }

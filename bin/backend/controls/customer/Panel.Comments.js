@@ -13,15 +13,15 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
     'Ajax',
     'Locale'
 
-], function (QUI, QUIControl, QUIButton, QUIConfirm, Comments, Permissions, QUIAjax, QUILocale) {
-    "use strict";
+], function(QUI, QUIControl, QUIButton, QUIConfirm, Comments, Permissions, QUIAjax, QUILocale) {
+    'use strict';
 
     var lg = 'quiqqer/customer';
 
     return new Class({
 
         Extends: QUIControl,
-        Type   : 'package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments',
+        Type: 'package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments',
 
         Binds: [
             'addComment',
@@ -33,12 +33,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
             userId: false
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.parent(options);
 
-            this.$Comments         = null;
+            this.$Comments = null;
             this.$AddCommentButton = null;
-            this.$FilterInput      = null;
+            this.$FilterInput = null;
 
             this.$editComments = false;
 
@@ -52,7 +52,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
          *
          * @return {HTMLDivElement}
          */
-        create: function () {
+        create: function() {
             var self = this;
 
             this.$Elm = this.parent();
@@ -60,31 +60,31 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
 
             var Header = new Element('section', {
                 'class': 'quiqqer-customer-comments-header',
-                html   : '<div class="quiqqer-customer-comments-header-filter">' +
+                html: '<div class="quiqqer-customer-comments-header-filter">' +
                     '   <input type="text" name="filter" /> ' +
                     '</div>'
             }).inject(this.$Elm);
 
-            this.$FilterInput             = Header.getElement('[name="filter"]');
+            this.$FilterInput = Header.getElement('[name="filter"]');
             this.$FilterInput.placeholder = QUILocale.get(lg, 'window.add.comment.filter.placeholder');
 
-            this.$FilterInput.addEvent('keyup', function () {
+            this.$FilterInput.addEvent('keyup', function() {
                 if (typeof self.$timer !== 'undefined') {
                     clearTimeout(self.$timer);
                 }
 
-                self.$timer = (function () {
+                self.$timer = (function() {
                     self.$onFilter();
                 }).delay(200);
             });
 
             this.$AddCommentButton = new QUIButton({
                 textimage: 'fa fa-comment',
-                text     : QUILocale.get(lg, 'window.add.comment.button.text'),
-                styles   : {
+                text: QUILocale.get(lg, 'window.add.comment.button.text'),
+                styles: {
                     'float': 'right'
                 },
-                events   : {
+                events: {
                     onClick: this.addComment
                 }
             });
@@ -101,10 +101,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
         /**
          * event: on inject
          */
-        $onInject: function () {
+        $onInject: function() {
             var self = this;
 
-            Permissions.hasPermission('quiqqer.customer.editComments').then(function (editComments) {
+            Permissions.hasPermission('quiqqer.customer.editComments').then(function(editComments) {
                 self.$editComments = editComments;
 
                 if (!self.$editComments) {
@@ -112,7 +112,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
                 }
 
                 return self.refresh();
-            }).then(function () {
+            }).then(function() {
                 self.fireEvent('load', [self]);
             });
         },
@@ -122,8 +122,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
          *
          * @return {Promise}
          */
-        refresh: function (comments) {
-            var self    = this;
+        refresh: function(comments) {
+            var self = this;
             var Section = this.$Elm.getElement('.quiqqer-customer-comments-list');
 
             Section.set('html', '');
@@ -131,7 +131,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
             this.$Comments = new Comments(comments);
             this.$Comments.inject(Section);
             this.$Comments.addEvents({
-                onEdit: function (Instance, Comment, data) {
+                onEdit: function(Instance, Comment, data) {
                     self.editComment(data.id, data.source);
                 }
             });
@@ -143,7 +143,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
                 return Promise.resolve();
             }
 
-            return this.getComments().then(function (comments) {
+            return this.getComments().then(function(comments) {
                 //comments = comments.reverse();
                 self.$Comments.unserialize(comments);
             });
@@ -156,13 +156,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
          *
          * @return {Promise}
          */
-        getComments: function () {
+        getComments: function() {
             var self = this;
 
-            return new Promise(function (resolve) {
+            return new Promise(function(resolve) {
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getComments', resolve, {
                     'package': 'quiqqer/customer',
-                    uid      : self.getAttribute('userId')
+                    uid: self.getAttribute('userId')
                 });
             });
         },
@@ -170,41 +170,41 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
         /**
          * add a comment
          */
-        addComment: function () {
+        addComment: function() {
             var self = this;
 
             new QUIConfirm({
-                icon     : 'fa fa-comment',
-                title    : QUILocale.get(lg, 'window.add.comment.title'),
+                icon: 'fa fa-comment',
+                title: QUILocale.get(lg, 'window.add.comment.title'),
                 maxHeight: 400,
-                maxWidth : 700,
+                maxWidth: 700,
                 autoclose: false,
-                events   : {
-                    onOpen: function (Win) {
+                events: {
+                    onOpen: function(Win) {
                         Win.getContent().set('html', '');
 
                         var Textarea = new Element('textarea', {
                             styles: {
                                 height: '98%',
-                                width : '100%'
+                                width: '100%'
                             }
                         }).inject(Win.getContent());
 
                         Textarea.focus();
                     },
 
-                    onSubmit: function (Win) {
+                    onSubmit: function(Win) {
                         Win.Loader.show();
 
                         var comment = Win.getContent().getElement('textarea').value;
 
-                        QUIAjax.post('package_quiqqer_customer_ajax_backend_customer_addComment', function (comments) {
+                        QUIAjax.post('package_quiqqer_customer_ajax_backend_customer_addComment', function(comments) {
                             Win.close();
                             self.refresh(comments);
                         }, {
                             'package': 'quiqqer/customer',
-                            userId   : self.getAttribute('userId'),
-                            comment  : comment
+                            userId: self.getAttribute('userId'),
+                            comment: comment
                         });
                     }
                 }
@@ -217,53 +217,53 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
          * @param {String} commentId
          * @param {String} source
          */
-        editComment: function (commentId, source) {
+        editComment: function(commentId, source) {
             var self = this;
 
             new QUIConfirm({
-                icon     : 'fa fa-comment',
-                title    : QUILocale.get(lg, 'window.edit.comment.title'),
+                icon: 'fa fa-comment',
+                title: QUILocale.get(lg, 'window.edit.comment.title'),
                 maxHeight: 400,
-                maxWidth : 700,
+                maxWidth: 700,
                 autoclose: false,
-                events   : {
-                    onOpen: function (Win) {
+                events: {
+                    onOpen: function(Win) {
                         Win.Loader.show();
                         Win.getContent().set('html', '');
 
                         var Textarea = new Element('textarea', {
                             styles: {
                                 height: '98%',
-                                width : '100%'
+                                width: '100%'
                             }
                         }).inject(Win.getContent());
 
-                        QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getComment', function (comment) {
+                        QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getComment', function(comment) {
                             Textarea.value = comment;
                             Textarea.focus();
                             Win.Loader.hide();
                         }, {
                             'package': 'quiqqer/customer',
-                            userId   : self.getAttribute('userId'),
+                            userId: self.getAttribute('userId'),
                             commentId: commentId,
-                            source   : source
+                            source: source
                         });
                     },
 
-                    onSubmit: function (Win) {
+                    onSubmit: function(Win) {
                         Win.Loader.show();
 
                         var comment = Win.getContent().getElement('textarea').value;
 
-                        QUIAjax.post('package_quiqqer_customer_ajax_backend_customer_editComment', function (comments) {
+                        QUIAjax.post('package_quiqqer_customer_ajax_backend_customer_editComment', function(comments) {
                             Win.close();
                             self.refresh(comments);
                         }, {
                             'package': 'quiqqer/customer',
-                            userId   : self.getAttribute('userId'),
+                            userId: self.getAttribute('userId'),
                             commentId: commentId,
-                            source   : source,
-                            comment  : comment
+                            source: source,
+                            comment: comment
                         });
                     }
                 }
@@ -277,7 +277,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.Comments', 
         /**
          * event: on filter
          */
-        $onFilter: function () {
+        $onFilter: function() {
             if (!this.$Comments) {
                 return;
             }

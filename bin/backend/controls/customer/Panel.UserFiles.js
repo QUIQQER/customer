@@ -22,16 +22,16 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
 
     'css!package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles.css'
 
-], function (QUI, QUILoader, QUIButton, QUIPackages, QUIControl, QUIConfirm, Grid, QUIAjax, QUILocale, Users) {
-    "use strict";
+], function(QUI, QUILoader, QUIButton, QUIPackages, QUIControl, QUIConfirm, Grid, QUIAjax, QUILocale, Users) {
+    'use strict';
 
-    var lg        = 'quiqqer/customer';
+    var lg = 'quiqqer/customer';
     var lgQUIQQER = 'quiqqer/quiqqer';
 
     return new Class({
 
         Extends: QUIControl,
-        Type   : 'package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
+        Type: 'package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
 
         Binds: [
             '$onInject',
@@ -45,19 +45,19 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
         ],
 
         options: {
-            userId    : false,
+            userId: false,
             selectMode: false // files cannot be deleted or edited
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.parent(options);
 
             this.$permissions = null;
 
-            this.Loader                  = new QUILoader();
-            this.$GridParent             = null;
+            this.Loader = new QUILoader();
+            this.$GridParent = null;
             this.$userDownloadsInstalled = false;
-            this.$selectMode             = this.getAttribute('selectMode');
+            this.$selectMode = this.getAttribute('selectMode');
 
             this.addEvents({
                 onInject: this.$onInject
@@ -68,7 +68,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
          *
          * @return {Promise|Promise|Promise|Promise}
          */
-        resize: function () {
+        resize: function() {
             return Promise.all([
                 this.$Grid.setWidth(this.$Elm.getSize().x),
                 this.$Grid.setHeight(this.$Elm.getSize().y)
@@ -80,7 +80,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
          *
          * @return {HTMLDivElement}
          */
-        create: function () {
+        create: function() {
             this.$Elm = this.parent();
             this.$Elm.set('html', '');
             this.$Elm.set('data-quiid', this.getId());
@@ -105,65 +105,69 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
          *
          * @return {Promise}
          */
-        $buildGrid: function () {
+        $buildGrid: function() {
             return new Promise((resolve) => {
                 QUIPackages.isInstalled('quiqqer/user-downloads').then((isInstalled) => {
                     this.$userDownloadsInstalled = isInstalled;
 
-                    var buttons = [{
-                        name     : 'upload',
-                        text     : QUILocale.get(lg, 'customer.files.upload.button'),
-                        disabled : true,
-                        textimage: 'fa fa-upload',
-                        events   : {
-                            onClick: this.openUpload
+                    var buttons = [
+                        {
+                            name: 'upload',
+                            text: QUILocale.get(lg, 'customer.files.upload.button'),
+                            disabled: true,
+                            textimage: 'fa fa-upload',
+                            events: {
+                                onClick: this.openUpload
+                            }
                         }
-                    }];
+                    ];
 
-                    var columns = [{
-                        header   : QUILocale.get(lgQUIQQER, 'type'),
-                        dataIndex: 'icon_node',
-                        dataType : 'node',
-                        width    : 40
-                    }, {
-                        header   : QUILocale.get(lgQUIQQER, 'file'),
-                        dataIndex: 'basename',
-                        dataType : 'string',
-                        width    : 300
-                    }, {
-                        header   : QUILocale.get(lgQUIQQER, 'size'),
-                        dataIndex: 'filesize_formatted',
-                        dataType : 'string',
-                        width    : 100
-                    }, {
-                        header   : QUILocale.get(lg, 'window.customer.tbl.header.uploadTime'),
-                        dataIndex: 'uploadTime',
-                        dataType : 'string',
-                        width    : 100
-                    }];
+                    var columns = [
+                        {
+                            header: QUILocale.get(lgQUIQQER, 'type'),
+                            dataIndex: 'icon_node',
+                            dataType: 'node',
+                            width: 40
+                        }, {
+                            header: QUILocale.get(lgQUIQQER, 'file'),
+                            dataIndex: 'basename',
+                            dataType: 'string',
+                            width: 300
+                        }, {
+                            header: QUILocale.get(lgQUIQQER, 'size'),
+                            dataIndex: 'filesize_formatted',
+                            dataType: 'string',
+                            width: 100
+                        }, {
+                            header: QUILocale.get(lg, 'window.customer.tbl.header.uploadTime'),
+                            dataIndex: 'uploadTime',
+                            dataType: 'string',
+                            width: 100
+                        }
+                    ];
 
                     // Add edit options if not in select mode
                     if (!this.$selectMode) {
                         buttons.push({
-                            name     : 'delete',
-                            text     : QUILocale.get(lgQUIQQER, 'delete'),
-                            disabled : true,
+                            name: 'delete',
+                            text: QUILocale.get(lgQUIQQER, 'delete'),
+                            disabled: true,
                             textimage: 'fa fa-trash',
-                            events   : {
+                            events: {
                                 onClick: this.openDeleteDialog
                             }
                         });
 
                         columns.push({
-                            header   : QUILocale.get(lg, 'window.customer.upload.tbl.header.actions'),
+                            header: QUILocale.get(lg, 'window.customer.upload.tbl.header.actions'),
                             dataIndex: 'actions',
-                            dataType : 'node',
-                            width    : 250
+                            dataType: 'node',
+                            width: 250
                         });
                     }
 
                     this.$Grid = new Grid(this.$GridContainer, {
-                        buttons    : buttons,
+                        buttons: buttons,
                         columnModel: columns
                     });
 
@@ -191,7 +195,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
         /**
          * event: on inject
          */
-        $onInject: function () {
+        $onInject: function() {
             this.Loader.show();
 
             this.$buildGrid().then(() => {
@@ -205,7 +209,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
         /**
          * refresh the list
          */
-        refresh: function () {
+        refresh: function() {
             this.getPermissions().then((permissions) => {
                 if (permissions.fileUpload) {
                     this.$Grid.getButton('upload').enable();
@@ -214,7 +218,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_files_getList', (list) => {
                     for (let i = 0, len = list.length; i < len; i++) {
                         list[i].icon_node = new Element('img', {
-                            src   : list[i].icon,
+                            src: list[i].icon,
                             styles: {
                                 margin: '5px 0'
                             }
@@ -231,9 +235,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
                         list[i].actions = ButtonContainer;
 
                         new QUIButton({
-                            icon  : 'fa fa-download',
-                            title : QUILocale.get(lg, 'window.customer.upload.tbl.btn.download'),
-                            row   : list[i],
+                            icon: 'fa fa-download',
+                            title: QUILocale.get(lg, 'window.customer.upload.tbl.btn.download'),
+                            row: list[i],
                             events: {
                                 onClick: this.$onClickDownload
                             }
@@ -248,10 +252,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
 
                             new QUIButton({
                                 'class': btnClass,
-                                icon   : 'fa fa-user',
-                                title  : QUILocale.get(lg, 'window.customer.upload.tbl.btn.user_download'),
-                                row    : list[i],
-                                events : {
+                                icon: 'fa fa-user',
+                                title: QUILocale.get(lg, 'window.customer.upload.tbl.btn.user_download'),
+                                row: list[i],
+                                events: {
                                     onClick: this.$onClickUserDownload
                                 }
                             }).inject(ButtonContainer);
@@ -264,7 +268,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
 
                     this.fireEvent('load');
                 }, {
-                    'package' : 'quiqqer/customer',
+                    'package': 'quiqqer/customer',
                     customerId: this.getAttribute('userId')
                 });
             });
@@ -275,15 +279,15 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
          *
          * @return {Promise}
          */
-        getPermissions: function () {
+        getPermissions: function() {
             var self = this;
 
             if (self.$permissions !== null) {
                 return Promise.resolve(self.$permissions);
             }
 
-            return new Promise(function (resolve) {
-                QUIAjax.get('package_quiqqer_customer_ajax_backend_files_getPermissions', function (permissions) {
+            return new Promise(function(resolve) {
+                QUIAjax.get('package_quiqqer_customer_ajax_backend_files_getPermissions', function(permissions) {
                     self.$permissions = permissions;
                     resolve(self.$permissions);
                 }, {
@@ -295,35 +299,35 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
         /**
          * Open Upload Window
          */
-        openUpload: function () {
+        openUpload: function() {
             var self = this;
 
             new QUIConfirm({
-                title    : QUILocale.get(lg, 'window.customer.upload.title'),
-                icon     : 'fa fa-upload',
-                maxWidth : 600,
+                title: QUILocale.get(lg, 'window.customer.upload.title'),
+                icon: 'fa fa-upload',
+                maxWidth: 600,
                 maxHeight: 400,
                 autoclose: false,
-                events   : {
-                    onOpen: function (Win) {
+                events: {
+                    onOpen: function(Win) {
                         Win.getContent().set('html', '');
                         Win.Loader.show();
 
-                        require(['controls/upload/Form'], function (Form) {
+                        require(['controls/upload/Form'], function(Form) {
                             self.$Form = new Form({
                                 pauseAllowed: false,
-                                contextMenu : false,
-                                events      : {
-                                    onBegin: function () {
+                                contextMenu: false,
+                                events: {
+                                    onBegin: function() {
                                         Win.Loader.show();
                                     },
 
-                                    onComplete: function () {
+                                    onComplete: function() {
                                         self.refresh();
                                         Win.close();
                                     },
 
-                                    onDragenter: function (event) {
+                                    onDragenter: function(event) {
                                         event.stop();
                                     }
                                 }
@@ -337,7 +341,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
                         });
                     },
 
-                    onSubmit: function () {
+                    onSubmit: function() {
                         if (self.$Form.getFiles().length) {
                             self.$Form.submit();
                         }
@@ -349,21 +353,21 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
         /**
          * Open Delete Window
          */
-        openDeleteDialog: function () {
-            var self     = this,
+        openDeleteDialog: function() {
+            var self = this,
                 selected = this.$Grid.getSelectedData();
 
             new QUIConfirm({
-                icon       : 'fa fa-trash',
-                texticon   : 'fa fa-trash',
-                title      : QUILocale.get(lg, 'window.customer.delete.title'),
+                icon: 'fa fa-trash',
+                texticon: 'fa fa-trash',
+                title: QUILocale.get(lg, 'window.customer.delete.title'),
                 information: QUILocale.get(lg, 'window.customer.delete.information'),
-                text       : QUILocale.get(lg, 'window.customer.delete.text'),
-                maxWidth   : 600,
-                maxHeight  : 400,
-                autoclose  : false,
-                events     : {
-                    onOpen  : function (Win) {
+                text: QUILocale.get(lg, 'window.customer.delete.text'),
+                maxWidth: 600,
+                maxHeight: 400,
+                autoclose: false,
+                events: {
+                    onOpen: function(Win) {
                         var List = new Element('ul');
 
                         for (var i = 0, len = selected.length; i < len; i++) {
@@ -377,19 +381,19 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
                             'after'
                         );
                     },
-                    onSubmit: function (Win) {
+                    onSubmit: function(Win) {
                         Win.Loader.show();
 
-                        var files = selected.map(function (e) {
+                        var files = selected.map(function(e) {
                             return e.basename;
                         });
 
-                        QUIAjax.post('package_quiqqer_customer_ajax_backend_files_delete', function () {
+                        QUIAjax.post('package_quiqqer_customer_ajax_backend_files_delete', function() {
                             Win.close();
                             self.refresh();
                         }, {
-                            package   : 'quiqqer/customer',
-                            files     : JSON.encode(files),
+                            package: 'quiqqer/customer',
+                            files: JSON.encode(files),
                             customerId: self.getAttribute('userId')
                         });
                     }
@@ -402,7 +406,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
          *
          * @param {Object} Btn - QUIButton
          */
-        $onClickDownload: function (Btn) {
+        $onClickDownload: function(Btn) {
             this.download(Btn.getAttribute('row'));
         },
 
@@ -411,35 +415,35 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
          *
          * @param {Object} Btn - QUIButton
          */
-        $onClickUserDownload: function (Btn) {
-            const Row  = Btn.getAttribute('row');
+        $onClickUserDownload: function(Btn) {
+            const Row = Btn.getAttribute('row');
             const file = Row.filename + '.' + Row.extension;
 
             if (Row.userDownload) {
                 new QUIConfirm({
                     maxHeight: 400,
-                    maxWidth : 600,
+                    maxWidth: 600,
 
-                    autoclose         : false,
+                    autoclose: false,
                     backgroundClosable: true,
 
                     information: QUILocale.get(lg, 'window.customer.userDownload.remove.information', {
                         file: file
                     }),
-                    title      : QUILocale.get(lg, 'window.customer.userDownload.remove.title'),
-                    texticon   : 'fa fa-user',
-                    text       : QUILocale.get(lg, 'window.customer.userDownload.remove.text'),
-                    icon       : 'fa fa-user',
+                    title: QUILocale.get(lg, 'window.customer.userDownload.remove.title'),
+                    texticon: 'fa fa-user',
+                    text: QUILocale.get(lg, 'window.customer.userDownload.remove.text'),
+                    icon: 'fa fa-user',
 
                     cancel_button: {
-                        text     : false,
+                        text: false,
                         textimage: 'icon-remove fa fa-remove'
                     },
-                    ok_button    : {
-                        text     : QUILocale.get(lg, 'window.customer.userDownload.remove.btn.submit'),
+                    ok_button: {
+                        text: QUILocale.get(lg, 'window.customer.userDownload.remove.btn.submit'),
                         textimage: 'icon-ok fa fa-check'
                     },
-                    events       : {
+                    events: {
                         onSubmit: (Win) => {
                             Win.Loader.show();
 
@@ -455,28 +459,28 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
             } else {
                 new QUIConfirm({
                     maxHeight: 400,
-                    maxWidth : 600,
+                    maxWidth: 600,
 
-                    autoclose         : false,
+                    autoclose: false,
                     backgroundClosable: true,
 
                     information: QUILocale.get(lg, 'window.customer.userDownload.add.information', {
                         file: file
                     }),
-                    title      : QUILocale.get(lg, 'window.customer.userDownload.add.title'),
-                    texticon   : 'fa fa-user',
-                    text       : QUILocale.get(lg, 'window.customer.userDownload.add.text'),
-                    icon       : 'fa fa-user',
+                    title: QUILocale.get(lg, 'window.customer.userDownload.add.title'),
+                    texticon: 'fa fa-user',
+                    text: QUILocale.get(lg, 'window.customer.userDownload.add.text'),
+                    icon: 'fa fa-user',
 
                     cancel_button: {
-                        text     : false,
+                        text: false,
                         textimage: 'icon-remove fa fa-remove'
                     },
-                    ok_button    : {
-                        text     : QUILocale.get(lg, 'window.customer.userDownload.add.btn.submit'),
+                    ok_button: {
+                        text: QUILocale.get(lg, 'window.customer.userDownload.add.btn.submit'),
                         textimage: 'icon-ok fa fa-check'
                     },
-                    events       : {
+                    events: {
                         onSubmit: (Win) => {
                             Win.Loader.show();
 
@@ -498,11 +502,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
          * @param {string} file - File name
          * @return {Promise}
          */
-        $addFileToDownloadEntry: function (file) {
+        $addFileToDownloadEntry: function(file) {
             return new Promise((resolve) => {
                 QUIAjax.post('package_quiqqer_customer_ajax_backend_files_downloadEntry_addFile', resolve, {
-                    'package' : 'quiqqer/customer',
-                    file      : file,
+                    'package': 'quiqqer/customer',
+                    file: file,
                     customerId: this.getAttribute('userId')
                 });
             });
@@ -514,11 +518,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
          * @param {string} file - File name
          * @return {Promise}
          */
-        $removeFileFromDownloadEntry: function (file) {
+        $removeFileFromDownloadEntry: function(file) {
             return new Promise((resolve) => {
                 QUIAjax.post('package_quiqqer_customer_ajax_backend_files_downloadEntry_removeFile', resolve, {
-                    'package' : 'quiqqer/customer',
-                    file      : file,
+                    'package': 'quiqqer/customer',
+                    file: file,
                     customerId: this.getAttribute('userId')
                 });
             });
@@ -529,7 +533,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
          *
          * @param {Object} [data] - Row data
          */
-        download: function (data) {
+        download: function(data) {
             if (!data) {
                 data = this.$Grid.getSelectedData();
 
@@ -541,25 +545,25 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
             }
 
             var uid = String.uniqueID();
-            var id  = 'download-customer-file-' + uid;
+            var id = 'download-customer-file-' + uid;
 
             new Element('iframe', {
-                src   : URL_OPT_DIR + 'quiqqer/customer/bin/backend/download.php?' + Object.toQueryString({
-                    file      : data.filename,
-                    extension : data.extension,
+                src: URL_OPT_DIR + 'quiqqer/customer/bin/backend/download.php?' + Object.toQueryString({
+                    file: data.filename,
+                    extension: data.extension,
                     customerId: this.getAttribute('userId')
                 }),
-                id    : id,
+                id: id,
                 styles: {
                     position: 'absolute',
-                    top     : -200,
-                    left    : -200,
-                    width   : 50,
-                    height  : 50
+                    top: -200,
+                    left: -200,
+                    width: 50,
+                    height: 50
                 }
             }).inject(document.body);
 
-            (function () {
+            (function() {
                 document.getElements('#' + id).destroy();
             }).delay(20000, this);
         },
@@ -569,7 +573,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
          *
          * @return {Array}
          */
-        getSelectedFiles: function () {
+        getSelectedFiles: function() {
             if (!this.$Grid) {
                 return [];
             }

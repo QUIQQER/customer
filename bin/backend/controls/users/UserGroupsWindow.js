@@ -9,24 +9,24 @@ define('package/quiqqer/customer/bin/backend/controls/users/UserGroupsWindow', [
     'Users',
     'Locale'
 
-], function (QUI, QUIConfirm, GroupsSelect, Users, QUILocale) {
-    "use strict";
+], function(QUI, QUIConfirm, GroupsSelect, Users, QUILocale) {
+    'use strict';
 
     var lg = 'quiqqer/customer';
 
     return new Class({
 
         Extends: QUIConfirm,
-        Type   : 'package/quiqqer/customer/bin/backend/controls/users/UserGroupsWindow',
+        Type: 'package/quiqqer/customer/bin/backend/controls/users/UserGroupsWindow',
 
         options: {
-            icon     : 'fa fa-users',
+            icon: 'fa fa-users',
             maxHeight: 400,
-            maxWidth : 600,
-            userId   : false
+            maxWidth: 600,
+            userId: false
         },
 
-        initialize: function (parent) {
+        initialize: function(parent) {
             this.parent(parent);
 
             this.$Select = null;
@@ -39,7 +39,7 @@ define('package/quiqqer/customer/bin/backend/controls/users/UserGroupsWindow', [
         /**
          * event: on open
          */
-        $onOpen: function () {
+        $onOpen: function() {
             var self = this,
                 User = Users.get(this.getAttribute('userId'));
 
@@ -52,7 +52,7 @@ define('package/quiqqer/customer/bin/backend/controls/users/UserGroupsWindow', [
                 LoadUser = User.load();
             }
 
-            LoadUser.then(function (User) {
+            LoadUser.then(function(User) {
                 self.setAttribute('title', QUILocale.get(lg, 'user.group.window.title', {
                     username: User.getUsername()
                 }));
@@ -84,20 +84,20 @@ define('package/quiqqer/customer/bin/backend/controls/users/UserGroupsWindow', [
         /**
          * submit the window and saves the groups to the user
          */
-        submit: function () {
+        submit: function() {
             if (!this.$Select) {
                 return;
             }
 
             this.Loader.show();
 
-            var self   = this,
-                User   = Users.get(this.getAttribute('userId')),
+            var self = this,
+                User = Users.get(this.getAttribute('userId')),
                 groups = this.$Select.getValue();
 
             User.setAttribute('usergroup', groups);
 
-            User.save().then(function () {
+            User.save().then(function() {
                 self.fireEvent('submit', [self]);
 
                 if (self.getAttribute('autoclose')) {

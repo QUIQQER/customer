@@ -8,15 +8,15 @@ define('package/quiqqer/customer/bin/backend/classes/Handler', [
     'qui/classes/DOM',
     'Ajax'
 
-], function (QUI, QDOM, QUIAjax) {
-    "use strict";
+], function(QUI, QDOM, QUIAjax) {
+    'use strict';
 
     return new Class({
 
         Extends: QDOM,
-        Type   : 'package/quiqqer/customer/bin/backend/classes/Handler',
+        Type: 'package/quiqqer/customer/bin/backend/classes/Handler',
 
-        initialize: function (parent) {
+        initialize: function(parent) {
             this.parent(parent);
         },
 
@@ -24,8 +24,8 @@ define('package/quiqqer/customer/bin/backend/classes/Handler', [
          *
          * @return {Promise}
          */
-        getCustomerGroupId: function () {
-            return new Promise(function (resolve) {
+        getCustomerGroupId: function() {
+            return new Promise(function(resolve) {
                 QUIAjax.post('package_quiqqer_customer_ajax_backend_getCustomerGroupId', resolve, {
                     'package': 'quiqqer/customer'
                 });
@@ -37,8 +37,8 @@ define('package/quiqqer/customer/bin/backend/classes/Handler', [
          *
          * @return {Promise}
          */
-        getCustomerIdPrefix: function () {
-            return new Promise(function (resolve) {
+        getCustomerIdPrefix: function() {
+            return new Promise(function(resolve) {
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_create_getPrefix', resolve, {
                     'package': 'quiqqer/customer'
                 });
@@ -51,12 +51,12 @@ define('package/quiqqer/customer/bin/backend/classes/Handler', [
          * @param {String|Number} customerNo
          * @return {Promise}
          */
-        validateCustomerNo: function (customerNo) {
-            return new Promise(function (resolve, reject) {
+        validateCustomerNo: function(customerNo) {
+            return new Promise(function(resolve, reject) {
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_create_validateCustomerNo', resolve, {
-                    'package' : 'quiqqer/customer',
+                    'package': 'quiqqer/customer',
                     customerNo: customerNo,
-                    onError   : reject
+                    onError: reject
                 });
             });
         },
@@ -66,8 +66,8 @@ define('package/quiqqer/customer/bin/backend/classes/Handler', [
          *
          * @return {Promise}
          */
-        getNewCustomerNo: function () {
-            return new Promise(function (resolve) {
+        getNewCustomerNo: function() {
+            return new Promise(function(resolve) {
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_create_getNewCustomerNo', resolve, {
                     'package': 'quiqqer/customer'
                 });
@@ -80,11 +80,11 @@ define('package/quiqqer/customer/bin/backend/classes/Handler', [
          * @param userId
          * @return {Promise}
          */
-        addToCustomer: function (userId) {
-            return new Promise(function (resolve) {
+        addToCustomer: function(userId) {
+            return new Promise(function(resolve) {
                 QUIAjax.post('package_quiqqer_customer_ajax_backend_addToCustomer', resolve, {
                     'package': 'quiqqer/customer',
-                    userId   : userId
+                    userId: userId
                 });
             });
         },
@@ -95,11 +95,11 @@ define('package/quiqqer/customer/bin/backend/classes/Handler', [
          * @param userId
          * @return {Promise}
          */
-        removeFromCustomer: function (userId) {
-            return new Promise(function (resolve) {
+        removeFromCustomer: function(userId) {
+            return new Promise(function(resolve) {
                 QUIAjax.post('package_quiqqer_customer_ajax_backend_removeFromCustomer', resolve, {
                     'package': 'quiqqer/customer',
-                    userId   : userId
+                    userId: userId
                 });
             });
         },
@@ -109,12 +109,12 @@ define('package/quiqqer/customer/bin/backend/classes/Handler', [
          *
          * @param customerId
          */
-        openCustomer: function (customerId) {
-            return new Promise(function (resolve) {
+        openCustomer: function(customerId) {
+            return new Promise(function(resolve) {
                 require([
                     'package/quiqqer/customer/bin/backend/controls/customer/Panel',
                     'utils/Panels'
-                ], function (Panel, PanelUtils) {
+                ], function(Panel, PanelUtils) {
                     var CustomerPanel = new Panel({
                         userId: customerId
                     });
@@ -131,11 +131,11 @@ define('package/quiqqer/customer/bin/backend/classes/Handler', [
          * @param userId
          * @return {Promise}
          */
-        addAddressToCustomer: function (userId) {
-            return new Promise(function (resolve) {
+        addAddressToCustomer: function(userId) {
+            return new Promise(function(resolve) {
                 QUIAjax.post('package_quiqqer_customer_ajax_backend_customer_addAddress', resolve, {
                     'package': 'quiqqer/customer',
-                    userId   : userId
+                    userId: userId
                 });
             });
         }
