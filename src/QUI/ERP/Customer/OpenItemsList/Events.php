@@ -174,11 +174,11 @@ class Events
      *
      * Update open records of user if an order changes
      *
-     * @param int $orderId
+     * @param int|string $orderId
      * @param array $orderAttributes
      * @return void
      */
-    public static function onQuiqqerOrderDelete(int $orderId, array $orderAttributes): void
+    public static function onQuiqqerOrderDelete(int|string $orderId, array $orderAttributes): void
     {
         try {
             $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
@@ -230,9 +230,9 @@ class Events
      *
      * Update open records of user if an order changes
      *
-     * @param QUI\ERP\Order\Order $Order
+     * @param QUI\ERP\Order\AbstractOrder $Order
      */
-    public static function onQuiqqerOrderCreated(QUI\ERP\Order\Order $Order): void
+    public static function onQuiqqerOrderCreated(QUI\ERP\Order\AbstractOrder $Order): void
     {
         try {
             $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
