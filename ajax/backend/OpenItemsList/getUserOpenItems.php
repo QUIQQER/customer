@@ -19,6 +19,7 @@ QUI::$Ajax->registerFunction(
             $userId = (int)$userId;
             $cacheName = 'quiqqer/customer/openitems/' . $userId;
             $refresh = true;
+            $openItems = [];
 
             if (empty($forceRefresh)) {
                 try {
