@@ -158,7 +158,7 @@ class Handler
 //                    'type'  => '<=',
 //                    'value' => \date('Y-m-d H:i:s')
 //                ],
-                'customer_id' => $User->getId(),
+                'customer_id' => $User->getUUID(),
                 'type' => QUI\ERP\Constants::TYPE_INVOICE
             ]
         ]);
@@ -293,7 +293,7 @@ class Handler
                     QUI\ERP\Constants::PAYMENT_STATUS_PLAN
                 ]
             ],
-            'customerId' => $User->getId(),
+            'customerId' => $User->getUUID(),
             'invoice_id' => null
         ];
 
@@ -465,7 +465,7 @@ class Handler
         }
 
         // Clear cache used in backend administration
-        QUI\Cache\Manager::clear('quiqqer/customer/openitems/' . $User->getId());
+        QUI\Cache\Manager::clear('quiqqer/customer/openitems/' . $User->getUUID());
     }
 
     /**

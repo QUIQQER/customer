@@ -39,12 +39,12 @@ class Customers extends Singleton
      * @param array $address
      * @param array $groupIds
      *
-     * @return QUI\Users\User
+     * @return QUI\Interfaces\Users\User
      *
      * @throws QUI\Exception
      * @throws QUI\Permissions\Exception
      */
-    public function createCustomer($customerId, array $address = [], array $groupIds = []): QUI\Users\User
+    public function createCustomer($customerId, array $address = [], array $groupIds = []): QUI\Interfaces\Users\User
     {
         QUI\Permissions\Permission::checkPermission('quiqqer.customer.create');
 
@@ -118,7 +118,7 @@ class Customers extends Singleton
         }
 
         // groups
-        $this->addUserToCustomerGroup($User->getId());
+        $this->addUserToCustomerGroup($User->getUUID());
 
         foreach ($groupIds as $groupId) {
             $User->addToGroup($groupId);
