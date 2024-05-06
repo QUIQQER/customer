@@ -15,7 +15,7 @@ QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_OpenItemsList_search',
     function ($searchParams) {
         try {
-            $searchParams = Orthos::clearArray(\json_decode($searchParams, true));
+            $searchParams = Orthos::clearArray(json_decode($searchParams, true));
             $result = Handler::searchOpenItems($searchParams);
             $result = Handler::parseForGrid($result);
 
@@ -34,7 +34,7 @@ QUI::$Ajax->registerFunction(
                 'grid' => $Grid->parseResult($result, $count),
                 'totals' => Handler::getTotals($result, $Currency)
             ];
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
             return [

@@ -9,15 +9,15 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.History', [
     'Ajax',
     'Locale'
 
-], function (ParentControl, QUIAjax, QUILocale) {
-    "use strict";
+], function(ParentControl, QUIAjax, QUILocale) {
+    'use strict';
 
     var lg = 'quiqqer/customer';
 
     return new Class({
 
         Extends: ParentControl,
-        Type   : 'package/quiqqer/customer/bin/backend/controls/customer/Panel.History',
+        Type: 'package/quiqqer/customer/bin/backend/controls/customer/Panel.History',
 
         Binds: [
             '$onInject'
@@ -27,7 +27,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.History', [
             userId: false
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.parent(options);
 
             this.$editComments = false;
@@ -40,7 +40,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.History', [
         /**
          * Event: onCreate
          */
-        $onInject: function () {
+        $onInject: function() {
             this.parent();
             this.$AddCommentButton.destroy();
         },
@@ -52,13 +52,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.History', [
          *
          * @return {Promise}
          */
-        getComments: function () {
+        getComments: function() {
             var self = this;
 
-            return new Promise(function (resolve) {
+            return new Promise(function(resolve) {
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getHistory', resolve, {
                     'package': 'quiqqer/customer',
-                    uid      : self.getAttribute('userId')
+                    uid: self.getAttribute('userId')
                 });
             });
         }

@@ -5,6 +5,9 @@ namespace QUI\ERP\Customer;
 use QUI;
 use QUI\Utils\Singleton;
 
+use function file_exists;
+use function is_array;
+
 /**
  * Class CustomerPanel
  *
@@ -21,7 +24,7 @@ class CustomerPanel extends Singleton
 
         try {
             $result = QUI\Cache\Manager::get($cache);
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             $files = [];
 
             $PackageHandler = QUI::getPackageManager();
@@ -42,7 +45,7 @@ class CustomerPanel extends Singleton
                 $packageDir = $Package->getDir();
                 $customerXml = $packageDir . '/customer.xml';
 
-                if (\file_exists($customerXml)) {
+                if (file_exists($customerXml)) {
                     $files[] = $customerXml;
                 }
             }
@@ -67,8 +70,8 @@ class CustomerPanel extends Singleton
         $categories = $result['categories'];
         $result['categories'] = [];
 
-        foreach ($categories as $key => $category) {
-            if (isset($category['title']) && \is_array($category['title'])) {
+        foreach ($categories as $category) {
+            if (isset($category['title']) && is_array($category['title'])) {
                 $category['text'] = QUI::getLocale()->get(
                     $category['title'][0],
                     $category['title'][1]
@@ -116,7 +119,7 @@ class CustomerPanel extends Singleton
             $packageDir = $Package->getDir();
             $customerXml = $packageDir . '/customer.xml';
 
-            if (\file_exists($customerXml)) {
+            if (file_exists($customerXml)) {
                 $files[] = $customerXml;
             }
         }

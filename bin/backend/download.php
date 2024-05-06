@@ -26,7 +26,7 @@ $isBackendUser = $User->canUseBackend();
 $Request = QUI::getRequest();
 $file = Orthos::clear($Request->query->get('file'));
 $extension = Orthos::clear($Request->query->get('extension'));
-$customerId = (int)$Request->query->get('customerId');
+$customerId = $Request->query->get('customerId');
 
 if ($isBackendUser) {
     try {
@@ -49,7 +49,7 @@ if ($isBackendUser) {
 
         exit;
     }
-} elseif ($customerId !== $User->getId()) {
+} elseif ($customerId !== $User->getUUID()) {
     exit;
 }
 

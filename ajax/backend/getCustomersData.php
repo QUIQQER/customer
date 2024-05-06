@@ -12,16 +12,16 @@
 QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_getCustomersData',
     function ($customerIds) {
-        $customerIds = \json_decode($customerIds, true);
-        $result      = [];
+        $customerIds = json_decode($customerIds, true);
+        $result = [];
 
         foreach ($customerIds as $customerId) {
             try {
                 $User = QUI::getUsers()->get($customerId);
 
                 $result[] = [
-                    'id'       => $User->getId(),
-                    'title'    => $User->getName(),
+                    'id' => $User->getUUID(),
+                    'title' => $User->getName(),
                     'username' => $User->getUsername()
                 ];
             } catch (QUI\Exception $Exception) {

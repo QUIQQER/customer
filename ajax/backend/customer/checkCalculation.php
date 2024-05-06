@@ -13,14 +13,14 @@ QUI::$Ajax->registerFunction(
         $User = QUI::getUsers()->get($userId);
         $User->setAttribute('quiqqer.erp.isNettoUser', false);
 
-        $status    = QUI\ERP\Utils\User::getBruttoNettoUserStatus($User);
-        $address   = false;
-        $shipping  = false;
+        $status = QUI\ERP\Utils\User::getBruttoNettoUserStatus($User);
+        $address = false;
+        $shipping = false;
         $isCompany = false;
 
         $euVatId = $User->getAttribute('quiqqer.erp.euVatId');
-        $taxId   = $User->getAttribute('quiqqer.erp.taxId');
-        $chUID   = $User->getAttribute('quiqqer.erp.chUID');
+        $taxId = $User->getAttribute('quiqqer.erp.taxId');
+        $chUID = $User->getAttribute('quiqqer.erp.chUID');
 
         // default address
         try {
@@ -31,27 +31,27 @@ QUI::$Ajax->registerFunction(
             $isCompany = !empty($isCompany);
 
             $address['text'] = $Address->getText();
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         // shipping address
         try {
             $shippingId = $User->getAttribute('quiqqer.delivery.address');
-            $Shipping   = $User->getAddress($shippingId);
-            $shipping   = $Shipping->getAttributes();
+            $Shipping = $User->getAddress($shippingId);
+            $shipping = $Shipping->getAttributes();
 
             $shipping['text'] = $Shipping->getText();
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         return [
-            'status'    => $status,
-            'address'   => $address,
-            'shipping'  => $shipping,
+            'status' => $status,
+            'address' => $address,
+            'shipping' => $shipping,
             'isCompany' => $isCompany,
-            'euVatId'   => $euVatId,
-            'taxId'     => $taxId,
-            'chUID'     => $chUID
+            'euVatId' => $euVatId,
+            'taxId' => $taxId,
+            'chUID' => $chUID
         ];
     },
     ['userId'],

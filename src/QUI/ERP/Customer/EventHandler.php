@@ -6,10 +6,12 @@
 
 namespace QUI\ERP\Customer;
 
+use DOMElement;
 use QUI;
+use QUI\Database\Exception;
 use QUI\Package\Package;
 use QUI\Users\Manager;
-use Quiqqer\Engine\Collector;
+use QUI\Smarty\Collector;
 
 use function array_merge;
 use function array_values;
@@ -33,7 +35,7 @@ class EventHandler
      *
      * @param Package $Package
      */
-    public static function onPackageSetup(Package $Package)
+    public static function onPackageSetup(Package $Package): void
     {
         if ($Package->getName() != 'quiqqer/customer') {
             return;
@@ -85,7 +87,7 @@ class EventHandler
     /**
      * event : on admin header loaded
      */
-    public static function onAdminLoadFooter()
+    public static function onAdminLoadFooter(): void
     {
         if (!defined('ADMIN') || !ADMIN) {
             return;
@@ -96,7 +98,7 @@ class EventHandler
             $Config = $Package->getConfig();
             $groupId = $Config->getValue('customer', 'groupId');
 
-            echo '<script>const QUIQQER_CUSTOMER_GROUP = ' . $groupId . '</script>';
+            echo '<script>window.QUIQQER_CUSTOMER_GROUP = ' . $groupId . '</script>';
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
@@ -108,13 +110,13 @@ class EventHandler
      * @param QUI\Users\User $User
      * @param array $attributes
      */
-    public static function onUserExtraAttributes(QUI\Users\User $User, array &$attributes)
+    public static function onUserExtraAttributes(QUI\Users\User $User, array &$attributes): void
     {
         $cache = 'quiqqer/package/quiqqer/customer';
 
         try {
             $customerAttr = QUI\Cache\Manager::get($cache);
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             $customerAttr = [];
 
             $list = QUI::getPackageManager()->getInstalled();
@@ -139,7 +141,7 @@ class EventHandler
 
 
     /**
-     * Read an user.xml and return the attributes,
+     * Read a user.xml and return the attributes,
      * if some extra attributes defined
      *
      * @param string $file
@@ -152,7 +154,7 @@ class EventHandler
 
         try {
             return QUI\Cache\Manager::get($cache);
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
         }
 
         $Dom = QUI\Utils\Text\XML::getDomFromXml($file);
@@ -162,7 +164,7 @@ class EventHandler
             return [];
         }
 
-        /* @var $Attributes \DOMElement */
+        /* @var $Attributes DOMElement */
         $Attributes = $Attr->item(0);
         $list = $Attributes->getElementsByTagName('attribute');
 
@@ -190,7 +192,7 @@ class EventHandler
         return $attributes;
     }
 
-    public static function onUserSaveBegin(QUI\Users\User $User)
+    public static function onUserSaveBegin(QUI\Users\User $User): void
     {
         if (!QUI::getUsers()->isUser($User)) {
             return;
@@ -219,7 +221,7 @@ class EventHandler
                         'quiqqer.erp.customer.contact.person',
                         (int)$data['quiqqer.erp.customer.contact.person']
                     );
-                } catch (QUI\Exception $exception) {
+                } catch (QUI\Exception) {
                 }
             }
 
@@ -230,7 +232,7 @@ class EventHandler
     /**
      * @param QUI\Users\User $User
      */
-    public static function onUserSaveEnd(QUI\Users\User $User)
+    public static function onUserSaveEnd(QUI\Users\User $User): void
     {
         $attributes = $User->getAttributes();
         $data = [];
@@ -279,7 +281,7 @@ class EventHandler
             QUI::getDataBase()->update(
                 Manager::table(),
                 $data,
-                ['id' => $User->getId()]
+                ['uuid' => $User->getUUID()]
             );
 
             if ($newNextCustomerNo) {
@@ -292,13 +294,16 @@ class EventHandler
 
     /**
      * @param QUI\Users\User $User
-     * @param string|false $code
-     * @param null|QUI\Users\User $ParentUser
+     * @param bool|string $code
+     * @param null|QUI\Interfaces\Users\User $ParentUser
      *
-     * @throws QUI\Users\Exception
+     * @throws QUI\Users\Exception|QUI\Exception
      */
-    public static function onUserActivateBegin(QUI\Users\User $User, $code, $ParentUser)
-    {
+    public static function onUserActivateBegin(
+        QUI\Users\User $User,
+        bool|string $code,
+        ?QUI\Interfaces\Users\User $ParentUser
+    ): void {
         $Group = Utils::getInstance()->getCustomerGroup();
 
         if (!$Group) {
@@ -336,16 +341,13 @@ class EventHandler
      */
     public static function onQuiqqerOrderCustomerDataSaveEnd(
         QUI\ERP\Order\Controls\OrderProcess\CustomerData $Step
-    ) {
+    ): void {
         $Order = $Step->getOrder();
         $Customer = $Order->getCustomer();
 
         try {
-            $User = QUI::getUsers()->get($Customer->getId());
-
-            QUI\ERP\Customer\Customers::getInstance()->addUserToCustomerGroup(
-                $User->getId()
-            );
+            $User = QUI::getUsers()->get($Customer->getUUID());
+            QUI\ERP\Customer\Customers::getInstance()->addUserToCustomerGroup($User->getUUID());
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::addDebug($Exception->getMessage());
         }
@@ -358,12 +360,13 @@ class EventHandler
      * @param QUI\Users\User $User - The user object
      * @param mixed $Address - The address data
      * @return void
+     * @throws Exception
      */
     public static function onFrontendUserDataMiddle(
         Collector $Collector,
         QUI\Users\User $User,
         $Address
-    ) {
+    ): void {
         try {
             $Engine = QUI::getTemplateManager()->getEngine();
         } catch (QUI\Exception $Exception) {
@@ -381,7 +384,7 @@ class EventHandler
         $currentContactPerson = $User->getAttribute('quiqqer.erp.customer.contact.person');
 
         if (empty($currentContactPerson) && count($addressList)) {
-            $currentContactPerson = $addressList[0]->getId();
+            $currentContactPerson = $addressList[0]->getUUID();
         }
 
         $Engine->assign([

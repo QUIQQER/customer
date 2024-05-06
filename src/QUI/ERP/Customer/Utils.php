@@ -3,6 +3,10 @@
 namespace QUI\ERP\Customer;
 
 use QUI;
+use QUI\Exception;
+
+use function current;
+use function method_exists;
 
 /**
  * Class Utils
@@ -19,15 +23,15 @@ class Utils extends QUI\Utils\Singleton
         $categories = [];
 
         $categories[] = [
-            'text'      => QUI::getLocale()->get('quiqqer/customer', 'customer.create.category.details'),
+            'text' => QUI::getLocale()->get('quiqqer/customer', 'customer.create.category.details'),
             'textimage' => 'fa fa-id-card',
-            'require'   => ''
+            'require' => ''
         ];
 
         $categories[] = [
-            'text'      => QUI::getLocale()->get('quiqqer/customer', 'customer.create.category.address'),
+            'text' => QUI::getLocale()->get('quiqqer/customer', 'customer.create.category.address'),
             'textimage' => 'fa fa-address-book',
-            'require'   => ''
+            'require' => ''
         ];
 
         return $categories;
@@ -36,6 +40,7 @@ class Utils extends QUI\Utils\Singleton
     /**
      * @param integer $uid
      * @return int
+     * @throws Exception
      */
     public function getPaymentTimeForUser(int $uid): int
     {
@@ -48,7 +53,7 @@ class Utils extends QUI\Utils\Singleton
 
         try {
             $User = QUI::getUsers()->get($uid);
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             // default time for payment
             return $defaultPaymentTime;
         }
@@ -70,11 +75,12 @@ class Utils extends QUI\Utils\Singleton
      * Return the global customer group
      *
      * @return QUI\Groups\Everyone|QUI\Groups\Group|QUI\Groups\Guest|null
+     * @throws Exception
      */
-    public function getCustomerGroup()
+    public function getCustomerGroup(): QUI\Groups\Group|QUI\Groups\Everyone|QUI\Groups\Guest|null
     {
         $Package = QUI::getPackage('quiqqer/customer');
-        $Config  = $Package->getConfig();
+        $Config = $Package->getConfig();
         $groupId = $Config->getValue('customer', 'groupId');
 
         if (empty($groupId)) {
@@ -94,7 +100,7 @@ class Utils extends QUI\Utils\Singleton
      * @param QUI\Interfaces\Users\User $Customer
      * @return string|false - Email address or false if no address exists
      */
-    public function getEmailByCustomer(QUI\Interfaces\Users\User $Customer)
+    public function getEmailByCustomer(QUI\Interfaces\Users\User $Customer): bool|string
     {
         $email = $this->getEmailByStandardAddress($Customer);
 
@@ -121,7 +127,7 @@ class Utils extends QUI\Utils\Singleton
      * @param QUI\Interfaces\Users\User $Customer
      * @return string|false - Email address or false if no address exists
      */
-    public function getContactEmailByCustomer(QUI\Interfaces\Users\User $Customer)
+    public function getContactEmailByCustomer(QUI\Interfaces\Users\User $Customer): bool|string
     {
         $email = $this->getEmailByContactPersonAddress($Customer);
 
@@ -144,19 +150,19 @@ class Utils extends QUI\Utils\Singleton
      * @param QUI\Interfaces\Users\User $Customer
      * @return string|false
      */
-    protected function getEmailByStandardAddress(QUI\Interfaces\Users\User $Customer)
+    protected function getEmailByStandardAddress(QUI\Interfaces\Users\User $Customer): bool|string
     {
-        if (!\method_exists($Customer, 'getStandardAddress')) {
+        if (!method_exists($Customer, 'getStandardAddress')) {
             return false;
         }
 
         try {
             /** @var QUI\Users\Address $StandardAddress */
             $StandardAddress = $Customer->getStandardAddress();
-            $mailAddresses   = $StandardAddress->getMailList();
+            $mailAddresses = $StandardAddress->getMailList();
 
             if (!empty($mailAddresses)) {
-                return \current($mailAddresses);
+                return current($mailAddresses);
             }
         } catch (\Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
@@ -171,21 +177,21 @@ class Utils extends QUI\Utils\Singleton
      * @param QUI\Interfaces\Users\User $Customer
      * @return string|false
      */
-    protected function getEmailByContactPersonAddress(QUI\Interfaces\Users\User $Customer)
+    protected function getEmailByContactPersonAddress(QUI\Interfaces\Users\User $Customer): bool|string
     {
         try {
             if (!($Customer instanceof QUI\Users\User)) {
-                $Customer = QUI::getUsers()->get($Customer->getId());
+                $Customer = QUI::getUsers()->get($Customer->getUUID());
             }
 
             $contactPersonAddressId = $Customer->getAttribute('quiqqer.erp.customer.contact.person');
 
             if (!empty($contactPersonAddressId)) {
                 $ContactAddress = new QUI\Users\Address($Customer, $contactPersonAddressId);
-                $mailAddresses  = $ContactAddress->getMailList();
+                $mailAddresses = $ContactAddress->getMailList();
 
                 if (!empty($mailAddresses)) {
-                    return \current($mailAddresses);
+                    return current($mailAddresses);
                 }
             }
         } catch (\Exception $Exception) {
@@ -201,7 +207,7 @@ class Utils extends QUI\Utils\Singleton
      * @param QUI\Interfaces\Users\User $Customer
      * @return string|false
      */
-    protected function getEmailByCustomerObject(QUI\Interfaces\Users\User $Customer)
+    protected function getEmailByCustomerObject(QUI\Interfaces\Users\User $Customer): bool|string
     {
         if (!empty($Customer->getAttribute('email'))) {
             return $Customer->getAttribute('email');
@@ -216,14 +222,14 @@ class Utils extends QUI\Utils\Singleton
      * @param QUI\Interfaces\Users\User $Customer
      * @return QUI\ERP\Address|false
      */
-    public function getContactPersonAddress(QUI\Interfaces\Users\User $Customer)
+    public function getContactPersonAddress(QUI\Interfaces\Users\User $Customer): bool|QUI\ERP\Address
     {
         try {
             $contactPersonAddressId = $Customer->getAttribute('quiqqer.erp.customer.contact.person');
 
             if (!empty($contactPersonAddressId)) {
                 if (!($Customer instanceof QUI\Users\User)) {
-                    $Customer = QUI::getUsers()->get($Customer->getId());
+                    $Customer = QUI::getUsers()->get($Customer->getUUID());
                 }
 
                 $Address = new QUI\Users\Address($Customer, $contactPersonAddressId);

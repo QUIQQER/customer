@@ -14,17 +14,17 @@ QUI::$Ajax->registerFunction(
     function ($userId) {
         try {
             $User = QUI::getUsers()->get($userId);
-            $Tax  = QUI\ERP\Tax\Utils::getTaxByUser($User);
+            $Tax = QUI\ERP\Tax\Utils::getTaxByUser($User);
             $Area = $Tax->getArea();
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             return null;
         }
 
         return [
-            'id'   => $Tax->getId(),
-            'vat'  => $Tax->getValue(),
+            'id' => $Tax->getId(),
+            'vat' => $Tax->getValue(),
             'area' => [
-                'id'    => $Area->getId(),
+                'id' => $Area->getId(),
                 'title' => $Area->getTitle()
             ]
         ];
