@@ -9,15 +9,15 @@ define('package/quiqqer/customer/bin/backend/controls/create/CustomerWindow', [
     'Locale',
     'package/quiqqer/customer/bin/backend/controls/create/Customer'
 
-], function (QUI, QUIPopup, QUILocale, CreateCustomer) {
-    "use strict";
+], function(QUI, QUIPopup, QUILocale, CreateCustomer) {
+    'use strict';
 
     var lg = 'quiqqer/customer';
 
     return new Class({
 
         Extends: QUIPopup,
-        Type   : 'package/quiqqer/customer/bin/backend/controls/create/CustomerWindow',
+        Type: 'package/quiqqer/customer/bin/backend/controls/create/CustomerWindow',
 
         Binds: [
             '$onOpen'
@@ -25,13 +25,13 @@ define('package/quiqqer/customer/bin/backend/controls/create/CustomerWindow', [
 
         options: {
             maxHeight: 700,
-            maxWidth : 600,
-            buttons  : false
+            maxWidth: 600,
+            buttons: false
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.setAttributes({
-                icon : 'fa fa-id-card',
+                icon: 'fa fa-id-card',
                 title: QUILocale.get(lg, 'customer.window.create.title')
             });
 
@@ -45,7 +45,7 @@ define('package/quiqqer/customer/bin/backend/controls/create/CustomerWindow', [
         /**
          * event: on open
          */
-        $onOpen: function () {
+        $onOpen: function() {
             var self = this;
 
             this.getContent().set('html', '');
@@ -53,15 +53,15 @@ define('package/quiqqer/customer/bin/backend/controls/create/CustomerWindow', [
 
             new CreateCustomer({
                 events: {
-                    onLoad: function () {
+                    onLoad: function() {
                         self.Loader.hide();
                     },
 
-                    onCreateCustomerBegin: function () {
+                    onCreateCustomerBegin: function() {
                         self.Loader.show();
                     },
 
-                    onCreateCustomerEnd: function (Instance, customerId) {
+                    onCreateCustomerEnd: function(Instance, customerId) {
                         self.fireEvent('submit', [self, customerId]);
                         self.close();
                     }

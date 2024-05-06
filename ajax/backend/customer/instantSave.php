@@ -15,13 +15,13 @@ QUI::$Ajax->registerFunction(
         QUI\Permissions\Permission::checkPermission('quiqqer.customer.edit');
 
         $User = QUI::getUsers()->get($userId);
-        $data = \json_decode($data, true);
+        $data = json_decode($data, true);
 
         try {
             $Address = $User->getStandardAddress();
-        } catch (QUI\Exception $Exception) {
+        } catch (QUI\Exception) {
             // create one
-            $Address = $User->addAddress([]);
+            $Address = $User->addAddress();
         }
 
         if (isset($data['username'])) {

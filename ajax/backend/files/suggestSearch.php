@@ -11,9 +11,9 @@
 QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_files_suggestSearch',
     function ($customerId, $searchString) {
-        $files = QUI\ERP\Customer\CustomerFiles::getFileList((int)$customerId);
+        $files = QUI\ERP\Customer\CustomerFiles::getFileList($customerId);
         $results = [];
-        $searchString = \trim(\mb_strtolower($searchString));
+        $searchString = trim(mb_strtolower($searchString));
 
         // Return all files if search string is empty
         if (empty($searchString)) {
@@ -21,7 +21,7 @@ QUI::$Ajax->registerFunction(
         }
 
         foreach ($files as $file) {
-            if (\mb_strpos(\mb_strtolower($file['basename']), $searchString) !== false) {
+            if (mb_strpos(mb_strtolower($file['basename']), $searchString) !== false) {
                 $results[] = $file;
             }
         }

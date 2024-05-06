@@ -6,8 +6,8 @@ define('package/quiqqer/customer/bin/backend/Handler', [
 
     'package/quiqqer/customer/bin/backend/classes/Handler'
 
-], function (Handler) {
-    "use strict";
+], function(Handler) {
+    'use strict';
 
     return new Handler();
 });

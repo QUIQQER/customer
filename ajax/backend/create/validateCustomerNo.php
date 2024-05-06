@@ -7,6 +7,7 @@
  * @return integer
  */
 
+use QUI\ERP\Customer\Customers;
 use QUI\ERP\Customer\NumberRange;
 use QUI\Utils\Security\Orthos;
 
@@ -16,8 +17,8 @@ QUI::$Ajax->registerFunction(
         $customerNo = Orthos::clear($customerNo);
 
         try {
-            $customerGroupId = \QUI\ERP\Customer\Customers::getInstance()->getCustomerGroupId();
-        } catch (\Exception $Exception) {
+            $customerGroupId = Customers::getInstance()->getCustomerGroupId();
+        } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             return;
         }

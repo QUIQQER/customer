@@ -17,7 +17,7 @@ QUI::$Ajax->registerFunction(
 
         Customers::getInstance()->setAttributesToCustomer(
             $userId,
-            \json_decode($data, true)
+            json_decode($data, true)
         );
 
         QUI::getMessagesHandler()->addSuccess(

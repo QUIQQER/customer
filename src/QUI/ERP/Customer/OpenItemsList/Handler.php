@@ -158,8 +158,8 @@ class Handler
 //                    'type'  => '<=',
 //                    'value' => \date('Y-m-d H:i:s')
 //                ],
-                'customer_id' => $User->getId(),
-                'type' => InvoiceHandler::TYPE_INVOICE
+                'customer_id' => $User->getUUID(),
+                'type' => QUI\ERP\Constants::TYPE_INVOICE
             ]
         ]);
 
@@ -293,7 +293,7 @@ class Handler
                     QUI\ERP\Constants::PAYMENT_STATUS_PLAN
                 ]
             ],
-            'customerId' => $User->getId(),
+            'customerId' => $User->getUUID(),
             'invoice_id' => null
         ];
 
@@ -433,7 +433,7 @@ class Handler
             QUI::getDataBase()->delete(
                 self::getTable(),
                 [
-                    'userId' => $User->getId()
+                    'userId' => $User->getUUID()
                 ]
             );
 
@@ -451,7 +451,7 @@ class Handler
             QUI::getDataBase()->replace(
                 self::getTable(),
                 [
-                    'userId' => $User->getId(),
+                    'userId' => $User->getUUID(),
                     'customerId' => $customerId,
                     'net_sum' => $values['netTotal'],
                     'total_sum' => $values['sumTotal'],
@@ -465,7 +465,7 @@ class Handler
         }
 
         // Clear cache used in backend administration
-        QUI\Cache\Manager::clear('quiqqer/customer/openitems/' . $User->getId());
+        QUI\Cache\Manager::clear('quiqqer/customer/openitems/' . $User->getUUID());
     }
 
     /**
