@@ -2,6 +2,7 @@
 
 namespace QUI\ERP\Customer\Console;
 
+use Exception;
 use QUI;
 use QUI\ERP\Customer\Utils;
 use QUI\ERP\Customer\OpenItemsList\Handler as OpenItemsListHandler;
@@ -32,7 +33,7 @@ class UpdateOpenItemsRecords extends QUI\System\Console\Tool
     /**
      * Execute the console tool
      */
-    public function execute()
+    public function execute(): void
     {
         $userId = $this->getArgument('user_id');
 
@@ -51,7 +52,7 @@ class UpdateOpenItemsRecords extends QUI\System\Console\Tool
                 $this->writeLn("Update open items for user #" . $userId . " (" . $User->getName() . ")");
                 OpenItemsListHandler::updateOpenItemsRecord($User);
                 $this->writeLn("  -> SUCCESS!");
-            } catch (\Exception $Exception) {
+            } catch (Exception $Exception) {
                 QUI\System\Log::writeException($Exception);
                 $this->writeLn("  -> ERROR: " . $Exception->getMessage());
             }
@@ -68,7 +69,7 @@ class UpdateOpenItemsRecords extends QUI\System\Console\Tool
     protected function exitSuccess(): void
     {
         $this->writeLn("\n\nBookings successfully imported.");
-        $this->writeLn("");
+        $this->writeLn();
 
         exit(0);
     }
@@ -82,10 +83,10 @@ class UpdateOpenItemsRecords extends QUI\System\Console\Tool
     protected function exitFail($msg): void
     {
         $this->writeLn("Script aborted due to an error:");
-        $this->writeLn("");
+        $this->writeLn();
         $this->writeLn($msg);
-        $this->writeLn("");
-        $this->writeLn("");
+        $this->writeLn();
+        $this->writeLn();
 
         exit(1);
     }

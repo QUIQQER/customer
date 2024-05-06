@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Return all comments and history entries for an user
+ * Return all comments and history entries for a user
  * - considers comments from other ERP modules
  *
  * @param int $page - Pagination page no.
@@ -16,19 +16,19 @@ QUI::$Ajax->registerFunction(
         $Comments = QUI\ERP\Comments::getCommentsByUser($User);
         $History = QUI\ERP\Comments::getHistoryByUser($User);
 
-        $comments = \array_merge(
+        $comments = array_merge(
             $Comments->toArray(),
             $History->toArray()
         );
 
-        // Sorty by time DESC
-        \usort($comments, function ($commA, $commB) {
+        // Sort by time DESC
+        usort($comments, function ($commA, $commB) {
             return $commB['time'] - $commA['time'];
         });
 
         // nl2br
-        \array_walk($comments, function (&$comment) {
-            $comment['message'] = \nl2br($comment['message']);
+        array_walk($comments, function (&$comment) {
+            $comment['message'] = nl2br($comment['message']);
         });
 
         if (empty($page) && empty($limit)) {
@@ -39,7 +39,7 @@ QUI::$Ajax->registerFunction(
         $limit = !empty($limit) ? (int)$limit : 10;
         $offset = ($page - 1) * $limit;
 
-        return \array_slice($comments, $offset, $limit);
+        return array_slice($comments, $offset, $limit);
     },
     ['uid', 'page', 'limit'],
     'Permission::checkAdminUser'

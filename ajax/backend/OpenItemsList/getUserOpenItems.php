@@ -9,6 +9,7 @@
 
 use QUI\Cache\Manager as QUICacheManager;
 use QUI\ERP\Customer\OpenItemsList\Handler;
+use QUI\ERP\Customer\OpenItemsList\Item;
 use QUI\Utils\Security\Orthos;
 
 QUI::$Ajax->registerFunction(
@@ -18,12 +19,13 @@ QUI::$Ajax->registerFunction(
             $userId = (int)$userId;
             $cacheName = 'quiqqer/customer/openitems/' . $userId;
             $refresh = true;
+            $openItems = [];
 
             if (empty($forceRefresh)) {
                 try {
                     $openItems = QUICacheManager::get($cacheName);
                     $refresh = false;
-                } catch (\Exception $Exception) {
+                } catch (Exception) {
                     // nothing - refresh cache
                 }
             }
@@ -35,14 +37,14 @@ QUI::$Ajax->registerFunction(
                 QUICacheManager::set($cacheName, $openItems);
             }
 
-            $searchParams = Orthos::clearArray(\json_decode($searchParams, true));
+            $searchParams = Orthos::clearArray(json_decode($searchParams, true));
 
             // Filter
             if (!empty($searchParams['search'])) {
-                $search = \trim($searchParams['search']);
+                $search = trim($searchParams['search']);
 
-                $openItems = \array_filter($openItems, function ($Item) use ($search) {
-                    return \mb_strpos($Item->getDocumentNo(), $search) !== false;
+                $openItems = array_filter($openItems, function ($Item) use ($search) {
+                    return mb_strpos($Item->getDocumentNo(), $search) !== false;
                 });
             }
 
@@ -56,7 +58,7 @@ QUI::$Ajax->registerFunction(
             $sortBy = 'DESC';
 
             if (!empty($searchParams['sortBy'])) {
-                switch (\mb_strtoupper($searchParams['sortBy'])) {
+                switch (mb_strtoupper($searchParams['sortBy'])) {
                     case 'ASC':
                     case 'DESC':
                         $sortBy = $searchParams['sortBy'];
@@ -64,15 +66,15 @@ QUI::$Ajax->registerFunction(
                 }
             }
 
-            \usort($openItems, function ($ItemA, $ItemB) use ($sortOn, $sortBy) {
+            usort($openItems, function ($ItemA, $ItemB) use ($sortOn, $sortBy) {
                 /**
-                 * @var \QUI\ERP\Customer\OpenItemsList\Item $ItemA
-                 * @var \QUI\ERP\Customer\OpenItemsList\Item $ItemB
+                 * @var Item $ItemA
+                 * @var Item $ItemB
                  */
                 switch ($sortOn) {
                     case 'documentNo':
-                        $valA = (int)\preg_replace('#[^\d]#i', '', $ItemA->getDocumentNo());
-                        $valB = (int)\preg_replace('#[^\d]#i', '', $ItemB->getDocumentNo());
+                        $valA = (int)preg_replace('#[^\d]#i', '', $ItemA->getDocumentNo());
+                        $valB = (int)preg_replace('#[^\d]#i', '', $ItemB->getDocumentNo());
                         break;
 
                     case 'documentType':
@@ -150,13 +152,13 @@ QUI::$Ajax->registerFunction(
             }
 
             $offset = ($page - 1) * $perPage;
-            $totalCount = \count($openItems);
-            $openItems = \array_splice($openItems, $offset, $perPage);
+            $totalCount = count($openItems);
+            $openItems = array_splice($openItems, $offset, $perPage);
 
             // Parse data for GRID display
             $items = [];
 
-            /** @var \QUI\ERP\Customer\OpenItemsList\Item $Item */
+            /** @var Item $Item */
             foreach ($openItems as $Item) {
                 $documentType = $Item->getDocumentType();
                 $documentTypeTitle = QUI::getLocale()->get(
@@ -188,7 +190,7 @@ QUI::$Ajax->registerFunction(
                 'page' => $page,
                 'total' => $totalCount
             ];
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
             return [

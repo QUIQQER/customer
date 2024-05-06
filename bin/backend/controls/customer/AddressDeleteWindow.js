@@ -9,15 +9,15 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressDeleteWind
     'Locale',
     'Ajax'
 
-], function (QUI, QUIConfirm, QUILocale, QUIAjax) {
-    "use strict";
+], function(QUI, QUIConfirm, QUILocale, QUIAjax) {
+    'use strict';
 
     var lg = 'quiqqer/customer';
 
     return new Class({
 
         Extends: QUIConfirm,
-        Type   : 'package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow',
+        Type: 'package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow',
 
         Binds: [
             '$onOpen'
@@ -26,20 +26,20 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressDeleteWind
         options: {
             addressId: false,
             maxHeight: 300,
-            maxWidth : 500,
+            maxWidth: 500,
             autoclose: false,
-            icon     : 'fa fa-trash'
+            icon: 'fa fa-trash'
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.parent(options);
 
             this.setAttributes({
-                title      : QUILocale.get(lg, 'customer.address.delete.title'),
-                text       : QUILocale.get(lg, 'customer.address.delete.text'),
+                title: QUILocale.get(lg, 'customer.address.delete.title'),
+                text: QUILocale.get(lg, 'customer.address.delete.text'),
                 information: '',
-                texticon   : 'fa fa-trash',
-                icon       : 'fa fa-trash'
+                texticon: 'fa fa-trash',
+                icon: 'fa fa-trash'
             });
 
             this.addEvents({
@@ -50,8 +50,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressDeleteWind
         /**
          * event: on open
          */
-        $onOpen: function () {
-            var self       = this,
+        $onOpen: function() {
+            var self = this,
                 addressIds = this.getAttribute('addressId');
 
             if (typeOf(addressIds) !== 'array') {
@@ -61,7 +61,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressDeleteWind
 
             this.Loader.show();
 
-            QUIAjax.post('ajax_users_address_getAddressList', function (addresses) {
+            QUIAjax.post('ajax_users_address_getAddressList', function(addresses) {
                 var list = '<ul>';
 
                 for (var i = 0, len = addresses.length; i < len; i++) {
@@ -83,12 +83,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressDeleteWind
         /**
          * submit
          */
-        submit: function () {
+        submit: function() {
             var self = this;
 
             this.Loader.show();
 
-            QUIAjax.post('ajax_users_address_deleteAddressList', function () {
+            QUIAjax.post('ajax_users_address_deleteAddressList', function() {
                 self.fireEvent('submit', [self]);
                 self.close();
             }, {

@@ -12,19 +12,19 @@ define('package/quiqqer/customer/bin/backend/controls/CreateCustomer', [
 
     'css!package/quiqqer/customer/bin/backend/controls/CreateCustomer.css'
 
-], function (QUI, QUIControl, QUIButton, QUIAjax, QUILocale) {
-    "use strict";
+], function(QUI, QUIControl, QUIButton, QUIAjax, QUILocale) {
+    'use strict';
 
     return new Class({
 
         Extends: QUIControl,
-        Type   : 'package/quiqqer/customer/bin/backend/controls/CreateCustomer',
+        Type: 'package/quiqqer/customer/bin/backend/controls/CreateCustomer',
 
         Binds: [
             '$onInject'
         ],
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.parent(options);
 
             this.addEvents({
@@ -32,7 +32,7 @@ define('package/quiqqer/customer/bin/backend/controls/CreateCustomer', [
             });
 
             this.$Categories = null;
-            this.$Content    = null;
+            this.$Content = null;
 
             this.$buttons = [];
         },
@@ -40,33 +40,33 @@ define('package/quiqqer/customer/bin/backend/controls/CreateCustomer', [
         /**
          * event: on inject
          */
-        $onInject: function () {
+        $onInject: function() {
             var self = this;
 
             this.$Categories = new Element('div', {
                 'class': 'quiqqer-customer-create-customer-categories',
-                html   : ''
+                html: ''
             }).inject(this.getElm());
 
             this.$Content = new Element('div', {
                 'class': 'quiqqer-customer-create-customer-content',
-                html   : ''
+                html: ''
             }).inject(this.getElm());
 
-            this.getCategories().then(function (categories) {
+            this.getCategories().then(function(categories) {
                 var i, len, category, Button;
 
-                var onClick = function (Btn) {
+                var onClick = function(Btn) {
                     var data = Btn.getAttribute('data');
 
-                    self.$buttons.each(function (B) {
+                    self.$buttons.each(function(B) {
                         B.setNormal();
                     });
 
 
                     Btn.setActive();
-                    
-                    require([data.require], function (Control) {
+
+                    require([data.require], function(Control) {
                         self.$Content.set('html', '');
                         new Control().inject(self.$Content);
                     });
@@ -76,11 +76,11 @@ define('package/quiqqer/customer/bin/backend/controls/CreateCustomer', [
                     category = categories[i];
 
                     Button = new QUIButton({
-                        text     : category.text,
-                        icon     : category.icon,
+                        text: category.text,
+                        icon: category.icon,
                         textimage: category.textimage,
-                        data     : category,
-                        events   : {
+                        data: category,
+                        events: {
                             onClick: onClick
                         }
                     });
@@ -89,7 +89,7 @@ define('package/quiqqer/customer/bin/backend/controls/CreateCustomer', [
 
                     self.$buttons.push(Button);
                 }
-            }).then(function () {
+            }).then(function() {
                 self.fireEvent('load', [self]);
             });
         },
@@ -99,8 +99,8 @@ define('package/quiqqer/customer/bin/backend/controls/CreateCustomer', [
          *
          * @return {Promise}
          */
-        getCategories: function () {
-            return new Promise(function (resolve) {
+        getCategories: function() {
+            return new Promise(function(resolve) {
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_create_getCategories', resolve, {
                     'package': 'quiqqer/customer'
                 });

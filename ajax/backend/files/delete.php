@@ -4,8 +4,6 @@
  * This file contains package_quiqqer_customer_ajax_backend_files_upload
  */
 
-use QUI\Permissions\Permission;
-
 /**
  * Upload finish event
  *
@@ -16,7 +14,7 @@ QUI::$Ajax->registerFunction(
     function ($files, $customerId) {
         QUI\ERP\Customer\CustomerFiles::deleteFiles(
             $customerId,
-            \json_decode($files, true)
+            json_decode($files, true)
         );
     },
     ['files', 'customerId'],

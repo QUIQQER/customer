@@ -15,15 +15,15 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
     'text!package/quiqqer/customer/bin/backend/controls/customer/AddressEdit.html',
     'css!package/quiqqer/customer/bin/backend/controls/customer/AddressEdit.css'
 
-], function (QUI, QUIControl, Countries, Users, QUILocale, QUIAjax, Mustache, template) {
-    "use strict";
+], function(QUI, QUIControl, Countries, Users, QUILocale, QUIAjax, Mustache, template) {
+    'use strict';
 
     const lg = 'quiqqer/customer';
 
     return new Class({
 
         Extends: QUIControl,
-        Type   : 'package/quiqqer/customer/bin/backend/controls/customer/AddressEdit',
+        Type: 'package/quiqqer/customer/bin/backend/controls/customer/AddressEdit',
 
         Binds: [
             '$onInject'
@@ -33,7 +33,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
             addressId: false
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.parent(options);
 
             this.$data = {};
@@ -48,35 +48,35 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
          *
          * @return {HTMLDivElement}
          */
-        create: function () {
+        create: function() {
             var self = this;
 
             this.$Elm = this.parent();
             this.$Elm.addClass('quiqqer-customer-address-edit');
 
             this.$Elm.set('html', Mustache.render(template, {
-                titleAddress         : QUILocale.get('quiqqer/quiqqer', 'address'),
-                textAddressCompany   : QUILocale.get('quiqqer/quiqqer', 'company'),
+                titleAddress: QUILocale.get('quiqqer/quiqqer', 'address'),
+                textAddressCompany: QUILocale.get('quiqqer/quiqqer', 'company'),
                 textAddressSalutation: QUILocale.get('quiqqer/quiqqer', 'salutation'),
-                textAddressFirstname : QUILocale.get('quiqqer/quiqqer', 'firstname'),
-                textAddressLastname  : QUILocale.get('quiqqer/quiqqer', 'lastname'),
-                textAddressStreet    : QUILocale.get('quiqqer/quiqqer', 'street'),
-                textAddressZIP       : QUILocale.get('quiqqer/quiqqer', 'zip'),
-                textAddressCity      : QUILocale.get('quiqqer/quiqqer', 'city'),
-                textAddressCountry   : QUILocale.get('quiqqer/quiqqer', 'country'),
-                textAddressSuffix    : QUILocale.get('quiqqer/quiqqer', 'address.suffix'),
+                textAddressFirstname: QUILocale.get('quiqqer/quiqqer', 'firstname'),
+                textAddressLastname: QUILocale.get('quiqqer/quiqqer', 'lastname'),
+                textAddressStreet: QUILocale.get('quiqqer/quiqqer', 'street'),
+                textAddressZIP: QUILocale.get('quiqqer/quiqqer', 'zip'),
+                textAddressCity: QUILocale.get('quiqqer/quiqqer', 'city'),
+                textAddressCountry: QUILocale.get('quiqqer/quiqqer', 'country'),
+                textAddressSuffix: QUILocale.get('quiqqer/quiqqer', 'address.suffix'),
 
                 textAddressTelFaxMobile: QUILocale.get(lg, 'address.telFaxMobile'),
-                textAddressEmail       : QUILocale.get(lg, 'address.email'),
-                textAddressGeneral     : QUILocale.get(lg, 'address.general'),
+                textAddressEmail: QUILocale.get(lg, 'address.email'),
+                textAddressGeneral: QUILocale.get(lg, 'address.general')
             }));
 
-            this.getElm().getElement('[name="add-phone"]').addEvent('click', function (e) {
+            this.getElm().getElement('[name="add-phone"]').addEvent('click', function(e) {
                 e.stop();
                 self.addPhone();
             });
 
-            this.getElm().getElement('[name="add-email"]').addEvent('click', function (e) {
+            this.getElm().getElement('[name="add-email"]').addEvent('click', function(e) {
                 e.stop();
                 self.addEmail();
             });
@@ -87,24 +87,24 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
         /**
          * event : on inject
          */
-        $onInject: function () {
+        $onInject: function() {
             var self = this;
 
-            Countries.getCountries().then(function (countries) {
+            Countries.getCountries().then(function(countries) {
                 for (var code in countries) {
                     if (!countries.hasOwnProperty(code)) {
                         continue;
                     }
 
                     new Element('option', {
-                        html : countries[code],
+                        html: countries[code],
                         value: code
                     }).inject(self.getElm().getElement('[name="address-country"]'));
                 }
 
                 // fetch address
-                QUIAjax.get('ajax_users_address_get', function (result) {
-                    var Form     = self.getElm().getElement('form'),
+                QUIAjax.get('ajax_users_address_get', function(result) {
+                    var Form = self.getElm().getElement('form'),
                         elements = Form.elements;
 
                     self.$data = result;
@@ -132,7 +132,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
                         mail = [];
                     }
 
-                    mail.forEach(function (entry) {
+                    mail.forEach(function(entry) {
                         self.addEmail().getElement('input').set('value', entry);
                     });
 
@@ -146,7 +146,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
                         phone = [];
                     }
 
-                    phone.forEach(function (entry) {
+                    phone.forEach(function(entry) {
                         var Phone = self.addPhone();
 
                         Phone.getElement('select').set('value', entry.type);
@@ -164,7 +164,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
          *
          * @return {string}
          */
-        getAddressId: function () {
+        getAddressId: function() {
             if (!this.getAttribute('addressId')) {
                 return '';
             }
@@ -177,7 +177,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
          *
          * @return {string}
          */
-        getFirstname: function () {
+        getFirstname: function() {
             if (typeof this.$data.firstname === 'undefined') {
                 return '';
             }
@@ -190,7 +190,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
          *
          * @return {string}
          */
-        getLastname: function () {
+        getLastname: function() {
             if (typeof this.$data.lastname === 'undefined') {
                 return '';
             }
@@ -203,7 +203,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
          *
          * @return {*|Promise}
          */
-        save: function () {
+        save: function() {
             return this.update();
         },
 
@@ -212,32 +212,32 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
          *
          * @return {Promise}
          */
-        update: function () {
+        update: function() {
             var self = this;
 
-            return new Promise(function (resolve, reject) {
-                var Form     = self.getElm().getElement('form'),
+            return new Promise(function(resolve, reject) {
+                var Form = self.getElm().getElement('form'),
                     elements = Form.elements;
 
                 // phone
                 var phone = self.getElm().getElements(
                     '.quiqqer-customer-address-phoneTable tbody tr'
-                ).map(function (Row) {
+                ).map(function(Row) {
                     var Input = Row.getElement('input');
                     var Select = Row.getElement('select');
 
                     return {
                         type: Select.value,
-                        no  : Input.value
+                        no: Input.value
                     };
                 });
 
                 // email
                 var mails = self.getElm().getElements(
                     '.quiqqer-customer-address-emailTable input'
-                ).map(function (Input) {
+                ).map(function(Input) {
                     return Input.value;
-                }).filter(function (entry) {
+                }).filter(function(entry) {
                     return entry;
                 });
 
@@ -245,9 +245,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
                 QUIAjax.post([
                     'ajax_users_address_save',
                     'ajax_users_address_getUserByAddress'
-                ], function (result, userId) {
-                    require(['Users'], function (Users) {
-                        Users.get(userId).load().then(function (User) {
+                ], function(result, userId) {
+                    require(['Users'], function(Users) {
+                        Users.get(userId).load().then(function(User) {
                             // consider address-communication
                             var i, len;
                             var com = User.getAttribute('address-communication');
@@ -300,20 +300,20 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
                     });
                 }, {
                     'package': 'quiqqer/customer',
-                    onError  : reject,
-                    aid      : self.getAttribute('addressId'),
-                    data     : JSON.encode({
-                        company   : elements['address-company'].value,
+                    onError: reject,
+                    aid: self.getAttribute('addressId'),
+                    data: JSON.encode({
+                        company: elements['address-company'].value,
                         salutation: elements['address-salutation'].value,
-                        firstname : elements['address-firstname'].value,
-                        lastname  : elements['address-lastname'].value,
-                        street_no : elements['address-street_no'].value,
-                        zip       : elements['address-zip'].value,
-                        city      : elements['address-city'].value,
-                        country   : elements['address-country'].value,
-                        suffix    : elements['address-suffix'].value,
-                        mails     : mails,
-                        phone     : phone
+                        firstname: elements['address-firstname'].value,
+                        lastname: elements['address-lastname'].value,
+                        street_no: elements['address-street_no'].value,
+                        zip: elements['address-zip'].value,
+                        city: elements['address-city'].value,
+                        country: elements['address-country'].value,
+                        suffix: elements['address-suffix'].value,
+                        mails: mails,
+                        phone: phone
                     })
                 });
             });
@@ -326,24 +326,24 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
          *
          * @return {Element}
          */
-        addPhone: function () {
+        addPhone: function() {
             const Table = this.getElm().getElement('.quiqqer-customer-address-phoneTable');
 
             return new Element('tr', {
                 html: '' +
-                      '<td>' +
-                      '    <label class="field-container">' +
-                      '        <span class="field-container-item field-container-item-select">' +
-                      '            <select name="phone-type">' +
-                      '                <option value="tel">' + QUILocale.get('quiqqer/quiqqer', 'tel') + '</option>' +
-                      '                <option value="fax">' + QUILocale.get('quiqqer/quiqqer', 'fax') + '</option>' +
-                      '                <option value="mobile">' + QUILocale.get('quiqqer/quiqqer', 'mobile') +
-                      '</option>' +
-                      '            </select>' +
-                      '        </span>' +
-                      '        <input type="text" class="field-container-field" />' +
-                      '    </label>' +
-                      '</td>'
+                    '<td>' +
+                    '    <label class="field-container">' +
+                    '        <span class="field-container-item field-container-item-select">' +
+                    '            <select name="phone-type">' +
+                    '                <option value="tel">' + QUILocale.get('quiqqer/quiqqer', 'tel') + '</option>' +
+                    '                <option value="fax">' + QUILocale.get('quiqqer/quiqqer', 'fax') + '</option>' +
+                    '                <option value="mobile">' + QUILocale.get('quiqqer/quiqqer', 'mobile') +
+                    '</option>' +
+                    '            </select>' +
+                    '        </span>' +
+                    '        <input type="text" class="field-container-field" />' +
+                    '    </label>' +
+                    '</td>'
             }).inject(Table.getElement('tbody'));
         },
 
@@ -352,19 +352,19 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressEdit', [
          *
          * @return {Element}
          */
-        addEmail: function () {
+        addEmail: function() {
             const Table = this.getElm().getElement('.quiqqer-customer-address-emailTable');
 
             return new Element('tr', {
                 html: '' +
-                      '<td>' +
-                      '    <label class="field-container">\n' +
-                      '        <span class="field-container-item">\n' +
-                      '            ' + QUILocale.get('quiqqer/quiqqer', 'email') +
-                      '        </span>\n' +
-                      '        <input type="email" class="field-container-field" />' +
-                      '    </label>' +
-                      '</td>'
+                    '<td>' +
+                    '    <label class="field-container">\n' +
+                    '        <span class="field-container-item">\n' +
+                    '            ' + QUILocale.get('quiqqer/quiqqer', 'email') +
+                    '        </span>\n' +
+                    '        <input type="email" class="field-container-field" />' +
+                    '    </label>' +
+                    '</td>'
             }).inject(Table.getElement('tbody'));
         }
 

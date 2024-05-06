@@ -13,7 +13,7 @@
 QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_search',
     function ($params) {
-        $params = \json_decode($params, true);
+        $params = json_decode($params, true);
         $Search = new QUI\ERP\Customer\Search();
 
         if (isset($params['filter'])) {

@@ -2,6 +2,7 @@
 
 namespace QUI\ERP\Customer\OpenItemsList;
 
+use Exception;
 use QUI;
 use QUI\ERP\Accounting\Invoice\Handler as InvoiceHandler;
 use QUI\ERP\Accounting\Invoice\Invoice;
@@ -10,7 +11,7 @@ use QUI\ERP\Accounting\Payments\Transactions\Transaction;
 use QUI\ERP\Order\Handler as OrderHandler;
 use QUI\ERP\Order\Order;
 use QUI\ERP\Order\Settings;
-use QUI\ERP\Order\AbstractOrder;
+use QUI\ERP\User;
 
 use function json_decode;
 
@@ -29,27 +30,27 @@ class Events
      * @param Transaction $Transaction
      * @return void
      */
-    public static function onTransactionCreate(Transaction $Transaction)
+    public static function onTransactionCreate(Transaction $Transaction): void
     {
         // Get invoice by hash
         try {
             $Invoice = InvoiceHandler::getInstance()->getInvoiceByHash($Transaction->getHash());
             $User = $Invoice->getCustomer();
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
 
             // Get order by hash
             try {
                 $Order = OrderHandler::getInstance()->getOrderByHash($Transaction->getHash());
                 $User = $Order->getCustomer();
-            } catch (\Exception $Exception) {
+            } catch (Exception $Exception) {
                 QUI\System\Log::writeDebugException($Exception);
                 return;
             }
         }
 
-        // Prefer LIVE user instead of invoice user
-        $LiveErpUser = self::getLiveErpUser($User->getId());
+        // prefer: LIVE user instead of invoice user
+        $LiveErpUser = self::getLiveErpUser($User->getUUID());
 
         if ($LiveErpUser) {
             $User = $LiveErpUser;
@@ -57,7 +58,7 @@ class Events
 
         try {
             Handler::updateOpenItemsRecord($User);
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
     }
@@ -76,24 +77,24 @@ class Events
         Invoice $Invoice,
         int $currentStatus,
         int $oldStatus
-    ) {
+    ): void {
         try {
             $User = $Invoice->getCustomer();
 
-            // Prefer LIVE user instead of invoice user
-            $LiveErpUser = self::getLiveErpUser($User->getId());
+            // Prefer: LIVE user instead of invoice user
+            $LiveErpUser = self::getLiveErpUser($User->getUUID());
 
             if ($LiveErpUser) {
                 $User = $LiveErpUser;
             }
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             return;
         }
 
         try {
             Handler::updateOpenItemsRecord($User);
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
     }
@@ -112,24 +113,24 @@ class Events
         Order $Order,
         int $currentStatus,
         int $oldStatus
-    ) {
+    ): void {
         try {
             $User = $Order->getCustomer();
 
-            // Prefer LIVE user instead of invoice user
-            $LiveErpUser = self::getLiveErpUser($User->getId());
+            // Prefer: LIVE user instead of invoice user
+            $LiveErpUser = self::getLiveErpUser($User->getUUID());
 
             if ($LiveErpUser) {
                 $User = $LiveErpUser;
             }
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             return;
         }
 
         try {
             Handler::updateOpenItemsRecord($User);
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
     }
@@ -150,20 +151,20 @@ class Events
         try {
             $User = $Invoice->getCustomer();
 
-            // Prefer LIVE user instead of invoice user
-            $LiveErpUser = self::getLiveErpUser($User->getId());
+            // Prefer: LIVE user instead of invoice user
+            $LiveErpUser = self::getLiveErpUser($User->getUUID());
 
             if ($LiveErpUser) {
                 $User = $LiveErpUser;
             }
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             return;
         }
 
         try {
             Handler::updateOpenItemsRecord($User);
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
     }
@@ -173,11 +174,11 @@ class Events
      *
      * Update open records of user if an order changes
      *
-     * @param int $orderId
+     * @param int|string $orderId
      * @param array $orderAttributes
      * @return void
      */
-    public static function onQuiqqerOrderDelete(int $orderId, array $orderAttributes): void
+    public static function onQuiqqerOrderDelete(int|string $orderId, array $orderAttributes): void
     {
         try {
             $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
@@ -186,7 +187,7 @@ class Events
             if (empty($considerOrders)) {
                 return;
             }
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             return;
         }
@@ -197,7 +198,7 @@ class Events
         }
 
         try {
-            // Prefer LIVE user instead of invoice user
+            // Prefer: LIVE user instead of invoice user
             $User = self::getLiveErpUser($orderAttributes['customerId']);
 
             if (!$User) {
@@ -212,14 +213,14 @@ class Events
 
                 $User = new QUI\ERP\User($customerData);
             }
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             return;
         }
 
         try {
             Handler::updateOpenItemsRecord($User);
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
     }
@@ -229,9 +230,9 @@ class Events
      *
      * Update open records of user if an order changes
      *
-     * @param QUI\ERP\Order\Order $Order
+     * @param QUI\ERP\Order\AbstractOrder $Order
      */
-    public static function onQuiqqerOrderCreated(QUI\ERP\Order\Order $Order)
+    public static function onQuiqqerOrderCreated(QUI\ERP\Order\AbstractOrder $Order): void
     {
         try {
             $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
@@ -240,7 +241,7 @@ class Events
             if (empty($considerOrders)) {
                 return;
             }
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             return;
         }
@@ -257,20 +258,20 @@ class Events
         try {
             $User = $Order->getCustomer();
 
-            // Prefer LIVE user instead of invoice user
-            $LiveErpUser = self::getLiveErpUser($User->getId());
+            // Prefer: LIVE user instead of invoice user
+            $LiveErpUser = self::getLiveErpUser($User->getUUID());
 
             if ($LiveErpUser) {
                 $User = $LiveErpUser;
             }
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             return;
         }
 
         try {
             Handler::updateOpenItemsRecord($User);
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
     }
@@ -278,14 +279,14 @@ class Events
     /**
      * Get ERP user from LIVE user data based on $userId from invoice or order
      *
-     * @param int $userId
-     * @return QUI\ERP\User|false
+     * @param int|string $userId
+     * @return User|false
      */
-    protected static function getLiveErpUser(int $userId)
+    protected static function getLiveErpUser(int|string $userId): bool|QUI\ERP\User
     {
         try {
             $User = QUI::getUsers()->get($userId);
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             if ($Exception->getCode() !== 404) {
                 QUI\System\Log::writeException($Exception);
             }
@@ -295,7 +296,7 @@ class Events
 
         try {
             return QUI\ERP\User::convertUserToErpUser($User);
-        } catch (\Exception $Exception) {
+        } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             return false;
         }

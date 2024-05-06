@@ -16,14 +16,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectI
     'text!package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectItem.Entry.html',
     'css!package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectItem.css'
 
-], function (QUISelectItem, QUIConfirm, QUILocale, QUIAjax, Mustache, templateEntry) {
-    "use strict";
+], function(QUISelectItem, QUIConfirm, QUILocale, QUIAjax, Mustache, templateEntry) {
+    'use strict';
 
     const lg = 'quiqqer/customer';
 
     return new Class({
         Extends: QUISelectItem,
-        Type   : 'package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectItem',
+        Type: 'package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectItem',
 
         Binds: [
             'refresh',
@@ -38,20 +38,20 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectI
             confirmDelete: false // deletion requires confirmation
         },
 
-        initialize: function (options) {
+        initialize: function(options) {
             this.parent(options);
             this.setAttribute('icon', 'fa fa-file-text-o');
 
-            this.$Download         = null;
-            this.$File             = null;
+            this.$Download = null;
+            this.$File = null;
             this.$AttachmentSwitch = null;
-            this.$ParentSelect     = this.getAttribute('Parent');
+            this.$ParentSelect = this.getAttribute('Parent');
         },
 
         /**
          * event : on inject
          */
-        refresh: function () {
+        refresh: function() {
             this.$Text.set({
                 html: '<span class="fa fa-spinner fa-spin"></span>'
             });
@@ -61,24 +61,24 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectI
 
                 this.$Text.set({
                     html: Mustache.render(templateEntry, {
-                        title   : File.basename,
+                        title: File.basename,
                         fileHash: File.hash
                     })
                 });
 
                 this.$AttachmentSwitch = new Element('span', {
-                    'class'      : 'qui-elements-selectItem-attachment fa fa-envelope',
-                    title        : QUILocale.get(lg, 'controls.userFiles.SelectItem.btn.attachment.title'),
+                    'class': 'qui-elements-selectItem-attachment fa fa-envelope',
+                    title: QUILocale.get(lg, 'controls.userFiles.SelectItem.btn.attachment.title'),
                     'data-active': 0,
-                    events       : {
+                    events: {
                         click: this.$onClickAttachmentSwitch
                     }
                 }).inject(this.$Destroy, 'before');
 
                 this.$Download = new Element('span', {
                     'class': 'qui-elements-selectItem-download fa fa-download',
-                    title  : QUILocale.get(lg, 'controls.userFiles.SelectItem.btn.download.title'),
-                    events : {
+                    title: QUILocale.get(lg, 'controls.userFiles.SelectItem.btn.download.title'),
+                    events: {
                         click: this.$onClickDownload
                     }
                 }).inject(this.$Destroy, 'before');
@@ -105,7 +105,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectI
          *
          * @param {Object} Options
          */
-        setItemOptions: function (Options) {
+        setItemOptions: function(Options) {
             if ('attachToEmail' in Options && !!Options.attachToEmail) {
                 this.$onClickAttachmentSwitch();
             }
@@ -117,13 +117,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectI
          * @param {String} fileHash
          * @return {Promise}
          */
-        $getFileData: function (fileHash) {
+        $getFileData: function(fileHash) {
             return new Promise((resolve, reject) => {
                 QUIAjax.get('package_quiqqer_customer_ajax_backend_files_get', resolve, {
-                    'package' : 'quiqqer/customer',
+                    'package': 'quiqqer/customer',
                     customerId: this.getAttribute('Parent').getAttribute('userId'),
-                    fileHash  : fileHash,
-                    onError   : reject
+                    fileHash: fileHash,
+                    onError: reject
                 });
             });
         },
@@ -133,27 +133,27 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectI
          *
          * @return {void}
          */
-        $onClickDownload: function () {
+        $onClickDownload: function() {
             const uid = String.uniqueID();
-            const id  = 'download-customer-file-' + uid;
+            const id = 'download-customer-file-' + uid;
 
             new Element('iframe', {
-                src   : URL_OPT_DIR + 'quiqqer/customer/bin/backend/download.php?' + Object.toQueryString({
-                    file      : this.$File.filename,
-                    extension : this.$File.extension,
+                src: URL_OPT_DIR + 'quiqqer/customer/bin/backend/download.php?' + Object.toQueryString({
+                    file: this.$File.filename,
+                    extension: this.$File.extension,
                     customerId: this.getAttribute('Parent').getAttribute('userId')
                 }),
-                id    : id,
+                id: id,
                 styles: {
                     position: 'absolute',
-                    top     : -200,
-                    left    : -200,
-                    width   : 50,
-                    height  : 50
+                    top: -200,
+                    left: -200,
+                    width: 50,
+                    height: 50
                 }
             }).inject(document.body);
 
-            (function () {
+            (function() {
                 document.getElements('#' + id).destroy();
             }).delay(20000, this);
         },
@@ -161,18 +161,18 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectI
         /**
          * Toggle "is email attachment" button
          */
-        $onClickAttachmentSwitch: function () {
+        $onClickAttachmentSwitch: function() {
             if (parseInt(this.$AttachmentSwitch.get('data-active'))) {
                 this.$AttachmentSwitch.setStyles({
                     background: 'initial',
-                    color     : 'initial'
+                    color: 'initial'
                 });
 
                 this.$AttachmentSwitch.set('data-active', 0);
             } else {
                 this.$AttachmentSwitch.setStyles({
                     background: '#2F8FC6',
-                    color     : '#FFFFFF'
+                    color: '#FFFFFF'
                 });
 
                 this.$AttachmentSwitch.set('data-active', 1);
@@ -186,7 +186,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectI
          *
          * @return {Object}
          */
-        getItemOptions: function () {
+        getItemOptions: function() {
             return {
                 attachToEmail: parseInt(this.$AttachmentSwitch.get('data-active')) ? true : false
             };
@@ -195,27 +195,27 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/SelectI
         /**
          * Item delete confirmation
          */
-        $onClickDelete: function () {
+        $onClickDelete: function() {
             new QUIConfirm({
                 maxHeight: 350,
-                maxWidth : 650,
+                maxWidth: 650,
 
-                autoclose         : false,
+                autoclose: false,
                 backgroundClosable: true,
 
                 information: QUILocale.get(lg, 'controls.userFiles.SelectItem.delete.information', {
                     file: this.$File.basename
                 }),
-                title      : QUILocale.get(lg, 'controls.userFiles.SelectItem.delete.title'),
-                texticon   : 'fa fa-trash',
-                text       : QUILocale.get(lg, 'controls.userFiles.SelectItem.delete.text'),
-                icon       : 'fa fa-trash',
+                title: QUILocale.get(lg, 'controls.userFiles.SelectItem.delete.title'),
+                texticon: 'fa fa-trash',
+                text: QUILocale.get(lg, 'controls.userFiles.SelectItem.delete.text'),
+                icon: 'fa fa-trash',
 
                 ok_button: {
-                    text     : QUILocale.get(lg, 'controls.userFiles.SelectItem.delete.submit'),
+                    text: QUILocale.get(lg, 'controls.userFiles.SelectItem.delete.submit'),
                     textimage: 'icon-ok fa fa-trash'
                 },
-                events   : {
+                events: {
                     onSubmit: (Win) => {
                         this.destroy();
                         //this.$ParentSelect.fireEvent('change', [this.$ParentSelect]);

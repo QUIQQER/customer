@@ -5,6 +5,10 @@ namespace QUI\ERP\Customer;
 use QUI;
 use QUI\BackendSearch\ProviderInterface;
 
+use function implode;
+use function in_array;
+use function json_encode;
+
 /**
  * Class BackendSearchProvider
  *
@@ -17,7 +21,7 @@ class BackendSearchProvider implements ProviderInterface
     /**
      * @inheritdoc
      */
-    public function buildCache()
+    public function buildCache(): void
     {
         // customers are searched live
     }
@@ -26,13 +30,13 @@ class BackendSearchProvider implements ProviderInterface
      * @param int $id
      * @inheritdoc
      */
-    public function getEntry($id)
+    public function getEntry(int $id): array
     {
         return [
-            'searchdata' => \json_encode([
+            'searchdata' => json_encode([
                 'require' => 'package/quiqqer/customer/bin/backend/controls/customer/Panel',
                 'params' => [
-                    'userId' => (int)$id
+                    'userId' => $id
                 ]
             ])
         ];
@@ -45,11 +49,11 @@ class BackendSearchProvider implements ProviderInterface
      * @param array $params
      * @return array
      */
-    public function search($search, $params = [])
+    public function search(string $search, array $params = []): array
     {
         if (
             isset($params['filterGroups'])
-            && !\in_array(self::TYPE, $params['filterGroups'])
+            && !in_array(self::TYPE, $params['filterGroups'])
         ) {
             return [];
         }
@@ -91,7 +95,7 @@ class BackendSearchProvider implements ProviderInterface
                         $nameParts[] = $row['lastname'];
                     }
 
-                    $name = \implode(' ', $nameParts);
+                    $name = implode(' ', $nameParts);
                 } else {
                     $name = QUI::getLocale()->get(
                         'quiqqer/customer',
@@ -123,7 +127,7 @@ class BackendSearchProvider implements ProviderInterface
      *
      * @return array
      */
-    public function getFilterGroups()
+    public function getFilterGroups(): array
     {
         return [
             [

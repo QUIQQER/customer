@@ -15,8 +15,8 @@ QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_files_getPermissions',
     function () {
         return [
-            'fileEdit'   => Permission::hasPermission('quiqqer.customer.fileEdit'),
-            'fileView'   => Permission::hasPermission('quiqqer.customer.fileView'),
+            'fileEdit' => Permission::hasPermission('quiqqer.customer.fileEdit'),
+            'fileView' => Permission::hasPermission('quiqqer.customer.fileView'),
             'fileUpload' => Permission::hasPermission('quiqqer.customer.fileUpload'),
         ];
     },

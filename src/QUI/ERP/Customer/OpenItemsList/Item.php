@@ -2,9 +2,12 @@
 
 namespace QUI\ERP\Customer\OpenItemsList;
 
+use DateTime;
 use QUI;
 use QUI\ERP\Currency\Currency;
 use QUI\Locale;
+
+use function date_create;
 
 /**
  * Class Item
@@ -16,92 +19,92 @@ class Item
     /**
      * @var string
      */
-    protected $title = '';
+    protected string $title = '';
 
     /**
      * @var string
      */
-    protected $description = '';
+    protected string $description = '';
 
     /**
      * @var int|string
      */
-    protected $documentId;
+    protected string|int $documentId;
 
     /**
      * @var string
      */
-    protected $documentNo = '';
+    protected string $documentNo = '';
 
     /**
      * @var string
      */
-    protected $documentType;
+    protected string $documentType;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
-    protected $Date;
+    protected DateTime $Date;
 
     /**
-     * @var \DateTime
+     * @var DateTime
      */
-    protected $DueDate;
+    protected DateTime $DueDate;
 
     /**
-     * @var \DateTime|false
+     * @var DateTime|false
      */
-    protected $LastPaymentDate = false;
+    protected false|DateTime $LastPaymentDate = false;
 
     /**
-     * @var float
+     * @var float|int
      */
-    protected $amountPaid = 0;
+    protected int|float $amountPaid = 0;
 
     /**
-     * @var float
+     * @var int|float
      */
-    protected $amountOpen = 0;
+    protected int|float $amountOpen = 0;
 
     /**
-     * @var float
+     * @var int|float
      */
-    protected $amountTotalNet = 0;
+    protected int|float $amountTotalNet = 0;
 
     /**
-     * @var float
+     * @var int|float
      */
-    protected $amountTotalSum = 0;
+    protected int|float $amountTotalSum = 0;
 
     /**
-     * @var float
+     * @var int|float
      */
-    protected $amountTotalVat = 0;
+    protected int|float $amountTotalVat = 0;
 
     /**
-     * @var float
+     * @var int|float
      */
-    protected $amountTotal = 0;
+    protected int|float $amountTotal = 0;
 
     /**
      * @var int
      */
-    protected $daysDue = 0;
+    protected int $daysDue = 0;
 
     /**
      * @var int|false
      */
-    protected $dunningLevel = false;
+    protected int|false $dunningLevel = false;
 
     /**
      * @var Currency
      */
-    protected $Currency;
+    protected Currency $Currency;
 
     /**
      * @var Locale
      */
-    protected $Locale;
+    protected Locale $Locale;
 
     protected ?string $globalProcessId = null;
     protected ?string $hash = null;
@@ -112,7 +115,7 @@ class Item
      * @param int|string $documentId - Internal document id
      * @param string $documentType - Type of document (e.g. invoice, order etc.)
      */
-    public function __construct($documentId, string $documentType)
+    public function __construct(int|string $documentId, string $documentType)
     {
         $this->documentId = $documentId;
         $this->documentType = $documentType;
@@ -129,7 +132,7 @@ class Item
     /**
      * @param string $title
      */
-    public function setTitle(string $title)
+    public function setTitle(string $title): void
     {
         $this->title = $title;
     }
@@ -145,7 +148,7 @@ class Item
     /**
      * @param string $description
      */
-    public function setDescription(string $description)
+    public function setDescription(string $description): void
     {
         $this->description = $description;
     }
@@ -161,7 +164,7 @@ class Item
     /**
      * @param int $daysDue
      */
-    public function setDaysDue(int $daysDue)
+    public function setDaysDue(int $daysDue): void
     {
         $this->daysDue = $daysDue;
     }
@@ -175,7 +178,7 @@ class Item
             return 0;
         }
 
-        $Now = \date_create();
+        $Now = date_create();
         $Diff = $Now->diff($this->Date);
 
         return $Diff->days + 1;
@@ -184,15 +187,15 @@ class Item
     /**
      * @return false|int
      */
-    public function getDunningLevel()
+    public function getDunningLevel(): bool|int
     {
         return $this->dunningLevel;
     }
 
     /**
-     * @param false|int $dunningLevel
+     * @param bool|int $dunningLevel
      */
-    public function setDunningLevel($dunningLevel)
+    public function setDunningLevel(bool|int $dunningLevel): void
     {
         $this->dunningLevel = $dunningLevel;
     }
@@ -214,7 +217,7 @@ class Item
     /**
      * @param Locale $Locale
      */
-    public function setLocale(Locale $Locale)
+    public function setLocale(Locale $Locale): void
     {
         $this->Locale = $Locale;
     }
@@ -222,7 +225,7 @@ class Item
     /**
      * @return int|string
      */
-    public function getDocumentId()
+    public function getDocumentId(): int|string
     {
         return $this->documentId;
     }
@@ -238,7 +241,7 @@ class Item
     /**
      * @param string $documentNo
      */
-    public function setDocumentNo(string $documentNo)
+    public function setDocumentNo(string $documentNo): void
     {
         $this->documentNo = $documentNo;
     }
@@ -252,9 +255,9 @@ class Item
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getDate(): \DateTime
+    public function getDate(): DateTime
     {
         return $this->Date;
     }
@@ -272,17 +275,17 @@ class Item
     }
 
     /**
-     * @param \DateTime $Date
+     * @param DateTime $Date
      */
-    public function setDate(\DateTime $Date)
+    public function setDate(DateTime $Date): void
     {
         $this->Date = $Date;
     }
 
     /**
-     * @return \DateTime|false
+     * @return DateTime|false
      */
-    public function getLastPaymentDate()
+    public function getLastPaymentDate(): DateTime|bool
     {
         return $this->LastPaymentDate;
     }
@@ -300,17 +303,17 @@ class Item
     }
 
     /**
-     * @param \DateTime $LastPaymentDate
+     * @param DateTime $LastPaymentDate
      */
-    public function setLastPaymentDate(\DateTime $LastPaymentDate)
+    public function setLastPaymentDate(DateTime $LastPaymentDate): void
     {
         $this->LastPaymentDate = $LastPaymentDate;
     }
 
     /**
-     * @return \DateTime
+     * @return DateTime
      */
-    public function getDueDate(): \DateTime
+    public function getDueDate(): DateTime
     {
         return $this->DueDate;
     }
@@ -328,9 +331,9 @@ class Item
     }
 
     /**
-     * @param \DateTime $DueDate
+     * @param DateTime $DueDate
      */
-    public function setDueDate(\DateTime $DueDate)
+    public function setDueDate(DateTime $DueDate): void
     {
         $this->DueDate = $DueDate;
     }
@@ -354,7 +357,7 @@ class Item
     /**
      * @param float $amountPaid
      */
-    public function setAmountPaid(float $amountPaid)
+    public function setAmountPaid(float $amountPaid): void
     {
         $this->amountPaid = $amountPaid;
     }
@@ -378,7 +381,7 @@ class Item
     /**
      * @param float $amountOpen
      */
-    public function setAmountOpen(float $amountOpen)
+    public function setAmountOpen(float $amountOpen): void
     {
         $this->amountOpen = $amountOpen;
     }
@@ -402,7 +405,7 @@ class Item
     /**
      * @param float $amountTotalNet
      */
-    public function setAmountTotalNet(float $amountTotalNet)
+    public function setAmountTotalNet(float $amountTotalNet): void
     {
         $this->amountTotalNet = $amountTotalNet;
     }
@@ -426,7 +429,7 @@ class Item
     /**
      * @param float $amountTotalSum
      */
-    public function setAmountTotalSum(float $amountTotalSum)
+    public function setAmountTotalSum(float $amountTotalSum): void
     {
         $this->amountTotalSum = $amountTotalSum;
     }
@@ -450,7 +453,7 @@ class Item
     /**
      * @param float $amountTotalVat
      */
-    public function setAmountTotalVat(float $amountTotalVat)
+    public function setAmountTotalVat(float $amountTotalVat): void
     {
         $this->amountTotalVat = $amountTotalVat;
     }
@@ -490,7 +493,7 @@ class Item
     /**
      * @param Currency $Currency
      */
-    public function setCurrency(Currency $Currency)
+    public function setCurrency(Currency $Currency): void
     {
         $this->Currency = $Currency;
     }
