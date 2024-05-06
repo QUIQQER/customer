@@ -16,7 +16,7 @@
     "url": "https://www.pcsg.de"
   },
   "require": {
-    "php": "^7|^8",
+    "php": "^8",
     "quiqqer/core": "^2",
     "quiqqer/erp": "^3.2",
     "quiqqer/user-downloads": "^1"
