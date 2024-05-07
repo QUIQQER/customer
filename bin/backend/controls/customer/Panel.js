@@ -184,7 +184,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             // buttons
             this.addButton({
                 name: 'userSave',
-                text: QUILocale.get('quiqqer/quiqqer', 'users.user.btn.save'),
+                text: QUILocale.get('quiqqer/core', 'users.user.btn.save'),
                 textimage: 'fa fa-save',
                 events: {
                     onClick: this.$onSaveClick
@@ -250,7 +250,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 this.addButton({
                     name: 'userDelete',
                     'class': 'quiqqer-customer-delete',
-                    title: QUILocale.get('quiqqer/quiqqer', 'users.user.btn.delete'),
+                    title: QUILocale.get('quiqqer/core', 'users.user.btn.delete'),
                     icon: 'fa fa-trash-o',
                     events: {
                         onClick: this.$onDeleteClick
@@ -393,7 +393,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                     QUI.getMessageHandler().then(function(MH) {
                         MH.addError(
-                            QUILocale.get('quiqqer/quiqqer', 'exception.lib.user.not.found')
+                            QUILocale.get('quiqqer/core', 'exception.lib.user.not.found')
                         );
                     });
 
@@ -446,7 +446,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                 QUI.getMessageHandler().then(function(MH) {
                     MH.addError(
-                        QUILocale.get('quiqqer/quiqqer', 'exception.lib.user.not.found')
+                        QUILocale.get('quiqqer/core', 'exception.lib.user.not.found')
                     );
                 });
             });
@@ -631,19 +631,19 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
             Content.set('html', Mustache.render(templateInformation, {
                 detailsTitle: QUILocale.get(lg, 'customer.panel.information.details'),
-                textUserId: QUILocale.get('quiqqer/quiqqer', 'user_id'),
+                textUserId: QUILocale.get('quiqqer/core', 'user_id'),
                 textCustomerId: QUILocale.get(lg, 'customerId'),
-                textSalutation: QUILocale.get('quiqqer/quiqqer', 'salutation'),
-                textCompany: QUILocale.get('quiqqer/quiqqer', 'company'),
-                textAddressSuffix: QUILocale.get('quiqqer/quiqqer', 'address.suffix'),
-                textFirstname: QUILocale.get('quiqqer/quiqqer', 'firstname'),
-                textLastname: QUILocale.get('quiqqer/quiqqer', 'lastname'),
-                titleAddress: QUILocale.get('quiqqer/quiqqer', 'address'),
-                textStreet: QUILocale.get('quiqqer/quiqqer', 'street'),
+                textSalutation: QUILocale.get('quiqqer/core', 'salutation'),
+                textCompany: QUILocale.get('quiqqer/core', 'company'),
+                textAddressSuffix: QUILocale.get('quiqqer/core', 'address.suffix'),
+                textFirstname: QUILocale.get('quiqqer/core', 'firstname'),
+                textLastname: QUILocale.get('quiqqer/core', 'lastname'),
+                titleAddress: QUILocale.get('quiqqer/core', 'address'),
+                textStreet: QUILocale.get('quiqqer/core', 'street'),
                 textCountryZipCity: QUILocale.get(lg, 'customer.panel.information.countryZipCity'),
-                textCountry: QUILocale.get('quiqqer/quiqqer', 'country'),
-                textZip: QUILocale.get('quiqqer/quiqqer', 'zip'),
-                textCity: QUILocale.get('quiqqer/quiqqer', 'city'),
+                textCountry: QUILocale.get('quiqqer/core', 'country'),
+                textZip: QUILocale.get('quiqqer/core', 'zip'),
+                textCity: QUILocale.get('quiqqer/core', 'city'),
                 textContactPerson: QUILocale.get(lg, 'customer.panel.information.contactPerson'),
                 titleAllocation: QUILocale.get(lg, 'customer.panel.information.allocation'),
                 textGroup: QUILocale.get(lg, 'customer.panel.information.group'),
@@ -654,9 +654,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 titleExtra: QUILocale.get(lg, 'customer.panel.information.extra'),
                 textPaymentTerm: QUILocale.get(lg, 'customer.panel.information.paymentTerm'),
                 textStandardShipping: QUILocale.get(lg, 'customer.panel.information.shipping'),
-                textMail: QUILocale.get('quiqqer/quiqqer', 'email'),
-                textTel: QUILocale.get('quiqqer/quiqqer', 'tel'),
-                textFax: QUILocale.get('quiqqer/quiqqer', 'fax'),
+                textMail: QUILocale.get('quiqqer/core', 'email'),
+                textTel: QUILocale.get('quiqqer/core', 'tel'),
+                textFax: QUILocale.get('quiqqer/core', 'fax'),
                 textInternet: QUILocale.get(lg, 'customer.panel.information.extra.homepage'),
 
                 // payments
@@ -803,7 +803,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                             html: '<td>' +
                                 '<label class="field-container">' +
                                 '   <span class="field-container-item">' +
-                                QUILocale.get('quiqqer/quiqqer', phone[i].type) + '</span>' +
+                                QUILocale.get('quiqqer/core', phone[i].type) + '</span>' +
                                 '   <input name="address-communication" class="field-container-field"/>' +
                                 '</label>' +
                                 '</td>'
@@ -833,7 +833,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                             html: '<td>' +
                                 '<label class="field-container">' +
                                 '   <span class="field-container-item">' +
-                                QUILocale.get('quiqqer/quiqqer', 'email') + '</span>' +
+                                QUILocale.get('quiqqer/core', 'email') + '</span>' +
                                 '   <input name="address-communication" data-type="email" type="email" class="field-container-field"/>' +
                                 '</label>' +
                                 '</td>'
@@ -853,7 +853,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                                 html: '<td>' +
                                     '<label class="field-container">' +
                                     '   <span class="field-container-item">' +
-                                    QUILocale.get('quiqqer/quiqqer', 'tel') + '</span>' +
+                                    QUILocale.get('quiqqer/core', 'tel') + '</span>' +
                                     '   <input name="address-communication" data-type="tel" class="field-container-field"/>' +
                                     '</label>' +
                                     '</td>'
@@ -868,7 +868,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                                 html: '<td>' +
                                     '<label class="field-container">' +
                                     '   <span class="field-container-item">' +
-                                    QUILocale.get('quiqqer/quiqqer', 'fax') + '</span>' +
+                                    QUILocale.get('quiqqer/core', 'fax') + '</span>' +
                                     '   <input name="address-communication" data-type="fax" class="field-container-field"/>' +
                                     '</label>' +
                                     '</td>'
@@ -883,7 +883,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                                 html: '<td>' +
                                     '<label class="field-container">' +
                                     '   <span class="field-container-item">' +
-                                    QUILocale.get('quiqqer/quiqqer', 'mobile') + '</span>' +
+                                    QUILocale.get('quiqqer/core', 'mobile') + '</span>' +
                                     '   <input name="address-communication" data-type="mobile" class="field-container-field"/>' +
                                     '</label>' +
                                     '</td>'
@@ -898,7 +898,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                                 html: '<td>' +
                                     '<label class="field-container">' +
                                     '   <span class="field-container-item">' +
-                                    QUILocale.get('quiqqer/quiqqer', 'email') + '</span>' +
+                                    QUILocale.get('quiqqer/core', 'email') + '</span>' +
                                     '   <input name="address-communication" data-type="email" type="email" class="field-container-field"/>' +
                                     '</label>' +
                                     '</td>'
@@ -1641,12 +1641,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 name: 'DeleteUser',
                 icon: 'fa fa-trash-o',
                 texticon: 'fa fa-trash-o',
-                title: QUILocale.get('quiqqer/quiqqer', 'users.user.window.delete.title'),
-                text: QUILocale.get('quiqqer/quiqqer', 'users.user.window.delete.text', {
+                title: QUILocale.get('quiqqer/core', 'users.user.window.delete.title'),
+                text: QUILocale.get('quiqqer/core', 'users.user.window.delete.text', {
                     userid: this.$User.getId(),
                     username: this.$User.getName()
                 }),
-                information: QUILocale.get('quiqqer/quiqqer', 'users.user.window.delete.information'),
+                information: QUILocale.get('quiqqer/core', 'users.user.window.delete.information'),
                 maxWidth: 600,
                 maxHeight: 400,
                 autoclose: false,

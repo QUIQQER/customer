@@ -57,16 +57,16 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressCreateWind
             this.getContent().addClass('quiqqer-customer-window-create-address');
 
             this.getContent().set('html', Mustache.render(template, {
-                titleAddress: QUILocale.get('quiqqer/quiqqer', 'address'),
-                textAddressCompany: QUILocale.get('quiqqer/quiqqer', 'company'),
-                textAddressSalutation: QUILocale.get('quiqqer/quiqqer', 'salutation'),
-                textAddressFirstname: QUILocale.get('quiqqer/quiqqer', 'firstname'),
-                textAddressLastname: QUILocale.get('quiqqer/quiqqer', 'lastname'),
-                textAddressStreet: QUILocale.get('quiqqer/quiqqer', 'street'),
-                textAddressZIP: QUILocale.get('quiqqer/quiqqer', 'zip'),
-                textAddressCity: QUILocale.get('quiqqer/quiqqer', 'city'),
-                textAddressCountry: QUILocale.get('quiqqer/quiqqer', 'country'),
-                textAddressSuffix: QUILocale.get('quiqqer/quiqqer', 'address.suffix'),
+                titleAddress: QUILocale.get('quiqqer/core', 'address'),
+                textAddressCompany: QUILocale.get('quiqqer/core', 'company'),
+                textAddressSalutation: QUILocale.get('quiqqer/core', 'salutation'),
+                textAddressFirstname: QUILocale.get('quiqqer/core', 'firstname'),
+                textAddressLastname: QUILocale.get('quiqqer/core', 'lastname'),
+                textAddressStreet: QUILocale.get('quiqqer/core', 'street'),
+                textAddressZIP: QUILocale.get('quiqqer/core', 'zip'),
+                textAddressCity: QUILocale.get('quiqqer/core', 'city'),
+                textAddressCountry: QUILocale.get('quiqqer/core', 'country'),
+                textAddressSuffix: QUILocale.get('quiqqer/core', 'address.suffix'),
 
                 textAddressTelFaxMobile: QUILocale.get(lg, 'address.telFaxMobile'),
                 textAddressEmail: QUILocale.get(lg, 'address.email'),
@@ -162,9 +162,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressCreateWind
                     '    <label class="field-container">' +
                     '        <span class="field-container-item field-container-item-select">' +
                     '            <select name="phone-type">' +
-                    '                <option value="tel">' + QUILocale.get('quiqqer/quiqqer', 'tel') + '</option>' +
-                    '                <option value="fax">' + QUILocale.get('quiqqer/quiqqer', 'fax') + '</option>' +
-                    '                <option value="mobile">' + QUILocale.get('quiqqer/quiqqer', 'mobile') +
+                    '                <option value="tel">' + QUILocale.get('quiqqer/core', 'tel') + '</option>' +
+                    '                <option value="fax">' + QUILocale.get('quiqqer/core', 'fax') + '</option>' +
+                    '                <option value="mobile">' + QUILocale.get('quiqqer/core', 'mobile') +
                     '</option>' +
                     '            </select>' +
                     '        </span>' +
@@ -187,7 +187,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressCreateWind
                     '<td>' +
                     '    <label class="field-container">' +
                     '        <span class="field-container-item">' +
-                    '            ' + QUILocale.get('quiqqer/quiqqer', 'email') +
+                    '            ' + QUILocale.get('quiqqer/core', 'email') +
                     '        </span>' +
                     '        <input type="email" class="field-container-field" />' +
                     '    </label>' +
