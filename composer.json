@@ -18,7 +18,9 @@
   "require": {
     "php": "^8",
     "quiqqer/core": "^2",
-    "quiqqer/erp": "^3.2",
+    "quiqqer/erp": "^3.2"
+  },
+  "suggest": {
     "quiqqer/user-downloads": "^1"
   },
   "autoload": {
