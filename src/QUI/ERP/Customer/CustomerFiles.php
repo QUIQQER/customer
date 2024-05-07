@@ -172,7 +172,7 @@ class CustomerFiles
     /**
      * Add a file to the customer
      *
-     * @param steing|int $customerId
+     * @param string|int $customerId
      * @param $file
      * @return string - Hash of the file
      *
