@@ -61,9 +61,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
                 textSendMailButton: QUILocale.get(lg, 'customer.user.information.discount.passwordMail.button'),
 
                 titleInfo: QUILocale.get(lg, 'customer.user.information.info'),
-                userCreated: QUILocale.get('quiqqer/quiqqer', 'c_date'),
-                userEdited: QUILocale.get('quiqqer/quiqqer', 'e_date'),
-                lastLogin: QUILocale.get('quiqqer/quiqqer', 'user.panel.lastLogin')
+                userCreated: QUILocale.get('quiqqer/core', 'c_date'),
+                userEdited: QUILocale.get('quiqqer/core', 'e_date'),
+                lastLogin: QUILocale.get('quiqqer/core', 'user.panel.lastLogin')
             }));
 
             return this.$Elm;

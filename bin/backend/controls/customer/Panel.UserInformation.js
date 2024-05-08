@@ -58,8 +58,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
                 textTaxInfo: QUILocale.get(lg, 'customer.user.information.taxInformation'),
                 textCompanyNo: QUILocale.get(lg, 'customer.user.information.textCompanyNo'),
                 titleGeneral: QUILocale.get(lg, 'customer.user.information.general'),
-                textLanguage: QUILocale.get('quiqqer/quiqqer', 'language'),
-                textBirthday: QUILocale.get('quiqqer/quiqqer', 'birthday'),
+                textLanguage: QUILocale.get('quiqqer/core', 'language'),
+                textBirthday: QUILocale.get('quiqqer/core', 'birthday'),
                 textDiscount: QUILocale.get(lg, 'customer.user.information.discount'),
                 textDiscountDesc: QUILocale.get(lg, 'customer.user.information.discount.description'),
                 textSendMail: QUILocale.get(lg, 'customer.user.information.discount.passwordMail'),
@@ -121,7 +121,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserInforma
 
                 for (var i = 0, len = languages.length; i < len; i++) {
                     new Element('option', {
-                        html: QUILocale.get('quiqqer/quiqqer', 'language.' + languages[i]),
+                        html: QUILocale.get('quiqqer/core', 'language.' + languages[i]),
                         value: languages[i]
                     }).inject(LangElm);
                 }
