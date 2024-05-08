@@ -14,7 +14,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
 ], function(QUI, QUIControl, Grid, QUILocale, QUIAjax, Users) {
     'use strict';
 
-    var lgQUIQQER = 'quiqqer/quiqqer';
+    var lgQUIQQER = 'quiqqer/core';
 
     return new Class({
 

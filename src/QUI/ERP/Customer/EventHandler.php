@@ -30,7 +30,7 @@ use function trim;
 class EventHandler
 {
     /**
-     * quiqqer/quiqqer: onPackageSetup
+     * quiqqer/core: onPackageSetup
      * - create customer group
      *
      * @param Package $Package

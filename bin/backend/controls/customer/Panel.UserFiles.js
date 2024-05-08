@@ -26,7 +26,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserFiles',
     'use strict';
 
     var lg = 'quiqqer/customer';
-    var lgQUIQQER = 'quiqqer/quiqqer';
+    var lgQUIQQER = 'quiqqer/core';
 
     return new Class({
 
