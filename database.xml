@@ -10,7 +10,7 @@
         </table>
 
         <table name="customer_open_items">
-            <field type="BIGINT(10) NOT NULL">userId</field>
+            <field type="VARCHAR(50) NOT NULL">userId</field>
             <field type="VARCHAR(255) NULL DEFAULT NULL">customerId</field>
 
             <field type="FLOAT NOT NULL DEFAULT 0">net_sum</field>
@@ -20,7 +20,6 @@
             <field type="FLOAT NOT NULL DEFAULT 0">open_sum</field>
 
             <field type="SMALLINT UNSIGNED NOT NULL DEFAULT 0">open_items_count</field>
-
             <field type="VARCHAR(10) NULL DEFAULT NULL">currency</field>
 
             <primary>userId,currency</primary>
