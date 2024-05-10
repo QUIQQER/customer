@@ -25,4 +25,6 @@
     <event on="onQuiqqer::frontend-users::profile::user-data-middle"
            fire="\QUI\ERP\Customer\EventHandler::onFrontendUserDataMiddle"
     />
+
+    <event on="onQuiqqerMigrationV2" fire="\QUI\ERP\Customer\EventHandler::onQuiqqerMigrationV2"/>
 </events>

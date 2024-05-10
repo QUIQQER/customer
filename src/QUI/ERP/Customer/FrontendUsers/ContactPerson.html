@@ -14,7 +14,7 @@
         {if $currentContactPerson === $Address->getId()}
         {assign var=selected value='selected="selected"'}
         {/if}
-        <option value="{$Address->getId()}" {$selected}>{$Address->getText()}</option>
+        <option value="{$Address->getUUID()}" {$selected}>{$Address->getText()}</option>
         {/foreach}
         </select>
     </label>
