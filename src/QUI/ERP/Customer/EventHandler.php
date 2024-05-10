@@ -10,6 +10,7 @@ use DOMElement;
 use QUI;
 use QUI\Database\Exception;
 use QUI\Package\Package;
+use QUI\System\Console\Tools\MigrationV2;
 use QUI\Users\Manager;
 use QUI\Smarty\Collector;
 
@@ -75,7 +76,7 @@ class EventHandler
                 QUI::getUsers()->getSystemUser()
             );
 
-            $Config->setValue('customer', 'groupId', $Customer->getId());
+            $Config->setValue('customer', 'groupId', $Customer->getUUID());
             $Config->save();
 
             $Customer->activate();
@@ -310,7 +311,7 @@ class EventHandler
             return;
         }
 
-        if (!$User->isInGroup($Group->getId())) {
+        if (!$User->isInGroup($Group->getUUID())) {
             return;
         }
 
@@ -409,5 +410,23 @@ class EventHandler
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
+    }
+
+    public static function onQuiqqerMigrationV2(MigrationV2 $Console): void
+    {
+        $Console->writeLn('- Migrate customer open items');
+
+        $customerOpenItemsTable = QUI::getDBTableName('customer_open_items');
+
+        QUI::getDataBaseConnection()->executeStatement(
+            'ALTER TABLE `' . $customerOpenItemsTable . '` CHANGE `userId` `userId` VARCHAR(50) NOT NULL;'
+        );
+
+        QUI\Utils\MigrationV1ToV2::migrateUsers(
+            $customerOpenItemsTable,
+            ['userId'],
+            'userId'
+        );
+
     }
 }
