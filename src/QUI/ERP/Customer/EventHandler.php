@@ -427,6 +427,5 @@ class EventHandler
             ['userId'],
             'userId'
         );
-
     }
 }
