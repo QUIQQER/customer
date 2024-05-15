@@ -169,9 +169,6 @@ class Search extends Singleton
         foreach ($data as $entry) {
             $entry['usergroup'] = trim($entry['usergroup'], ',');
             $entry['usergroup'] = explode(',', $entry['usergroup']);
-            $entry['usergroup'] = array_map(function ($groupId) {
-                return (int)$groupId;
-            }, $entry['usergroup']);
 
             $groups = array_map(function ($groupId) use ($Groups) {
                 try {

@@ -133,12 +133,12 @@ class Customers extends Singleton
      * Get a customer by customer no.
      *
      * @param string $customerNo
-     * @return QUI\Users\User
+     * @return QUI\Interfaces\Users\User
      *
      * @throws Exception
      * @throws QUI\Exception
      */
-    public function getCustomerByCustomerNo(string $customerNo): QUI\Users\User
+    public function getCustomerByCustomerNo(string $customerNo): QUI\Interfaces\Users\User
     {
         $NumberRange = new NumberRange();
         $prefix = $NumberRange->getCustomerNoPrefix();
@@ -162,12 +162,11 @@ class Customers extends Singleton
     }
 
     /**
-     * @return int
+     * @return string
      *
      * @throws Exception
-     * @throws QUI\Exception
      */
-    public function getCustomerGroupId(): int
+    public function getCustomerGroupId(): string
     {
         $Package = QUI::getPackage('quiqqer/customer');
         $Config = $Package->getConfig();
@@ -413,14 +412,14 @@ class Customers extends Singleton
     }
 
     /**
-     * @param QUI\Users\User $User
+     * @param QUI\Interfaces\Users\User $User
      * @param array $attributes
      *
      * @throws QUI\Exception
      * @throws QUI\Permissions\Exception
      * @throws QUI\Users\Exception
      */
-    protected function changeAddress(QUI\Users\User $User, array $attributes): void
+    protected function changeAddress(QUI\Interfaces\Users\User $User, array $attributes): void
     {
         $Address = $User->getStandardAddress();
 
@@ -493,13 +492,13 @@ class Customers extends Singleton
     }
 
     /**
-     * @param QUI\Users\User $User
+     * @param QUI\Interfaces\Users\User $User
      * @param $attributes
      * @throws QUI\Exception
      * @throws QUI\Permissions\Exception
      * @throws QUI\Users\Exception
      */
-    protected function saveDeliveryAddress(QUI\Users\User $User, $attributes): void
+    protected function saveDeliveryAddress(QUI\Interfaces\Users\User $User, $attributes): void
     {
         // check if all is empty
         $isEmpty = true;
