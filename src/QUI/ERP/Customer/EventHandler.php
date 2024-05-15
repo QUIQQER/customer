@@ -100,7 +100,7 @@ class EventHandler
             $Config = $Package->getConfig();
             $groupId = $Config->getValue('customer', 'groupId');
 
-            echo '<script>window.QUIQQER_CUSTOMER_GROUP = ' . $groupId . '</script>';
+            echo '<script>window.QUIQQER_CUSTOMER_GROUP = "' . $groupId . '"</script>';
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
@@ -112,7 +112,7 @@ class EventHandler
      * @param QUI\Users\User $User
      * @param array $attributes
      */
-    public static function onUserExtraAttributes(QUI\Users\User $User, array &$attributes): void
+    public static function onUserExtraAttributes(QUI\Interfaces\Users\User $User, array &$attributes): void
     {
         $cache = 'quiqqer/package/quiqqer/customer';
 
