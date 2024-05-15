@@ -106,7 +106,7 @@ class BackendSearchProvider implements ProviderInterface
                 $name .= ' (' . $customerId . ')';
 
                 $result[] = [
-                    'id' => (int)$userId,
+                    'id' => $userId,
                     'title' => $name,
                     'description' => '',
                     'icon' => 'fa fa-user-o',
