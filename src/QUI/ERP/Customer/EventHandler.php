@@ -19,6 +19,7 @@ use function array_values;
 use function dirname;
 use function file_exists;
 use function is_array;
+use function is_numeric;
 use function json_decode;
 use function md5;
 use function trim;
@@ -427,5 +428,19 @@ class EventHandler
             ['userId'],
             'userId'
         );
+
+        // migrate settings
+        $Console->writeLn('- Migrate customer settings');
+
+        $Config = QUI::getPackage('quiqqer/customer')->getConfig();
+        $groupId = $Config->get('customer', 'groupId');
+
+        if (is_numeric($groupId)) {
+            try {
+                $Config->setValue('customer', 'groupId', QUI::getGroups()->get($groupId)->getUUID());
+                $Config->save();
+            } catch (QUI\Exception) {
+            }
+        }
     }
 }
