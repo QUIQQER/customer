@@ -9,6 +9,7 @@ use QUI\UserDownloads\DownloadEntry;
 use QUI\UserDownloads\Handler as UserDownloadsHandler;
 
 use function array_fill_keys;
+use function class_exists;
 use function count;
 use function file_exists;
 use function filemtime;
@@ -417,7 +418,10 @@ class CustomerFiles
      */
     public static function getDownloadEntry(int|string $customerId): bool|DownloadEntry
     {
-        if (!QUI::getPackageManager()->isInstalled('quiqqer/user-downloads')) {
+        if (
+            !QUI::getPackageManager()->isInstalled('quiqqer/user-downloads')
+            || !class_exists('QUI\UserDownloads\Handler')
+        ) {
             throw new QUI\Exception('This feature requires quiqqer/user-downloads to be installed.');
         }
 
@@ -441,7 +445,11 @@ class CustomerFiles
      */
     public static function createDownloadEntry(int|string $customerId): DownloadEntry
     {
-        if (!QUI::getPackageManager()->isInstalled('quiqqer/user-downloads')) {
+        if (
+            !QUI::getPackageManager()->isInstalled('quiqqer/user-downloads')
+            || !class_exists('QUI\UserDownloads\Handler')
+            || !class_exists('QUI\UserDownloads\DownloadEntry')
+        ) {
             throw new QUI\Exception('This feature requires quiqqer/user-downloads to be installed.');
         }
 

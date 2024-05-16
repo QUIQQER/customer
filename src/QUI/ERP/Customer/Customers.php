@@ -416,7 +416,6 @@ class Customers extends Singleton
      * @param array $attributes
      *
      * @throws QUI\Exception
-     * @throws QUI\Permissions\Exception
      * @throws QUI\Users\Exception
      */
     protected function changeAddress(QUI\Interfaces\Users\User $User, array $attributes): void
@@ -554,12 +553,12 @@ class Customers extends Singleton
     /**
      * Add a comment to the customer user comments
      *
-     * @param QUI\Users\User $User
+     * @param QUI\Interfaces\Users\User $User
      * @param string $comment - comment message
      *
      * @throws QUI\Exception
      */
-    public function addCommentToUser(QUI\Users\User $User, string $comment): void
+    public function addCommentToUser(QUI\Interfaces\Users\User $User, string $comment): void
     {
         QUI\Permissions\Permission::checkPermission('quiqqer.customer.editComments');
 
@@ -579,7 +578,7 @@ class Customers extends Singleton
     /**
      * Edit a comment
      *
-     * @param QUI\Users\User $User
+     * @param QUI\Interfaces\Users\User $User
      * @param $commentId - id of the comment
      * @param $commentSource - comment source
      * @param $message - new comment message
@@ -587,7 +586,7 @@ class Customers extends Singleton
      * @throws QUI\Exception
      */
     public function editComment(
-        QUI\Users\User $User,
+        QUI\Interfaces\Users\User $User,
         $commentId,
         $commentSource,
         $message
@@ -618,10 +617,10 @@ class Customers extends Singleton
     }
 
     /**
-     * @param QUI\Users\User $User
+     * @param QUI\Interfaces\Users\User $User
      * @return QUI\ERP\Comments
      */
-    public function getUserComments(QUI\Users\User $User): QUI\ERP\Comments
+    public function getUserComments(QUI\Interfaces\Users\User $User): QUI\ERP\Comments
     {
         $comments = $User->getAttribute('comments');
         $comments = json_decode($comments, true);
