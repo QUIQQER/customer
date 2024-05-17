@@ -38,11 +38,10 @@ class Utils extends QUI\Utils\Singleton
     }
 
     /**
-     * @param integer $uid
+     * @param int|string $uid
      * @return int
-     * @throws Exception
      */
-    public function getPaymentTimeForUser(int $uid): int
+    public function getPaymentTimeForUser(int|string $uid): int
     {
         $defaultPaymentTime = 0;
 

@@ -48,8 +48,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/SelectItem', [
                     'package': 'quiqqer/customer',
                     userId: id,
                     showAddressName: this.getAttribute('Parent').getAttribute('showAddressName') ? 1 : 0,
-                    onError: (err) => {
-                        console.error(err);
+                    showError: false,
+                    onError: () => {
                         this.destroy();
                         resolve();
                     }
