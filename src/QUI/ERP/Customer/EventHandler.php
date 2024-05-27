@@ -241,7 +241,7 @@ class EventHandler
 
         if (isset($attributes['mainGroup'])) {
             try {
-                $mainGroup = (int)$attributes['mainGroup'];
+                $mainGroup = $attributes['mainGroup'];
                 QUI::getGroups()->get($mainGroup);
 
                 $data['mainGroup'] = $mainGroup;

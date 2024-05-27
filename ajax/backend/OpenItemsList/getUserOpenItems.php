@@ -16,7 +16,6 @@ QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_OpenItemsList_getUserOpenItems',
     function ($userId, $searchParams, $forceRefresh) {
         try {
-            $userId = (int)$userId;
             $cacheName = 'quiqqer/customer/openitems/' . $userId;
             $refresh = true;
             $openItems = [];
