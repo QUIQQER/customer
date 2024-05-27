@@ -68,7 +68,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
             this.$SearchButton.setAttribute('menuCorner', 'topRight');
 
             this.$SearchButton.appendChild({
-                text: 'Kunden suchen',
+                text: QUILocale.get(lg, 'customer.select.button.search'),
                 icon: 'fa fa-search',
                 events: {
                     click: this.openCustomerSearch
@@ -76,7 +76,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
             });
 
             this.$SearchButton.appendChild({
-                text: 'Neuen Kunden anlegen',
+                text: QUILocale.get(lg, 'customer.select.button.create'),
                 icon: 'fa fa-plus',
                 events: {
                     click: this.createCustomer
