@@ -33,7 +33,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
         Type: 'package/quiqqer/customer/bin/backend/controls/customer/Select',
 
         Binds: [
+            '$onCreate',
             '$onSearchButtonClick',
+            'openCustomerSearch',
+            'createCustomer',
             'userSearch'
         ],
 
@@ -54,10 +57,37 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
             );
 
             this.addEvents({
-                onSearchButtonClick: this.$onSearchButtonClick,
-                onCreate: () => {
-                    this.getElm().addClass('quiqqer-customer-select');
+                //onSearchButtonClick: this.$onSearchButtonClick,
+                onCreate: this.$onCreate
+            });
+        },
+
+        $onCreate: function() {
+            this.getElm().addClass('quiqqer-customer-select');
+
+            this.$SearchButton.setAttribute('menuCorner', 'topRight');
+
+            this.$SearchButton.appendChild({
+                text: 'Kunden suchen',
+                icon: 'fa fa-search',
+                events: {
+                    click: this.openCustomerSearch
                 }
+            });
+
+            this.$SearchButton.appendChild({
+                text: 'Neuen Kunden anlegen',
+                icon: 'fa fa-plus',
+                events: {
+                    click: this.createCustomer
+                }
+            });
+
+            this.$SearchButton.getContextMenu((Menu) => {
+                Menu.setAttribute('menuCorner', 'topRight');
+                Menu.addEvent('show', () => {
+                    Menu.getElm().setStyle('left', Menu.getElm().getPosition().x + 15);
+                });
             });
         },
 
@@ -110,7 +140,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
 
             require([
                 'package/quiqqer/customer/bin/backend/controls/AdministrationWindow'
-            ], function(Window) {
+            ], (Window) => {
                 new Window({
                     autoclose: true,
                     multiple: self.getAttribute('multiple'),
@@ -128,6 +158,62 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
 
                 Btn.setAttribute('icon', oldIcon);
                 Btn.enable();
+            });
+        },
+
+        /**
+         * Opens the customer search window
+         */
+        openCustomerSearch: function() {
+            const oldIcon = this.$SearchButton.getAttribute('icon');
+
+            this.$SearchButton.setAttribute('icon', 'fa fa-spinner fa-spin');
+            this.$SearchButton.disable();
+
+            require([
+                'package/quiqqer/customer/bin/backend/controls/AdministrationWindow'
+            ], (Window) => {
+                new Window({
+                    autoclose: true,
+                    multiple: this.getAttribute('multiple'),
+                    search: this.getAttribute('search'),
+                    searchSettings: this.getAttribute('searchSettings'),
+                    events: {
+                        onSubmit: (Win, userIds) => {
+                            for (let i = 0, len = userIds.length; i < len; i++) {
+                                this.addItem(userIds[i]);
+                            }
+                        }
+                    }
+                }).open();
+
+                this.$SearchButton.setAttribute('icon', oldIcon);
+                this.$SearchButton.enable();
+            });
+        },
+
+        /**
+         * opens the customer creation dialog
+         */
+        createCustomer: function() {
+            const oldIcon = this.$SearchButton.getAttribute('icon');
+
+            this.$SearchButton.setAttribute('icon', 'fa fa-spinner fa-spin');
+            this.$SearchButton.disable();
+
+            require([
+                'package/quiqqer/customer/bin/backend/controls/create/CustomerWindow'
+            ], (CustomerWindow) => {
+                new CustomerWindow({
+                    events: {
+                        submit: (Instance, customerId) => {
+                            this.addItem(customerId);
+                        }
+                    }
+                }).open();
+
+                this.$SearchButton.setAttribute('icon', oldIcon);
+                this.$SearchButton.enable();
             });
         }
     });

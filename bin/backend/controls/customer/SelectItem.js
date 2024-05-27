@@ -17,12 +17,17 @@ define('package/quiqqer/customer/bin/backend/controls/customer/SelectItem', [
         Type: 'package/quiqqer/customer/bin/backend/controls/customer/SelectItem',
 
         Binds: [
-            'refresh'
+            'refresh',
+            '$onCustomerInject'
         ],
 
         initialize: function(options) {
             this.parent(options);
             this.setAttribute('icon', 'fa fa-user-o');
+
+            this.addEvents({
+                onInject: this.$onCustomerInject
+            });
         },
 
         /**
@@ -53,6 +58,26 @@ define('package/quiqqer/customer/bin/backend/controls/customer/SelectItem', [
                         this.destroy();
                         resolve();
                     }
+                });
+            });
+        },
+
+        $onCustomerInject: function() {
+            this.getElm().setStyle('cursor', 'pointer');
+            this.getElm().addEvent('dblclick', () => {
+                if (!this.getAttribute('id')) {
+                    return;
+                }
+
+                require([
+                    'package/quiqqer/customer/bin/backend/controls/customer/Panel',
+                    'utils/Panels'
+                ], (Panel, PanelUtils) => {
+                    PanelUtils.openPanelInTasks(
+                        new Panel({
+                            userId: this.getAttribute('id')
+                        })
+                    );
                 });
             });
         }
