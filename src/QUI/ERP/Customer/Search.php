@@ -200,8 +200,20 @@ class Search extends Singleton
             $Address = null;
             $uuid = '';
 
+            if (!empty($entry['uuid'])) {
+                $entry['user_id'] = $entry['uuid'];
+            }
+
+            if (empty($entry['user_id']) && !empty($entry['id'])) {
+                $entry['user_id'] = $entry['id'];
+            }
+
+            if (empty($entry['user_id'])) {
+                continue;
+            }
+
             try {
-                $User = $Users->get((int)$entry['user_id']);
+                $User = $Users->get($entry['user_id']);
                 $uuid = $User->getUUID();
                 $Address = $User->getStandardAddress();
             } catch (QUI\Exception) {
@@ -257,7 +269,7 @@ class Search extends Singleton
                 'id' => (int)$entry['id'],
                 'customerId' => $entry['customerId'],
                 'status' => !!$entry['active'],
-                'user_id' => (int)$entry['user_id'],
+                'user_id' => $entry['user_id'],
                 'user_uuid' => $uuid,
                 'username' => $entry['username'],
                 'firstname' => $entry['firstname'],
