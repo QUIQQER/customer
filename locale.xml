@@ -1165,6 +1165,14 @@ Best regards
             <de><![CDATA[Neue Adresse anlegen]]></de>
             <en><![CDATA[Create new address]]></en>
         </locale>
+        <locale name="customer.select.button.create">
+            <de><![CDATA[Neuen Kunden anlegen]]></de>
+            <en><![CDATA[Create new customer]]></en>
+        </locale>
+        <locale name="customer.select.button.search">
+            <de><![CDATA[Kunden suchen]]></de>
+            <en><![CDATA[Search customer]]></en>
+        </locale>
 
     </groups>
 </locales>
