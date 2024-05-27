@@ -345,17 +345,14 @@ class Customers extends Singleton
         $groups = [];
 
         if (isset($attributes['group'])) {
-            $groups[] = (int)$attributes['group'];
-            $User->setAttribute('mainGroup', (int)$attributes['group']);
+            $groups[] = $attributes['group'];
+            $User->setAttribute('mainGroup', $attributes['group']);
         } elseif (isset($attributes['group']) && $attributes['group'] === null) {
             $User->setAttribute('mainGroup', false);
         }
 
-        if (isset($attributes['groups'])) {
-            if (str_contains($attributes['groups'], ',')) {
-                $attributes['groups'] = explode(',', $attributes['groups']);
-            }
-
+        if (!empty($attributes['groups'])) {
+            $attributes['groups'] = explode(',', $attributes['groups']);
             $groups = array_merge($groups, $attributes['groups']);
         }
 
