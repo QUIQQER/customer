@@ -297,14 +297,14 @@ class EventHandler
     /**
      * @param QUI\Users\User $User
      * @param bool|string $code
-     * @param null|QUI\Interfaces\Users\User $ParentUser
+     * @param null|QUI\Interfaces\Users\User $PermissionUser
      *
      * @throws QUI\Users\Exception|QUI\Exception
      */
     public static function onUserActivateBegin(
         QUI\Users\User $User,
         bool|string $code,
-        ?QUI\Interfaces\Users\User $ParentUser
+        ?QUI\Interfaces\Users\User $PermissionUser
     ): void {
         $Group = Utils::getInstance()->getCustomerGroup();
 
