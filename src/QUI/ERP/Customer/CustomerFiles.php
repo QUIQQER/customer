@@ -58,12 +58,40 @@ class CustomerFiles
 
         $fileDir = $varDir . $User->getId();
 
-        // if dir with id exists, rename it to hash folder
+        // dir migration
         if (is_dir($fileDir)) {
             $fileUuidDir = $varDir . $User->getUUID();
 
-            rename($fileDir, $fileUuidDir);
+            if (!is_dir($fileUuidDir)) {
+                rename($fileDir, $fileUuidDir);
+            } else {
+                if (!($dh = opendir($fileDir))) {
+                    throw new QUI\Exception('Users without ID cannot have a customer file folder.');
+                }
+
+                while (($file = readdir($dh)) !== false) {
+                    if ($file == "." || $file == "..") {
+                        continue;
+                    }
+
+                    if (file_exists($fileUuidDir . $file)) {
+                        unlink($fileUuidDir . $file);
+                        continue;
+                    }
+
+                    rename(
+                        $fileDir . $file,
+                        $fileUuidDir . $file
+                    );
+                }
+
+                closedir($dh);
+                rmdir($fileDir);
+            }
+
             $fileDir = $fileUuidDir;
+        } else {
+            $fileDir = $varDir . $User->getUUID();
         }
 
         QUI\Utils\System\File::mkdir($fileDir);
