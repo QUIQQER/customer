@@ -587,7 +587,7 @@ class Search extends Singleton
                 users.*, ad.*
                 FROM $table as users
                      LEFT JOIN users_address AS ad ON users.id = ad.uid 
-                     AND users.address = ad.id
+                     AND users.address = ad.uuid
                 {$whereQuery}
                 ORDER BY {$order}
                 {$limit}

@@ -5,7 +5,7 @@
         <config>
             <section name="customer">
                 <conf name="groupId">
-                    <type><![CDATA[integer]]></type>
+                    <type><![CDATA[string]]></type>
                 </conf>
                 <conf name="customerLogin">
                     <type>integer</type>
