@@ -16,11 +16,13 @@ use QUI\Smarty\Collector;
 
 use function array_merge;
 use function array_values;
+use function count;
 use function dirname;
 use function file_exists;
 use function is_array;
 use function is_numeric;
 use function json_decode;
+use function json_encode;
 use function md5;
 use function trim;
 
@@ -428,6 +430,70 @@ class EventHandler
             ['userId'],
             'userId'
         );
+
+        // users extra fields
+        $Console->writeLn('- Migrate customer attributes');
+
+        $userTable = QUI::getUsers()->table();
+        $tableAddresses = QUI::getUsers()->tableAddress();
+
+        $result = QUI::getDataBase()->fetch([
+            'from' => $userTable
+        ]);
+
+        foreach ($result as $entry) {
+            $extra = json_decode($entry['extra'], true);
+
+            if (!empty($extra['quiqqer.erp.customer.contact.person'])) {
+                if (is_numeric($extra['quiqqer.erp.customer.contact.person'])) {
+                    try {
+                        $extra['quiqqer.erp.customer.contact.person'] = QUI::getUsers()->get(
+                            $extra['quiqqer.erp.customer.contact.person']
+                        )->getUUID();
+                    } catch (QUI\Exception) {
+                    }
+                }
+            }
+
+            if (!empty($extra['quiqqer.erp.address'])) {
+                if (is_numeric($extra['quiqqer.erp.address'])) {
+                    try {
+                        $addressData = QUI::getDataBase()->fetch([
+                            'from' => $tableAddresses,
+                            'where' => [
+                                'id' => $extra['quiqqer.erp.address']
+                            ]
+                        ]);
+
+                        if (count($addressData)) {
+                            $extra['quiqqer.erp.address'] = $addressData[0]['uuid'];
+                        }
+                    } catch (QUI\Exception) {
+                    }
+                }
+            }
+
+            if (!empty($extra['quiqqer.erp.supplier.contact.person'])) {
+                if (is_numeric($extra['quiqqer.erp.supplier.contact.person'])) {
+                    try {
+                        $extra['quiqqer.erp.supplier.contact.person'] = QUI::getUsers()->get(
+                            $extra['quiqqer.erp.supplier.contact.person']
+                        )->getUUID();
+                    } catch (QUI\Exception) {
+                    }
+                }
+            }
+
+            try {
+                QUI::getDataBase()->update(
+                    $userTable,
+                    ['extra' => json_encode($extra)],
+                    ['id' => $entry['id']]
+                );
+            } catch (QUI\Exception) {
+            }
+        }
+
 
         // migrate settings
         $Console->writeLn('- Migrate customer settings');
