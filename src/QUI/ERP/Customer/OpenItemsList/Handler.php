@@ -195,7 +195,7 @@ class Handler
         $Item = new Item($Invoice->getId(), self::DOCUMENT_TYPE_INVOICE);
 
         // Basic data
-        $Item->setDocumentNo($Invoice->getId());
+        $Item->setDocumentNo($Invoice->getPrefixedNumber());
         $Item->setDate(date_create($Invoice->getAttribute('c_date')));
         $Item->setDueDate(date_create($Invoice->getAttribute('time_for_payment')));
         $Item->setGlobalProcessId($Invoice->getGlobalProcessId());
