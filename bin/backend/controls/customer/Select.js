@@ -36,6 +36,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
             '$onCreate',
             '$onSearchButtonClick',
             'openCustomerSearch',
+            'editCustomer',
             'createCustomer',
             'userSearch'
         ],
@@ -57,7 +58,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
             );
 
             this.addEvents({
-                //onSearchButtonClick: this.$onSearchButtonClick,
                 onCreate: this.$onCreate
             });
         },
@@ -80,6 +80,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
                 icon: 'fa fa-plus',
                 events: {
                     click: this.createCustomer
+                }
+            });
+
+            this.$SearchButton.appendChild({
+                text: QUILocale.get(lg, 'customer.select.button.edit'),
+                icon: 'fa fa-edit',
+                events: {
+                    click: this.editCustomer
                 }
             });
 
@@ -215,6 +223,28 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
                 this.$SearchButton.setAttribute('icon', oldIcon);
                 this.$SearchButton.enable();
             });
+        },
+
+        editCustomer: function() {
+            if (this.getValue() === '') {
+                return;
+            }
+
+            if (!this.getValue()) {
+                return;
+            }
+
+            const Item = this.getElm().getElement('.qui-elements-selectItem');
+
+            if (Item) {
+                Item.dispatchEvent(
+                    new MouseEvent('dblclick', {
+                        'view': window,
+                        'bubbles': true,
+                        'cancelable': true
+                    })
+                );
+            }
         }
     });
 });

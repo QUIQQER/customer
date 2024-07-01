@@ -750,8 +750,6 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                             moofx(Container).animate({
                                 opacity: 1
                             });
-
-                            console.log('done');
                         },
                         onError: (Instance) => {
                             if (!Instance.$User) {
