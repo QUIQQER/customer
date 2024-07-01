@@ -8,10 +8,13 @@
 define('QUIQQER_SYSTEM', true);
 define('QUIQQER_AJAX', true);
 
+if (!isset($_REQUEST['customerId'])) {
+    exit;
+}
+
 if (
-    !isset($_REQUEST['file'])
-    || !isset($_REQUEST['customerId'])
-    || !isset($_REQUEST['extension'])
+    !isset($_REQUEST['hash'])
+    && (!isset($_REQUEST['file']) || !isset($_REQUEST['extension']))
 ) {
     exit;
 }
@@ -25,6 +28,7 @@ $isBackendUser = $User->canUseBackend();
 
 $Request = QUI::getRequest();
 $file = Orthos::clear($Request->query->get('file'));
+$hash = Orthos::clear($Request->query->get('hash'));
 $extension = Orthos::clear($Request->query->get('extension'));
 $customerId = $Request->query->get('customerId');
 
@@ -54,18 +58,28 @@ if ($isBackendUser) {
 }
 
 try {
-    $Customer = QUI::getUsers()->get($customerId);
-    $customerDir = QUI\ERP\Customer\CustomerFiles::getFolderPath($Customer);
+    if (!empty($hash)) {
+        $file = QUI\ERP\Customer\CustomerFiles::getFileByHash($customerId, $hash);
+        $filePath = $file['dirname'] . DIRECTORY_SEPARATOR . $file['basename'];
 
-    if (!empty($extension) && $extension !== 'false') {
-        $file .= '.' . $extension;
+        if (file_exists($filePath)) {
+            QUI\Utils\System\File::send($filePath, 0, $file['basename']);
+        }
+    } else {
+        $Customer = QUI::getUsers()->get($customerId);
+        $customerDir = QUI\ERP\Customer\CustomerFiles::getFolderPath($Customer);
+
+        if (!empty($extension) && $extension !== 'false') {
+            $file .= '.' . $extension;
+        }
+
+        $filePath = $customerDir . DIRECTORY_SEPARATOR . $file;
+
+        if (file_exists($filePath)) {
+            QUI\Utils\System\File::send($filePath, 0, $file);
+        }
     }
 
-    $filePath = $customerDir . DIRECTORY_SEPARATOR . $file;
-
-    if (file_exists($filePath)) {
-        QUI\Utils\System\File::send($filePath, 0, $file);
-    }
 } catch (\Exception $Exception) {
     QUI\System\Log::addDebug($Exception->getMessage());
 
