@@ -69,6 +69,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
 
             this.$SearchButton.appendChild({
                 text: QUILocale.get(lg, 'customer.select.button.search'),
+                name: 'search',
                 icon: 'fa fa-search',
                 events: {
                     click: this.openCustomerSearch
@@ -77,6 +78,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
 
             this.$SearchButton.appendChild({
                 text: QUILocale.get(lg, 'customer.select.button.create'),
+                name: 'create',
                 icon: 'fa fa-plus',
                 events: {
                     click: this.createCustomer
@@ -85,15 +87,34 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
 
             this.$SearchButton.appendChild({
                 text: QUILocale.get(lg, 'customer.select.button.edit'),
+                name: 'edit',
                 icon: 'fa fa-edit',
+                disabled: true,
                 events: {
                     click: this.editCustomer
                 }
             });
 
+            const Search = this.$SearchButton.getChildren().filter((Instance) => {
+                return Instance.getAttribute('name') === 'search';
+            })[0];
+
+
+            const Edit = this.$SearchButton.getChildren().filter((Instance) => {
+                return Instance.getAttribute('name') === 'edit';
+            })[0];
+
             this.$SearchButton.getContextMenu((Menu) => {
                 Menu.setAttribute('menuCorner', 'topRight');
                 Menu.addEvent('show', () => {
+                    if (this.getValue()) {
+                        Edit.enable();
+                        Search.setAttribute('text', QUILocale.get(lg, 'customer.select.button.replace'));
+                    } else {
+                        Edit.disable();
+                        Search.setAttribute('text', QUILocale.get(lg, 'customer.select.button.create'));
+                    }
+
                     Menu.getElm().setStyle('left', Menu.getElm().getPosition().x + 15);
                 });
             });
