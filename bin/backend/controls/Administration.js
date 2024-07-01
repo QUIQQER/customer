@@ -131,6 +131,9 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
             this.$SubmitButton = this.$Elm.getElement('[name="submit"]');
             this.$FilterButton = this.$Elm.getElement('button[name="filter"]');
 
+            this.$SearchContainer.setStyle('display', 'none');
+            this.$GridContainer.setStyle('display', 'none');
+
             this.$SearchContainer.getElement('form').addEvent('submit', function(event) {
                 event.stop();
             });
@@ -349,17 +352,21 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
 
             this.$Grid.disable();
 
-            if (customerId && customerId !== '0') {
-                this.$openCustomer(this.getAttribute('customerId'));
-            } else {
+            CustomerHandler.getCustomerGroupId().then((customerGroup) => {
+                self.$customerGroup = customerGroup;
+
+                if (customerId && customerId !== '0') {
+                    return this.$openCustomer(this.getAttribute('customerId'));
+                }
+
                 if (this.isInWindow() && this.$SearchInput) {
                     this.$SearchInput.focus();
                 }
-            }
 
-            CustomerHandler.getCustomerGroupId().then(function(customerGroup) {
-                self.$customerGroup = customerGroup;
-                self.refresh().then(function() {
+                this.$SearchContainer.setStyle('display', null);
+                this.$GridContainer.setStyle('display', null);
+
+                return self.refresh().then(function() {
                     self.$Grid.enable();
                 });
             });
@@ -687,65 +694,82 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 userId
             ]);
 
-            require([
-                'package/quiqqer/customer/bin/backend/controls/customer/Panel',
-                'utils/Panels'
-            ], function(Panel, PanelUtils) {
-                if (self.isInWindow()) {
-                    const Container = new Element('div', {
-                        'class': 'quiqqer-customer-administration-customer',
-                        styles: {
-                            left: -50,
-                            opacity: 0
-                        }
-                    }).inject(self.getElm());
+            if (!self.isInWindow()) {
+                require([
+                    'utils/Panels',
+                    'package/quiqqer/customer/bin/backend/controls/customer/Panel'
+                ], (PanelUtils, Panel) => {
+                    PanelUtils.openPanelInTasks(
+                        new Panel({
+                            userId: userId
+                        })
+                    );
+                });
 
-                    self.$CustomerPanel = new Panel({
-                        header: false,
-                        userId: userId,
-                        showUserButton: true,
-                        showDeleteButton: false,
-                        events: {
-                            onLoaded: () => {
-                                self.fireEvent('customerOpenEnd', [
-                                    this,
-                                    userId,
-                                    self.$CustomerPanel
-                                ]);
-                            },
-                            onError: (Instance) => {
-                                if (!Instance.$User) {
-                                    self.setAttribute('customerId', false);
-                                }
+                return;
+            }
+
+            moofx([
+                this.$SearchContainer,
+                this.$GridContainer
+            ]).animate({
+                opacity: 0
+            }, {
+                duration: 200,
+                callback: () => {
+                    this.$SearchContainer.setStyle('display', 'none');
+                    this.$GridContainer.setStyle('display', 'none');
+                }
+            });
+
+
+            require([
+                'package/quiqqer/customer/bin/backend/controls/customer/Panel'
+            ], function(Panel) {
+                const Container = new Element('div', {
+                    'class': 'quiqqer-customer-administration-customer',
+                    styles: {
+                        opacity: 0
+                    }
+                }).inject(self.getElm());
+
+                self.$CustomerPanel = new Panel({
+                    header: false,
+                    userId: userId,
+                    showUserButton: true,
+                    showDeleteButton: false,
+                    'hide-loader': true,
+                    events: {
+                        onLoaded: () => {
+                            self.fireEvent('customerOpenEnd', [
+                                this,
+                                userId,
+                                self.$CustomerPanel
+                            ]);
+
+                            moofx(Container).animate({
+                                opacity: 1
+                            });
+
+                            console.log('done');
+                        },
+                        onError: (Instance) => {
+                            if (!Instance.$User) {
+                                self.setAttribute('customerId', false);
                             }
                         }
-                    });
+                    }
+                });
 
-                    self.$CustomerPanel.inject(Container);
+                self.$CustomerPanel.inject(Container);
 
-                    self.fireEvent('customerOpen', [
-                        this,
-                        userId,
-                        self.$CustomerPanel
-                    ]);
+                self.fireEvent('customerOpen', [
+                    this,
+                    userId,
+                    self.$CustomerPanel
+                ]);
 
-                    moofx(Container).animate({
-                        left: 0,
-                        opacity: 1
-                    }, {
-                        callback: function() {
-                            self.$CustomerPanel.fireEvent('show');
-                        }
-                    });
-
-                    return;
-                }
-
-                PanelUtils.openPanelInTasks(
-                    new Panel({
-                        userId: userId
-                    })
-                );
+                self.$CustomerPanel.fireEvent('show');
             });
         },
 
@@ -757,17 +781,29 @@ define('package/quiqqer/customer/bin/backend/controls/Administration', [
                 return;
             }
 
-            const self = this,
-                Container = this.$CustomerPanel.getElm().getParent();
+            const Container = this.$CustomerPanel.getElm().getParent();
+            const hiedCustomer = new Promise((resolve) => {
+                moofx(Container).animate({
+                    opacity: 0
+                }, {
+                    callback: resolve
+                });
+            });
 
-            moofx(Container).animate({
-                left: 50,
-                opacity: 0
-            }, {
-                callback: function() {
-                    self.$CustomerPanel = null;
-                    Container.destroy();
-                }
+            this.$SearchContainer.setStyle('display', null);
+            this.$SearchContainer.setStyle('opacity', null);
+
+            this.$GridContainer.setStyle('display', null);
+            this.$GridContainer.setStyle('opacity', null);
+
+            Promise.all([
+                this.refresh(),
+                hiedCustomer
+            ]).then(() => {
+                this.$Grid.enable();
+
+                this.$CustomerPanel = null;
+                Container.destroy();
             });
         },
 
