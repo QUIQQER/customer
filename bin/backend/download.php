@@ -79,7 +79,6 @@ try {
             QUI\Utils\System\File::send($filePath, 0, $file);
         }
     }
-
 } catch (\Exception $Exception) {
     QUI\System\Log::addDebug($Exception->getMessage());
 
