@@ -1173,6 +1173,14 @@ Best regards
             <de><![CDATA[Kunden suchen]]></de>
             <en><![CDATA[Search customer]]></en>
         </locale>
+        <locale name="customer.select.button.replace">
+            <de><![CDATA[Kunden ersetzen]]></de>
+            <en><![CDATA[Replace customer]]></en>
+        </locale>
+        <locale name="customer.select.button.edit">
+            <de><![CDATA[Kunden editieren]]></de>
+            <en><![CDATA[Edit customer]]></en>
+        </locale>
 
     </groups>
 </locales>

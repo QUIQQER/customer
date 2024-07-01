@@ -70,14 +70,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/SelectItem', [
                 }
 
                 require([
-                    'package/quiqqer/customer/bin/backend/controls/customer/Panel',
-                    'utils/Panels'
-                ], (Panel, PanelUtils) => {
-                    PanelUtils.openPanelInTasks(
-                        new Panel({
-                            userId: this.getAttribute('id')
-                        })
-                    );
+                    'package/quiqqer/customer/bin/backend/controls/AdministrationWindow',
+                ], (AdministrationWindow,) => {
+                    new AdministrationWindow({
+                        customerId: this.getAttribute('id')
+                    }).open();
                 });
             });
         }

@@ -10,6 +10,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'qui/controls/desktop/Panel',
     'qui/controls/buttons/Button',
     'qui/controls/buttons/ButtonMultiple',
+    'qui/controls/loader/Loader',
     'qui/controls/windows/Confirm',
     'package/quiqqer/countries/bin/Countries',
     'package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow',
@@ -27,7 +28,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.EditId.html',
     'css!package/quiqqer/customer/bin/backend/controls/customer/Panel.css'
 
-], function(QUI, QUIPanel, QUIButton, QUIButtonMultiple, QUIConfirm, Countries, AddressEditWindow, Handler,
+], function(QUI, QUIPanel, QUIButton, QUIButtonMultiple, QUILoader, QUIConfirm, Countries, AddressEditWindow, Handler,
     FormUtils, Users, QUILocale, QUIAjax, Packages, Mustache, templateInformation, templateEditId
 ) {
     'use strict';
@@ -67,7 +68,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             icon: 'fa fa-user',
             userId: false,
             showUserButton: true,
-            showDeleteButton: true
+            showDeleteButton: true,
+            'hide-loader': false
         },
 
         initialize: function(options) {
@@ -178,6 +180,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          */
         $onCreate: function() {
             const self = this;
+
+            if (this.getAttribute('hide-loader')) {
+                this.Loader = new QUILoader();
+            }
 
             this.getElm().addClass('quiqqer-customer-panel');
 
