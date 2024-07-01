@@ -996,7 +996,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     case 'Invoice':
                         require(['package/quiqqer/invoice/bin/Invoices'], function(Invoices) {
                             Invoices.addPaymentToInvoice(
-                                Row.documentNo,
+                                Row.hash,
                                 Data.amount,
                                 Data.payment_method
                             ).then(function() {
@@ -1014,7 +1014,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                     case 'Order':
                         require(['package/quiqqer/order/bin/backend/Orders'], function(Orders) {
                             Orders.addPaymentToOrder(
-                                Row.documentId,
+                                Row.hash,
                                 Data.amount,
                                 Data.payment_method,
                                 Data.date
@@ -1070,7 +1070,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             };
 
             new AddPaymentWindow({
-                entityId: Row.documentNo,
+                entityId: Row.hash,
                 entityType: erpEntity,
                 events: {
                     onSubmit: submitTransaction,
