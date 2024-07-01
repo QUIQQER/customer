@@ -112,7 +112,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
                         Search.setAttribute('text', QUILocale.get(lg, 'customer.select.button.replace'));
                     } else {
                         Edit.disable();
-                        Search.setAttribute('text', QUILocale.get(lg, 'customer.select.button.create'));
+                        Search.setAttribute('text', QUILocale.get(lg, 'customer.select.button.search'));
                     }
 
                     Menu.getElm().setStyle('left', Menu.getElm().getPosition().x + 15);
