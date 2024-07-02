@@ -78,7 +78,18 @@ define('package/quiqqer/customer/bin/backend/controls/customer/SelectItem', [
                     'package/quiqqer/customer/bin/backend/controls/AdministrationWindow'
                 ], (AdministrationWindow) => {
                     new AdministrationWindow({
-                        customerId: this.getAttribute('id')
+                        customerId: this.getAttribute('id'),
+                        events: {
+                            onSubmit: (Win, userIds) => {
+                                const Parent = QUI.Controls.getById(
+                                    this.getElm().getParent('.quiqqer-customer-select').get('data-quiid')
+                                );
+
+                                for (let i = 0, len = userIds.length; i < len; i++) {
+                                    Parent.addItem(userIds[i]);
+                                }
+                            }
+                        }
                     }).open();
                 });
             });
