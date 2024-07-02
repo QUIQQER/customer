@@ -38,6 +38,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/SelectItem', [
         refresh: function() {
             const id = this.getAttribute('id');
 
+            if (!id || id === '' || id === '0' || id === 0) {
+                this.destroy();
+                return Promise.resolve();
+            }
+
             // user
             this.setAttribute('icon', 'fa fa-user-o');
 
@@ -70,10 +75,21 @@ define('package/quiqqer/customer/bin/backend/controls/customer/SelectItem', [
                 }
 
                 require([
-                    'package/quiqqer/customer/bin/backend/controls/AdministrationWindow',
-                ], (AdministrationWindow,) => {
+                    'package/quiqqer/customer/bin/backend/controls/AdministrationWindow'
+                ], (AdministrationWindow) => {
                     new AdministrationWindow({
-                        customerId: this.getAttribute('id')
+                        customerId: this.getAttribute('id'),
+                        events: {
+                            onSubmit: (Win, userIds) => {
+                                const Parent = QUI.Controls.getById(
+                                    this.getElm().getParent('.quiqqer-customer-select').get('data-quiid')
+                                );
+
+                                for (let i = 0, len = userIds.length; i < len; i++) {
+                                    Parent.addItem(userIds[i]);
+                                }
+                            }
+                        }
                     }).open();
                 });
             });
