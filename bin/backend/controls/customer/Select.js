@@ -64,6 +64,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
 
         $onCreate: function() {
             this.getElm().addClass('quiqqer-customer-select');
+            this.getElm().set('data-qui', 'package/quiqqer/customer/bin/backend/controls/customer/Select');
 
             this.$SearchButton.setAttribute('menuCorner', 'topRight');
 
@@ -152,6 +153,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
                     })
                 });
             });
+        },
+
+        addItem: function(id) {
+            if (id === '0' || id === 0) {
+                return this;
+            }
+
+            return this.parent(id);
         },
 
         /**
