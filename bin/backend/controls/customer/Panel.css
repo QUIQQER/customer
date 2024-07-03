@@ -47,6 +47,11 @@
     float: none;
 }
 
+.quiqqer-customer-panel form[name="customer-information"] {
+    display: inline-block;
+    width: 100%;
+}
+
 /** comments
  ===================================== */
 
@@ -164,7 +169,7 @@ form[name="customer-information"] .comments {
     height: 45px;
     bottom: 0;
     float: left;
-    width: 50%;
+    width: 100%;
 }
 
 .comments-pagination .quiqqer-sheets-desktop,
