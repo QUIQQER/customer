@@ -948,6 +948,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                 PaginationContainer.set('html', paginationHtml);
 
+                if (paginationHtml === '') {
+                    PaginationContainer.setStyle('display', 'none');
+                } else {
+                    PaginationContainer.setStyle('display', null);
+                }
+
                 return QUI.parse(PaginationContainer).then(function() {
                     if (paginationHtml) {
                         self.$CommentsPagination = QUI.Controls.getById(
@@ -990,6 +996,24 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     ], function(Payments) {
                         Payments.getPayments().then(function(payments) {
                             let i, len, text;
+
+                            // payment sort
+                            let current = QUILocale.getCurrent();
+
+                            payments.sort((a, b) => {
+                                let titleA = a.title[current] ? a.title[current].toLowerCase() : '';
+                                let titleB = b.title[current] ? b.title[current].toLowerCase() : '';
+
+                                if (titleA < titleB) {
+                                    return -1;
+                                }
+
+                                if (titleA > titleB) {
+                                    return 1;
+                                }
+
+                                return 0;
+                            });
 
                             for (i = 0, len = payments.length; i < len; i++) {
                                 text = '';
