@@ -76,7 +76,7 @@ class OutputProvider implements OutputProviderInterface
 
         return $Locale->get('quiqqer/customer', 'OutputProvider.download_filename', [
             'date' => $Date->format('Y-m-d'),
-            'uid' => $ERPUser->getUUID()
+            'uid' => $ERPUser->getCustomerNo()
         ]);
     }
 
