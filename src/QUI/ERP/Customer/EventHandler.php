@@ -371,14 +371,7 @@ class EventHandler
         QUI\Users\User $User,
         $Address
     ): void {
-        try {
-            $Engine = QUI::getTemplateManager()->getEngine();
-        } catch (QUI\Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
-
-            return;
-        }
-
+        $Engine = QUI::getTemplateManager()->getEngine();
         $canEdit = QUI\Permissions\Permission::hasPermission('quiqqer.customer.FrontendUsers.contactPerson.edit');
         $canView = QUI\Permissions\Permission::hasPermission('quiqqer.customer.FrontendUsers.contactPerson.view');
 
