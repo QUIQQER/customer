@@ -17,6 +17,10 @@
                 <conf name="customerNoPrefix">
                     <type><![CDATA[string]]></type>
                 </conf>
+                <conf name="setCustomerNoAtOrder">
+                    <type><![CDATA[boolean]]></type>
+                    <defaultvalue>1</defaultvalue>
+                </conf>
             </section>
 
             <section name="openItems">
@@ -71,6 +75,15 @@
                             </text>
                             <description>
                                 <locale group="quiqqer/customer" var="customer.settings.customerNoPrefix.description"/>
+                            </description>
+                        </input>
+
+                        <input conf="customer.setCustomerNoAtOrder" type="checkbox">
+                            <text>
+                                <locale group="quiqqer/customer" var="customer.settings.setCustomerNoAtOrder"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/customer" var="customer.settings.setCustomerNoAtOrder.description"/>
                             </description>
                         </input>
 
