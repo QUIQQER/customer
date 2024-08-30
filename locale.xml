@@ -76,6 +76,21 @@
             <en><![CDATA[Prefix that is prependend to all customer numbers.]]></en>
         </locale>
 
+        <locale name="customer.settings.setCustomerNoAtOrder">
+            <de><![CDATA[Automatische Kundennummer-Zuordnung bei Bestellung]]></de>
+            <en><![CDATA[Automatic customer number assignment when ordering]]></en>
+        </locale>
+        <locale name="customer.settings.setCustomerNoAtOrder.description">
+            <de><![CDATA[
+            Diese Einstellung ermöglicht es, dass bei jeder Bestellung automatisch die Kundennummer des Kunden hinzugefügt wird.
+            Das Bestellungsmodul (quiqqer/orders) muss dafür installiert sein.
+            ]]></de>
+            <en><![CDATA[
+            This setting allows the customer's customer number to be added automatically with every order.
+            The order module (quiqqer/orders) must be installed for this.
+            ]]></en>
+        </locale>
+
         <locale name="exception.customer.group.not.exists">
             <de><![CDATA[Kundengruppe existiert nicht.]]></de>
             <en><![CDATA[Customer group does not exist.]]></en>

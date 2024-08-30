@@ -354,6 +354,23 @@ class EventHandler
             QUI\ERP\Customer\Customers::getInstance()->addUserToCustomerGroup($User->getUUID());
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::addDebug($Exception->getMessage());
+            return;
+        }
+
+        // setting: automatically add customer number when ordering
+        $Config = QUI::getPackage('quiqqer/customer')->getConfig();
+
+        if ($Config->get('customer', 'setCustomerNoAtOrder') && !$User->getAttribute('customerId')) {
+            $NumberRange = new NumberRange();
+            $nextCustomerNo = $NumberRange->getNextCustomerNo();
+
+            try {
+                $User->setAttribute('customerId', $nextCustomerNo);
+                $User->save(QUI::getUsers()->getSystemUser());
+
+                $NumberRange->setRange($nextCustomerNo + 1);
+            } catch (QUI\Exception) {
+            }
         }
     }
 
