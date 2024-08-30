@@ -76,18 +76,8 @@ parameters:
 			path: src/QUI/ERP/Customer/CustomerFiles.php
 
 		-
-			message: "#^Parameter \\#1 \\$Group of method QUI\\\\Interfaces\\\\Users\\\\User\\:\\:removeGroup\\(\\) expects int\\|QUI\\\\Groups\\\\Group, string given\\.$#"
-			count: 1
-			path: src/QUI/ERP/Customer/Customers.php
-
-		-
 			message: "#^Parameter \\#1 \\$code of method QUI\\\\Interfaces\\\\Users\\\\User\\:\\:activate\\(\\) expects string, false given\\.$#"
 			count: 2
-			path: src/QUI/ERP/Customer/Customers.php
-
-		-
-			message: "#^Parameter \\#1 \\$groupId of method QUI\\\\Interfaces\\\\Users\\\\User\\:\\:addToGroup\\(\\) expects int, string given\\.$#"
-			count: 1
 			path: src/QUI/ERP/Customer/Customers.php
 
 		-
@@ -334,8 +324,3 @@ parameters:
 			message: "#^Strict comparison using \\=\\=\\= between 'ad\\.firstname'\\|'ad\\.lastname'\\|'company'\\|'customerId'\\|'email'\\|'firstname'\\|'lastname'\\|'usergroup'\\|'userId'\\|'username' and 'users\\.customerId' will always evaluate to false\\.$#"
 			count: 1
 			path: src/QUI/ERP/Customer/Search.php
-
-		-
-			message: "#^Parameter \\#2 \\$User of class QUI\\\\ERP\\\\Address constructor expects QUI\\\\ERP\\\\User\\|null, QUI\\\\Interfaces\\\\Users\\\\User given\\.$#"
-			count: 1
-			path: src/QUI/ERP/Customer/Utils.php
