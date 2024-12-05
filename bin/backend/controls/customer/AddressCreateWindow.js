@@ -83,6 +83,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressCreateWind
                 self.addEmail();
             });
 
+            this.addPhone();
+            this.addEmail();
+
             this.Loader.hide();
         },
 
