@@ -21,7 +21,7 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
 ], function(QUI, QUIControl, Countries, Handler, QUILocale, QUIAjax, Mustache, template) {
     'use strict';
 
-    var lg = 'quiqqer/customer';
+    const lg = 'quiqqer/customer';
 
     return new Class({
 
@@ -66,6 +66,9 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
                 customerGroupsHeader: QUILocale.get(lg, 'window.customer.creation.groups.title'),
                 customerGroupsText: QUILocale.get(lg, 'window.customer.creation.groups.text'),
                 labelPrefix: QUILocale.get(lg, 'window.customer.creation.customerNo.labelPrefix'),
+                textIsNettoBruttoUser: QUILocale.get(lg, 'customer.user.information.textBruttoNetto'),
+                textNetto: QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.netto'),
+                textBrutto: QUILocale.get('quiqqer/erp', 'user.settings.userNettoStatus.brutto'),
 
                 textAddressCompany: QUILocale.get('quiqqer/core', 'company'),
                 textAddressSalutation: QUILocale.get('quiqqer/core', 'salutation'),
@@ -86,10 +89,10 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
             this.$Form = this.$Elm.getElement('form');
 
             // key events
-            var self = this;
-            var CustomerId = this.$Elm.getElement('[name="customerId"]');
-            var Company = this.$Elm.getElement('[name="address-company"]');
-            var Country = this.$Elm.getElement('[name="address-country"]');
+            const self = this;
+            const CustomerId = this.$Elm.getElement('[name="customerId"]');
+            const Company = this.$Elm.getElement('[name="address-company"]');
+            const Country = this.$Elm.getElement('[name="address-country"]');
 
             CustomerId.addEvent('keydown', function(event) {
                 if (event.key === 'tab') {
@@ -140,13 +143,13 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
          * event: on inject
          */
         $onInject: function() {
-            var self = this;
-            var Group = this.$Elm.getElement('[name="group"]');
+            const self = this;
+            const Group = this.$Elm.getElement('[name="group"]');
 
             Countries.getCountries().then(function(countries) {
-                var CountrySelect = self.$Elm.getElement('[name="address-country"]');
+                const CountrySelect = self.$Elm.getElement('[name="address-country"]');
 
-                for (var code in countries) {
+                for (let code in countries) {
                     if (!countries.hasOwnProperty(code)) {
                         continue;
                     }
@@ -160,10 +163,32 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
                 if (QUIQQER_CONFIG.globals.country) {
                     CountrySelect.value = QUIQQER_CONFIG.globals.country;
                 }
+            }).then(() => {
+                const Select = this.$Elm.getElement('[name="quiqqer.erp.isNettoUser"]')
+
+                return new Promise((resolve) => {
+                    QUIAjax.get('package_quiqqer_customer_ajax_backend_getBusinessType', (businessType) => {
+                        switch (businessType.toLowerCase()) {
+                            case 'b2b':
+                            case 'b2b-b2c':
+                                Select.value = '1';
+                                break;
+
+                            case 'b2c':
+                            case 'b2c-b2b':
+                                Select.value = '2';
+                                break;
+                        }
+
+                        resolve();
+                    }, {
+                        'package': 'quiqqer/customer',
+                    });
+                });
             }).then(function() {
                 return QUI.parse(self.$Elm);
             }).then(function() {
-                var GroupControl = QUI.Controls.getById(Group.get('data-quiid'));
+                const GroupControl = QUI.Controls.getById(Group.get('data-quiid'));
 
                 GroupControl.disable();
                 self.showCustomerNumber();
@@ -174,12 +199,12 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
          * Create the customer
          */
         createCustomer: function() {
-            var self = this;
-            var elements = this.$Form.elements;
-            var customerId = elements.customerId.value;
-            var groups = elements.groups.value.split(',');
+            const self = this;
+            const elements = this.$Form.elements;
+            const customerId = elements.customerId.value;
+            const groups = elements.groups.value.split(',');
 
-            var address = {
+            const address = {
                 'salutation': elements['address-salutation'].value,
                 'firstname': elements['address-firstname'].value,
                 'lastname': elements['address-lastname'].value,
@@ -200,7 +225,10 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
                 'package': 'quiqqer/customer',
                 customerId: customerId,
                 address: JSON.encode(address),
-                groups: JSON.encode(groups)
+                groups: JSON.encode(groups),
+                attributes: JSON.encode({
+                    'quiqqer.erp.isNettoUser': this.$Elm.getElement('[name="quiqqer.erp.isNettoUser"]').value
+                })
             });
         },
 
@@ -212,16 +240,16 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
                 return this.createCustomer();
             }
 
-            var self = this;
-            var steps = this.$List.getElements('li');
-            var pos = this.$List.getPosition(this.$Container);
-            var top = pos.y;
+            const self = this;
+            const steps = this.$List.getElements('li');
+            const pos = this.$List.getPosition(this.$Container);
+            const top = pos.y;
 
-            var height = this.$Container.getSize().y;
-            var scrollHeight = this.$Container.getScrollSize().y;
-            var newTop = this.$roundToStepPos(top - height);
+            const height = this.$Container.getSize().y;
+            const scrollHeight = this.$Container.getScrollSize().y;
+            const newTop = this.$roundToStepPos(top - height);
 
-            var step = 1;
+            let step = 1;
 
             if ((top * -1) / height) {
                 step = Math.round(((top * -1) / height) + 1);
@@ -239,11 +267,11 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
             }
 
             return new Promise(function(resolve) {
-                var checkPromises = [];
+                const checkPromises = [];
 
                 if (step === 1) {
-                    var elements = self.$Form.elements;
-                    var customerId = elements.customerId.value;
+                    const elements = self.$Form.elements;
+                    const customerId = elements.customerId.value;
 
                     checkPromises.push(Handler.validateCustomerNo(customerId));
                 }
@@ -267,12 +295,12 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
          * Previous next step
          */
         previous: function() {
-            var self = this;
-            var pos = this.$List.getPosition(this.$Container);
-            var top = pos.y;
+            const self = this;
+            const pos = this.$List.getPosition(this.$Container);
+            const top = pos.y;
 
-            var height = this.$Container.getSize().y;
-            var newTop = this.$roundToStepPos(top + height);
+            const height = this.$Container.getSize().y;
+            let newTop = this.$roundToStepPos(top + height);
 
             this.$Next.set('html', QUILocale.get(lg, 'window.customer.creation.next'));
             this.$Next.set('data-last', null);
@@ -297,11 +325,11 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
          * refresh the step display
          */
         refreshStepDisplay: function() {
-            var step = 1;
-            var steps = this.$List.getElements('li');
-            var pos = this.$List.getPosition(this.$Container);
-            var top = pos.y;
-            var height = this.$Container.getSize().y;
+            let step = 1;
+            const steps = this.$List.getElements('li');
+            const pos = this.$List.getPosition(this.$Container);
+            const top = pos.y;
+            const height = this.$Container.getSize().y;
 
             if ((top * -1) / height) {
                 step = Math.round(((top * -1) / height) + 1);
@@ -329,8 +357,8 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
          * @return {number}
          */
         $roundToStepPos: function(currentPos) {
-            var height = this.$Container.getSize().y;
-            var pos = Math.round(currentPos / height) * -1;
+            const height = this.$Container.getSize().y;
+            const pos = Math.round(currentPos / height) * -1;
 
             return pos * height * -1;
         },
@@ -339,7 +367,7 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
          * Show the customer number step
          */
         showCustomerNumber: function() {
-            var self = this;
+            const self = this;
 
             this.$Next.disabled = true;
 
@@ -347,8 +375,8 @@ define('package/quiqqer/customer/bin/backend/controls/create/Customer', [
                 Handler.getNewCustomerNo(),
                 Handler.getCustomerIdPrefix()
             ]).then(function(result) {
-                var Input = self.$Elm.getElement('input[name="customerId"]');
-                var InputPrefix = self.$Elm.getElement('input[name="prefix"]');
+                const Input = self.$Elm.getElement('input[name="customerId"]');
+                const InputPrefix = self.$Elm.getElement('input[name="prefix"]');
 
                 if (result[1]) {
                     InputPrefix.value = result[1];

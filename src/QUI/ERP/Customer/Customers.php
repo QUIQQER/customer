@@ -67,11 +67,7 @@ class Customers extends Singleton
         $User->save();
 
         if (!empty($address)) {
-            try {
-                $Address = $User->getStandardAddress();
-            } catch (QUI\Exception) {
-                $Address = $User->addAddress();
-            }
+            $Address = $User->getStandardAddress();
 
             $needles = [
                 'salutation',
