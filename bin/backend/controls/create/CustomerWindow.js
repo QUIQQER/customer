@@ -24,7 +24,7 @@ define('package/quiqqer/customer/bin/backend/controls/create/CustomerWindow', [
         ],
 
         options: {
-            maxHeight: 700,
+            maxHeight: 750,
             maxWidth: 600,
             buttons: false
         },
@@ -50,6 +50,7 @@ define('package/quiqqer/customer/bin/backend/controls/create/CustomerWindow', [
 
             this.getContent().set('html', '');
             this.getContent().setStyle('padding', 0);
+            this.Loader.show();
 
             new CreateCustomer({
                 events: {

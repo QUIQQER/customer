@@ -5,7 +5,7 @@
         <config>
             <section name="customer">
                 <conf name="groupId">
-                    <type><![CDATA[integer]]></type>
+                    <type><![CDATA[string]]></type>
                 </conf>
                 <conf name="customerLogin">
                     <type>integer</type>
@@ -16,6 +16,10 @@
                 </conf>
                 <conf name="customerNoPrefix">
                     <type><![CDATA[string]]></type>
+                </conf>
+                <conf name="setCustomerNoAtOrder">
+                    <type><![CDATA[boolean]]></type>
+                    <defaultvalue>1</defaultvalue>
                 </conf>
             </section>
 
@@ -71,6 +75,15 @@
                             </text>
                             <description>
                                 <locale group="quiqqer/customer" var="customer.settings.customerNoPrefix.description"/>
+                            </description>
+                        </input>
+
+                        <input conf="customer.setCustomerNoAtOrder" type="checkbox">
+                            <text>
+                                <locale group="quiqqer/customer" var="customer.settings.setCustomerNoAtOrder"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/customer" var="customer.settings.setCustomerNoAtOrder.description"/>
                             </description>
                         </input>
 

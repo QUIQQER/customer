@@ -1,0 +1,326 @@
+parameters:
+	ignoreErrors:
+		-
+			message: "#^Parameter \\#1 \\$User of static method QUI\\\\ERP\\\\Comments\\:\\:getHistoryByUser\\(\\) expects QUI\\\\Users\\\\User, QUI\\\\Interfaces\\\\Users\\\\User given\\.$#"
+			count: 1
+			path: ajax/backend/customer/getCommentsAndHistory.php
+
+		-
+			message: "#^Parameter \\#1 \\$User of static method QUI\\\\ERP\\\\Comments\\:\\:getHistoryByUser\\(\\) expects QUI\\\\Users\\\\User, QUI\\\\Interfaces\\\\Users\\\\User given\\.$#"
+			count: 1
+			path: ajax/backend/customer/getHistory.php
+
+		-
+			message: "#^Parameter \\#1 \\$User of static method QUI\\\\ERP\\\\Comments\\:\\:getHistoryByUser\\(\\) expects QUI\\\\Users\\\\User, QUI\\\\Interfaces\\\\Users\\\\User given\\.$#"
+			count: 1
+			path: ajax/backend/customer/getPagination.php
+
+		-
+			message: "#^Parameter \\#1 \\$User of method QUI\\\\Users\\\\Auth\\\\Handler\\:\\:sendPasswordResetVerificationMail\\(\\) expects QUI\\\\Users\\\\User, QUI\\\\Interfaces\\\\Users\\\\User given\\.$#"
+			count: 1
+			path: ajax/backend/customer/passwordMail.php
+
+		-
+			message: "#^Call to method addUrl\\(\\) on an unknown class QUI\\\\UserDownloads\\\\DownloadEntry\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/CustomerFiles.php
+
+		-
+			message: "#^Call to method delete\\(\\) on an unknown class QUI\\\\UserDownloads\\\\DownloadEntry\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/CustomerFiles.php
+
+		-
+			message: "#^Call to method getUrls\\(\\) on an unknown class QUI\\\\UserDownloads\\\\DownloadEntry\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/CustomerFiles.php
+
+		-
+			message: "#^Call to method update\\(\\) on an unknown class QUI\\\\UserDownloads\\\\DownloadEntry\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/CustomerFiles.php
+
+		-
+			message: "#^Cannot call method getQuiqqerMediaUrls\\(\\) on QUI\\\\UserDownloads\\\\DownloadEntry\\|false\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/CustomerFiles.php
+
+		-
+			message: "#^Cannot call method getUrls\\(\\) on QUI\\\\UserDownloads\\\\DownloadEntry\\|false\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/CustomerFiles.php
+
+		-
+			message: "#^Cannot call method removeUrl\\(\\) on QUI\\\\UserDownloads\\\\DownloadEntry\\|false\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/CustomerFiles.php
+
+		-
+			message: "#^Cannot call method update\\(\\) on QUI\\\\UserDownloads\\\\DownloadEntry\\|false\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/CustomerFiles.php
+
+		-
+			message: "#^Method QUI\\\\ERP\\\\Customer\\\\CustomerFiles\\:\\:createDownloadEntry\\(\\) has invalid return type QUI\\\\UserDownloads\\\\DownloadEntry\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/CustomerFiles.php
+
+		-
+			message: "#^Method QUI\\\\ERP\\\\Customer\\\\CustomerFiles\\:\\:getDownloadEntry\\(\\) has invalid return type QUI\\\\UserDownloads\\\\DownloadEntry\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/CustomerFiles.php
+
+		-
+			message: "#^PHPDoc tag @throws with type QUI\\\\Exception\\|QUI\\\\UserDownloads\\\\Exception is not subtype of Throwable$#"
+			count: 1
+			path: src/QUI/ERP/Customer/CustomerFiles.php
+
+		-
+			message: "#^Parameter \\#1 \\$code of method QUI\\\\Interfaces\\\\Users\\\\User\\:\\:activate\\(\\) expects string, false given\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/Customers.php
+
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/Customers.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between mixed and '' will always evaluate to false\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/Customers.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between mixed and null will always evaluate to false\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/Customers.php
+
+		-
+			message: "#^Call to method getOrder\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Controls\\\\OrderProcess\\\\CustomerData\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/EventHandler.php
+
+		-
+			message: "#^Parameter \\$Step of method QUI\\\\ERP\\\\Customer\\\\EventHandler\\:\\:onQuiqqerOrderCustomerDataSaveEnd\\(\\) has invalid type QUI\\\\ERP\\\\Order\\\\Controls\\\\OrderProcess\\\\CustomerData\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/EventHandler.php
+
+		-
+			message: "#^Call to method getAttribute\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\AbstractOrder\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
+
+		-
+			message: "#^Call to method getCustomer\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
+
+		-
+			message: "#^Call to method getCustomer\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\AbstractOrder\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
+
+		-
+			message: "#^Call to method getCustomer\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Order\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
+
+		-
+			message: "#^Call to method getHash\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Transaction\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
+
+		-
+			message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Handler\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
+
+		-
+			message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Handler\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
+
+		-
+			message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Settings\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
+
+		-
+			message: "#^Parameter \\$Invoice of method QUI\\\\ERP\\\\Customer\\\\OpenItemsList\\\\Events\\:\\:onQuiqqerInvoicePaymentStatusChanged\\(\\) has invalid type QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
+
+		-
+			message: "#^Parameter \\$Invoice of method QUI\\\\ERP\\\\Customer\\\\OpenItemsList\\\\Events\\:\\:onQuiqqerInvoiceTemporaryInvoicePostEnd\\(\\) has invalid type QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
+
+		-
+			message: "#^Parameter \\$Order of method QUI\\\\ERP\\\\Customer\\\\OpenItemsList\\\\Events\\:\\:onQuiqqerOrderCreated\\(\\) has invalid type QUI\\\\ERP\\\\Order\\\\AbstractOrder\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
+
+		-
+			message: "#^Parameter \\$Order of method QUI\\\\ERP\\\\Customer\\\\OpenItemsList\\\\Events\\:\\:onQuiqqerOrderPaidStatusChanged\\(\\) has invalid type QUI\\\\ERP\\\\Order\\\\Order\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
+
+		-
+			message: "#^Parameter \\$TempInvoice of method QUI\\\\ERP\\\\Customer\\\\OpenItemsList\\\\Events\\:\\:onQuiqqerInvoiceTemporaryInvoicePostEnd\\(\\) has invalid type QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\InvoiceTemporary\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
+
+		-
+			message: "#^Parameter \\$Transaction of method QUI\\\\ERP\\\\Customer\\\\OpenItemsList\\\\Events\\:\\:onTransactionCreate\\(\\) has invalid type QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Transaction\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
+
+		-
+			message: "#^Call to method getArticles\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Order\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to method getAttribute\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+			count: 6
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to method getAttribute\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Order\\.$#"
+			count: 3
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to method getCancelledStatus\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\ProcessingStatus\\\\Handler\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to method getCleanId\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Order\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to method getCurrency\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to method getCurrency\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Order\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to method getDate\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Transaction\\.$#"
+			count: 4
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to method getGlobalProcessId\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to method getGlobalProcessId\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Order\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to method getId\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to method getPaidStatusInformation\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to method getPaidStatusInformation\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Order\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to method getPrefixedNumber\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to method getPrefixedNumber\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Order\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to method getUUID\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to method getUUID\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Order\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Dunning\\\\Handler\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Handler\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Handler\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Handler\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Call to static method getTransactionsByInvoice\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Utils\\\\Invoice\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Instantiated class QUI\\\\ERP\\\\Order\\\\ProcessingStatus\\\\Handler not found\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Method QUI\\\\ERP\\\\Customer\\\\OpenItemsList\\\\Handler\\:\\:getOpenInvoices\\(\\) has invalid return type QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Method QUI\\\\ERP\\\\Customer\\\\OpenItemsList\\\\Handler\\:\\:getOpenOrders\\(\\) has invalid return type QUI\\\\ERP\\\\Order\\\\Order\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$TransactionA contains unknown class QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Transaction\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^PHPDoc tag @var for variable \\$TransactionB contains unknown class QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Transaction\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Parameter \\$Invoice of method QUI\\\\ERP\\\\Customer\\\\OpenItemsList\\\\Handler\\:\\:parseInvoiceToOpenItem\\(\\) has invalid type QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Invoice\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Parameter \\$Order of method QUI\\\\ERP\\\\Customer\\\\OpenItemsList\\\\Handler\\:\\:parseOrderToOpenItem\\(\\) has invalid type QUI\\\\ERP\\\\Order\\\\Order\\.$#"
+			count: 2
+			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between 'ad\\.firstname'\\|'ad\\.lastname'\\|'company'\\|'customerId'\\|'email'\\|'firstname'\\|'lastname'\\|'usergroup'\\|'userId'\\|'username' and 'users\\.customerId' will always evaluate to false\\.$#"
+			count: 1
+			path: src/QUI/ERP/Customer/Search.php

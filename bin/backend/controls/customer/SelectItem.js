@@ -17,12 +17,17 @@ define('package/quiqqer/customer/bin/backend/controls/customer/SelectItem', [
         Type: 'package/quiqqer/customer/bin/backend/controls/customer/SelectItem',
 
         Binds: [
-            'refresh'
+            'refresh',
+            '$onCustomerInject'
         ],
 
         initialize: function(options) {
             this.parent(options);
             this.setAttribute('icon', 'fa fa-user-o');
+
+            this.addEvents({
+                onInject: this.$onCustomerInject
+            });
         },
 
         /**
@@ -32,6 +37,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/SelectItem', [
          */
         refresh: function() {
             const id = this.getAttribute('id');
+
+            if (!id || id === '' || id === '0' || id === 0) {
+                this.destroy();
+                return Promise.resolve();
+            }
 
             // user
             this.setAttribute('icon', 'fa fa-user-o');
@@ -53,6 +63,34 @@ define('package/quiqqer/customer/bin/backend/controls/customer/SelectItem', [
                         this.destroy();
                         resolve();
                     }
+                });
+            });
+        },
+
+        $onCustomerInject: function() {
+            this.getElm().setStyle('cursor', 'pointer');
+            this.getElm().addEvent('dblclick', () => {
+                if (!this.getAttribute('id')) {
+                    return;
+                }
+
+                require([
+                    'package/quiqqer/customer/bin/backend/controls/AdministrationWindow'
+                ], (AdministrationWindow) => {
+                    new AdministrationWindow({
+                        customerId: this.getAttribute('id'),
+                        events: {
+                            onSubmit: (Win, userIds) => {
+                                const Parent = QUI.Controls.getById(
+                                    this.getElm().getParent('.quiqqer-customer-select').get('data-quiid')
+                                );
+
+                                for (let i = 0, len = userIds.length; i < len; i++) {
+                                    Parent.addItem(userIds[i]);
+                                }
+                            }
+                        }
+                    }).open();
                 });
             });
         }

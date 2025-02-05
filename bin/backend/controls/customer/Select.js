@@ -33,7 +33,11 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
         Type: 'package/quiqqer/customer/bin/backend/controls/customer/Select',
 
         Binds: [
+            '$onCreate',
             '$onSearchButtonClick',
+            'openCustomerSearch',
+            'editCustomer',
+            'createCustomer',
             'userSearch'
         ],
 
@@ -54,10 +58,66 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
             );
 
             this.addEvents({
-                onSearchButtonClick: this.$onSearchButtonClick,
-                onCreate: () => {
-                    this.getElm().addClass('quiqqer-customer-select');
+                onCreate: this.$onCreate
+            });
+        },
+
+        $onCreate: function() {
+            this.getElm().addClass('quiqqer-customer-select');
+            this.getElm().set('data-qui', 'package/quiqqer/customer/bin/backend/controls/customer/Select');
+
+            this.$SearchButton.setAttribute('menuCorner', 'topRight');
+
+            this.$SearchButton.appendChild({
+                text: QUILocale.get(lg, 'customer.select.button.search'),
+                name: 'search',
+                icon: 'fa fa-search',
+                events: {
+                    click: this.openCustomerSearch
                 }
+            });
+
+            this.$SearchButton.appendChild({
+                text: QUILocale.get(lg, 'customer.select.button.create'),
+                name: 'create',
+                icon: 'fa fa-plus',
+                events: {
+                    click: this.createCustomer
+                }
+            });
+
+            this.$SearchButton.appendChild({
+                text: QUILocale.get(lg, 'customer.select.button.edit'),
+                name: 'edit',
+                icon: 'fa fa-edit',
+                disabled: true,
+                events: {
+                    click: this.editCustomer
+                }
+            });
+
+            const Search = this.$SearchButton.getChildren().filter((Instance) => {
+                return Instance.getAttribute('name') === 'search';
+            })[0];
+
+
+            const Edit = this.$SearchButton.getChildren().filter((Instance) => {
+                return Instance.getAttribute('name') === 'edit';
+            })[0];
+
+            this.$SearchButton.getContextMenu((Menu) => {
+                Menu.setAttribute('menuCorner', 'topRight');
+                Menu.addEvent('show', () => {
+                    if (this.getValue()) {
+                        Edit.enable();
+                        Search.setAttribute('text', QUILocale.get(lg, 'customer.select.button.replace'));
+                    } else {
+                        Edit.disable();
+                        Search.setAttribute('text', QUILocale.get(lg, 'customer.select.button.search'));
+                    }
+
+                    Menu.getElm().setStyle('left', Menu.getElm().getPosition().x + 15);
+                });
             });
         },
 
@@ -95,6 +155,14 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
             });
         },
 
+        addItem: function(id) {
+            if (id === '0' || id === 0) {
+                return this;
+            }
+
+            return this.parent(id);
+        },
+
         /**
          * event : on search click
          *
@@ -110,7 +178,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
 
             require([
                 'package/quiqqer/customer/bin/backend/controls/AdministrationWindow'
-            ], function(Window) {
+            ], (Window) => {
                 new Window({
                     autoclose: true,
                     multiple: self.getAttribute('multiple'),
@@ -129,6 +197,84 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
                 Btn.setAttribute('icon', oldIcon);
                 Btn.enable();
             });
+        },
+
+        /**
+         * Opens the customer search window
+         */
+        openCustomerSearch: function() {
+            const oldIcon = this.$SearchButton.getAttribute('icon');
+
+            this.$SearchButton.setAttribute('icon', 'fa fa-spinner fa-spin');
+            this.$SearchButton.disable();
+
+            require([
+                'package/quiqqer/customer/bin/backend/controls/AdministrationWindow'
+            ], (Window) => {
+                new Window({
+                    autoclose: true,
+                    multiple: this.getAttribute('multiple'),
+                    search: this.getAttribute('search'),
+                    searchSettings: this.getAttribute('searchSettings'),
+                    events: {
+                        onSubmit: (Win, userIds) => {
+                            for (let i = 0, len = userIds.length; i < len; i++) {
+                                this.addItem(userIds[i]);
+                            }
+                        }
+                    }
+                }).open();
+
+                this.$SearchButton.setAttribute('icon', oldIcon);
+                this.$SearchButton.enable();
+            });
+        },
+
+        /**
+         * opens the customer creation dialog
+         */
+        createCustomer: function() {
+            const oldIcon = this.$SearchButton.getAttribute('icon');
+
+            this.$SearchButton.setAttribute('icon', 'fa fa-spinner fa-spin');
+            this.$SearchButton.disable();
+
+            require([
+                'package/quiqqer/customer/bin/backend/controls/create/CustomerWindow'
+            ], (CustomerWindow) => {
+                new CustomerWindow({
+                    events: {
+                        submit: (Instance, customerId) => {
+                            this.addItem(customerId);
+                        }
+                    }
+                }).open();
+
+                this.$SearchButton.setAttribute('icon', oldIcon);
+                this.$SearchButton.enable();
+            });
+        },
+
+        editCustomer: function() {
+            if (this.getValue() === '') {
+                return;
+            }
+
+            if (!this.getValue()) {
+                return;
+            }
+
+            const Item = this.getElm().getElement('.qui-elements-selectItem');
+
+            if (Item) {
+                Item.dispatchEvent(
+                    new MouseEvent('dblclick', {
+                        'view': window,
+                        'bubbles': true,
+                        'cancelable': true
+                    })
+                );
+            }
         }
     });
 });

@@ -992,44 +992,9 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             const submitTransaction = function(Win, Data) {
                 Win.Loader.show();
 
-                switch (erpEntity) {
-                    case 'Invoice':
-                        require(['package/quiqqer/invoice/bin/Invoices'], function(Invoices) {
-                            Invoices.addPaymentToInvoice(
-                                Row.documentNo,
-                                Data.amount,
-                                Data.payment_method
-                            ).then(function() {
-                                Win.close();
-
-                                self.$refreshUserEntry(self.$currentRecordsUserId).then(function() {
-                                    self.$refreshUserRecords(self.$GridDetails, true);
-                                });
-                            }).catch(function(err) {
-                                Win.Loader.hide();
-                            });
-                        });
-                        break;
-
-                    case 'Order':
-                        require(['package/quiqqer/order/bin/backend/Orders'], function(Orders) {
-                            Orders.addPaymentToOrder(
-                                Row.documentId,
-                                Data.amount,
-                                Data.payment_method,
-                                Data.date
-                            ).then(function() {
-                                Win.close();
-
-                                self.$refreshUserEntry(self.$currentRecordsUserId).then(function() {
-                                    self.$refreshUserRecords(self.$GridDetails, true);
-                                });
-                            }).catch(function(err) {
-                                Win.Loader.hide();
-                            });
-                        });
-                        break;
-                }
+                self.$refreshUserEntry(self.$currentRecordsUserId).then(function() {
+                    self.$refreshUserRecords(self.$GridDetails, true);
+                });
             };
 
             const linkTransaction = (txId, Win) => {
@@ -1070,7 +1035,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             };
 
             new AddPaymentWindow({
-                entityId: Row.documentNo,
+                entityId: Row.hash,
                 entityType: erpEntity,
                 events: {
                     onSubmit: submitTransaction,

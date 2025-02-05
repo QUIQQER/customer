@@ -200,8 +200,25 @@ class Search extends Singleton
             $Address = null;
             $uuid = '';
 
+            if (!empty($entry['user_uuid'])) {
+                $entry['uuid'] = $entry['user_uuid'];
+                $entry['user_id'] = $entry['user_uuid'];
+            }
+
+            if (!empty($entry['uuid'])) {
+                $entry['user_id'] = $entry['uuid'];
+            }
+
+            if (empty($entry['user_id']) && !empty($entry['id'])) {
+                $entry['user_id'] = $entry['id'];
+            }
+
+            if (empty($entry['user_id'])) {
+                continue;
+            }
+
             try {
-                $User = $Users->get((int)$entry['user_id']);
+                $User = $Users->get($entry['user_id']);
                 $uuid = $User->getUUID();
                 $Address = $User->getStandardAddress();
             } catch (QUI\Exception) {
@@ -257,7 +274,7 @@ class Search extends Singleton
                 'id' => (int)$entry['id'],
                 'customerId' => $entry['customerId'],
                 'status' => !!$entry['active'],
-                'user_id' => (int)$entry['user_id'],
+                'user_id' => $entry['user_id'],
                 'user_uuid' => $uuid,
                 'username' => $entry['username'],
                 'firstname' => $entry['firstname'],
@@ -558,7 +575,7 @@ class Search extends Singleton
                         users.`email` as user_email
                         FROM $table as users
                              LEFT JOIN users_address AS ad ON users.id = ad.uid 
-                             AND users.address = ad.id
+                             AND users.address = ad.uuid
                         {$whereQuery}
                     ) as search_query
                 ",
@@ -568,14 +585,17 @@ class Search extends Singleton
 
         return [
             "query" => "
-                SELECT users.`id` as user_id,
-                users.`firstname` as user_firstname,
-                users.`lastname` as user_lastname,
-                users.`email` as user_email,
-                users.*, ad.*
+                SELECT 
+                    users.`id` as user_id,
+                    users.`firstname` as user_firstname,
+                    users.`lastname` as user_lastname,
+                    users.`email` as user_email,
+                    users.`uuid` as user_uuid,
+                    users.*, 
+                    ad.*
                 FROM $table as users
                      LEFT JOIN users_address AS ad ON users.id = ad.uid 
-                     AND users.address = ad.id
+                     AND users.address = ad.uuid
                 {$whereQuery}
                 ORDER BY {$order}
                 {$limit}

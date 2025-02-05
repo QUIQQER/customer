@@ -10,6 +10,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'qui/controls/desktop/Panel',
     'qui/controls/buttons/Button',
     'qui/controls/buttons/ButtonMultiple',
+    'qui/controls/loader/Loader',
     'qui/controls/windows/Confirm',
     'package/quiqqer/countries/bin/Countries',
     'package/quiqqer/customer/bin/backend/controls/customer/AddressEditWindow',
@@ -27,7 +28,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
     'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.EditId.html',
     'css!package/quiqqer/customer/bin/backend/controls/customer/Panel.css'
 
-], function(QUI, QUIPanel, QUIButton, QUIButtonMultiple, QUIConfirm, Countries, AddressEditWindow, Handler,
+], function(QUI, QUIPanel, QUIButton, QUIButtonMultiple, QUILoader, QUIConfirm, Countries, AddressEditWindow, Handler,
     FormUtils, Users, QUILocale, QUIAjax, Packages, Mustache, templateInformation, templateEditId
 ) {
     'use strict';
@@ -67,7 +68,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             icon: 'fa fa-user',
             userId: false,
             showUserButton: true,
-            showDeleteButton: true
+            showDeleteButton: true,
+            'hide-loader': false
         },
 
         initialize: function(options) {
@@ -178,6 +180,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          */
         $onCreate: function() {
             const self = this;
+
+            if (this.getAttribute('hide-loader')) {
+                this.Loader = new QUILoader();
+            }
 
             this.getElm().addClass('quiqqer-customer-panel');
 
@@ -942,6 +948,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                 PaginationContainer.set('html', paginationHtml);
 
+                if (paginationHtml === '') {
+                    PaginationContainer.setStyle('display', 'none');
+                } else {
+                    PaginationContainer.setStyle('display', null);
+                }
+
                 return QUI.parse(PaginationContainer).then(function() {
                     if (paginationHtml) {
                         self.$CommentsPagination = QUI.Controls.getById(
@@ -984,6 +996,24 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     ], function(Payments) {
                         Payments.getPayments().then(function(payments) {
                             let i, len, text;
+
+                            // payment sort
+                            let current = QUILocale.getCurrent();
+
+                            payments.sort((a, b) => {
+                                let titleA = a.title[current] ? a.title[current].toLowerCase() : '';
+                                let titleB = b.title[current] ? b.title[current].toLowerCase() : '';
+
+                                if (titleA < titleB) {
+                                    return -1;
+                                }
+
+                                if (titleA > titleB) {
+                                    return 1;
+                                }
+
+                                return 0;
+                            });
 
                             for (i = 0, len = payments.length; i < len; i++) {
                                 text = '';

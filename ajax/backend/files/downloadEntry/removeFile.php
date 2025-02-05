@@ -12,7 +12,7 @@ QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_files_downloadEntry_removeFile',
     function ($file, $customerId) {
         try {
-            CustomerFiles::removeFileFromDownloadEntry((int)$customerId, $file);
+            CustomerFiles::removeFileFromDownloadEntry($customerId, $file);
         } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
 
