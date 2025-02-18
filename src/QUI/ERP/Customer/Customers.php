@@ -104,11 +104,11 @@ class Customers extends Singleton
 
             $Address->save();
 
-            if (!$User->getAttribute('firstname') || $User->getAttribute('firstname') === '') {
+            if (empty($User->getAttribute('firstname'))) {
                 $User->setAttribute('firstname', $address['firstname']);
             }
 
-            if (!$User->getAttribute('lastname') || $User->getAttribute('lastname') === '') {
+            if (empty($User->getAttribute('lastname'))) {
                 $User->setAttribute('lastname', $address['lastname']);
             }
         }
@@ -221,8 +221,8 @@ class Customers extends Singleton
      * @throws QUI\Users\Exception
      */
     public function addUserToCustomerGroup(
-        bool|int|string $userId,
-        QUI\Interfaces\Users\User $PermissionUser = null
+        bool | int | string $userId,
+        null | QUI\Interfaces\Users\User $PermissionUser = null
     ): void {
         if (!$userId) {
             return;
@@ -258,7 +258,7 @@ class Customers extends Singleton
      * @throws QUI\Exception
      * @throws QUI\Users\Exception
      */
-    public function removeUserFromCustomerGroup(bool|int|string $userId): void
+    public function removeUserFromCustomerGroup(bool | int | string $userId): void
     {
         $customerGroup = null;
 
@@ -287,7 +287,7 @@ class Customers extends Singleton
      * @throws QUI\Permissions\Exception
      * @throws QUI\Users\Exception
      */
-    public function setAttributesToCustomer(bool|int|string $userId, array $attributes): void
+    public function setAttributesToCustomer(bool | int | string $userId, array $attributes): void
     {
         $User = QUI::getUsers()->get($userId);
 
