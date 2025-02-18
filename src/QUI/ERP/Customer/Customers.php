@@ -343,8 +343,6 @@ class Customers extends Singleton
         if (isset($attributes['group'])) {
             $groups[] = $attributes['group'];
             $User->setAttribute('mainGroup', $attributes['group']);
-        } elseif (isset($attributes['group']) && $attributes['group'] === null) {
-            $User->setAttribute('mainGroup', false);
         }
 
         if (!empty($attributes['groups'])) {
@@ -385,7 +383,7 @@ class Customers extends Singleton
             $SystemUser = QUI::getUsers()->getSystemUser();
 
             try {
-                $User->activate(false, $SystemUser);
+                $User->activate('', $SystemUser);
             } catch (QUI\Exception $Exception) {
                 // if no password, set a password
                 $userAttr = $User->getAttributes();
@@ -396,7 +394,7 @@ class Customers extends Singleton
                         $SystemUser
                     );
 
-                    $User->activate(false, $SystemUser);
+                    $User->activate('', $SystemUser);
                 } else {
                     throw $Exception;
                 }

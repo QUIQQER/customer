@@ -332,7 +332,8 @@ class Search extends Singleton
             'company',
             'customerId',
             'ad.firstname',
-            'ad.lastname'
+            'ad.lastname',
+            'users.customerId'
         ];
 
         $searchFilters = [];
@@ -687,7 +688,7 @@ class Search extends Singleton
      * @param integer|string $from - start
      * @param integer|string $count - count of entries
      */
-    public function limit(int|string $from, int|string $count): void
+    public function limit(int | string $from, int | string $count): void
     {
         $this->limit = [(int)$from, (int)$count];
     }
@@ -702,7 +703,7 @@ class Search extends Singleton
      * @param string $filter
      * @param array|string $value
      */
-    public function setFilter(string $filter, array|string $value): void
+    public function setFilter(string $filter, array | string $value): void
     {
         if ($filter === 'search') {
             $this->search = $value;
