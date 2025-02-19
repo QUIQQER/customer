@@ -37,7 +37,7 @@ class OutputProvider implements OutputProviderInterface
      * @param Locale|null $Locale $Locale (optional) - If ommitted use \QUI::getLocale()
      * @return string
      */
-    public static function getEntityTypeTitle(Locale $Locale = null): string
+    public static function getEntityTypeTitle(null | Locale $Locale = null): string
     {
         if (empty($Locale)) {
             $Locale = QUI::getLocale();
