@@ -196,7 +196,7 @@ class EventHandler
         return $attributes;
     }
 
-    public static function onUserSaveBegin(QUI\Users\User $User): void
+    public static function onUserSaveBegin(QUI\Interfaces\Users\User $User): void
     {
         if (!QUI::getUsers()->isUser($User)) {
             return;
@@ -234,10 +234,14 @@ class EventHandler
     }
 
     /**
-     * @param QUI\Users\User $User
+     * @param QUI\Interfaces\Users\User $User
      */
-    public static function onUserSaveEnd(QUI\Users\User $User): void
+    public static function onUserSaveEnd(QUI\Interfaces\Users\User $User): void
     {
+        if (!QUI::getUsers()->isUser($User)) {
+            return;
+        }
+
         $attributes = $User->getAttributes();
         $data = [];
 
@@ -297,15 +301,15 @@ class EventHandler
     }
 
     /**
-     * @param QUI\Users\User $User
+     * @param QUI\Interfaces\Users\User $User
      * @param bool|string $code
      * @param null|QUI\Interfaces\Users\User $PermissionUser
      *
      * @throws QUI\Users\Exception|QUI\Exception
      */
     public static function onUserActivateBegin(
-        QUI\Users\User $User,
-        bool|string $code,
+        QUI\Interfaces\Users\User $User,
+        bool | string $code,
         ?QUI\Interfaces\Users\User $PermissionUser
     ): void {
         $Group = Utils::getInstance()->getCustomerGroup();
@@ -342,6 +346,7 @@ class EventHandler
      * - set the user to the customer group
      *
      * @param QUI\ERP\Order\Controls\OrderProcess\CustomerData $Step
+     * @throws QUI\Exception
      */
     public static function onQuiqqerOrderCustomerDataSaveEnd(
         QUI\ERP\Order\Controls\OrderProcess\CustomerData $Step
@@ -378,15 +383,15 @@ class EventHandler
      * Handle the frontend user data event
      *
      * @param Collector $Collector - The collector object
-     * @param QUI\Users\User $User - The user object
+     * @param QUI\Interfaces\Users\User $User - The user object
      * @param mixed $Address - The address data
      * @return void
      * @throws Exception
      */
     public static function onFrontendUserDataMiddle(
         Collector $Collector,
-        QUI\Users\User $User,
-        $Address
+        QUI\Interfaces\Users\User $User,
+        mixed $Address
     ): void {
         $Engine = QUI::getTemplateManager()->getEngine();
         $canEdit = QUI\Permissions\Permission::hasPermission('quiqqer.customer.FrontendUsers.contactPerson.edit');
