@@ -39,7 +39,6 @@ class Handler
      * Permissions
      */
     const PERMISSION_OPENITEMS_VIEW = 'quiqqer.customer.OpenItemsList.view';
-    const PERMISSION_OPENITEMS_ADD_PAYMENT = 'quiqqer.customer.OpenItemsList.addPayment';
 
     const DOCUMENT_TYPE_INVOICE = 'invoice';
     const DOCUMENT_TYPE_ORDER = 'order';

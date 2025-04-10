@@ -41,7 +41,7 @@ class Utils extends QUI\Utils\Singleton
      * @param int|string $uid
      * @return int
      */
-    public function getPaymentTimeForUser(int|string $uid): int
+    public function getPaymentTimeForUser(int | string $uid): int
     {
         $defaultPaymentTime = 0;
 
@@ -76,7 +76,7 @@ class Utils extends QUI\Utils\Singleton
      * @return QUI\Groups\Everyone|QUI\Groups\Group|QUI\Groups\Guest|null
      * @throws Exception
      */
-    public function getCustomerGroup(): QUI\Groups\Group|QUI\Groups\Everyone|QUI\Groups\Guest|null
+    public function getCustomerGroup(): QUI\Groups\Group | QUI\Groups\Everyone | QUI\Groups\Guest | null
     {
         $Package = QUI::getPackage('quiqqer/customer');
         $Config = $Package->getConfig();
@@ -92,15 +92,22 @@ class Utils extends QUI\Utils\Singleton
     /**
      * Get e-mail address of a customer user in the following order:
      *
-     * 1. Email address of default address
-     * 2. Email address of QUIQQER user
-     * 3. Email address of contact address
+     * 1. Email address of erp address
+     * 2. Email address of default address
+     * 3. Email address of QUIQQER user
+     * 4. Email address of contact address
      *
      * @param QUI\Interfaces\Users\User $Customer
      * @return string|false - Email address or false if no address exists
      */
-    public function getEmailByCustomer(QUI\Interfaces\Users\User $Customer): bool|string
+    public function getEmailByCustomer(QUI\Interfaces\Users\User $Customer): bool | string
     {
+        $email = $this->getEmailByErpAddress($Customer);
+
+        if (!empty($email)) {
+            return $email;
+        }
+
         $email = $this->getEmailByStandardAddress($Customer);
 
         if (!empty($email)) {
@@ -126,7 +133,7 @@ class Utils extends QUI\Utils\Singleton
      * @param QUI\Interfaces\Users\User $Customer
      * @return string|false - Email address or false if no address exists
      */
-    public function getContactEmailByCustomer(QUI\Interfaces\Users\User $Customer): bool|string
+    public function getContactEmailByCustomer(QUI\Interfaces\Users\User $Customer): bool | string
     {
         $email = $this->getEmailByContactPersonAddress($Customer);
 
@@ -149,7 +156,31 @@ class Utils extends QUI\Utils\Singleton
      * @param QUI\Interfaces\Users\User $Customer
      * @return string|false
      */
-    protected function getEmailByStandardAddress(QUI\Interfaces\Users\User $Customer): bool|string
+    protected function getEmailByErpAddress(QUI\Interfaces\Users\User $Customer): bool | string
+    {
+        $address = $Customer->getAttribute('quiqqer.erp.address');
+
+        try {
+            $Address = $Customer->getAddress($address);
+            $mailAddresses = $Address->getMailList();
+
+            if (!empty($mailAddresses)) {
+                return current($mailAddresses);
+            }
+        } catch (\Exception $Exception) {
+            QUI\System\Log::writeDebugException($Exception);
+        }
+
+        return $this->getEmailByStandardAddress($Customer);
+    }
+
+    /**
+     * Get customer e-mail address from customer standard address.
+     *
+     * @param QUI\Interfaces\Users\User $Customer
+     * @return string|false
+     */
+    protected function getEmailByStandardAddress(QUI\Interfaces\Users\User $Customer): bool | string
     {
         if (!method_exists($Customer, 'getStandardAddress')) {
             return false;
@@ -176,7 +207,7 @@ class Utils extends QUI\Utils\Singleton
      * @param QUI\Interfaces\Users\User $Customer
      * @return string|false
      */
-    protected function getEmailByContactPersonAddress(QUI\Interfaces\Users\User $Customer): bool|string
+    protected function getEmailByContactPersonAddress(QUI\Interfaces\Users\User $Customer): bool | string
     {
         try {
             if (!($Customer instanceof QUI\Users\User)) {
@@ -206,7 +237,7 @@ class Utils extends QUI\Utils\Singleton
      * @param QUI\Interfaces\Users\User $Customer
      * @return string|false
      */
-    protected function getEmailByCustomerObject(QUI\Interfaces\Users\User $Customer): bool|string
+    protected function getEmailByCustomerObject(QUI\Interfaces\Users\User $Customer): bool | string
     {
         if (!empty($Customer->getAttribute('email'))) {
             return $Customer->getAttribute('email');
@@ -221,7 +252,7 @@ class Utils extends QUI\Utils\Singleton
      * @param QUI\Interfaces\Users\User $Customer
      * @return QUI\ERP\Address|false
      */
-    public function getContactPersonAddress(QUI\Interfaces\Users\User $Customer): bool|QUI\ERP\Address
+    public function getContactPersonAddress(QUI\Interfaces\Users\User $Customer): bool | QUI\ERP\Address
     {
         try {
             $contactPersonAddressId = $Customer->getAttribute('quiqqer.erp.customer.contact.person');
