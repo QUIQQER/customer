@@ -172,6 +172,14 @@
             <de><![CDATA[Darf Ansprechpartner im Frontend Profil editieren]]></de>
             <en><![CDATA[May edit contact person in frontend profile]]></en>
         </locale>
+        <locale name="permission.quiqqer.customer.OpenItemsList._header">
+            <de><![CDATA[Zahlungseingänge]]></de>
+            <en><![CDATA[Incoming payments]]></en>
+        </locale>
+        <locale name="permission.quiqqer.customer.OpenItemsList.view">
+            <de><![CDATA[Darf Zahlungseingänge / offene Posten verwenden]]></de>
+            <en><![CDATA[Can use incoming payments / open items]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/customer" datatype="php">
@@ -191,7 +199,7 @@
             <de>
                 <![CDATA[Datei "[file]" wurde von [editUser] aus den Downloads im Frontend-Profil des Kunden entfernt.]]></de>
             <en>
-                <![CDATA[File "[file]" was removed from the downloadas  in the customer's frontend profile by [editUser].]]></en>
+                <![CDATA[File "[file]" was removed from the downloads  in the customer's frontend profile by [editUser].]]></en>
         </locale>
 
         <locale name="exception.ajax.backend.general">
