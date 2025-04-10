@@ -198,7 +198,7 @@ class EventHandler
 
     public static function onUserSaveBegin(QUI\Interfaces\Users\User $User): void
     {
-        if (!QUI::getUsers()->isUser($User)) {
+        if (!($User instanceof QUI\Users\User)) {
             return;
         }
 
@@ -238,7 +238,7 @@ class EventHandler
      */
     public static function onUserSaveEnd(QUI\Interfaces\Users\User $User): void
     {
-        if (!QUI::getUsers()->isUser($User)) {
+        if (!($User instanceof QUI\Users\User)) {
             return;
         }
 
