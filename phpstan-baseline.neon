@@ -101,11 +101,6 @@ parameters:
 			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
 
 		-
-			message: "#^Call to method getHash\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Transaction\\.$#"
-			count: 2
-			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
-
-		-
 			message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Invoice\\\\Handler\\.$#"
 			count: 1
 			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
@@ -146,11 +141,6 @@ parameters:
 			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
 
 		-
-			message: "#^Parameter \\$Transaction of method QUI\\\\ERP\\\\Customer\\\\OpenItemsList\\\\Events\\:\\:onTransactionCreate\\(\\) has invalid type QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Transaction\\.$#"
-			count: 2
-			path: src/QUI/ERP/Customer/OpenItemsList/Events.php
-
-		-
 			message: "#^Call to method getArticles\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Order\\.$#"
 			count: 1
 			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
@@ -183,11 +173,6 @@ parameters:
 		-
 			message: "#^Call to method getCurrency\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Order\\.$#"
 			count: 1
-			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
-
-		-
-			message: "#^Call to method getDate\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Transaction\\.$#"
-			count: 4
 			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
 
 		-
@@ -246,11 +231,6 @@ parameters:
 			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
 
 		-
-			message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Handler\\.$#"
-			count: 1
-			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
-
-		-
 			message: "#^Call to static method getInstance\\(\\) on an unknown class QUI\\\\ERP\\\\Order\\\\Handler\\.$#"
 			count: 1
 			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
@@ -273,16 +253,6 @@ parameters:
 		-
 			message: "#^Method QUI\\\\ERP\\\\Customer\\\\OpenItemsList\\\\Handler\\:\\:getOpenOrders\\(\\) has invalid return type QUI\\\\ERP\\\\Order\\\\Order\\.$#"
 			count: 1
-			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
-
-		-
-			message: "#^PHPDoc tag @var for variable \\$TransactionA contains unknown class QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Transaction\\.$#"
-			count: 2
-			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
-
-		-
-			message: "#^PHPDoc tag @var for variable \\$TransactionB contains unknown class QUI\\\\ERP\\\\Accounting\\\\Payments\\\\Transactions\\\\Transaction\\.$#"
-			count: 2
 			path: src/QUI/ERP/Customer/OpenItemsList/Handler.php
 
 		-
