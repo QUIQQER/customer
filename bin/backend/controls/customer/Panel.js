@@ -1455,62 +1455,66 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
          * @param {String} category - name of the category
          */
         $openCategory: function(category) {
-            const self = this;
-
             this.Loader.show();
             this.$categoryUnload();
             this.getBody().setStyle('padding', 20);
 
-            this.$hideCategory().then(function() {
-                self.$currentCategory = category;
+            this.$hideCategory().then(() => {
+                this.$currentCategory = category;
 
                 if (category === 'information') {
-                    return self.$openInformation();
+                    return this.$openInformation();
                 }
 
                 if (category === 'addresses') {
-                    return self.$openAddressManagement();
+                    return this.$openAddressManagement();
                 }
 
                 if (category === 'comments') {
-                    self.getBody().setStyle('padding', 0);
+                    this.getBody().setStyle('padding', 0);
 
-                    return self.$openComments();
+                    return this.$openComments();
                 }
 
                 if (category === 'history') {
-                    self.getBody().setStyle('padding', 0);
+                    this.getBody().setStyle('padding', 0);
 
-                    return self.$openHistory();
+                    return this.$openHistory();
                 }
 
                 if (category === 'userInformation') {
-                    return self.$openUserInformation();
+                    return this.$openUserInformation();
                 }
 
                 if (category === 'userProperty') {
-                    return self.$openUserProperty();
+                    return this.$openUserProperty();
                 }
 
                 if (category === 'files') {
-                    return self.$openFiles();
+                    return this.$openFiles();
                 }
 
                 // load customer category
-                return new Promise(function(resolve) {
-                    QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getCategory', function(result) {
-                        self.getContent().set('html', '<form>' + result + '</form>');
+                return new Promise((resolve) => {
+                    QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getCategory', (result) => {
+                        this.getContent().set('html', '<form>' + result + '</form>');
 
-                        QUI.parse(self.getContent()).then(resolve);
+                        QUI.parse(this.getContent()).then(() => {
+                            return new Promise((resolve) => {
+                                require(['utils/Controls'], (ControlUtils) => {
+                                    ControlUtils.parse(this.getContent()).then(resolve);
+                                });
+                            });
+                        }).then(resolve);
                     }, {
                         'package': 'quiqqer/customer',
                         category: category
                     });
                 });
-            }).then(function() {
-                return self.$showCategory();
-            }).then(function() {
-                self.Loader.hide();
+            }).then(() => {
+                return this.$showCategory();
+            }).then(() => {
+                this.Loader.hide();
             });
         },
 
