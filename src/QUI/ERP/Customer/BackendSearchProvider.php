@@ -27,10 +27,10 @@ class BackendSearchProvider implements ProviderInterface
     }
 
     /**
-     * @param int $id
+     * @param string|int $id
      * @inheritdoc
      */
-    public function getEntry(int $id): array
+    public function getEntry(string | int $id): array
     {
         return [
             'searchdata' => json_encode([
