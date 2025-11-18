@@ -19,7 +19,8 @@
         "php": "^8",
         "quiqqer/core": "^2",
         "quiqqer/erp": "^3.2",
-        "quiqqer/payment-transactions": "^2"
+        "quiqqer/payment-transactions": "^2",
+        "quiqqer/backendsearch": "^2.1"
     },
     "suggest": {
         "quiqqer/user-downloads": "^1"
