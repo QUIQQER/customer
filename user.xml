@@ -7,5 +7,6 @@
         <attribute>quiqqer.erp.customer.payment.term</attribute>
         <attribute>quiqqer.erp.customer.contact.person</attribute>
         <attribute>quiqqer.erp.customer.download_entry_id</attribute>
+        <attribute>quiqqer.erp.customer.referenceCode</attribute>
     </attributes>
 </user>
