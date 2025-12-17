@@ -658,6 +658,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 titleCommentsAndHistory: QUILocale.get(lg, 'customer.panel.information.commentsAndHistory'),
 
                 titleExtra: QUILocale.get(lg, 'customer.panel.information.extra'),
+                textReferenceCode: QUILocale.get(lg, 'customer.panel.information.referenceCode'),
                 textPaymentTerm: QUILocale.get(lg, 'customer.panel.information.paymentTerm'),
                 textStandardShipping: QUILocale.get(lg, 'customer.panel.information.shipping'),
                 textMail: QUILocale.get('quiqqer/core', 'email'),
@@ -721,6 +722,9 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
                 Form.elements['quiqqer.erp.customer.payment.term'].value =
                     checkVal(self.$User.getAttribute('quiqqer.erp.customer.payment.term'));
+
+                Form.elements['quiqqer.erp.customer.referenceCode'].value =
+                    checkVal(self.$User.getAttribute('quiqqer.erp.customer.referenceCode'));
 
                 // address
                 address = self.$User.getAttribute('address');

@@ -827,6 +827,10 @@ Best regards
             <de><![CDATA[Ansprechpartner]]></de>
             <en><![CDATA[Contact person]]></en>
         </locale>
+        <locale name="customer.panel.information.referenceCode">
+            <de><![CDATA[Kundenreferenz / Kundenzeichen]]></de>
+            <en><![CDATA[Customer Reference / Reference Code]]></en>
+        </locale>
         <locale name="customer.panel.delivery.address">
             <de><![CDATA[Versandadresse]]></de>
             <en><![CDATA[Shipping address]]></en>
