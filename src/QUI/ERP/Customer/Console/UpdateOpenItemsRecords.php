@@ -40,7 +40,13 @@ class UpdateOpenItemsRecords extends QUI\System\Console\Tool
         if (!empty($userId)) {
             $userIds = [$userId];
         } else {
-            $userIds = Utils::getInstance()->getCustomerGroup()->getUserIds();
+            $CustomerGroup = Utils::getInstance()->getCustomerGroup();
+
+            if (!$CustomerGroup) {
+                $this->exitFail('Customer group is not configured or invalid.');
+            }
+
+            $userIds = $CustomerGroup->getUserIds();
         }
 
         $Users = QUI::getUsers();

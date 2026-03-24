@@ -80,13 +80,23 @@ class Utils extends QUI\Utils\Singleton
     {
         $Package = QUI::getPackage('quiqqer/customer');
         $Config = $Package->getConfig();
-        $groupId = $Config->getValue('customer', 'groupId');
+        $groupId = trim((string)$Config->getValue('customer', 'groupId'));
 
         if (empty($groupId)) {
             return null;
         }
 
-        return QUI::getGroups()->get($groupId);
+        try {
+            return QUI::getGroups()->get($groupId);
+        } catch (QUI\Exception $Exception) {
+            QUI\System\Log::addError(
+                'Invalid customer group configuration (customer.groupId="' . $groupId . '"): '
+                . $Exception->getMessage()
+            );
+            QUI\System\Log::writeDebugException($Exception);
+
+            return null;
+        }
     }
 
     /**
