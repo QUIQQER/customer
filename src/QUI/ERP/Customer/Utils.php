@@ -6,7 +6,6 @@ use QUI;
 use QUI\Exception;
 
 use function current;
-use function method_exists;
 
 /**
  * Class Utils
@@ -192,10 +191,6 @@ class Utils extends QUI\Utils\Singleton
      */
     protected function getEmailByStandardAddress(QUI\Interfaces\Users\User $Customer): bool | string
     {
-        if (!method_exists($Customer, 'getStandardAddress')) {
-            return false;
-        }
-
         try {
             /** @var QUI\Users\Address $StandardAddress */
             $StandardAddress = $Customer->getStandardAddress();
