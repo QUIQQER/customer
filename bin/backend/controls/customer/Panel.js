@@ -487,7 +487,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             if (!address) {
                 GetAddress = this.getAddressDefaultAddress();
             } else {
-                GetAddress = this.getAddress(address);
+                GetAddress = this.getAddress(address).then((addressData) => {
+                    if (addressData) {
+                        return addressData;
+                    }
+
+                    return this.getAddressDefaultAddress();
+                });
             }
 
             return GetAddress.then(function(addressData) {
@@ -763,7 +769,13 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     return self.getAddressDefaultAddress();
                 }
 
-                return self.getAddress(address);
+                return self.getAddress(address).then(function(addressData) {
+                    if (addressData) {
+                        return addressData;
+                    }
+
+                    return self.getAddressDefaultAddress();
+                });
             }).then(function(address) {
                 if (!address) {
                     return;
