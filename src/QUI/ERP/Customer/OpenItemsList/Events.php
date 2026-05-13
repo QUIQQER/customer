@@ -12,6 +12,7 @@ use QUI\ERP\Order\Handler as OrderHandler;
 use QUI\ERP\Order\Order;
 use QUI\ERP\Order\Settings;
 use QUI\ERP\User;
+use QUI\ERP\Order\AbstractOrder;
 
 use function json_decode;
 
@@ -104,13 +105,13 @@ class Events
      *
      * Update open records of user if a transaction was made against one of his open items
      *
-     * @param Order $Order
+     * @param AbstractOrder $Order
      * @param int $currentStatus
      * @param int $oldStatus
      * @return void
      */
     public static function onQuiqqerOrderPaidStatusChanged(
-        Order $Order,
+        AbstractOrder $Order,
         int $currentStatus,
         int $oldStatus
     ): void {

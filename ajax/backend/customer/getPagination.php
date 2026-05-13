@@ -14,6 +14,11 @@ QUI::$Ajax->registerFunction(
     function ($uid) {
         try {
             $User = QUI::getUsers()->get($uid);
+
+            if (!($User instanceof QUI\Users\User)) {
+                return '';
+            }
+
             $Comments = QUI\ERP\Comments::getCommentsByUser($User);
             $History = QUI\ERP\Comments::getHistoryByUser($User);
         } catch (Exception $Exception) {

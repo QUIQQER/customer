@@ -24,6 +24,7 @@ use function is_numeric;
 use function json_decode;
 use function json_encode;
 use function md5;
+use function sort;
 use function trim;
 
 /**
@@ -33,6 +34,20 @@ use function trim;
  */
 class EventHandler
 {
+    /**
+     * Snapshots of tracked customer data keyed by user UUID.
+     *
+     * @var array<string, array<string, array<string, string>>>
+     */
+    protected static array $userSaveSnapshots = [];
+
+    /**
+     * Snapshots of tracked customer addresses keyed by address UUID.
+     *
+     * @var array<string, array<string, array<string, string>>>
+     */
+    protected static array $userAddressSnapshots = [];
+
     /**
      * quiqqer/core: onPackageSetup
      * - create customer group
@@ -202,6 +217,8 @@ class EventHandler
             return;
         }
 
+        self::rememberUserSnapshot($User);
+
         if (QUI::isBackend()) {
             return;
         }
@@ -235,6 +252,7 @@ class EventHandler
 
     /**
      * @param QUI\Interfaces\Users\User $User
+     * @throws QUI\Exception
      */
     public static function onUserSaveEnd(QUI\Interfaces\Users\User $User): void
     {
@@ -242,13 +260,20 @@ class EventHandler
             return;
         }
 
+        $snapshotKey = $User->getUUID();
+        $beforeSnapshot = self::$userSaveSnapshots[$snapshotKey] ?? null;
+        unset(self::$userSaveSnapshots[$snapshotKey]);
+
         $attributes = $User->getAttributes();
         $data = [];
 
         if (isset($attributes['mainGroup'])) {
             try {
                 $mainGroup = $attributes['mainGroup'];
-                QUI::getGroups()->get($mainGroup);
+
+                if (!empty($mainGroup)) {
+                    QUI::getGroups()->get($mainGroup);
+                }
 
                 $data['mainGroup'] = $mainGroup;
             } catch (QUI\Exception $Exception) {
@@ -280,24 +305,128 @@ class EventHandler
             }
         }
 
-        if (empty($data)) {
+        // history
+        if ($User->getAttribute('history')) {
+            $history = $User->getAttribute('history');
+            $json = json_decode($history, true);
+
+            if (is_array($json)) {
+                $data['history'] = $history;
+            }
+        }
+
+        if (!empty($data)) {
+            // saving
+            try {
+                QUI::getDataBase()->update(
+                    Manager::table(),
+                    $data,
+                    ['uuid' => $User->getUUID()]
+                );
+
+                if ($newNextCustomerNo) {
+                    $NumberRange->setRange($newNextCustomerNo);
+                }
+            } catch (QUI\Exception $Exception) {
+                QUI\System\Log::addDebug($Exception->getMessage());
+            }
+        }
+
+        if (empty($beforeSnapshot) || !self::isCustomerUser($User)) {
             return;
         }
 
-        // saving
-        try {
-            QUI::getDataBase()->update(
-                Manager::table(),
-                $data,
-                ['uuid' => $User->getUUID()]
-            );
+        $afterSnapshot = self::createUserSnapshot($User);
+        $changes = self::diffUserSnapshots($beforeSnapshot, $afterSnapshot);
 
-            if ($newNextCustomerNo) {
-                $NumberRange->setRange($newNextCustomerNo);
-            }
-        } catch (QUI\Exception $Exception) {
-            QUI\System\Log::addDebug($Exception->getMessage());
+        if (empty($changes)) {
+            return;
         }
+
+        $History = Customers::getInstance()->getUserHistory($User);
+
+        foreach ($changes as $change) {
+            $History->addComment(
+                self::createHistoryMessage($change),
+                false,
+                'quiqqer/customer',
+                'fa fa-history'
+            );
+        }
+
+        Customers::getInstance()->updateHistory($User, $History);
+    }
+
+    /**
+     * Remember the current standard address snapshot before saving.
+     *
+     * @param QUI\Users\Address $Address
+     * @param QUI\Interfaces\Users\User $User
+     * @return void
+     */
+    public static function onUserAddressSaveBegin(
+        QUI\Users\Address $Address,
+        QUI\Interfaces\Users\User $User
+    ): void {
+        if (!($User instanceof QUI\Users\User)) {
+            return;
+        }
+
+        self::rememberAddressSnapshot($Address, $User);
+    }
+
+    /**
+     * Compare the current standard address after direct address saves.
+     *
+     * @param QUI\Users\Address $Address
+     * @param QUI\Interfaces\Users\User $User
+     * @return void
+     */
+    public static function onUserAddressSave(
+        QUI\Users\Address $Address,
+        QUI\Interfaces\Users\User $User
+    ): void {
+        if (!($User instanceof QUI\Users\User)) {
+            return;
+        }
+
+        $addressUuid = $Address->getUUID();
+
+        if (empty($addressUuid)) {
+            return;
+        }
+
+        $beforeSnapshot = self::$userAddressSnapshots[$addressUuid] ?? null;
+        unset(self::$userAddressSnapshots[$addressUuid]);
+
+        if (empty($beforeSnapshot) || !self::shouldTrackAddressHistory($Address, $User)) {
+            return;
+        }
+
+        // If the address save is part of User::save(), the user snapshot will write the history once.
+        if (isset(self::$userSaveSnapshots[$User->getUUID()])) {
+            return;
+        }
+
+        $afterSnapshot = self::createAddressSnapshot($Address);
+        $changes = self::diffUserSnapshots($beforeSnapshot, $afterSnapshot);
+
+        if (empty($changes)) {
+            return;
+        }
+
+        $History = Customers::getInstance()->getUserHistory($User);
+
+        foreach ($changes as $change) {
+            $History->addComment(
+                self::createHistoryMessage($change),
+                false,
+                'quiqqer/customer',
+                'fa fa-history'
+            );
+        }
+
+        Customers::getInstance()->updateHistory($User, $History);
     }
 
     /**
@@ -523,5 +652,516 @@ class EventHandler
             } catch (QUI\Exception) {
             }
         }
+    }
+
+    /**
+     * Import customer history entries into the generic ERP history feed.
+     *
+     * @param QUI\Interfaces\Users\User $User
+     * @param QUI\ERP\Comments $History
+     * @return void
+     */
+    public static function onQuiqqerErpGetHistoryByUser(
+        QUI\Interfaces\Users\User $User,
+        QUI\ERP\Comments $History
+    ): void {
+        $History->import(
+            Customers::getInstance()->getUserHistory($User)
+        );
+    }
+
+    /**
+     * Remember the current customer snapshot before saving.
+     *
+     * @param QUI\Users\User $User
+     * @return void
+     */
+    protected static function rememberUserSnapshot(QUI\Users\User $User): void
+    {
+        $snapshotKey = $User->getUUID();
+
+        if (!self::isCustomerUser($User)) {
+            unset(self::$userSaveSnapshots[$snapshotKey]);
+            return;
+        }
+
+        try {
+            $DbUser = new QUI\Users\User($User->getUUID());
+            self::$userSaveSnapshots[$snapshotKey] = self::createUserSnapshot($DbUser);
+        } catch (QUI\Exception) {
+            self::$userSaveSnapshots[$snapshotKey] = self::createUserSnapshot($User);
+        }
+    }
+
+    /**
+     * Remember the current address snapshot before saving.
+     *
+     * @param QUI\Users\Address $Address
+     * @param QUI\Users\User $User
+     * @return void
+     */
+    protected static function rememberAddressSnapshot(
+        QUI\Users\Address $Address,
+        QUI\Users\User $User
+    ): void {
+        if (!self::shouldTrackAddressHistory($Address, $User)) {
+            return;
+        }
+
+        $addressUuid = $Address->getUUID();
+
+        if (empty($addressUuid)) {
+            return;
+        }
+
+        try {
+            $DbUser = new QUI\Users\User($User->getUUID());
+            $DbAddress = new QUI\Users\Address($DbUser, $addressUuid);
+
+            self::$userAddressSnapshots[$addressUuid] = self::createAddressSnapshot($DbAddress);
+        } catch (QUI\Exception) {
+            self::$userAddressSnapshots[$addressUuid] = self::createAddressSnapshot($Address);
+        }
+    }
+
+    /**
+     * Return whether the given user is a customer.
+     *
+     * @param QUI\Users\User $User
+     * @return bool
+     */
+    protected static function isCustomerUser(QUI\Users\User $User): bool
+    {
+        if (!empty($User->getAttribute('customerId'))) {
+            return true;
+        }
+
+        try {
+            $CustomerGroup = Utils::getInstance()->getCustomerGroup();
+
+            if ($CustomerGroup === null) {
+                return false;
+            }
+
+            if ($User->getAttribute('mainGroup') === $CustomerGroup->getUUID()) {
+                return true;
+            }
+
+            return $User->isInGroup($CustomerGroup->getUUID());
+        } catch (QUI\Exception) {
+            return false;
+        }
+    }
+
+    /**
+     * Return whether a given address save should be tracked for history.
+     *
+     * Currently only the standard customer address is tracked here.
+     *
+     * @param QUI\Users\Address $Address
+     * @param QUI\Users\User $User
+     * @return bool
+     */
+    protected static function shouldTrackAddressHistory(
+        QUI\Users\Address $Address,
+        QUI\Users\User $User
+    ): bool {
+        if (!self::isCustomerUser($User)) {
+            return false;
+        }
+
+        $standardAddressUuid = $User->getStandardAddress()->getUUID();
+
+        if (empty($standardAddressUuid)) {
+            return false;
+        }
+
+        return $Address->getUUID() === $standardAddressUuid;
+    }
+
+    /**
+     * Create a normalized snapshot of the tracked customer data.
+     *
+     * @param QUI\Users\User $User
+     * @return array<string, array<string, string>>
+     */
+    protected static function createUserSnapshot(QUI\Users\User $User): array
+    {
+        $Address = null;
+        $groupIds = [];
+
+        foreach ($User->getGroups(false) as $groupId) {
+            if (!is_string($groupId) || $groupId === '') {
+                continue;
+            }
+
+            $groupIds[] = $groupId;
+        }
+
+        sort($groupIds);
+
+        try {
+            $Address = $User->getStandardAddress();
+        } catch (QUI\Exception) {
+        }
+
+        return [
+            'username' => self::createSnapshotEntry(
+                $User->getUsername()
+            ),
+            'email' => self::createSnapshotEntry(
+                $User->getAttribute('email')
+            ),
+            'customerId' => self::createSnapshotEntry(
+                $User->getAttribute('customerId')
+            ),
+            'mainGroup' => self::createSnapshotEntry(
+                $User->getAttribute('mainGroup'),
+                self::getGroupDisplay($User->getAttribute('mainGroup'))
+            ),
+            'groups' => self::createSnapshotEntry(
+                implode(',', $groupIds),
+                self::getGroupsDisplay($groupIds)
+            ),
+            'referenceCode' => self::createSnapshotEntry(
+                $User->getAttribute('quiqqer.erp.customer.referenceCode')
+            ),
+            'paymentTerm' => self::createSnapshotEntry(
+                $User->getAttribute('quiqqer.erp.customer.payment.term')
+            ),
+            'contactPerson' => self::createSnapshotEntry(
+                $User->getAttribute('quiqqer.erp.customer.contact.person'),
+                self::getContactPersonDisplay(
+                    $User,
+                    $User->getAttribute('quiqqer.erp.customer.contact.person')
+                )
+            ),
+            'address.salutation' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'salutation')
+            ),
+            'address.firstname' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'firstname')
+            ),
+            'address.lastname' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'lastname')
+            ),
+            'address.company' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'company')
+            ),
+            'address.street_no' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'street_no')
+            ),
+            'address.zip' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'zip')
+            ),
+            'address.city' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'city')
+            ),
+            'address.country' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'country'),
+                self::getCountryDisplay(
+                    self::getAddressAttribute($Address, 'country')
+                )
+            ),
+            'address.suffix' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'suffix')
+            ),
+            'address.phone.tel' => self::createSnapshotEntry(
+                self::getAddressPhone($Address, 'tel')
+            ),
+            'address.phone.mobile' => self::createSnapshotEntry(
+                self::getAddressPhone($Address, 'mobile')
+            ),
+            'address.phone.fax' => self::createSnapshotEntry(
+                self::getAddressPhone($Address, 'fax')
+            )
+        ];
+    }
+
+    /**
+     * Create a normalized snapshot of a customer address.
+     *
+     * @param QUI\Users\Address $Address
+     * @return array<string, array<string, string>>
+     */
+    protected static function createAddressSnapshot(QUI\Users\Address $Address): array
+    {
+        return [
+            'address.salutation' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'salutation')
+            ),
+            'address.firstname' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'firstname')
+            ),
+            'address.lastname' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'lastname')
+            ),
+            'address.company' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'company')
+            ),
+            'address.street_no' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'street_no')
+            ),
+            'address.zip' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'zip')
+            ),
+            'address.city' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'city')
+            ),
+            'address.country' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'country'),
+                self::getCountryDisplay(
+                    self::getAddressAttribute($Address, 'country')
+                )
+            ),
+            'address.suffix' => self::createSnapshotEntry(
+                self::getAddressAttribute($Address, 'suffix')
+            ),
+            'address.phone.tel' => self::createSnapshotEntry(
+                self::getAddressPhone($Address, 'tel')
+            ),
+            'address.phone.mobile' => self::createSnapshotEntry(
+                self::getAddressPhone($Address, 'mobile')
+            ),
+            'address.phone.fax' => self::createSnapshotEntry(
+                self::getAddressPhone($Address, 'fax')
+            )
+        ];
+    }
+
+    /**
+     * Create a normalized snapshot entry.
+     *
+     * @param mixed $value
+     * @param string|null $display
+     * @return array<string, string>
+     */
+    protected static function createSnapshotEntry(mixed $value, ?string $display = null): array
+    {
+        $value = self::normalizeSnapshotValue($value);
+
+        if ($display === null) {
+            $display = $value;
+        }
+
+        return [
+            'value' => $value,
+            'display' => self::normalizeSnapshotValue($display)
+        ];
+    }
+
+    /**
+     * Normalize a snapshot value to a comparable string.
+     *
+     * @param mixed $value
+     * @return string
+     */
+    protected static function normalizeSnapshotValue(mixed $value): string
+    {
+        if ($value === false || $value === null) {
+            return '';
+        }
+
+        if (is_array($value)) {
+            $value = json_encode($value);
+        }
+
+        return trim((string)$value);
+    }
+
+    /**
+     * Return the normalized value of an address attribute.
+     *
+     * @param QUI\Users\Address|null $Address
+     * @param string $attribute
+     * @return string
+     */
+    protected static function getAddressAttribute(?QUI\Users\Address $Address, string $attribute): string
+    {
+        if ($Address === null) {
+            return '';
+        }
+
+        return self::normalizeSnapshotValue(
+            $Address->getAttribute($attribute)
+        );
+    }
+
+    /**
+     * Return the normalized phone number of an address by type.
+     *
+     * @param QUI\Users\Address|null $Address
+     * @param string $type
+     * @return string
+     */
+    protected static function getAddressPhone(?QUI\Users\Address $Address, string $type): string
+    {
+        if ($Address === null) {
+            return '';
+        }
+
+        return match ($type) {
+            'mobile' => self::normalizeSnapshotValue($Address->getMobile()),
+            'fax' => self::normalizeSnapshotValue($Address->getFax()),
+            default => self::normalizeSnapshotValue($Address->getPhone())
+        };
+    }
+
+    /**
+     * Return a readable display value for a group UUID.
+     *
+     * @param mixed $groupId
+     * @return string
+     */
+    protected static function getGroupDisplay(mixed $groupId): string
+    {
+        $groupId = self::normalizeSnapshotValue($groupId);
+
+        if ($groupId === '') {
+            return '';
+        }
+
+        try {
+            return QUI::getGroups()->get($groupId)->getName();
+        } catch (QUI\Exception) {
+            return $groupId;
+        }
+    }
+
+    /**
+     * Return readable display values for a list of group UUIDs.
+     *
+     * @param array $groupIds
+     * @return string
+     */
+    protected static function getGroupsDisplay(array $groupIds): string
+    {
+        $display = [];
+
+        foreach ($groupIds as $groupId) {
+            $display[] = self::getGroupDisplay($groupId);
+        }
+
+        sort($display);
+
+        return implode(', ', $display);
+    }
+
+    /**
+     * Resolve the display value of a contact person address.
+     *
+     * @param QUI\Users\User $User
+     * @param mixed $addressId
+     * @return string
+     */
+    protected static function getContactPersonDisplay(QUI\Users\User $User, mixed $addressId): string
+    {
+        $addressId = self::normalizeSnapshotValue($addressId);
+
+        if ($addressId === '') {
+            return '';
+        }
+
+        try {
+            return $User->getAddress($addressId)->getName();
+        } catch (QUI\Exception) {
+            return $addressId;
+        }
+    }
+
+    /**
+     * Resolve the display value of a country code.
+     *
+     * @param string $countryCode
+     * @return string
+     */
+    protected static function getCountryDisplay(string $countryCode): string
+    {
+        if ($countryCode === '') {
+            return '';
+        }
+
+        try {
+            return QUI\Countries\Manager::get($countryCode)->getName();
+        } catch (QUI\Exception) {
+            return $countryCode;
+        }
+    }
+
+    /**
+     * Compare two customer snapshots.
+     *
+     * @param array<string, array<string, string>> $before
+     * @param array<string, array<string, string>> $after
+     * @return list<array<string, array<string, string>|string>>
+     */
+    protected static function diffUserSnapshots(array $before, array $after): array
+    {
+        $changes = [];
+
+        foreach ($before as $field => $oldEntry) {
+            if (!isset($after[$field])) {
+                continue;
+            }
+
+            if ($oldEntry['value'] === $after[$field]['value']) {
+                continue;
+            }
+
+            $changes[] = [
+                'field' => $field,
+                'old' => $oldEntry,
+                'new' => $after[$field]
+            ];
+        }
+
+        return $changes;
+    }
+
+    /**
+     * Create a readable history message for one customer change.
+     *
+     * @param array<string, array<string, string>|string> $change
+     * @return string
+     */
+    protected static function createHistoryMessage(array $change): string
+    {
+        $Actor = QUI::getUserBySession();
+
+        if (!$Actor->getUUID()) {
+            $Actor = QUI::getUsers()->getSystemUser();
+        }
+
+        $old = $change['old']['display'];
+        $new = $change['new']['display'];
+
+        if ($old === '') {
+            $old = QUI::getLocale()->get(
+                'quiqqer/customer',
+                'customer.history.value.empty'
+            );
+        }
+
+        if ($new === '') {
+            $new = QUI::getLocale()->get(
+                'quiqqer/customer',
+                'customer.history.value.empty'
+            );
+        }
+
+        return QUI::getLocale()->get(
+            'quiqqer/customer',
+            'customer.history.change',
+            [
+                'field' => QUI::getLocale()->get(
+                    'quiqqer/customer',
+                    'customer.history.field.' . $change['field']
+                ),
+                'old' => $old,
+                'new' => $new,
+                'username' => $Actor->getUsername(),
+                'userId' => $Actor->getUUID()
+            ]
+        );
     }
 }

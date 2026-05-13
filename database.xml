@@ -5,6 +5,7 @@
             <field type="VARCHAR(255) NULL">customerId</field>
             <field type="VARCHAR(255) NULL">mainGroup</field>
             <field type="text NULL">comments</field>
+            <field type="text NULL">history</field>
 
             <primary>id</primary>
         </table>

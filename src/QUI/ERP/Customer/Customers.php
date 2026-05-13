@@ -10,6 +10,7 @@ use QUI;
 use QUI\Exception;
 use QUI\ExceptionStack;
 use QUI\Groups\Group;
+use QUI\Users\Manager;
 use QUI\Utils\Singleton;
 
 use function array_filter;
@@ -623,6 +624,66 @@ class Customers extends Singleton
         }
 
         return $Comments;
+    }
+
+    /**
+     * Add a history entry to the customer user history
+     *
+     * @param QUI\Interfaces\Users\User $User
+     * @param string $message
+     * @return void
+     * @throws QUI\Exception
+     */
+    public function addHistoryToUser(QUI\Interfaces\Users\User $User, string $message): void
+    {
+        $History = $this->getUserHistory($User);
+        $History->addComment(
+            $message,
+            false,
+            'quiqqer/customer',
+            'fa fa-history'
+        );
+
+        $this->updateHistory($User, $History);
+    }
+
+    /**
+     * Return the history object of a customer user
+     *
+     * @param QUI\Interfaces\Users\User $User
+     * @return QUI\ERP\Comments
+     */
+    public function getUserHistory(QUI\Interfaces\Users\User $User): QUI\ERP\Comments
+    {
+        $history = $User->getAttribute('history');
+        $history = json_decode($history, true);
+
+        if (is_array($history)) {
+            return new QUI\ERP\Comments($history);
+        }
+
+        return new QUI\ERP\Comments();
+    }
+
+    /**
+     * Persist a history object to the customer user
+     *
+     * @param QUI\Interfaces\Users\User $User
+     * @param QUI\ERP\Comments $History
+     * @return void
+     * @throws QUI\Exception
+     */
+    public function updateHistory(QUI\Interfaces\Users\User $User, QUI\ERP\Comments $History): void
+    {
+        $history = $History->serialize();
+
+        $User->setAttribute('history', $history);
+
+        QUI::getDataBase()->update(
+            Manager::table(),
+            ['history' => $history],
+            ['uuid' => $User->getUUID()]
+        );
     }
 
     //endregion
