@@ -5,10 +5,10 @@
     <event on="onUserExtraAttributes" fire="\QUI\ERP\Customer\EventHandler::onUserExtraAttributes"/>
     <event on="onUserSaveBegin" fire="\QUI\ERP\Customer\EventHandler::onUserSaveBegin"/>
     <event on="onUserSaveEnd" fire="\QUI\ERP\Customer\EventHandler::onUserSaveEnd"/>
-    <event on="userAddressSaveBegin" fire="\QUI\ERP\Customer\EventHandler::onUserAddressSaveBegin"/>
-    <event on="userAddressSave" fire="\QUI\ERP\Customer\EventHandler::onUserAddressSave"/>
+    <event on="onUserAddressSaveBegin" fire="\QUI\ERP\Customer\EventHandler::onUserAddressSaveBegin"/>
+    <event on="onUserAddressSave" fire="\QUI\ERP\Customer\EventHandler::onUserAddressSave"/>
     <event on="onUserActivateBegin" fire="\QUI\ERP\Customer\EventHandler::onUserActivateBegin"/>
-    <event on="quiqqerErpGetHistoryByUser" fire="\QUI\ERP\Customer\EventHandler::onQuiqqerErpGetHistoryByUser"/>
+    <event on="onQuiqqerErpGetHistoryByUser" fire="\QUI\ERP\Customer\EventHandler::onQuiqqerErpGetHistoryByUser"/>
     <event on="onQuiqqerOrderCustomerDataSaveEnd"
            fire="\QUI\ERP\Customer\EventHandler::onQuiqqerOrderCustomerDataSaveEnd"
     />

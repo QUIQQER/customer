@@ -252,6 +252,7 @@ class EventHandler
 
     /**
      * @param QUI\Interfaces\Users\User $User
+     * @throws QUI\Exception
      */
     public static function onUserSaveEnd(QUI\Interfaces\Users\User $User): void
     {
@@ -269,7 +270,10 @@ class EventHandler
         if (isset($attributes['mainGroup'])) {
             try {
                 $mainGroup = $attributes['mainGroup'];
-                QUI::getGroups()->get($mainGroup);
+
+                if (!empty($mainGroup)) {
+                    QUI::getGroups()->get($mainGroup);
+                }
 
                 $data['mainGroup'] = $mainGroup;
             } catch (QUI\Exception $Exception) {
@@ -681,7 +685,12 @@ class EventHandler
             return;
         }
 
-        self::$userSaveSnapshots[$snapshotKey] = self::createUserSnapshot($User);
+        try {
+            $DbUser = new QUI\Users\User($User->getUUID());
+            self::$userSaveSnapshots[$snapshotKey] = self::createUserSnapshot($DbUser);
+        } catch (QUI\Exception) {
+            self::$userSaveSnapshots[$snapshotKey] = self::createUserSnapshot($User);
+        }
     }
 
     /**
@@ -705,7 +714,14 @@ class EventHandler
             return;
         }
 
-        self::$userAddressSnapshots[$addressUuid] = self::createAddressSnapshot($Address);
+        try {
+            $DbUser = new QUI\Users\User($User->getUUID());
+            $DbAddress = new QUI\Users\Address($DbUser, $addressUuid);
+
+            self::$userAddressSnapshots[$addressUuid] = self::createAddressSnapshot($DbAddress);
+        } catch (QUI\Exception) {
+            self::$userAddressSnapshots[$addressUuid] = self::createAddressSnapshot($Address);
+        }
     }
 
     /**
@@ -792,12 +808,6 @@ class EventHandler
         return [
             'username' => self::createSnapshotEntry(
                 $User->getUsername()
-            ),
-            'firstname' => self::createSnapshotEntry(
-                $User->getAttribute('firstname')
-            ),
-            'lastname' => self::createSnapshotEntry(
-                $User->getAttribute('lastname')
             ),
             'email' => self::createSnapshotEntry(
                 $User->getAttribute('email')
