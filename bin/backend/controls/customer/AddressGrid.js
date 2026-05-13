@@ -270,8 +270,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
                     mail = addressList[i].mail;
                     phone = addressList[i].phone;
 
+                    addressList[i].mailRaw = [];
+                    addressList[i].phoneRaw = [];
+
                     try {
                         mail = JSON.decode(mail);
+                        addressList[i].mailRaw = mail;
                         addressList[i].mail = mail.join(', ');
                     } catch (e) {
                     }
@@ -279,6 +283,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
                     try {
                         phoneText = '';
                         phone = JSON.decode(phone);
+                        addressList[i].phoneRaw = phone;
                         phone.forEach(buildPhoneText);
 
                         addressList[i].phone = phoneText;
@@ -410,8 +415,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/AddressGrid', [
                         zip: rowData.zip,
                         city: rowData.city,
                         country: rowData.country,
-                        phone: JSON.decode(rowData.phone),
-                        mails: JSON.decode(rowData.mail)
+                        phone: Array.isArray(rowData.phoneRaw) ? rowData.phoneRaw : [],
+                        mails: Array.isArray(rowData.mailRaw) ? rowData.mailRaw : []
                     })
                 });
             });
