@@ -763,11 +763,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 Row = self.$Grid.getDataByRow(data.row),
                 ParentNode = data.parent;
 
-            if (Row.userId === this.$currentRecordsUserId) {
-                return;
-            }
-
             this.$currentRecordsUserId = Row.userId;
+            this.$currentUserRecordsSearch = '';
 
             ParentNode.setStyle('padding', 10);
             //ParentNode.set('html', '<div class="fa fa-spinner fa-spin"></div>');

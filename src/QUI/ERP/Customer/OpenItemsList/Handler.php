@@ -424,7 +424,26 @@ class Handler
      */
     public static function updateOpenItemsRecord(QUI\Interfaces\Users\User $User): void
     {
-        $OpenItemsList = self::getOpenItemsList($User);
+        self::syncOpenItemsRecord($User);
+    }
+
+    /**
+     * Synchronize the persisted open-items snapshot of a user with the current live data.
+     *
+     * @param QUI\Interfaces\Users\User $User
+     * @param ItemsList|null $OpenItemsList
+     * @return void
+     *
+     * @throws QUI\Exception
+     */
+    public static function syncOpenItemsRecord(
+        QUI\Interfaces\Users\User $User,
+        ?ItemsList $OpenItemsList = null
+    ): void {
+        if ($OpenItemsList === null) {
+            $OpenItemsList = self::getOpenItemsList($User);
+        }
+
         $items = $OpenItemsList->getItems();
 
         // If no open items exist -> Delete entry from db
@@ -517,7 +536,7 @@ class Handler
         }
 
         if (!empty($searchParams['userId'])) {
-            $where[] = '`userId` = ' . (int)$searchParams['userId'];
+            $where[] = '`userId` = \'' . Orthos::clear($searchParams['userId']) . '\'';
         }
 
         // build WHERE query string
