@@ -16,6 +16,11 @@ QUI::$Ajax->registerFunction(
     'package_quiqqer_customer_ajax_backend_customer_getHistory',
     function ($uid, $page, $limit) {
         $User = QUI::getUsers()->get($uid);
+
+        if (!($User instanceof QUI\Users\User)) {
+            return [];
+        }
+
         $Comments = QUI\ERP\Comments::getHistoryByUser($User);
         $comments = $Comments->toArray();
 
