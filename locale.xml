@@ -381,6 +381,102 @@ Best regards
             Sorry, the customer cannot be activated. Customer login is disabled for this system.
             ]]></en>
         </locale>
+        <locale name="customer.history.change">
+            <de><![CDATA[[field] wurde von [username] ([userId]) von "[old]" zu "[new]" geändert.]]></de>
+            <en><![CDATA[[field] was changed by [username] ([userId]) from "[old]" to "[new]".]]></en>
+        </locale>
+        <locale name="customer.history.value.empty">
+            <de><![CDATA[leer]]></de>
+            <en><![CDATA[empty]]></en>
+        </locale>
+        <locale name="customer.history.field.username">
+            <de><![CDATA[Benutzername]]></de>
+            <en><![CDATA[Username]]></en>
+        </locale>
+        <locale name="customer.history.field.firstname">
+            <de><![CDATA[Vorname]]></de>
+            <en><![CDATA[First name]]></en>
+        </locale>
+        <locale name="customer.history.field.lastname">
+            <de><![CDATA[Nachname]]></de>
+            <en><![CDATA[Last name]]></en>
+        </locale>
+        <locale name="customer.history.field.email">
+            <de><![CDATA[E-Mail]]></de>
+            <en><![CDATA[E-mail]]></en>
+        </locale>
+        <locale name="customer.history.field.customerId">
+            <de><![CDATA[Kunden-Nr.]]></de>
+            <en><![CDATA[Customer no.]]></en>
+        </locale>
+        <locale name="customer.history.field.mainGroup">
+            <de><![CDATA[Hauptgruppe]]></de>
+            <en><![CDATA[Main group]]></en>
+        </locale>
+        <locale name="customer.history.field.groups">
+            <de><![CDATA[Gruppen]]></de>
+            <en><![CDATA[Groups]]></en>
+        </locale>
+        <locale name="customer.history.field.referenceCode">
+            <de><![CDATA[Referenzcode]]></de>
+            <en><![CDATA[Reference code]]></en>
+        </locale>
+        <locale name="customer.history.field.paymentTerm">
+            <de><![CDATA[Zahlungsziel]]></de>
+            <en><![CDATA[Payment term]]></en>
+        </locale>
+        <locale name="customer.history.field.contactPerson">
+            <de><![CDATA[Ansprechpartner]]></de>
+            <en><![CDATA[Contact person]]></en>
+        </locale>
+        <locale name="customer.history.field.address.salutation">
+            <de><![CDATA[Anrede]]></de>
+            <en><![CDATA[Salutation]]></en>
+        </locale>
+        <locale name="customer.history.field.address.firstname">
+            <de><![CDATA[Adress-Vorname]]></de>
+            <en><![CDATA[Address first name]]></en>
+        </locale>
+        <locale name="customer.history.field.address.lastname">
+            <de><![CDATA[Adress-Nachname]]></de>
+            <en><![CDATA[Address last name]]></en>
+        </locale>
+        <locale name="customer.history.field.address.company">
+            <de><![CDATA[Firma]]></de>
+            <en><![CDATA[Company]]></en>
+        </locale>
+        <locale name="customer.history.field.address.street_no">
+            <de><![CDATA[Straße / Hausnr.]]></de>
+            <en><![CDATA[Street / no.]]></en>
+        </locale>
+        <locale name="customer.history.field.address.zip">
+            <de><![CDATA[PLZ]]></de>
+            <en><![CDATA[ZIP]]></en>
+        </locale>
+        <locale name="customer.history.field.address.city">
+            <de><![CDATA[Ort]]></de>
+            <en><![CDATA[City]]></en>
+        </locale>
+        <locale name="customer.history.field.address.country">
+            <de><![CDATA[Land]]></de>
+            <en><![CDATA[Country]]></en>
+        </locale>
+        <locale name="customer.history.field.address.suffix">
+            <de><![CDATA[Adresszusatz]]></de>
+            <en><![CDATA[Address suffix]]></en>
+        </locale>
+        <locale name="customer.history.field.address.phone.tel">
+            <de><![CDATA[Telefon]]></de>
+            <en><![CDATA[Telephone]]></en>
+        </locale>
+        <locale name="customer.history.field.address.phone.mobile">
+            <de><![CDATA[Mobil]]></de>
+            <en><![CDATA[Mobile]]></en>
+        </locale>
+        <locale name="customer.history.field.address.phone.fax">
+            <de><![CDATA[Fax]]></de>
+            <en><![CDATA[Fax]]></en>
+        </locale>
     </groups>
 
     <groups name="quiqqer/customer" datatype="js">
