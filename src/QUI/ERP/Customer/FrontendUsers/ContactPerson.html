@@ -11,7 +11,7 @@
         {foreach $addressList as $Address}
 
         {assign var=selected value=''}
-        {if $currentContactPerson === $Address->getId()}
+        {if $currentContactPerson === $Address->getUUID()}
         {assign var=selected value='selected="selected"'}
         {/if}
         <option value="{$Address->getUUID()}" {$selected}>{$Address->getText()}</option>

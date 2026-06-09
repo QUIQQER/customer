@@ -17,8 +17,12 @@
     <event on="onTransactionCreate" fire="\QUI\ERP\Customer\OpenItemsList\Events::onTransactionCreate" priority="500"/>
     <event on="onQuiqqerInvoicePaymentStatusChanged"
            fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerInvoicePaymentStatusChanged"/>
+    <event on="quiqqerInvoiceLinkTransaction"
+           fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerInvoiceLinkTransaction"/>
     <event on="onQuiqqerOrderPaidStatusChanged"
            fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerOrderPaidStatusChanged"/>
+    <event on="quiqqerOrderLinkTransaction"
+           fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerOrderLinkTransaction"/>
     <event on="onQuiqqerInvoiceTemporaryInvoicePostEnd"
            fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerInvoiceTemporaryInvoicePostEnd"/>
 

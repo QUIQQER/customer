@@ -19,6 +19,7 @@ QUI::$Ajax->registerFunction(
             $cacheName = 'quiqqer/customer/openitems/' . $userId;
             $refresh = true;
             $openItems = [];
+            $User = QUI::getUsers()->get($userId);
 
             if (empty($forceRefresh)) {
                 try {
@@ -30,8 +31,11 @@ QUI::$Ajax->registerFunction(
             }
 
             if ($refresh) {
-                $OpenItemsList = Handler::getOpenItemsList(QUI::getUsers()->get($userId));
+                $OpenItemsList = Handler::getOpenItemsList($User);
                 $openItems = $OpenItemsList->getItems();
+
+                // Self-heal persisted open-items snapshots when the live list is refreshed.
+                Handler::syncOpenItemsRecord($User, $OpenItemsList);
 
                 QUICacheManager::set($cacheName, $openItems);
             }
