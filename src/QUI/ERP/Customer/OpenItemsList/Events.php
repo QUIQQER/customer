@@ -24,6 +24,23 @@ use function json_decode;
 class Events
 {
     /**
+     * Refresh the persisted open-items snapshot for a customer based on the live ERP user.
+     *
+     * @param QUI\ERP\User $User
+     * @return void
+     */
+    protected static function syncOpenItemsRecord(QUI\ERP\User $User): void
+    {
+        $LiveErpUser = self::getLiveErpUser($User->getUUID());
+
+        if ($LiveErpUser) {
+            $User = $LiveErpUser;
+        }
+
+        Handler::updateOpenItemsRecord($User);
+    }
+
+    /**
      * quiqqer/payment-transactions: onTransactionCreate
      *
      * Update open records of user if a transaction was made against one of his open items
@@ -50,15 +67,8 @@ class Events
             }
         }
 
-        // prefer: LIVE user instead of invoice user
-        $LiveErpUser = self::getLiveErpUser($User->getUUID());
-
-        if ($LiveErpUser) {
-            $User = $LiveErpUser;
-        }
-
         try {
-            Handler::updateOpenItemsRecord($User);
+            self::syncOpenItemsRecord($User);
         } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
@@ -80,23 +90,30 @@ class Events
         int $oldStatus
     ): void {
         try {
-            $User = $Invoice->getCustomer();
-
-            // Prefer: LIVE user instead of invoice user
-            $LiveErpUser = self::getLiveErpUser($User->getUUID());
-
-            if ($LiveErpUser) {
-                $User = $LiveErpUser;
-            }
+            self::syncOpenItemsRecord($Invoice->getCustomer());
         } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             return;
         }
+    }
 
+    /**
+     * quiqqer/invoice: quiqqerInvoiceLinkTransaction
+     *
+     * Update open records of user after linking an existing transaction to an invoice.
+     *
+     * @param Invoice $Invoice
+     * @param Transaction $Transaction
+     * @return void
+     */
+    public static function onQuiqqerInvoiceLinkTransaction(
+        Invoice $Invoice,
+        Transaction $Transaction
+    ): void {
         try {
-            Handler::updateOpenItemsRecord($User);
+            self::syncOpenItemsRecord($Invoice->getCustomer());
         } catch (Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
+            QUI\System\Log::writeDebugException($Exception);
         }
     }
 
@@ -116,23 +133,30 @@ class Events
         int $oldStatus
     ): void {
         try {
-            $User = $Order->getCustomer();
-
-            // Prefer: LIVE user instead of invoice user
-            $LiveErpUser = self::getLiveErpUser($User->getUUID());
-
-            if ($LiveErpUser) {
-                $User = $LiveErpUser;
-            }
+            self::syncOpenItemsRecord($Order->getCustomer());
         } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             return;
         }
+    }
 
+    /**
+     * quiqqer/order: quiqqerOrderLinkTransaction
+     *
+     * Update open records of user after linking an existing transaction to an order.
+     *
+     * @param AbstractOrder $Order
+     * @param Transaction $Transaction
+     * @return void
+     */
+    public static function onQuiqqerOrderLinkTransaction(
+        AbstractOrder $Order,
+        Transaction $Transaction
+    ): void {
         try {
-            Handler::updateOpenItemsRecord($User);
+            self::syncOpenItemsRecord($Order->getCustomer());
         } catch (Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
+            QUI\System\Log::writeDebugException($Exception);
         }
     }
 
@@ -150,23 +174,10 @@ class Events
         Invoice $Invoice
     ): void {
         try {
-            $User = $Invoice->getCustomer();
-
-            // Prefer: LIVE user instead of invoice user
-            $LiveErpUser = self::getLiveErpUser($User->getUUID());
-
-            if ($LiveErpUser) {
-                $User = $LiveErpUser;
-            }
+            self::syncOpenItemsRecord($Invoice->getCustomer());
         } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             return;
-        }
-
-        try {
-            Handler::updateOpenItemsRecord($User);
-        } catch (Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
         }
     }
 
@@ -220,7 +231,7 @@ class Events
         }
 
         try {
-            Handler::updateOpenItemsRecord($User);
+            self::syncOpenItemsRecord($User);
         } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
@@ -257,23 +268,9 @@ class Events
         }
 
         try {
-            $User = $Order->getCustomer();
-
-            // Prefer: LIVE user instead of invoice user
-            $LiveErpUser = self::getLiveErpUser($User->getUUID());
-
-            if ($LiveErpUser) {
-                $User = $LiveErpUser;
-            }
+            self::syncOpenItemsRecord($Order->getCustomer());
         } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
-            return;
-        }
-
-        try {
-            Handler::updateOpenItemsRecord($User);
-        } catch (Exception $Exception) {
-            QUI\System\Log::writeException($Exception);
         }
     }
 

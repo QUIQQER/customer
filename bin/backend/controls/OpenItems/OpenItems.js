@@ -52,6 +52,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             '$onClickOpenProcess',
             '$onSearchKeyUp',
             '$refreshUserRecords',
+            '$refreshUserRecordsAfterTransaction',
             '$refreshUserRecordsButtons',
             '$onClickAddTransaction',
             '$onClickOpenDocument',
@@ -762,11 +763,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 Row = self.$Grid.getDataByRow(data.row),
                 ParentNode = data.parent;
 
-            if (Row.userId === this.$currentRecordsUserId) {
-                return;
-            }
-
             this.$currentRecordsUserId = Row.userId;
+            this.$currentUserRecordsSearch = '';
 
             ParentNode.setStyle('padding', 10);
             //ParentNode.set('html', '<div class="fa fa-spinner fa-spin"></div>');
@@ -963,6 +961,53 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
         },
 
         /**
+         * Reset the detail grid state after a successful booking and reload it.
+         *
+         * @return {Promise}
+         */
+        $refreshUserRecordsAfterTransaction: function() {
+            const userId = this.$currentRecordsUserId;
+
+            if (!userId) {
+                return Promise.resolve();
+            }
+
+            if (this.$UserRecordsSearch) {
+                this.$UserRecordsSearch.value = '';
+            }
+
+            this.$currentUserRecordsSearch = '';
+
+            if (this.$GridDetails) {
+                this.$GridDetails.options.page = 1;
+
+                if (typeof this.$GridDetails.setAttribute === 'function') {
+                    this.$GridDetails.setAttribute('page', 1);
+                }
+            }
+
+            return this.$refreshUserEntry(userId).then(() => {
+                if (
+                    !this.$GridDetails
+                    || !this.$GridDetails.getElm()
+                    || !this.$GridDetails.getElm().getParent()
+                ) {
+                    return;
+                }
+
+                return this.$refreshUserRecords(this.$GridDetails, true).then(() => {
+                    const entries = this.$GridDetails.getData();
+
+                    if (entries.length) {
+                        this.$GridDetails.selectRow(this.$GridDetails.getRowElement(0));
+                    }
+
+                    this.$refreshUserRecordsButtons();
+                });
+            });
+        },
+
+        /**
          * If the user clicks the "add transaction to open item record" button
          */
         $onClickAddTransaction: function() {
@@ -992,9 +1037,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             const submitTransaction = function(Win, Data) {
                 Win.Loader.show();
 
-                self.$refreshUserEntry(self.$currentRecordsUserId).then(function() {
-                    self.$refreshUserRecords(self.$GridDetails, true);
-                });
+                self.$refreshUserRecordsAfterTransaction();
             };
 
             const linkTransaction = (txId, Win) => {
@@ -1009,9 +1052,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                             ).then(() => {
                                 Win.close();
 
-                                this.$refreshUserEntry(this.$currentRecordsUserId).then(() => {
-                                    this.$refreshUserRecords(this.$GridDetails, true);
-                                });
+                                this.$refreshUserRecordsAfterTransaction();
                             }).catch(() => {
                                 Win.Loader.hide();
                             });
@@ -1023,9 +1064,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                             Orders.linkTransaction(Row.hash, txId).then(() => {
                                 Win.close();
 
-                                this.$refreshUserEntry(this.$currentRecordsUserId).then(() => {
-                                    this.$refreshUserRecords(this.$GridDetails, true);
-                                });
+                                this.$refreshUserRecordsAfterTransaction();
                             }).catch(() => {
                                 Win.Loader.hide();
                             });
