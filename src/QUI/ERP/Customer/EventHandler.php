@@ -240,7 +240,7 @@ class EventHandler
                     $User->getAddress($data['quiqqer.erp.customer.contact.person']);
                     $User->setAttribute(
                         'quiqqer.erp.customer.contact.person',
-                        (int)$data['quiqqer.erp.customer.contact.person']
+                        $data['quiqqer.erp.customer.contact.person']
                     );
                 } catch (QUI\Exception) {
                 }
@@ -542,7 +542,7 @@ class EventHandler
             'User' => $User,
             'Address' => $Address,
             'addressList' => $addressList,
-            'currentContactPerson' => (int)$currentContactPerson,
+            'currentContactPerson' => $currentContactPerson,
 
             'businessTypeIsChangeable' => !(QUI\ERP\Utils\Shop::isOnlyB2C() || QUI\ERP\Utils\Shop::isOnlyB2B()),
             'isB2C' => QUI\ERP\Utils\Shop::isB2C(),
@@ -591,9 +591,16 @@ class EventHandler
             if (!empty($extra['quiqqer.erp.customer.contact.person'])) {
                 if (is_numeric($extra['quiqqer.erp.customer.contact.person'])) {
                     try {
-                        $extra['quiqqer.erp.customer.contact.person'] = QUI::getUsers()->get(
-                            $extra['quiqqer.erp.customer.contact.person']
-                        )->getUUID();
+                        $addressData = QUI::getDataBase()->fetch([
+                            'from' => $tableAddresses,
+                            'where' => [
+                                'id' => $extra['quiqqer.erp.customer.contact.person']
+                            ]
+                        ]);
+
+                        if (count($addressData)) {
+                            $extra['quiqqer.erp.customer.contact.person'] = $addressData[0]['uuid'];
+                        }
                     } catch (QUI\Exception) {
                     }
                 }
