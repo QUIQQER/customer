@@ -916,8 +916,8 @@ Best regards
             <en><![CDATA[Comments & history]]></en>
         </locale>
         <locale name="customer.panel.information.standard.payments">
-            <de><![CDATA[Standard Zahlungsweise]]></de>
-            <en><![CDATA[Standard payment]]></en>
+            <de><![CDATA[Standard-Zahlungsart]]></de>
+            <en><![CDATA[Default payment type]]></en>
         </locale>
         <locale name="customer.panel.information.contactPerson">
             <de><![CDATA[Ansprechpartner]]></de>
