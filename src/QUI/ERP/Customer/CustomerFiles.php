@@ -17,6 +17,7 @@ use function hash;
 use function http_build_query;
 use function is_dir;
 use function is_readable;
+use function is_string;
 use function mb_strpos;
 use function pathinfo;
 use function rename;
@@ -359,6 +360,10 @@ class CustomerFiles
 
         $DownloadEntry = self::getDownloadEntry($customerId);
 
+        if (!$DownloadEntry instanceof DownloadEntry) {
+            throw new QUI\Exception('Customer download entry was not found.');
+        }
+
         $downloadUrl = URL_OPT_DIR . 'quiqqer/customer/bin/backend/download.php?';
         $query = http_build_query([
             'file' => $fileName,
@@ -492,10 +497,21 @@ class CustomerFiles
         $Locale = QUI::getLocale();
 
         foreach (QUI::availableLanguages() as $lang) {
-            $DownloadEntry->setTitle($lang, $Locale->getByLang($lang, 'quiqqer/customer', 'DownloadEntry.title'));
+            $title = $Locale->getByLang($lang, 'quiqqer/customer', 'DownloadEntry.title');
+            $description = $Locale->getByLang($lang, 'quiqqer/customer', 'DownloadEntry.description');
+
+            if (!is_string($title)) {
+                $title = '';
+            }
+
+            if (!is_string($description)) {
+                $description = '';
+            }
+
+            $DownloadEntry->setTitle($lang, $title);
             $DownloadEntry->setDescription(
                 $lang,
-                $Locale->getByLang($lang, 'quiqqer/customer', 'DownloadEntry.description')
+                $description
             );
         }
 
