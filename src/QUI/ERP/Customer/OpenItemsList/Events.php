@@ -29,8 +29,12 @@ class Events
      * @param QUI\ERP\User $User
      * @return void
      */
-    protected static function syncOpenItemsRecord(QUI\ERP\User $User): void
+    protected static function syncOpenItemsRecord(?QUI\ERP\User $User): void
     {
+        if (!$User) {
+            return;
+        }
+
         $LiveErpUser = self::getLiveErpUser($User->getUUID());
 
         if ($LiveErpUser) {
@@ -65,6 +69,10 @@ class Events
                 QUI\System\Log::writeDebugException($Exception);
                 return;
             }
+        }
+
+        if (!$User instanceof User) {
+            return;
         }
 
         try {
@@ -132,8 +140,14 @@ class Events
         int $currentStatus,
         int $oldStatus
     ): void {
+        $User = $Order->getCustomer();
+
+        if (!$User instanceof User) {
+            return;
+        }
+
         try {
-            self::syncOpenItemsRecord($Order->getCustomer());
+            self::syncOpenItemsRecord($User);
         } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             return;
@@ -153,8 +167,14 @@ class Events
         AbstractOrder $Order,
         Transaction $Transaction
     ): void {
+        $User = $Order->getCustomer();
+
+        if (!$User instanceof User) {
+            return;
+        }
+
         try {
-            self::syncOpenItemsRecord($Order->getCustomer());
+            self::syncOpenItemsRecord($User);
         } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
         }
@@ -187,14 +207,15 @@ class Events
      * Update open records of user if an order changes
      *
      * @param int|string $orderId
-     * @param array $orderAttributes
+     * @param array<string, mixed> $orderAttributes
      * @return void
      */
     public static function onQuiqqerOrderDelete(int|string $orderId, array $orderAttributes): void
     {
         try {
-            $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
-            $considerOrders = $Conf->get('openItems', 'considerOrders');
+            $considerOrders = QUI::getPackage('quiqqer/customer')
+                ->getConfig()
+                ?->get('openItems', 'considerOrders');
 
             if (empty($considerOrders)) {
                 return;
@@ -247,8 +268,9 @@ class Events
     public static function onQuiqqerOrderCreated(QUI\ERP\Order\AbstractOrder $Order): void
     {
         try {
-            $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
-            $considerOrders = $Conf->get('openItems', 'considerOrders');
+            $considerOrders = QUI::getPackage('quiqqer/customer')
+                ->getConfig()
+                ?->get('openItems', 'considerOrders');
 
             if (empty($considerOrders)) {
                 return;
@@ -267,8 +289,14 @@ class Events
             return;
         }
 
+        $User = $Order->getCustomer();
+
+        if (!$User instanceof User) {
+            return;
+        }
+
         try {
-            self::syncOpenItemsRecord($Order->getCustomer());
+            self::syncOpenItemsRecord($User);
         } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
         }

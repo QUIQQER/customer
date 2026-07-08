@@ -9,7 +9,7 @@
 
 use QUI\Controls\Navigating\Pagination;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_customer_getPagination',
     function ($uid) {
         try {
@@ -23,6 +23,10 @@ QUI::$Ajax->registerFunction(
             $History = QUI\ERP\Comments::getHistoryByUser($User);
         } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
+            return '';
+        }
+
+        if (!$Comments instanceof QUI\ERP\Comments) {
             return '';
         }
 

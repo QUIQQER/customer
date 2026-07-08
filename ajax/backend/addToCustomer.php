@@ -6,7 +6,7 @@
 
 use QUI\ERP\Customer\Customers;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_addToCustomer',
     function ($userId) {
         Customers::getInstance()->addUserToCustomerGroup($userId);

@@ -10,7 +10,7 @@ use QUI\ERP\Customer\Customers;
  *
  * @return array
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_customer_editComment',
     function ($userId, $commentId, $source, $comment) {
         QUI\Permissions\Permission::checkPermission('quiqqer.customer.editComments');
@@ -24,7 +24,13 @@ QUI::$Ajax->registerFunction(
             $comment
         );
 
-        return QUI\ERP\Comments::getCommentsByUser($User)->toArray();
+        $Comments = QUI\ERP\Comments::getCommentsByUser($User);
+
+        if (!$Comments instanceof QUI\ERP\Comments) {
+            return [];
+        }
+
+        return $Comments->toArray();
     },
     ['userId', 'commentId', 'source', 'comment'],
     'Permission::checkAdminUser'

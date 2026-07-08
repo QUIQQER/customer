@@ -17,6 +17,7 @@ use function hash;
 use function http_build_query;
 use function is_dir;
 use function is_readable;
+use function is_string;
 use function mb_strpos;
 use function pathinfo;
 use function rename;
@@ -107,7 +108,7 @@ class CustomerFiles
      * Return the file list from the customer
      *
      * @param int|string $customerId
-     * @return array
+     * @return list<array<string, mixed>>
      *
      * @throws QUI\Permissions\Exception|QUI\Exception
      */
@@ -171,7 +172,7 @@ class CustomerFiles
 
     /**
      * @param integer|string $customerId
-     * @param array $files
+     * @param array<int, string> $files
      *
      * @throws QUI\Permissions\Exception|QUI\Exception
      */
@@ -202,13 +203,13 @@ class CustomerFiles
      * Add a file to the customer
      *
      * @param string|int $customerId
-     * @param $file
+     * @param string $file
      * @return string - Hash of the file
      *
      * @throws QUI\Exception
      * @throws QUI\Permissions\Exception
      */
-    public static function addFileToCustomer(string|int $customerId, $file): string
+    public static function addFileToCustomer(string|int $customerId, string $file): string
     {
         Permission::checkPermission('quiqqer.customer.fileUpload');
 
@@ -239,7 +240,7 @@ class CustomerFiles
      *
      * @param int|string $customerId
      * @param string $fileHash
-     * @return false|array - File data or false if file is not found in customer files
+     * @return false|array<string, mixed> - File data or false if file is not found in customer files
      *
      * @throws QUI\Permissions\Exception
      * @throws Exception
@@ -358,6 +359,10 @@ class CustomerFiles
         }
 
         $DownloadEntry = self::getDownloadEntry($customerId);
+
+        if (!$DownloadEntry instanceof DownloadEntry) {
+            throw new QUI\Exception('Customer download entry was not found.');
+        }
 
         $downloadUrl = URL_OPT_DIR . 'quiqqer/customer/bin/backend/download.php?';
         $query = http_build_query([
@@ -492,10 +497,21 @@ class CustomerFiles
         $Locale = QUI::getLocale();
 
         foreach (QUI::availableLanguages() as $lang) {
-            $DownloadEntry->setTitle($lang, $Locale->getByLang($lang, 'quiqqer/customer', 'DownloadEntry.title'));
+            $title = $Locale->getByLang($lang, 'quiqqer/customer', 'DownloadEntry.title');
+            $description = $Locale->getByLang($lang, 'quiqqer/customer', 'DownloadEntry.description');
+
+            if (!is_string($title)) {
+                $title = '';
+            }
+
+            if (!is_string($description)) {
+                $description = '';
+            }
+
+            $DownloadEntry->setTitle($lang, $title);
             $DownloadEntry->setDescription(
                 $lang,
-                $Locale->getByLang($lang, 'quiqqer/customer', 'DownloadEntry.description')
+                $description
             );
         }
 

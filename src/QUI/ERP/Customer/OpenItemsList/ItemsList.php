@@ -20,7 +20,18 @@ use function usort;
 class ItemsList
 {
     /**
-     * @var array
+     * @var array<string, array{
+     *     netTotal: int|float,
+     *     netTotalFormatted: string,
+     *     vatTotal: int|float,
+     *     vatTotalFormatted: string,
+     *     sumTotal: int|float,
+     *     sumTotalFormatted: string,
+     *     dueTotal: int|float,
+     *     dueTotalFormatted: string,
+     *     paidTotal: int|float,
+     *     paidTotalFormatted: string
+     * }>
      */
     protected array $totalAmountsByCurrency = [];
 
@@ -111,7 +122,18 @@ class ItemsList
     }
 
     /**
-     * @return array
+     * @return array<string, array{
+     *     netTotal: int|float,
+     *     netTotalFormatted: string,
+     *     vatTotal: int|float,
+     *     vatTotalFormatted: string,
+     *     sumTotal: int|float,
+     *     sumTotalFormatted: string,
+     *     dueTotal: int|float,
+     *     dueTotalFormatted: string,
+     *     paidTotal: int|float,
+     *     paidTotalFormatted: string
+     * }>
      */
     public function getTotalAmountsByCurrency(): array
     {

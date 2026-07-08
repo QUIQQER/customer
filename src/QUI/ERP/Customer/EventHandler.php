@@ -21,6 +21,7 @@ use function dirname;
 use function file_exists;
 use function is_array;
 use function is_numeric;
+use function is_string;
 use function json_decode;
 use function json_encode;
 use function md5;
@@ -40,6 +41,20 @@ class EventHandler
      * @var array<string, array<string, array<string, string>>>
      */
     protected static array $userSaveSnapshots = [];
+
+    /**
+     * @throws QUI\Exception
+     */
+    protected static function getCustomerConfig(): QUI\Config
+    {
+        $Config = QUI::getPackage('quiqqer/customer')->getConfig();
+
+        if (!$Config instanceof QUI\Config) {
+            throw new QUI\Exception('Customer package config is not available.');
+        }
+
+        return $Config;
+    }
 
     /**
      * Snapshots of tracked customer addresses keyed by address UUID.
@@ -71,8 +86,7 @@ class EventHandler
     protected static function createCustomerGroup(): void
     {
         try {
-            $Package = QUI::getPackage('quiqqer/customer');
-            $Config = $Package->getConfig();
+            $Config = self::getCustomerConfig();
             $groupId = $Config->getValue('customer', 'groupId');
 
             if (!empty($groupId)) {
@@ -114,8 +128,11 @@ class EventHandler
 
         try {
             $Package = QUI::getPackageManager()->getInstalledPackage('quiqqer/customer');
-            $Config = $Package->getConfig();
-            $groupId = $Config->getValue('customer', 'groupId');
+            $groupId = $Package->getConfig()?->getValue('customer', 'groupId');
+
+            if (!is_scalar($groupId)) {
+                return;
+            }
 
             echo '<script>window.QUIQQER_CUSTOMER_GROUP = "' . $groupId . '"</script>';
         } catch (QUI\Exception $Exception) {
@@ -127,7 +144,7 @@ class EventHandler
      * Extend user with customer.xml attributes
      *
      * @param QUI\Users\User $User
-     * @param array $attributes
+     * @param array<mixed> $attributes
      */
     public static function onUserExtraAttributes(QUI\Interfaces\Users\User $User, array &$attributes): void
     {
@@ -165,7 +182,7 @@ class EventHandler
      *
      * @param string $file
      *
-     * @return array
+     * @return list<array{name: string, encrypt: bool}>
      */
     protected static function readAttributesFromUserXML(string $file): array
     {
@@ -185,6 +202,11 @@ class EventHandler
 
         /* @var $Attributes DOMElement */
         $Attributes = $Attr->item(0);
+
+        if (!$Attributes instanceof DOMElement) {
+            return [];
+        }
+
         $list = $Attributes->getElementsByTagName('attribute');
 
         if (!$list->length) {
@@ -196,12 +218,16 @@ class EventHandler
         for ($c = 0; $c < $list->length; $c++) {
             $Attribute = $list->item($c);
 
+            if (!$Attribute instanceof DOMElement) {
+                continue;
+            }
+
             if ($Attribute->nodeName == '#text') {
                 continue;
             }
 
             $attributes[] = [
-                'name' => trim($Attribute->nodeValue),
+                'name' => trim($Attribute->nodeValue ?? ''),
                 'encrypt' => !!$Attribute->getAttribute('encrypt')
             ];
         }
@@ -452,9 +478,9 @@ class EventHandler
         }
 
         try {
-            $Package = QUI::getPackage('quiqqer/customer');
-            $Config = $Package->getConfig();
-            $login = (int)$Config->getValue('customer', 'customerLogin');
+            $login = !empty(QUI::getPackage('quiqqer/customer')
+                ->getConfig()
+                ?->getValue('customer', 'customerLogin'));
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::addError($Exception->getMessage());
 
@@ -480,8 +506,20 @@ class EventHandler
     public static function onQuiqqerOrderCustomerDataSaveEnd(
         QUI\ERP\Order\Controls\OrderProcess\CustomerData $Step
     ): void {
-        $Order = $Step->getOrder();
+        self::addOrderCustomerToCustomerGroup($Step->getOrder());
+    }
+
+    protected static function addOrderCustomerToCustomerGroup(?QUI\ERP\Order\AbstractOrder $Order): void
+    {
+        if ($Order === null) {
+            return;
+        }
+
         $Customer = $Order->getCustomer();
+
+        if (!$Customer instanceof QUI\ERP\User) {
+            return;
+        }
 
         try {
             $User = QUI::getUsers()->get($Customer->getUUID());
@@ -492,11 +530,13 @@ class EventHandler
         }
 
         // setting: automatically add customer number when ordering
-        $Config = QUI::getPackage('quiqqer/customer')->getConfig();
+        $setCustomerNoAtOrder = QUI::getPackage('quiqqer/customer')
+            ->getConfig()
+            ?->get('customer', 'setCustomerNoAtOrder');
 
-        if ($Config->get('customer', 'setCustomerNoAtOrder') && !$User->getAttribute('customerId')) {
+        if ($setCustomerNoAtOrder && !$User->getAttribute('customerId')) {
             $NumberRange = new NumberRange();
-            $nextCustomerNo = $NumberRange->getNextCustomerNo();
+            $nextCustomerNo = (int)$NumberRange->getNextCustomerNo();
 
             try {
                 $User->setAttribute('customerId', $nextCustomerNo);
@@ -628,7 +668,7 @@ class EventHandler
                 if (is_numeric($extra['quiqqer.erp.supplier.contact.person'])) {
                     try {
                         $extra['quiqqer.erp.supplier.contact.person'] = QUI::getUsers()->get(
-                            $extra['quiqqer.erp.supplier.contact.person']
+                            (string)$extra['quiqqer.erp.supplier.contact.person']
                         )->getUUID();
                     } catch (QUI\Exception) {
                     }
@@ -649,12 +689,12 @@ class EventHandler
         // migrate settings
         $Console->writeLn('- Migrate customer settings');
 
-        $Config = QUI::getPackage('quiqqer/customer')->getConfig();
+        $Config = self::getCustomerConfig();
         $groupId = $Config->get('customer', 'groupId');
 
         if (is_numeric($groupId)) {
             try {
-                $Config->setValue('customer', 'groupId', QUI::getGroups()->get($groupId)->getUUID());
+                $Config->setValue('customer', 'groupId', QUI::getGroups()->get((string)$groupId)->getUUID());
                 $Config->save();
             } catch (QUI\Exception) {
             }
@@ -685,7 +725,7 @@ class EventHandler
      */
     protected static function rememberUserSnapshot(QUI\Users\User $User): void
     {
-        $snapshotKey = $User->getUUID();
+        $snapshotKey = (string)$User->getUUID();
 
         if (!self::isCustomerUser($User)) {
             unset(self::$userSaveSnapshots[$snapshotKey]);
@@ -777,7 +817,7 @@ class EventHandler
             return false;
         }
 
-        $standardAddressUuid = $User->getStandardAddress()->getUUID();
+        $standardAddressUuid = $User->getStandardAddress()?->getUUID();
 
         if (empty($standardAddressUuid)) {
             return false;
@@ -1038,7 +1078,7 @@ class EventHandler
     /**
      * Return readable display values for a list of group UUIDs.
      *
-     * @param array $groupIds
+     * @param array<int, int|string> $groupIds
      * @return string
      */
     protected static function getGroupsDisplay(array $groupIds): string
@@ -1139,8 +1179,22 @@ class EventHandler
             $Actor = QUI::getUsers()->getSystemUser();
         }
 
-        $old = $change['old']['display'];
-        $new = $change['new']['display'];
+        $old = '';
+        $new = '';
+
+        if (isset($change['old']) && is_array($change['old'])) {
+            $old = $change['old']['display'] ?? '';
+        }
+
+        if (isset($change['new']) && is_array($change['new'])) {
+            $new = $change['new']['display'] ?? '';
+        }
+
+        $field = $change['field'] ?? '';
+
+        if (!is_string($field)) {
+            $field = '';
+        }
 
         if ($old === '') {
             $old = QUI::getLocale()->get(
@@ -1162,7 +1216,7 @@ class EventHandler
             [
                 'field' => QUI::getLocale()->get(
                     'quiqqer/customer',
-                    'customer.history.field.' . $change['field']
+                    'customer.history.field.' . $field
                 ),
                 'old' => $old,
                 'new' => $new,

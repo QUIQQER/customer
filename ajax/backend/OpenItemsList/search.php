@@ -11,16 +11,26 @@ use QUI\ERP\Customer\OpenItemsList\Handler;
 use QUI\Utils\Grid;
 use QUI\Utils\Security\Orthos;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_OpenItemsList_search',
     function ($searchParams) {
         try {
             $searchParams = Orthos::clearArray(json_decode($searchParams, true));
+
             $result = Handler::searchOpenItems($searchParams);
+
+            if (!is_array($result)) {
+                $result = [];
+            }
+
             $result = Handler::parseForGrid($result);
 
             $searchParams['count'] = true;
             $count = Handler::searchOpenItems($searchParams);
+
+            if (!is_int($count)) {
+                $count = 0;
+            }
 
             $Grid = new Grid($searchParams);
 
@@ -28,6 +38,10 @@ QUI::$Ajax->registerFunction(
                 $Currency = \QUI\ERP\Currency\Handler::getCurrency($searchParams['currency']);
             } else {
                 $Currency = \QUI\ERP\Currency\Handler::getDefaultCurrency();
+            }
+
+            if (!$Currency instanceof \QUI\ERP\Currency\Currency) {
+                throw new QUI\Exception('Could not determine currency.');
             }
 
             return [

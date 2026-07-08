@@ -16,7 +16,7 @@ use function is_array;
 class CustomerPanel extends Singleton
 {
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function getPanelCategories(): array
     {

@@ -10,7 +10,7 @@
  * @return array
  */
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_create_getCategories',
     function () {
         return QUI\ERP\Customer\Utils::getInstance()->getCategoriesForCustomerCreate();

@@ -9,7 +9,7 @@
  * @return array
  */
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_customer_getCommentsAndHistory',
     function ($uid, $page, $limit) {
         $User = QUI::getUsers()->get($uid);
@@ -20,6 +20,10 @@ QUI::$Ajax->registerFunction(
 
         $Comments = QUI\ERP\Comments::getCommentsByUser($User);
         $History = QUI\ERP\Comments::getHistoryByUser($User);
+
+        if (!$Comments instanceof QUI\ERP\Comments) {
+            return [];
+        }
 
         $comments = array_merge(
             $Comments->toArray(),

@@ -9,7 +9,7 @@
  *
  * @return array
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_customer_instantSave',
     function ($userId, $data) {
         QUI\Permissions\Permission::checkPermission('quiqqer.customer.edit');
@@ -22,6 +22,10 @@ QUI::$Ajax->registerFunction(
         } catch (QUI\Exception) {
             // create one
             $Address = $User->addAddress();
+        }
+
+        if (!$Address instanceof QUI\Users\Address) {
+            throw new QUI\Exception('Could not determine address.');
         }
 
         if (isset($data['username'])) {

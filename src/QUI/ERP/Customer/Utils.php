@@ -15,7 +15,7 @@ use function current;
 class Utils extends QUI\Utils\Singleton
 {
     /**
-     * @return array
+     * @return list<array{text: string, textimage: string, require: string}>
      */
     public function getCategoriesForCustomerCreate(): array
     {
@@ -78,8 +78,13 @@ class Utils extends QUI\Utils\Singleton
     public function getCustomerGroup(): QUI\Groups\Group | QUI\Groups\Everyone | QUI\Groups\Guest | null
     {
         $Package = QUI::getPackage('quiqqer/customer');
-        $Config = $Package->getConfig();
-        $groupId = trim((string)$Config->getValue('customer', 'groupId'));
+        $groupId = $Package->getConfig()?->getValue('customer', 'groupId');
+
+        if (!is_string($groupId)) {
+            return null;
+        }
+
+        $groupId = trim($groupId);
 
         if (empty($groupId)) {
             return null;

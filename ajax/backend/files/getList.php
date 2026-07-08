@@ -9,7 +9,7 @@
  *
  * @return array
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_files_getList',
     function ($customerId) {
         $files = QUI\ERP\Customer\CustomerFiles::getFileList($customerId);
