@@ -2,6 +2,7 @@
 
 namespace QUI\ERP\Customer\OpenItemsList;
 
+use DateTime;
 use Exception;
 use PDO;
 use QUI;
@@ -21,6 +22,7 @@ use function count;
 use function date_create;
 use function implode;
 use function in_array;
+use function is_scalar;
 use function json_decode;
 use function usort;
 
@@ -44,6 +46,21 @@ class Handler
     const DOCUMENT_TYPE_INVOICE = 'invoice';
     const DOCUMENT_TYPE_ORDER = 'order';
 
+    protected static function createDateTime(mixed $value = 'now'): DateTime
+    {
+        if (!is_scalar($value)) {
+            return new DateTime();
+        }
+
+        $Date = date_create((string)$value);
+
+        if (!$Date instanceof DateTime) {
+            return new DateTime();
+        }
+
+        return $Date;
+    }
+
     /**
      * Generate an open items list for a user
      *
@@ -54,7 +71,7 @@ class Handler
     public static function getOpenItemsList(QUI\Interfaces\Users\User $User): ItemsList
     {
         $List = new ItemsList();
-        $List->setDate(date_create());
+        $List->setDate(self::createDateTime());
 //        $List->setUser($User);
 
         // Fetch open invoices
@@ -175,7 +192,11 @@ class Handler
                     continue;
                 }
 
-                $invoices[] = $Invoices->get($row['id']);
+                if (!$Invoice instanceof Invoice) {
+                    continue;
+                }
+
+                $invoices[] = $Invoice;
             } catch (Exception $Exception) {
                 QUI\System\Log::writeException($Exception);
             }
@@ -197,8 +218,8 @@ class Handler
 
         // Basic data
         $Item->setDocumentNo($Invoice->getPrefixedNumber());
-        $Item->setDate(date_create($Invoice->getAttribute('c_date')));
-        $Item->setDueDate(date_create($Invoice->getAttribute('time_for_payment')));
+        $Item->setDate(self::createDateTime($Invoice->getAttribute('c_date')));
+        $Item->setDueDate(self::createDateTime($Invoice->getAttribute('time_for_payment')));
         $Item->setGlobalProcessId($Invoice->getGlobalProcessId());
         $Item->setHash($Invoice->getUUID());
 
@@ -231,8 +252,8 @@ class Handler
                  * @var QUI\ERP\Accounting\Payments\Transactions\Transaction $TransactionA
                  * @var QUI\ERP\Accounting\Payments\Transactions\Transaction $TransactionB
                  */
-                $DateA = date_create($TransactionA->getDate());
-                $DateB = date_create($TransactionB->getDate());
+                $DateA = self::createDateTime($TransactionA->getDate());
+                $DateB = self::createDateTime($TransactionB->getDate());
 
                 if ($DateA === $DateB) {
                     return 0;
@@ -241,13 +262,13 @@ class Handler
                 return $DateA > $DateB ? -1 : 1;
             });
 
-            $LatestTransactionDate = date_create($transactions[0]->getDate());
+            $LatestTransactionDate = self::createDateTime($transactions[0]->getDate());
             $Item->setLastPaymentDate($LatestTransactionDate);
         }
 
         // Days due
-        $Now = date_create();
-        $TimeForPayment = date_create($Invoice->getAttribute('time_for_payment'));
+        $Now = self::createDateTime();
+        $TimeForPayment = self::createDateTime($Invoice->getAttribute('time_for_payment'));
 
         if ($Now < $TimeForPayment) {
             $Item->setDaysDue(0);
@@ -347,12 +368,12 @@ class Handler
 
         // Basic data
         $Item->setDocumentNo($Order->getPrefixedNumber());
-        $Item->setDate(date_create($Order->getAttribute('c_date')));
+        $Item->setDate(self::createDateTime($Order->getAttribute('c_date')));
         $Item->setGlobalProcessId($Order->getGlobalProcessId());
         $Item->setHash($Order->getUUID());
 
         if (!empty($Order->getAttribute('payment_time'))) {
-            $Item->setDueDate(date_create($Order->getAttribute('payment_time')));
+            $Item->setDueDate(self::createDateTime($Order->getAttribute('payment_time')));
         }
 
         // Invoice amounts
@@ -383,8 +404,8 @@ class Handler
                  * @var QUI\ERP\Accounting\Payments\Transactions\Transaction $TransactionA
                  * @var QUI\ERP\Accounting\Payments\Transactions\Transaction $TransactionB
                  */
-                $DateA = date_create($TransactionA->getDate());
-                $DateB = date_create($TransactionB->getDate());
+                $DateA = self::createDateTime($TransactionA->getDate());
+                $DateB = self::createDateTime($TransactionB->getDate());
 
                 if ($DateA === $DateB) {
                     return 0;
@@ -393,7 +414,7 @@ class Handler
                 return $DateA > $DateB ? -1 : 1;
             });
 
-            $LatestTransactionDate = date_create($transactions[0]->getDate());
+            $LatestTransactionDate = self::createDateTime($transactions[0]->getDate());
             $Item->setLastPaymentDate($LatestTransactionDate);
         }
 
@@ -523,14 +544,12 @@ class Handler
                 $whereOr[] = '`' . $searchColumn . '` LIKE :search';
             }
 
-            if (count($whereOr)) {
-                $where[] = '(' . implode(' OR ', $whereOr) . ')';
+            $where[] = '(' . implode(' OR ', $whereOr) . ')';
 
-                $binds['search'] = [
-                    'value' => '%' . $searchParams['search'] . '%',
-                    'type' => PDO::PARAM_STR
-                ];
-            }
+            $binds['search'] = [
+                'value' => '%' . $searchParams['search'] . '%',
+                'type' => PDO::PARAM_STR
+            ];
         }
 
         if (!empty($searchParams['currency'])) {

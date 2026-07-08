@@ -74,6 +74,10 @@ class OutputProvider implements OutputProviderInterface
         $Locale = $ERPUser->getLocale();
         $Date = date_create();
 
+        if (!$Date instanceof \DateTime) {
+            $Date = new \DateTime();
+        }
+
         return $Locale->get('quiqqer/customer', 'OutputProvider.download_filename', [
             'date' => $Date->format('Y-m-d'),
             'uid' => $ERPUser->getCustomerNo()

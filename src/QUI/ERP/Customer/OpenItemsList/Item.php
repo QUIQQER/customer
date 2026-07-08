@@ -179,6 +179,11 @@ class Item
         }
 
         $Now = date_create();
+
+        if (!$Now instanceof \DateTime) {
+            return 0;
+        }
+
         $Diff = $Now->diff($this->Date);
 
         return $Diff->days + 1;
@@ -187,15 +192,15 @@ class Item
     /**
      * @return false|int
      */
-    public function getDunningLevel(): bool|int
+    public function getDunningLevel(): false|int
     {
         return $this->dunningLevel;
     }
 
     /**
-     * @param bool|int $dunningLevel
+     * @param false|int $dunningLevel
      */
-    public function setDunningLevel(bool|int $dunningLevel): void
+    public function setDunningLevel(false|int $dunningLevel): void
     {
         $this->dunningLevel = $dunningLevel;
     }
