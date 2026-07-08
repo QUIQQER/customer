@@ -8,3 +8,10 @@ parameters:
         - ajax
     bootstrapFiles:
         - tests/phpstan-bootstrap.php
+    stubFiles:
+        - tests/phpstan-stubs/QUI/ERP/User.php
+        - tests/phpstan-stubs/QUI/ERP/Accounting/Invoice/Handler.php
+        - tests/phpstan-stubs/QUI/ERP/Accounting/Invoice/Invoice.php
+        - tests/phpstan-stubs/QUI/ERP/Accounting/Invoice/InvoiceTemporary.php
+        - tests/phpstan-stubs/QUI/ERP/Order/AbstractOrder.php
+        - tests/phpstan-stubs/QUI/ERP/Order/Controls/OrderProcess/CustomerData.php

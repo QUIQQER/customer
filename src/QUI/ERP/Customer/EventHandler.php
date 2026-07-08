@@ -506,13 +506,7 @@ class EventHandler
     public static function onQuiqqerOrderCustomerDataSaveEnd(
         QUI\ERP\Order\Controls\OrderProcess\CustomerData $Step
     ): void {
-        $Order = $Step->getOrder();
-
-        if (!$Order instanceof QUI\ERP\Order\AbstractOrder) {
-            return;
-        }
-
-        $Customer = $Order->getCustomer();
+        $Customer = $Step->getOrder()?->getCustomer();
 
         if (!$Customer instanceof QUI\ERP\User) {
             return;

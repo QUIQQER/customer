@@ -29,8 +29,12 @@ class Events
      * @param QUI\ERP\User $User
      * @return void
      */
-    protected static function syncOpenItemsRecord(QUI\ERP\User $User): void
+    protected static function syncOpenItemsRecord(?QUI\ERP\User $User): void
     {
+        if (!$User) {
+            return;
+        }
+
         $LiveErpUser = self::getLiveErpUser($User->getUUID());
 
         if ($LiveErpUser) {
