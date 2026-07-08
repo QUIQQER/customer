@@ -617,6 +617,10 @@ class Search extends Singleton
         $binds = $queryData['binds'];
         $query = $queryData['query'];
 
+        if (!$PDO instanceof PDO) {
+            throw new QUI\Exception('Database connection is not available.');
+        }
+
         $Statement = $PDO->prepare($query);
 
         foreach ($binds as $var => $bind) {
