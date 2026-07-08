@@ -36,20 +36,20 @@ class Customers extends Singleton
     protected ?QUI\Groups\Group $Group = null;
 
     /**
-     * @param $customerId
-     * @param array $address
-     * @param array $groupIds
+     * @param int|string $customerId
+     * @param array<string, mixed> $address
+     * @param array<int, int|string> $groupIds
      *
      * @return QUI\Interfaces\Users\User
      *
      * @throws QUI\Exception
      * @throws QUI\Permissions\Exception
      */
-    public function createCustomer($customerId, array $address = [], array $groupIds = []): QUI\Interfaces\Users\User
+    public function createCustomer(int|string $customerId, array $address = [], array $groupIds = []): QUI\Interfaces\Users\User
     {
         QUI\Permissions\Permission::checkPermission('quiqqer.customer.create');
 
-        $User = QUI::getUsers()->createChild($customerId);
+        $User = QUI::getUsers()->createChild((string)$customerId);
 
         /**
          * Check if $customerId equals the next customerId in the NumberRange.
@@ -280,7 +280,7 @@ class Customers extends Singleton
 
     /**
      * @param bool|int|string $userId
-     * @param array $attributes
+     * @param array<string, mixed> $attributes
      *
      * @throws Exception
      * @throws QUI\Database\Exception
@@ -405,7 +405,7 @@ class Customers extends Singleton
 
     /**
      * @param QUI\Interfaces\Users\User $User
-     * @param array $attributes
+     * @param array<string, mixed> $attributes
      *
      * @throws QUI\Exception
      * @throws QUI\Users\Exception
@@ -484,12 +484,12 @@ class Customers extends Singleton
 
     /**
      * @param QUI\Interfaces\Users\User $User
-     * @param $attributes
+     * @param array<string, mixed> $attributes
      * @throws QUI\Exception
      * @throws QUI\Permissions\Exception
      * @throws QUI\Users\Exception
      */
-    protected function saveDeliveryAddress(QUI\Interfaces\Users\User $User, $attributes): void
+    protected function saveDeliveryAddress(QUI\Interfaces\Users\User $User, array $attributes): void
     {
         // check if all is empty
         $isEmpty = true;
@@ -571,17 +571,17 @@ class Customers extends Singleton
      * Edit a comment
      *
      * @param QUI\Interfaces\Users\User $User
-     * @param $commentId - id of the comment
-     * @param $commentSource - comment source
-     * @param $message - new comment message
+     * @param int|string $commentId - id of the comment
+     * @param string $commentSource - comment source
+     * @param string $message - new comment message
      *
      * @throws QUI\Exception
      */
     public function editComment(
         QUI\Interfaces\Users\User $User,
-        $commentId,
-        $commentSource,
-        $message
+        int|string $commentId,
+        string $commentSource,
+        string $message
     ): void {
         QUI\Permissions\Permission::checkPermission('quiqqer.customer.editComments');
 

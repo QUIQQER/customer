@@ -127,7 +127,7 @@ class EventHandler
      * Extend user with customer.xml attributes
      *
      * @param QUI\Users\User $User
-     * @param array $attributes
+     * @param array<mixed> $attributes
      */
     public static function onUserExtraAttributes(QUI\Interfaces\Users\User $User, array &$attributes): void
     {
@@ -165,7 +165,7 @@ class EventHandler
      *
      * @param string $file
      *
-     * @return array
+     * @return list<array{name: string, encrypt: bool}>
      */
     protected static function readAttributesFromUserXML(string $file): array
     {
@@ -1038,7 +1038,7 @@ class EventHandler
     /**
      * Return readable display values for a list of group UUIDs.
      *
-     * @param array $groupIds
+     * @param array<int, int|string> $groupIds
      * @return string
      */
     protected static function getGroupsDisplay(array $groupIds): string

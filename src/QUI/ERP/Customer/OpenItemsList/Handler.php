@@ -16,6 +16,7 @@ use QUI\Utils\Security\Orthos;
 
 use function array_column;
 use function array_sum;
+use function array_values;
 use function count;
 use function date_create;
 use function implode;
@@ -489,8 +490,8 @@ class Handler
     /**
      * Search open items records
      *
-     * @param array $searchParams
-     * @return array|int
+     * @param array<string, mixed> $searchParams
+     * @return list<array<string, mixed>>|int
      */
     public static function searchOpenItems(array $searchParams): int|array
     {
@@ -615,14 +616,14 @@ class Handler
             return (int)current(current($result));
         }
 
-        return $result;
+        return array_values($result);
     }
 
     /**
      * Parses a search result for display in backend GRID
      *
-     * @param array $result
-     * @return array
+     * @param array<int, array<string, mixed>> $result
+     * @return array<int, array<string, mixed>>
      *
      * @throws QUI\Exception
      */
@@ -662,9 +663,9 @@ class Handler
     /**
      * Calculate the totals for a set of customer open items
      *
-     * @param array $entries - Database rows form customer_open_items table
+     * @param array<int, array<string, mixed>> $entries - Database rows form customer_open_items table
      * @param QUI\ERP\Currency\Currency $Currency
-     * @return array - Totals prepared for backend display
+     * @return array<string, string> - Totals prepared for backend display
      */
     public static function getTotals(array $entries, QUI\ERP\Currency\Currency $Currency): array
     {

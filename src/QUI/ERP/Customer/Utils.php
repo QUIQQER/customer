@@ -15,7 +15,7 @@ use function current;
 class Utils extends QUI\Utils\Singleton
 {
     /**
-     * @return array
+     * @return list<array{text: string, textimage: string, require: string}>
      */
     public function getCategoriesForCustomerCreate(): array
     {

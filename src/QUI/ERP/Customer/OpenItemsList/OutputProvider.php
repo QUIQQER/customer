@@ -100,7 +100,7 @@ class OutputProvider implements OutputProviderInterface
      * Fill the OutputTemplate with appropriate entity data
      *
      * @param int|string $entityId
-     * @return array
+     * @return array{Address: QUI\Users\Address, OpenItemsList: ItemsList, Customer: User}
      *
      * @throws QUI\Exception
      */

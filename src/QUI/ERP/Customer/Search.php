@@ -13,6 +13,7 @@ use QUI\Utils\Singleton;
 
 use function array_flip;
 use function array_map;
+use function array_values;
 use function array_walk;
 use function count;
 use function explode;
@@ -39,7 +40,7 @@ class Search extends Singleton
     protected string $order = 'user_id DESC';
 
     /**
-     * @var array
+     * @var array<string, mixed>
      */
     protected array $filter = [];
 
@@ -58,7 +59,7 @@ class Search extends Singleton
     protected bool $onlyCustomer = true;
 
     /**
-     * @var array
+     * @var array{0: int, 1: int}
      */
     protected array $limit = [0, 20];
 
@@ -83,7 +84,7 @@ class Search extends Singleton
     }
 
     /**
-     * @return array
+     * @return list<string>
      */
     public function getAllowedFields(): array
     {
@@ -114,7 +115,7 @@ class Search extends Singleton
     /**
      * Execute the search and return the invoice list
      *
-     * @return array
+     * @return list<array<string, mixed>>
      *
      * @throws QUI\Exception
      */
@@ -124,6 +125,8 @@ class Search extends Singleton
     }
 
     /**
+     * @return array<string, mixed>
+     *
      * @throws QUI\Exception
      */
     public function searchForGrid(): array
@@ -144,10 +147,10 @@ class Search extends Singleton
     }
 
     /**
-     * @param $data
-     * @return array
+     * @param list<array<string, mixed>> $data
+     * @return list<array<string, mixed>>
      */
-    protected function parseListForGrid($data): array
+    protected function parseListForGrid(array $data): array
     {
         $localeCode = QUI::getLocale()->getLocalesByLang(
             QUI::getLocale()->getCurrent()
@@ -295,7 +298,7 @@ class Search extends Singleton
     //region query stuff
 
     /**
-     * @return array
+     * @return array{query: string, binds: array<string, array{value: mixed, type: int}>}
      */
     protected function getQueryCount(): array
     {
@@ -304,7 +307,7 @@ class Search extends Singleton
 
     /**
      * @param bool $count - Use count select, or not
-     * @return array
+     * @return array{query: string, binds: array<string, array{value: mixed, type: int}>}
      */
     protected function getQuery(bool $count = false): array
     {
@@ -314,11 +317,9 @@ class Search extends Singleton
         // limit
         $limit = '';
 
-        if ($this->limit && isset($this->limit[0]) && isset($this->limit[1])) {
-            $start = $this->limit[0];
-            $end = $this->limit[1];
-            $limit = " LIMIT $start,$end";
-        }
+        $start = $this->limit[0];
+        $end = $this->limit[1];
+        $limit = " LIMIT $start,$end";
 
 
         // filter checks
@@ -606,11 +607,11 @@ class Search extends Singleton
     }
 
     /**
-     * @param array $queryData
-     * @return array
+     * @param array{query: string, binds: array<string, array{value: mixed, type: int}>} $queryData
+     * @return list<array<string, mixed>>
      * @throws QUI\Exception
      */
-    protected function executeQueryParams(array $queryData = []): array
+    protected function executeQueryParams(array $queryData): array
     {
         $PDO = QUI::getDataBase()->getPDO();
         $binds = $queryData['binds'];
@@ -625,7 +626,7 @@ class Search extends Singleton
         try {
             $Statement->execute();
 
-            return $Statement->fetchAll(PDO::FETCH_ASSOC);
+            return array_values($Statement->fetchAll(PDO::FETCH_ASSOC));
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             QUI\System\Log::writeRecursive($query);
@@ -701,11 +702,15 @@ class Search extends Singleton
      * Set a filter
      *
      * @param string $filter
-     * @param array|string $value
+     * @param array<mixed>|string $value
      */
     public function setFilter(string $filter, array | string $value): void
     {
         if ($filter === 'search') {
+            if (!is_string($value)) {
+                return;
+            }
+
             $this->search = $value;
 
             return;

@@ -187,7 +187,7 @@ class Events
      * Update open records of user if an order changes
      *
      * @param int|string $orderId
-     * @param array $orderAttributes
+     * @param array<string, mixed> $orderAttributes
      * @return void
      */
     public static function onQuiqqerOrderDelete(int|string $orderId, array $orderAttributes): void

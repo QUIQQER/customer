@@ -43,7 +43,7 @@ class ErpProvider extends AbstractErpProvider
     }
 
     /**
-     * @return array
+     * @return list<NumberRange>
      */
     public static function getNumberRanges(): array
     {

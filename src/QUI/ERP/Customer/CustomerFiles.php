@@ -107,7 +107,7 @@ class CustomerFiles
      * Return the file list from the customer
      *
      * @param int|string $customerId
-     * @return array
+     * @return list<array<string, mixed>>
      *
      * @throws QUI\Permissions\Exception|QUI\Exception
      */
@@ -171,7 +171,7 @@ class CustomerFiles
 
     /**
      * @param integer|string $customerId
-     * @param array $files
+     * @param array<int, string> $files
      *
      * @throws QUI\Permissions\Exception|QUI\Exception
      */
@@ -202,13 +202,13 @@ class CustomerFiles
      * Add a file to the customer
      *
      * @param string|int $customerId
-     * @param $file
+     * @param string $file
      * @return string - Hash of the file
      *
      * @throws QUI\Exception
      * @throws QUI\Permissions\Exception
      */
-    public static function addFileToCustomer(string|int $customerId, $file): string
+    public static function addFileToCustomer(string|int $customerId, string $file): string
     {
         Permission::checkPermission('quiqqer.customer.fileUpload');
 
@@ -239,7 +239,7 @@ class CustomerFiles
      *
      * @param int|string $customerId
      * @param string $fileHash
-     * @return false|array - File data or false if file is not found in customer files
+     * @return false|array<string, mixed> - File data or false if file is not found in customer files
      *
      * @throws QUI\Permissions\Exception
      * @throws Exception
