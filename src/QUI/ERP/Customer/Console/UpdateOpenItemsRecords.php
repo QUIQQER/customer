@@ -44,6 +44,7 @@ class UpdateOpenItemsRecords extends QUI\System\Console\Tool
 
             if (!$CustomerGroup) {
                 $this->exitFail('Customer group is not configured or invalid.');
+                return;
             }
 
             $userIds = $CustomerGroup->getUserIds();

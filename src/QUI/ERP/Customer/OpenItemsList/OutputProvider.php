@@ -111,6 +111,10 @@ class OutputProvider implements OutputProviderInterface
         $QuiqqerUser = QUI::getUsers()->get($ERPUser->getUUID());
         $Address = $QuiqqerUser->getStandardAddress();
 
+        if (!$Address instanceof QUI\Users\Address) {
+            throw new QUI\Exception('Could not determine customer address.');
+        }
+
         $Address->clearMail();
         $Address->clearPhone();
 
