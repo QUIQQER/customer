@@ -166,8 +166,16 @@ class Customers extends Singleton
     public function getCustomerGroupId(): string
     {
         $Package = QUI::getPackage('quiqqer/customer');
-        $Config = $Package->getConfig();
-        $groupId = trim($Config->getValue('customer', 'groupId'));
+        $groupId = $Package->getConfig()?->getValue('customer', 'groupId');
+
+        if (!is_string($groupId)) {
+            throw new Exception([
+                'quiqqer/customer',
+                'exception.customer.group.not.exists'
+            ]);
+        }
+
+        $groupId = trim($groupId);
 
         if (empty($groupId)) {
             throw new Exception([
@@ -188,12 +196,12 @@ class Customers extends Singleton
     {
         try {
             $Package = QUI::getPackage('quiqqer/customer');
-            $Config = $Package->getConfig();
+            $customerLogin = $Package->getConfig()?->getValue('customer', 'customerLogin');
         } catch (QUI\Exception) {
             return false;
         }
 
-        return (bool)$Config->getValue('customer', 'customerLogin');
+        return (bool)$customerLogin;
     }
 
     /**

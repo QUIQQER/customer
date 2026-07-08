@@ -69,8 +69,9 @@ class Handler
         }
 
         try {
-            $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
-            $considerOrders = $Conf->get('openItems', 'considerOrders');
+            $considerOrders = QUI::getPackage('quiqqer/customer')
+                ->getConfig()
+                ?->get('openItems', 'considerOrders');
 
             if (!empty($considerOrders)) {
                 $orders = self::getOpenOrders($User);

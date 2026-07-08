@@ -42,6 +42,20 @@ class EventHandler
     protected static array $userSaveSnapshots = [];
 
     /**
+     * @throws QUI\Exception
+     */
+    protected static function getCustomerConfig(): QUI\Config
+    {
+        $Config = QUI::getPackage('quiqqer/customer')->getConfig();
+
+        if (!$Config instanceof QUI\Config) {
+            throw new QUI\Exception('Customer package config is not available.');
+        }
+
+        return $Config;
+    }
+
+    /**
      * Snapshots of tracked customer addresses keyed by address UUID.
      *
      * @var array<string, array<string, array<string, string>>>
@@ -71,8 +85,7 @@ class EventHandler
     protected static function createCustomerGroup(): void
     {
         try {
-            $Package = QUI::getPackage('quiqqer/customer');
-            $Config = $Package->getConfig();
+            $Config = self::getCustomerConfig();
             $groupId = $Config->getValue('customer', 'groupId');
 
             if (!empty($groupId)) {
@@ -114,8 +127,11 @@ class EventHandler
 
         try {
             $Package = QUI::getPackageManager()->getInstalledPackage('quiqqer/customer');
-            $Config = $Package->getConfig();
-            $groupId = $Config->getValue('customer', 'groupId');
+            $groupId = $Package->getConfig()?->getValue('customer', 'groupId');
+
+            if (!is_scalar($groupId)) {
+                return;
+            }
 
             echo '<script>window.QUIQQER_CUSTOMER_GROUP = "' . $groupId . '"</script>';
         } catch (QUI\Exception $Exception) {
@@ -452,9 +468,9 @@ class EventHandler
         }
 
         try {
-            $Package = QUI::getPackage('quiqqer/customer');
-            $Config = $Package->getConfig();
-            $login = (int)$Config->getValue('customer', 'customerLogin');
+            $login = !empty(QUI::getPackage('quiqqer/customer')
+                ->getConfig()
+                ?->getValue('customer', 'customerLogin'));
         } catch (QUI\Exception $Exception) {
             QUI\System\Log::addError($Exception->getMessage());
 
@@ -492,11 +508,13 @@ class EventHandler
         }
 
         // setting: automatically add customer number when ordering
-        $Config = QUI::getPackage('quiqqer/customer')->getConfig();
+        $setCustomerNoAtOrder = QUI::getPackage('quiqqer/customer')
+            ->getConfig()
+            ?->get('customer', 'setCustomerNoAtOrder');
 
-        if ($Config->get('customer', 'setCustomerNoAtOrder') && !$User->getAttribute('customerId')) {
+        if ($setCustomerNoAtOrder && !$User->getAttribute('customerId')) {
             $NumberRange = new NumberRange();
-            $nextCustomerNo = $NumberRange->getNextCustomerNo();
+            $nextCustomerNo = (int)$NumberRange->getNextCustomerNo();
 
             try {
                 $User->setAttribute('customerId', $nextCustomerNo);
@@ -649,12 +667,12 @@ class EventHandler
         // migrate settings
         $Console->writeLn('- Migrate customer settings');
 
-        $Config = QUI::getPackage('quiqqer/customer')->getConfig();
+        $Config = self::getCustomerConfig();
         $groupId = $Config->get('customer', 'groupId');
 
         if (is_numeric($groupId)) {
             try {
-                $Config->setValue('customer', 'groupId', QUI::getGroups()->get($groupId)->getUUID());
+                $Config->setValue('customer', 'groupId', QUI::getGroups()->get((string)$groupId)->getUUID());
                 $Config->save();
             } catch (QUI\Exception) {
             }

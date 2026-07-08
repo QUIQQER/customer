@@ -193,8 +193,9 @@ class Events
     public static function onQuiqqerOrderDelete(int|string $orderId, array $orderAttributes): void
     {
         try {
-            $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
-            $considerOrders = $Conf->get('openItems', 'considerOrders');
+            $considerOrders = QUI::getPackage('quiqqer/customer')
+                ->getConfig()
+                ?->get('openItems', 'considerOrders');
 
             if (empty($considerOrders)) {
                 return;
@@ -247,8 +248,9 @@ class Events
     public static function onQuiqqerOrderCreated(QUI\ERP\Order\AbstractOrder $Order): void
     {
         try {
-            $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
-            $considerOrders = $Conf->get('openItems', 'considerOrders');
+            $considerOrders = QUI::getPackage('quiqqer/customer')
+                ->getConfig()
+                ?->get('openItems', 'considerOrders');
 
             if (empty($considerOrders)) {
                 return;
