@@ -2,6 +2,6 @@
 
 namespace QUI\ERP\Accounting\Invoice;
 
-class InvoiceTemporary
+class InvoiceTemporary extends Invoice
 {
 }

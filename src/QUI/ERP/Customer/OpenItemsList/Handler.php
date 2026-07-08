@@ -9,6 +9,7 @@ use QUI;
 use QUI\ERP\Accounting\Dunning\Handler as DunningsHandler;
 use QUI\ERP\Accounting\Invoice\Handler as InvoiceHandler;
 use QUI\ERP\Accounting\Invoice\Invoice;
+use QUI\ERP\Accounting\Invoice\InvoiceTemporary;
 use QUI\ERP\Accounting\Invoice\Utils\Invoice as InvoiceUtils;
 use QUI\ERP\Order\Handler as OrderHandler;
 use QUI\ERP\Order\ProcessingStatus\Handler as OrderStatusHandler;
@@ -149,7 +150,7 @@ class Handler
      * Get all open invoices of a user
      *
      * @param QUI\Interfaces\Users\User $User
-     * @return Invoice[]
+     * @return array<Invoice|InvoiceTemporary>
      * @throws QUI\Database\Exception
      */
     protected static function getOpenInvoices(QUI\Interfaces\Users\User $User): array
@@ -192,10 +193,6 @@ class Handler
                     continue;
                 }
 
-                if (!$Invoice instanceof Invoice) {
-                    continue;
-                }
-
                 $invoices[] = $Invoice;
             } catch (Exception $Exception) {
                 QUI\System\Log::writeException($Exception);
@@ -208,11 +205,11 @@ class Handler
     /**
      * Parses invoice data to an open item
      *
-     * @param Invoice $Invoice
+     * @param Invoice|InvoiceTemporary $Invoice
      * @return Item
      * @throws QUI\Exception
      */
-    protected static function parseInvoiceToOpenItem(Invoice $Invoice): Item
+    protected static function parseInvoiceToOpenItem(Invoice|InvoiceTemporary $Invoice): Item
     {
         $Item = new Item($Invoice->getId(), self::DOCUMENT_TYPE_INVOICE);
 
@@ -243,7 +240,7 @@ class Handler
         $Item->setCurrency($Invoice->getCurrency());
 
         // Latest transaction date
-        $transactions = InvoiceUtils::getTransactionsByInvoice($Invoice);
+        $transactions = InvoiceUtils::getTransactionsByInvoice($Invoice->getId());
 
         if (!empty($transactions)) {
             // Sort by date
