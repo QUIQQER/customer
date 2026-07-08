@@ -9,7 +9,7 @@
  *
  * @return string
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_customer_getTaxByUser',
     function ($userId) {
         try {
@@ -17,6 +17,10 @@ QUI::$Ajax->registerFunction(
             $Tax = QUI\ERP\Tax\Utils::getTaxByUser($User);
             $Area = $Tax->getArea();
         } catch (QUI\Exception) {
+            return null;
+        }
+
+        if (!$Area instanceof QUI\ERP\Areas\Area) {
             return null;
         }
 

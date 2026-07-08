@@ -7,7 +7,7 @@
 /**
  * @return array
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_customer_checkCalculation',
     function ($userId) {
         $User = QUI::getUsers()->get($userId);
@@ -25,6 +25,11 @@ QUI::$Ajax->registerFunction(
         // default address
         try {
             $Address = QUI\ERP\Utils\User::getUserERPAddress($User);
+
+            if (!$Address instanceof QUI\Users\Address) {
+                throw new QUI\Exception('Could not determine default address.');
+            }
+
             $address = $Address->getAttributes();
 
             $isCompany = $Address->getAttribute('company');
@@ -38,6 +43,7 @@ QUI::$Ajax->registerFunction(
         try {
             $shippingId = $User->getAttribute('quiqqer.delivery.address');
             $Shipping = $User->getAddress($shippingId);
+
             $shipping = $Shipping->getAttributes();
 
             $shipping['text'] = $Shipping->getText();

@@ -8,7 +8,7 @@
 
 use QUI\ERP\Customer\CustomerFiles;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_files_downloadEntry_addFile',
     function ($file, $customerId) {
         try {

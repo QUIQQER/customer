@@ -12,7 +12,7 @@ use QUI\ERP\Customer\OpenItemsList\Handler;
 use QUI\ERP\Customer\OpenItemsList\Item;
 use QUI\Utils\Security\Orthos;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_OpenItemsList_getUserOpenItems',
     function ($userId, $searchParams, $forceRefresh) {
         try {

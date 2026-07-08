@@ -10,7 +10,7 @@
 
 use QUI\Utils\Security\Orthos;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_files_get',
     function ($customerId, $fileHash) {
         return QUI\ERP\Customer\CustomerFiles::getFileByHash(

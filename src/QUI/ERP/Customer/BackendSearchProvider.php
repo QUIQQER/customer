@@ -46,8 +46,8 @@ class BackendSearchProvider implements ProviderInterface
      * Execute a search
      *
      * @param string $search
-     * @param array $params
-     * @return array
+     * @param array<string, mixed> $params
+     * @return list<array<string, mixed>>
      */
     public function search(string $search, array $params = []): array
     {
@@ -125,7 +125,7 @@ class BackendSearchProvider implements ProviderInterface
      * Get all available search groups of this provider.
      * Search results can be filtered by these search groups.
      *
-     * @return array
+     * @return list<array<string, mixed>>
      */
     public function getFilterGroups(): array
     {

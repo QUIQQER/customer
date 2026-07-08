@@ -2,32 +2,17 @@ includes:
     - phpstan-baseline.neon
 
 parameters:
-    level: 5
+    level: 8
     paths:
         - src
         - ajax
     bootstrapFiles:
         - tests/phpstan-bootstrap.php
-    treatPhpDocTypesAsCertain: false
-    customRulesetUsed: true
-services:
-    -
-        class: \PHPStan\Rules\Properties\TypesAssignedToPropertiesRule
-        tags:
-            - phpstan.rules.rule
-    -
-        class: \PHPStan\Rules\Functions\ArrowFunctionReturnTypeRule
-        tags:
-            - phpstan.rules.rule
-    -
-        class: \PHPStan\Rules\Functions\ClosureReturnTypeRule
-        tags:
-            - phpstan.rules.rule
-    -
-        class: \PHPStan\Rules\Functions\ReturnTypeRule
-        tags:
-            - phpstan.rules.rule
-    -
-        class: \PHPStan\Rules\Methods\ReturnTypeRule
-        tags:
-            - phpstan.rules.rule
+    stubFiles:
+        - tests/phpstan-stubs/QUI/ERP/User.php
+        - tests/phpstan-stubs/QUI/ERP/Accounting/Invoice/Handler.php
+        - tests/phpstan-stubs/QUI/ERP/Accounting/Invoice/Invoice.php
+        - tests/phpstan-stubs/QUI/ERP/Accounting/Invoice/InvoiceTemporary.php
+        - tests/phpstan-stubs/QUI/ERP/Order/AbstractOrder.php
+        - tests/phpstan-stubs/QUI/ERP/Order/Order.php
+        - tests/phpstan-stubs/QUI/ERP/Order/Controls/OrderProcess/CustomerData.php

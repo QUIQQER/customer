@@ -9,10 +9,16 @@
  *
  * @return string
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_customer_addAddress',
     function ($userId) {
-        return QUI::getUsers()->get($userId)->addAddress()->getUUID();
+        $Address = QUI::getUsers()->get($userId)->addAddress();
+
+        if (!$Address instanceof QUI\Users\Address) {
+            throw new QUI\Exception('Could not create address.');
+        }
+
+        return $Address->getUUID();
     },
     ['userId'],
     'Permission::checkAdminUser'

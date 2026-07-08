@@ -8,7 +8,7 @@
  * @return array
  */
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_files_suggestSearch',
     function ($customerId, $searchString) {
         $files = QUI\ERP\Customer\CustomerFiles::getFileList($customerId);

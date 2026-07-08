@@ -10,7 +10,7 @@
  * @return integer
  */
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_create_createCustomer',
     function ($customerId, $address, $groups, $attributes) {
         $address = json_decode($address, true);

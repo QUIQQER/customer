@@ -5,6 +5,7 @@ namespace QUI\ERP\Customer;
 use QUI;
 use QUI\ERP\Api\NumberRangeInterface;
 
+use function is_numeric;
 use function preg_match_all;
 
 /**
@@ -14,6 +15,20 @@ use function preg_match_all;
  */
 class NumberRange implements NumberRangeInterface
 {
+    /**
+     * @throws QUI\Exception
+     */
+    protected function getConfig(): QUI\Config
+    {
+        $Config = QUI::getPackage('quiqqer/customer')->getConfig();
+
+        if (!$Config instanceof QUI\Config) {
+            throw new QUI\Exception('Customer package config is not available.');
+        }
+
+        return $Config;
+    }
+
     /**
      * @param null|QUI\Locale $Locale
      *
@@ -42,10 +57,11 @@ class NumberRange implements NumberRangeInterface
     {
         // Get from config
         try {
-            $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
-            $nextCustomerNoFromConfig = $Conf->get('customer', 'nextCustomerNo');
+            $nextCustomerNoFromConfig = QUI::getPackage('quiqqer/customer')
+                ->getConfig()
+                ?->get('customer', 'nextCustomerNo');
 
-            if (!empty($nextCustomerNoFromConfig)) {
+            if (is_numeric($nextCustomerNoFromConfig)) {
                 return (int)$nextCustomerNoFromConfig;
             }
         } catch (\Exception $Exception) {
@@ -77,7 +93,7 @@ class NumberRange implements NumberRangeInterface
     public function setRange(int $range): void
     {
         try {
-            $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
+            $Conf = $this->getConfig();
             $Conf->set('customer', 'nextCustomerNo', $range);
             $Conf->save();
         } catch (\Exception $Exception) {
@@ -103,10 +119,11 @@ class NumberRange implements NumberRangeInterface
     public function getCustomerNoPrefix(): string
     {
         try {
-            $Conf = QUI::getPackage('quiqqer/customer')->getConfig();
-            $prefix = $Conf->get('customer', 'customerNoPrefix');
+            $prefix = QUI::getPackage('quiqqer/customer')
+                ->getConfig()
+                ?->get('customer', 'customerNoPrefix');
 
-            if (!empty($prefix)) {
+            if (is_string($prefix) && $prefix !== '') {
                 return $prefix;
             }
         } catch (\Exception $Exception) {

@@ -9,7 +9,7 @@
  *
  * @return array
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_files_delete',
     function ($files, $customerId) {
         QUI\ERP\Customer\CustomerFiles::deleteFiles(

@@ -44,6 +44,7 @@ class UpdateOpenItemsRecords extends QUI\System\Console\Tool
 
             if (!$CustomerGroup) {
                 $this->exitFail('Customer group is not configured or invalid.');
+                return;
             }
 
             $userIds = $CustomerGroup->getUserIds();
@@ -83,10 +84,10 @@ class UpdateOpenItemsRecords extends QUI\System\Console\Tool
     /**
      * Exits the console tool with an error msg and status 1
      *
-     * @param $msg
+     * @param string $msg
      * @return void
      */
-    protected function exitFail($msg): void
+    protected function exitFail(string $msg): void
     {
         $this->writeLn("Script aborted due to an error:");
         $this->writeLn();

@@ -74,6 +74,10 @@ class OutputProvider implements OutputProviderInterface
         $Locale = $ERPUser->getLocale();
         $Date = date_create();
 
+        if (!$Date instanceof \DateTime) {
+            $Date = new \DateTime();
+        }
+
         return $Locale->get('quiqqer/customer', 'OutputProvider.download_filename', [
             'date' => $Date->format('Y-m-d'),
             'uid' => $ERPUser->getCustomerNo()
@@ -100,7 +104,7 @@ class OutputProvider implements OutputProviderInterface
      * Fill the OutputTemplate with appropriate entity data
      *
      * @param int|string $entityId
-     * @return array
+     * @return array{Address: QUI\Users\Address, OpenItemsList: ItemsList, Customer: User}
      *
      * @throws QUI\Exception
      */
@@ -110,6 +114,10 @@ class OutputProvider implements OutputProviderInterface
         $ERPUser = self::getEntity($entityId);
         $QuiqqerUser = QUI::getUsers()->get($ERPUser->getUUID());
         $Address = $QuiqqerUser->getStandardAddress();
+
+        if (!$Address instanceof QUI\Users\Address) {
+            throw new QUI\Exception('Could not determine customer address.');
+        }
 
         $Address->clearMail();
         $Address->clearPhone();
