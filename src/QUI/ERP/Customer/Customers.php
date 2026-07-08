@@ -657,6 +657,36 @@ class Customers extends Singleton
     }
 
     /**
+     * @return list<array<string, mixed>>
+     */
+    protected function normalizeCommentsData(mixed $comments): array
+    {
+        if (!is_array($comments)) {
+            return [];
+        }
+
+        $result = [];
+
+        foreach ($comments as $comment) {
+            if (!is_array($comment)) {
+                continue;
+            }
+
+            $entry = [];
+
+            foreach ($comment as $key => $value) {
+                if (is_string($key)) {
+                    $entry[$key] = $value;
+                }
+            }
+
+            $result[] = $entry;
+        }
+
+        return $result;
+    }
+
+    /**
      * @param QUI\Interfaces\Users\User $User
      * @return QUI\ERP\Comments
      */
@@ -665,13 +695,7 @@ class Customers extends Singleton
         $comments = $User->getAttribute('comments');
         $comments = json_decode($comments, true);
 
-        if (is_array($comments)) {
-            $Comments = new QUI\ERP\Comments($comments);
-        } else {
-            $Comments = new QUI\ERP\Comments();
-        }
-
-        return $Comments;
+        return new QUI\ERP\Comments($this->normalizeCommentsData($comments));
     }
 
     /**
@@ -706,11 +730,7 @@ class Customers extends Singleton
         $history = $User->getAttribute('history');
         $history = json_decode($history, true);
 
-        if (is_array($history)) {
-            return new QUI\ERP\Comments($history);
-        }
-
-        return new QUI\ERP\Comments();
+        return new QUI\ERP\Comments($this->normalizeCommentsData($history));
     }
 
     /**
