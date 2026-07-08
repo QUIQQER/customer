@@ -11,7 +11,7 @@ use QUI\ERP\Customer\Customers;
 use QUI\ERP\Customer\NumberRange;
 use QUI\Utils\Security\Orthos;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_create_validateCustomerNo',
     function ($customerNo) {
         $customerNo = Orthos::clear($customerNo);

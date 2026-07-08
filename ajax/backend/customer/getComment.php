@@ -10,7 +10,7 @@ use QUI\ERP\Customer\Customers;
  *
  * @return array
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_customer_getComment',
     function ($userId, $commentId, $source) {
         $User     = QUI::getUsers()->get($userId);

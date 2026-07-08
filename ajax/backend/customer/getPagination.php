@@ -9,7 +9,7 @@
 
 use QUI\Controls\Navigating\Pagination;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_customer_getPagination',
     function ($uid) {
         try {

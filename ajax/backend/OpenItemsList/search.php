@@ -11,7 +11,7 @@ use QUI\ERP\Customer\OpenItemsList\Handler;
 use QUI\Utils\Grid;
 use QUI\Utils\Security\Orthos;
 
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_OpenItemsList_search',
     function ($searchParams) {
         try {

@@ -9,7 +9,7 @@
  *
  * @return array
  */
-QUI::$Ajax->registerFunction(
+QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_customer_instantSave',
     function ($userId, $data) {
         QUI\Permissions\Permission::checkPermission('quiqqer.customer.edit');
