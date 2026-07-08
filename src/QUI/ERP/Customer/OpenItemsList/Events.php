@@ -67,6 +67,10 @@ class Events
             }
         }
 
+        if (!$User instanceof User) {
+            return;
+        }
+
         try {
             self::syncOpenItemsRecord($User);
         } catch (Exception $Exception) {
@@ -132,8 +136,14 @@ class Events
         int $currentStatus,
         int $oldStatus
     ): void {
+        $User = $Order->getCustomer();
+
+        if (!$User instanceof User) {
+            return;
+        }
+
         try {
-            self::syncOpenItemsRecord($Order->getCustomer());
+            self::syncOpenItemsRecord($User);
         } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
             return;
@@ -153,8 +163,14 @@ class Events
         AbstractOrder $Order,
         Transaction $Transaction
     ): void {
+        $User = $Order->getCustomer();
+
+        if (!$User instanceof User) {
+            return;
+        }
+
         try {
-            self::syncOpenItemsRecord($Order->getCustomer());
+            self::syncOpenItemsRecord($User);
         } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
         }
@@ -269,8 +285,14 @@ class Events
             return;
         }
 
+        $User = $Order->getCustomer();
+
+        if (!$User instanceof User) {
+            return;
+        }
+
         try {
-            self::syncOpenItemsRecord($Order->getCustomer());
+            self::syncOpenItemsRecord($User);
         } catch (Exception $Exception) {
             QUI\System\Log::writeDebugException($Exception);
         }
