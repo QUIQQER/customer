@@ -21,6 +21,7 @@ use function dirname;
 use function file_exists;
 use function is_array;
 use function is_numeric;
+use function is_string;
 use function json_decode;
 use function json_encode;
 use function md5;
@@ -201,6 +202,11 @@ class EventHandler
 
         /* @var $Attributes DOMElement */
         $Attributes = $Attr->item(0);
+
+        if (!$Attributes instanceof DOMElement) {
+            return [];
+        }
+
         $list = $Attributes->getElementsByTagName('attribute');
 
         if (!$list->length) {
@@ -212,12 +218,16 @@ class EventHandler
         for ($c = 0; $c < $list->length; $c++) {
             $Attribute = $list->item($c);
 
+            if (!$Attribute instanceof DOMElement) {
+                continue;
+            }
+
             if ($Attribute->nodeName == '#text') {
                 continue;
             }
 
             $attributes[] = [
-                'name' => trim($Attribute->nodeValue),
+                'name' => trim($Attribute->nodeValue ?? ''),
                 'encrypt' => !!$Attribute->getAttribute('encrypt')
             ];
         }
@@ -497,7 +507,16 @@ class EventHandler
         QUI\ERP\Order\Controls\OrderProcess\CustomerData $Step
     ): void {
         $Order = $Step->getOrder();
+
+        if (!$Order instanceof QUI\ERP\Order\AbstractOrder) {
+            return;
+        }
+
         $Customer = $Order->getCustomer();
+
+        if (!$Customer instanceof QUI\ERP\User) {
+            return;
+        }
 
         try {
             $User = QUI::getUsers()->get($Customer->getUUID());
@@ -646,7 +665,7 @@ class EventHandler
                 if (is_numeric($extra['quiqqer.erp.supplier.contact.person'])) {
                     try {
                         $extra['quiqqer.erp.supplier.contact.person'] = QUI::getUsers()->get(
-                            $extra['quiqqer.erp.supplier.contact.person']
+                            (string)$extra['quiqqer.erp.supplier.contact.person']
                         )->getUUID();
                     } catch (QUI\Exception) {
                     }
@@ -703,7 +722,7 @@ class EventHandler
      */
     protected static function rememberUserSnapshot(QUI\Users\User $User): void
     {
-        $snapshotKey = $User->getUUID();
+        $snapshotKey = (string)$User->getUUID();
 
         if (!self::isCustomerUser($User)) {
             unset(self::$userSaveSnapshots[$snapshotKey]);
@@ -795,7 +814,7 @@ class EventHandler
             return false;
         }
 
-        $standardAddressUuid = $User->getStandardAddress()->getUUID();
+        $standardAddressUuid = $User->getStandardAddress()?->getUUID();
 
         if (empty($standardAddressUuid)) {
             return false;
@@ -1157,8 +1176,22 @@ class EventHandler
             $Actor = QUI::getUsers()->getSystemUser();
         }
 
-        $old = $change['old']['display'];
-        $new = $change['new']['display'];
+        $old = '';
+        $new = '';
+
+        if (isset($change['old']) && is_array($change['old'])) {
+            $old = $change['old']['display'] ?? '';
+        }
+
+        if (isset($change['new']) && is_array($change['new'])) {
+            $new = $change['new']['display'] ?? '';
+        }
+
+        $field = $change['field'] ?? '';
+
+        if (!is_string($field)) {
+            $field = '';
+        }
 
         if ($old === '') {
             $old = QUI::getLocale()->get(
@@ -1180,7 +1213,7 @@ class EventHandler
             [
                 'field' => QUI::getLocale()->get(
                     'quiqqer/customer',
-                    'customer.history.field.' . $change['field']
+                    'customer.history.field.' . $field
                 ),
                 'old' => $old,
                 'new' => $new,
