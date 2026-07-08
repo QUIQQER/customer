@@ -24,6 +24,10 @@ QUI::getAjax()->registerFunction(
             $Address = $User->addAddress();
         }
 
+        if (!$Address instanceof QUI\Users\Address) {
+            throw new QUI\Exception('Could not determine address.');
+        }
+
         if (isset($data['username'])) {
             $User->setAttribute('username', $data['username']);
         }

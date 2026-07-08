@@ -20,6 +20,10 @@ QUI::getAjax()->registerFunction(
             return null;
         }
 
+        if (!$Area instanceof QUI\ERP\Areas\Area) {
+            return null;
+        }
+
         return [
             'id' => $Tax->getId(),
             'vat' => $Tax->getValue(),

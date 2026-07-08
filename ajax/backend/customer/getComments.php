@@ -18,6 +18,11 @@ QUI::getAjax()->registerFunction(
     function ($uid, $page, $limit) {
         $User = QUI::getUsers()->get($uid);
         $Comments = QUI\ERP\Comments::getCommentsByUser($User);
+
+        if (!$Comments instanceof QUI\ERP\Comments) {
+            return [];
+        }
+
         $comments = $Comments->toArray();
 
         // Sort by time DESC

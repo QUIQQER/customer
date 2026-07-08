@@ -24,7 +24,13 @@ QUI::getAjax()->registerFunction(
             $comment
         );
 
-        return QUI\ERP\Comments::getCommentsByUser($User)->toArray();
+        $Comments = QUI\ERP\Comments::getCommentsByUser($User);
+
+        if (!$Comments instanceof QUI\ERP\Comments) {
+            return [];
+        }
+
+        return $Comments->toArray();
     },
     ['userId', 'commentId', 'source', 'comment'],
     'Permission::checkAdminUser'

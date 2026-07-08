@@ -21,6 +21,10 @@ QUI::getAjax()->registerFunction(
         $Comments = QUI\ERP\Comments::getCommentsByUser($User);
         $History = QUI\ERP\Comments::getHistoryByUser($User);
 
+        if (!$Comments instanceof QUI\ERP\Comments) {
+            return [];
+        }
+
         $comments = array_merge(
             $Comments->toArray(),
             $History->toArray()

@@ -16,7 +16,13 @@ QUI::getAjax()->registerFunction(
         $User = QUI::getUsers()->get($userId);
         Customers::getInstance()->addCommentToUser($User, $comment);
 
-        return QUI\ERP\Comments::getCommentsByUser($User)->toArray();
+        $Comments = QUI\ERP\Comments::getCommentsByUser($User);
+
+        if (!$Comments instanceof QUI\ERP\Comments) {
+            return [];
+        }
+
+        return $Comments->toArray();
     },
     ['userId', 'comment'],
     'Permission::checkAdminUser'
