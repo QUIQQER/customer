@@ -240,9 +240,9 @@ class Handler
         $Item->setCurrency($Invoice->getCurrency());
 
         // Latest transaction date
-        $transactions = [];
-
-        if ($Invoice instanceof Invoice) {
+        if ($Invoice instanceof InvoiceTemporary) {
+            $transactions = [];
+        } else {
             $transactions = InvoiceUtils::getTransactionsByInvoice($Invoice);
         }
 
