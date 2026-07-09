@@ -56,7 +56,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
             '$onCustomerCategoryActive',
             'openUser',
             'deliveryAddressToggle',
-            '$onOpenOpenItemsListClick',
             '$onClickSendMail',
             '$onEditCustomerIdClick',
             '$getPagination',
@@ -233,14 +232,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     }
                 });
             }
-
-            ExtrasBtn.appendChild({
-                text: QUILocale.get(lg, 'quiqqer.customer.panel.openItemsListOutput'),
-                icon: 'fa fa-th-list',
-                events: {
-                    onClick: this.$onOpenOpenItemsListClick
-                }
-            });
 
             ExtrasBtn.appendChild({
                 text: QUILocale.get(lg, 'quiqqer.customer.panel.sendMail'),
@@ -1709,22 +1700,6 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     }
                 }
             }).open();
-        },
-
-        /**
-         * User clicks on "open OpenItemList" btn
-         */
-        $onOpenOpenItemsListClick: function() {
-            const self = this;
-
-            require([
-                'package/quiqqer/erp/bin/backend/controls/OutputDialog'
-            ], function(OutputDialog) {
-                new OutputDialog({
-                    entityId: self.getAttribute('userId'),
-                    entityType: 'OpenItemsList'
-                }).open();
-            });
         },
 
         /**

@@ -33,7 +33,6 @@
         </languages>
 
         <provider>
-            <erpOutput src="\QUI\ERP\Customer\OpenItemsList\OutputProvider"/>
             <erp src="\QUI\ERP\Customer\ErpProvider"/>
             <desktopSearch src="\QUI\ERP\Customer\BackendSearchProvider"/>
         </provider>

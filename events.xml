@@ -12,23 +12,6 @@
     <event on="onQuiqqerOrderCustomerDataSaveEnd"
            fire="\QUI\ERP\Customer\EventHandler::onQuiqqerOrderCustomerDataSaveEnd"
     />
-
-    <!-- Open items -->
-    <event on="onTransactionCreate" fire="\QUI\ERP\Customer\OpenItemsList\Events::onTransactionCreate" priority="500"/>
-    <event on="onQuiqqerInvoicePaymentStatusChanged"
-           fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerInvoicePaymentStatusChanged"/>
-    <event on="quiqqerInvoiceLinkTransaction"
-           fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerInvoiceLinkTransaction"/>
-    <event on="onQuiqqerOrderPaidStatusChanged"
-           fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerOrderPaidStatusChanged"/>
-    <event on="quiqqerOrderLinkTransaction"
-           fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerOrderLinkTransaction"/>
-    <event on="onQuiqqerInvoiceTemporaryInvoicePostEnd"
-           fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerInvoiceTemporaryInvoicePostEnd"/>
-
-    <event on="onQuiqqerOrderCreated" fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerOrderCreated"/>
-    <event on="onQuiqqerOrderDelete" fire="\QUI\ERP\Customer\OpenItemsList\Events::onQuiqqerOrderDelete"/>
-
     <event on="onQuiqqer::frontend-users::profile::user-data-middle"
            fire="\QUI\ERP\Customer\EventHandler::onFrontendUserDataMiddle"
     />

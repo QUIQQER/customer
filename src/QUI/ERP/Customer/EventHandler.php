@@ -601,20 +601,6 @@ class EventHandler
 
     public static function onQuiqqerMigrationV2(MigrationV2 $Console): void
     {
-        $Console->writeLn('- Migrate customer open items');
-
-        $customerOpenItemsTable = QUI::getDBTableName('customer_open_items');
-
-        QUI::getDataBaseConnection()->executeStatement(
-            'ALTER TABLE `' . $customerOpenItemsTable . '` CHANGE `userId` `userId` VARCHAR(50) NOT NULL;'
-        );
-
-        QUI\Utils\MigrationV1ToV2::migrateUsers(
-            $customerOpenItemsTable,
-            ['userId'],
-            'userId'
-        );
-
         // users extra fields
         $Console->writeLn('- Migrate customer attributes');
 
