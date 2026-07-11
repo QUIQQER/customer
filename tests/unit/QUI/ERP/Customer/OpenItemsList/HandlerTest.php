@@ -32,4 +32,26 @@ class HandlerTest extends TestCase
         $this->assertGreaterThanOrEqual($before, $Date->getTimestamp());
         $this->assertLessThanOrEqual($after, $Date->getTimestamp());
     }
+
+    public function testResolveOpenItemsSortMapsDisplayColumnAndDirection(): void
+    {
+        $Method = new ReflectionMethod(Handler::class, 'resolveOpenItemsSort');
+        $Method->setAccessible(true);
+
+        $this->assertSame(
+            ['column' => 'open_sum', 'direction' => 'DESC'],
+            $Method->invoke(null, ['sortOn' => 'display_open_sum', 'sortBy' => 'DESC'])
+        );
+    }
+
+    public function testResolveOpenItemsSortRejectsUnknownColumnAndDirection(): void
+    {
+        $Method = new ReflectionMethod(Handler::class, 'resolveOpenItemsSort');
+        $Method->setAccessible(true);
+
+        $this->assertSame(
+            ['column' => 'userId', 'direction' => 'ASC'],
+            $Method->invoke(null, ['sortOn' => 'malicious SQL', 'sortBy' => 'malicious SQL'])
+        );
+    }
 }

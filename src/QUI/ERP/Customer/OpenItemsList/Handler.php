@@ -4,7 +4,6 @@ namespace QUI\ERP\Customer\OpenItemsList;
 
 use DateTime;
 use Exception;
-use PDO;
 use QUI;
 use QUI\ERP\Accounting\Dunning\Handler as DunningsHandler;
 use QUI\ERP\Accounting\Invoice\Handler as InvoiceHandler;
@@ -14,7 +13,6 @@ use QUI\ERP\Accounting\Invoice\Utils\Invoice as InvoiceUtils;
 use QUI\ERP\Order\Handler as OrderHandler;
 use QUI\ERP\Order\ProcessingStatus\Handler as OrderStatusHandler;
 use QUI\Utils\Grid;
-use QUI\Utils\Security\Orthos;
 
 use function array_column;
 use function array_sum;
@@ -60,6 +58,44 @@ class Handler
         }
 
         return $Date;
+    }
+
+    /**
+     * @param array<string, mixed> $searchParams
+     * @return array{column: string, direction: 'ASC'|'DESC'}
+     */
+    protected static function resolveOpenItemsSort(array $searchParams): array
+    {
+        $sortColumns = [
+            'userId' => 'userId',
+            'customerId' => 'customerId',
+            'net_sum' => 'net_sum',
+            'vat_sum' => 'vat_sum',
+            'total_sum' => 'total_sum',
+            'paid_sum' => 'paid_sum',
+            'open_sum' => 'open_sum',
+            'currency' => 'currency',
+            'open_items_count' => 'open_items_count',
+            'display_net_sum' => 'net_sum',
+            'display_vat_sum' => 'vat_sum',
+            'display_total_sum' => 'total_sum',
+            'display_paid_sum' => 'paid_sum',
+            'display_open_sum' => 'open_sum',
+            'currency_code' => 'currency'
+        ];
+        $requestedSort = isset($searchParams['sortOn']) && is_string($searchParams['sortOn'])
+            ? $searchParams['sortOn']
+            : 'userId';
+        $sortBy = empty($searchParams['sortOn']) ? 'DESC' : 'ASC';
+
+        if (!empty($searchParams['sortBy']) && strtoupper((string)$searchParams['sortBy']) === 'DESC') {
+            $sortBy = 'DESC';
+        }
+
+        return [
+            'column' => $sortColumns[$requestedSort] ?? 'userId',
+            'direction' => $sortBy
+        ];
     }
 
     /**
@@ -117,35 +153,6 @@ class Handler
 
     // region Invoices
 
-//    /**
-//     * Check if an order is linked to an invoice and if so, if this invoice is already paid or otherwise
-//     * irrelevant
-//     *
-//     * @param Item $OrderItem
-//     * @return bool
-//     */
-//    protected static function isOrderLinkedToInvoiceEligibleAsOpenItem(Item $OrderItem): bool
-//    {
-//        $Invoices = InvoiceHandler::getInstance();
-//
-//        $invoiceStatusCodes = [
-//            QUI\ERP\Constants::PAYMENT_STATUS_PAID,
-//            QUI\ERP\Constants::PAYMENT_STATUS_DEBIT
-//        ];
-//
-//        $sql = "SELECT SUM(`sum`) as invoice_sum FROM " . $Invoices->invoiceTable();
-//        $sql .= " WHERE `paid_status` IN(" . implode(",", $invoiceStatusCodes) . ")";
-//        $sql .= " AND `global_process_id` = '" . $OrderItem->getGlobalProcessId() . "'";
-//        $sql .= " GROUP BY `sum`";
-//        $sql .= " HAVING `invoice_sum` >= " . $OrderItem->getAmountTotalSum();
-//
-//        $result = QUI::getDataBase()->fetchSQL($sql);
-//
-//        $amount = current(current($result));
-//
-//        return $amount >= $OrderItem->getAmountTotalSum();
-//    }
-
     /**
      * Get all open invoices of a user
      *
@@ -161,26 +168,28 @@ class Handler
 
         $Invoices = InvoiceHandler::getInstance();
 
-        $result = QUI::getDataBase()->fetch([
-            'select' => ['id'],
-            'from' => $Invoices->invoiceTable(),
-            'where' => [
-                'paid_status' => [
-                    'type' => 'NOT IN',
-                    'value' => [
-                        QUI\ERP\Constants::PAYMENT_STATUS_PAID,
-                        QUI\ERP\Constants::PAYMENT_STATUS_CANCELED,
-                        QUI\ERP\Constants::PAYMENT_STATUS_DEBIT
-                    ]
-                ],
-//                'time_for_payment' => [
-//                    'type'  => '<=',
-//                    'value' => \date('Y-m-d H:i:s')
-//                ],
-                'customer_id' => $User->getUUID(),
-                'type' => QUI\ERP\Constants::TYPE_INVOICE
-            ]
-        ]);
+        $QueryBuilder = QUI::getQueryBuilder();
+        $result = $QueryBuilder
+            ->select(QUI\Utils\Doctrine::quoteIdentifier('id'))
+            ->from(QUI\Utils\Doctrine::quoteIdentifier($Invoices->invoiceTable()))
+            ->where($QueryBuilder->expr()->notIn(
+                QUI\Utils\Doctrine::quoteIdentifier('paid_status'),
+                ':excludedStatuses'
+            ))
+            ->andWhere($QueryBuilder->expr()->eq(
+                QUI\Utils\Doctrine::quoteIdentifier('customer_id'),
+                ':customerId'
+            ))
+            ->andWhere($QueryBuilder->expr()->eq(QUI\Utils\Doctrine::quoteIdentifier('type'), ':type'))
+            ->setParameter('excludedStatuses', [
+                QUI\ERP\Constants::PAYMENT_STATUS_PAID,
+                QUI\ERP\Constants::PAYMENT_STATUS_CANCELED,
+                QUI\ERP\Constants::PAYMENT_STATUS_DEBIT
+            ], \Doctrine\DBAL\ArrayParameterType::INTEGER)
+            ->setParameter('customerId', $User->getUUID())
+            ->setParameter('type', QUI\ERP\Constants::TYPE_INVOICE)
+            ->executeQuery()
+            ->fetchAllAssociative();
 
         $invoices = [];
 
@@ -322,25 +331,43 @@ class Handler
 
         $Orders = OrderHandler::getInstance();
         $OrderStatusHandler = new OrderStatusHandler();
+        $cancelledStatusId = null;
 
         try {
             $CancelledStatus = $OrderStatusHandler->getCancelledStatus();
 
             if ($CancelledStatus->getId()) {
-                $where['status'] = [
-                    'type' => 'NOT',
-                    'value' => $CancelledStatus->getId()
-                ];
+                $cancelledStatusId = $CancelledStatus->getId();
             }
         } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
         }
 
-        $result = QUI::getDataBase()->fetch([
-            'select' => ['id'],
-            'from' => $Orders->table(),
-            'where' => $where
-        ]);
+        $QueryBuilder = QUI::getQueryBuilder();
+        $QueryBuilder
+            ->select(QUI\Utils\Doctrine::quoteIdentifier('id'))
+            ->from(QUI\Utils\Doctrine::quoteIdentifier($Orders->table()))
+            ->where($QueryBuilder->expr()->notIn(
+                QUI\Utils\Doctrine::quoteIdentifier('paid_status'),
+                ':excludedStatuses'
+            ))
+            ->andWhere($QueryBuilder->expr()->eq(
+                QUI\Utils\Doctrine::quoteIdentifier('customerId'),
+                ':customerId'
+            ))
+            ->andWhere($QueryBuilder->expr()->isNull(QUI\Utils\Doctrine::quoteIdentifier('invoice_id')))
+            ->setParameter('excludedStatuses', $where['paid_status']['value'], \Doctrine\DBAL\ArrayParameterType::INTEGER)
+            ->setParameter('customerId', $User->getUUID());
+
+        if ($cancelledStatusId !== null) {
+            $QueryBuilder->andWhere($QueryBuilder->expr()->neq(
+                QUI\Utils\Doctrine::quoteIdentifier('status'),
+                ':cancelledStatus'
+            ));
+            $QueryBuilder->setParameter('cancelledStatus', $cancelledStatusId);
+        }
+
+        $result = $QueryBuilder->executeQuery()->fetchAllAssociative();
 
         $orders = [];
 
@@ -472,8 +499,8 @@ class Handler
 
         // If no open items exist -> Delete entry from db
         if (empty($items)) {
-            QUI::getDataBase()->delete(
-                self::getTable(),
+            QUI::getDataBaseConnection()->delete(
+                QUI\Utils\Doctrine::quoteIdentifier(self::getTable()),
                 [
                     'userId' => $User->getUUID()
                 ]
@@ -490,20 +517,27 @@ class Handler
 
         // Parse open items to db entry
         foreach ($OpenItemsList->getTotalAmountsByCurrency() as $currency => $values) {
-            QUI::getDataBase()->replace(
-                self::getTable(),
-                [
-                    'userId' => $User->getUUID(),
-                    'customerId' => $customerId,
-                    'net_sum' => $values['netTotal'],
-                    'total_sum' => $values['sumTotal'],
-                    'open_sum' => $values['dueTotal'],
-                    'paid_sum' => $values['paidTotal'],
-                    'vat_sum' => $values['vatTotal'],
-                    'open_items_count' => count($OpenItemsList->getItemsByCurrencyCode($currency)),
-                    'currency' => $currency
-                ]
-            );
+            $data = [
+                'userId' => $User->getUUID(),
+                'customerId' => $customerId,
+                'net_sum' => $values['netTotal'],
+                'total_sum' => $values['sumTotal'],
+                'open_sum' => $values['dueTotal'],
+                'paid_sum' => $values['paidTotal'],
+                'vat_sum' => $values['vatTotal'],
+                'open_items_count' => count($OpenItemsList->getItemsByCurrencyCode($currency)),
+                'currency' => $currency
+            ];
+            $criteria = [
+                'userId' => $User->getUUID(),
+                'currency' => $currency
+            ];
+            $Connection = QUI::getDataBaseConnection();
+            $table = QUI\Utils\Doctrine::quoteIdentifier(self::getTable());
+
+            if ($Connection->update($table, $data, $criteria) === 0) {
+                $Connection->insert($table, $data);
+            }
         }
 
         // Clear cache used in backend administration
@@ -520,124 +554,69 @@ class Handler
     {
         $Grid = new Grid($searchParams);
         $gridParams = $Grid->parseDBParams($searchParams);
-
-        $binds = [];
-        $where = [];
         $countOnly = !empty($searchParams['count']);
+        $QueryBuilder = QUI::getQueryBuilder();
+        $quote = static fn(string $column): string => QUI\Utils\Doctrine::quoteIdentifier($column);
 
         if ($countOnly) {
-            $sql = "SELECT COUNT(*)";
+            $QueryBuilder->select('COUNT(*)');
         } else {
-            $sql = "SELECT *";
+            $QueryBuilder->select('*');
         }
 
-        $sql .= " FROM `" . self::getTable() . "`";
+        $QueryBuilder->from($quote(self::getTable()));
 
         if (!empty($searchParams['search'])) {
-            $searchColumns = [
-                'customerId',
-                'userId'
-            ];
-
-            $whereOr = [];
-
-            foreach ($searchColumns as $searchColumn) {
-                $whereOr[] = '`' . $searchColumn . '` LIKE :search';
-            }
-
-            $where[] = '(' . implode(' OR ', $whereOr) . ')';
-
-            $binds['search'] = [
-                'value' => '%' . $searchParams['search'] . '%',
-                'type' => PDO::PARAM_STR
-            ];
+            $QueryBuilder->andWhere($QueryBuilder->expr()->or(
+                $QueryBuilder->expr()->like($quote('customerId'), ':search'),
+                $QueryBuilder->expr()->like($quote('userId'), ':search')
+            ));
+            $QueryBuilder->setParameter('search', '%' . $searchParams['search'] . '%');
         }
 
         if (!empty($searchParams['currency'])) {
-            $where[] = '`currency` = \'' . Orthos::clear($searchParams['currency']) . '\'';
+            $QueryBuilder->andWhere($QueryBuilder->expr()->eq($quote('currency'), ':currency'));
+            $QueryBuilder->setParameter('currency', $searchParams['currency']);
         }
 
         if (!empty($searchParams['userId'])) {
-            $where[] = '`userId` = \'' . Orthos::clear($searchParams['userId']) . '\'';
+            $QueryBuilder->andWhere($QueryBuilder->expr()->eq($quote('userId'), ':userId'));
+            $QueryBuilder->setParameter('userId', $searchParams['userId']);
         }
 
-        // build WHERE query string
-        if (!empty($where)) {
-            $sql .= " WHERE " . implode(" AND ", $where);
+        $sort = self::resolveOpenItemsSort($searchParams);
+
+        if (!$countOnly) {
+            $QueryBuilder->orderBy($quote($sort['column']), $sort['direction']);
         }
 
-        // ORDER
-        if (!empty($searchParams['sortOn'])) {
-            $sortOn = Orthos::clear($searchParams['sortOn']);
+        if (!$countOnly) {
+            if (!empty($gridParams['limit'])) {
+                $limit = explode(',', (string)$gridParams['limit'], 2);
 
-            switch ($sortOn) {
-                case 'display_net_sum':
-                    $sortOn = 'net_sum';
-                    break;
-
-                case 'display_vat_sum':
-                    $sortOn = 'vat_sum';
-                    break;
-
-                case 'display_total_sum':
-                    $sortOn = 'total_sum';
-                    break;
-
-                case 'display_paid_sum':
-                    $sortOn = 'paid_sum';
-                    break;
-
-                case 'display_open_sum':
-                    $sortOn = 'open_sum';
-                    break;
-
-                case 'currency_code':
-                    $sortOn = 'currency';
-                    break;
-            }
-
-            $order = "ORDER BY " . $sortOn;
-
-            if (!empty($searchParams['sortBy'])) {
-                $order .= " " . Orthos::clear($searchParams['sortBy']);
+                if (isset($limit[1])) {
+                    $QueryBuilder->setFirstResult((int)$limit[0]);
+                    $QueryBuilder->setMaxResults((int)$limit[1]);
+                } else {
+                    $QueryBuilder->setMaxResults((int)$limit[0]);
+                }
             } else {
-                $order .= " ASC";
+                $QueryBuilder->setMaxResults(20);
             }
-
-            $sql .= " " . $order;
-        } else {
-            $sql .= " ORDER BY `userId` DESC";
-        }
-
-        // LIMIT
-        if (!empty($gridParams['limit']) && !$countOnly) {
-            $sql .= " LIMIT " . $gridParams['limit'];
-        } else {
-            if (!$countOnly) {
-                $sql .= " LIMIT " . 20;
-            }
-        }
-
-        $Stmt = QUI::getPDO()->prepare($sql);
-
-        // bind search values
-        foreach ($binds as $var => $bind) {
-            $Stmt->bindValue(':' . $var, $bind['value'], $bind['type']);
         }
 
         try {
-            $Stmt->execute();
-            $result = $Stmt->fetchAll(PDO::FETCH_ASSOC);
+            $Result = $QueryBuilder->executeQuery();
         } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             return [];
         }
 
         if ($countOnly) {
-            return (int)current(current($result));
+            return (int)$Result->fetchOne();
         }
 
-        return array_values($result);
+        return $Result->fetchAllAssociative();
     }
 
     /**

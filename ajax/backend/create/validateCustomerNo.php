@@ -9,12 +9,11 @@
 
 use QUI\ERP\Customer\Customers;
 use QUI\ERP\Customer\NumberRange;
-use QUI\Utils\Security\Orthos;
 
 QUI::getAjax()->registerFunction(
     'package_quiqqer_customer_ajax_backend_create_validateCustomerNo',
     function ($customerNo) {
-        $customerNo = Orthos::clear($customerNo);
+        $customerNo = (string)$customerNo;
 
         try {
             $customerGroupId = Customers::getInstance()->getCustomerGroupId();
@@ -23,12 +22,26 @@ QUI::getAjax()->registerFunction(
             return;
         }
 
-        $sql = "SELECT `id` FROM " . QUI::getUsers()::table();
-        $sql .= " WHERE `username` = '$customerNo' OR (`customerId` = '$customerNo'";
-        $sql .= " AND `usergroup` LIKE '%,$customerGroupId,%')";
-        $sql .= " LIMIT 1";
+        $QueryBuilder = QUI::getQueryBuilder();
+        $username = QUI\Utils\Doctrine::quoteIdentifier('username');
+        $customerId = QUI\Utils\Doctrine::quoteIdentifier('customerId');
+        $usergroup = QUI\Utils\Doctrine::quoteIdentifier('usergroup');
 
-        $result = QUI::getDataBase()->fetchSQL($sql);
+        $result = $QueryBuilder
+            ->select(QUI\Utils\Doctrine::quoteIdentifier('id'))
+            ->from(QUI\Utils\Doctrine::quoteIdentifier(QUI::getUsers()::table()))
+            ->where($QueryBuilder->expr()->or(
+                $QueryBuilder->expr()->eq($username, ':customerNo'),
+                $QueryBuilder->expr()->and(
+                    $QueryBuilder->expr()->eq($customerId, ':customerNo'),
+                    $QueryBuilder->expr()->like($usergroup, ':customerGroup')
+                )
+            ))
+            ->setParameter('customerNo', $customerNo)
+            ->setParameter('customerGroup', '%,' . $customerGroupId . ',%')
+            ->setMaxResults(1)
+            ->executeQuery()
+            ->fetchAssociative();
 
         if (empty($result)) {
             return;

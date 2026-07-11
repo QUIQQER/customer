@@ -185,21 +185,27 @@ class Customers extends Singleton
         $prefix = $NumberRange->getCustomerNoPrefix();
         $customerNo = preg_replace('#^' . $prefix . '#im', '', $customerNo);
 
-        $result = QUI::getDataBase()->fetch([
-            'select' => 'id',
-            'from' => QUI::getUsers()::table(),
-            'where_or' => [
-                'customerId' => $customerNo,
-                'id' => $customerNo
-            ],
-            'limit' => 1
-        ]);
+        $QueryBuilder = QUI::getQueryBuilder();
+        $id = QUI\Utils\Doctrine::quoteIdentifier('id');
+        $customerId = QUI\Utils\Doctrine::quoteIdentifier('customerId');
+
+        $result = $QueryBuilder
+            ->select($id)
+            ->from(QUI\Utils\Doctrine::quoteIdentifier(QUI::getUsers()::table()))
+            ->where($QueryBuilder->expr()->or(
+                $QueryBuilder->expr()->eq($customerId, ':customerNo'),
+                $QueryBuilder->expr()->eq($id, ':customerNo')
+            ))
+            ->setParameter('customerNo', $customerNo)
+            ->setMaxResults(1)
+            ->executeQuery()
+            ->fetchAssociative();
 
         if (empty($result)) {
             throw new Exception('Customer with customer no. ' . $customerNo . ' not found.', 404);
         }
 
-        return QUI::getUsers()->get($result[0]['id']);
+        return QUI::getUsers()->get($result['id']);
     }
 
     /**
@@ -769,8 +775,8 @@ class Customers extends Singleton
 
         $User->setAttribute('history', $history);
 
-        QUI::getDataBase()->update(
-            Manager::table(),
+        QUI::getDataBaseConnection()->update(
+            QUI\Utils\Doctrine::quoteIdentifier(Manager::table()),
             ['history' => $history],
             ['uuid' => $User->getUUID()]
         );
