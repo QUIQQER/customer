@@ -21,6 +21,9 @@
                     <type><![CDATA[boolean]]></type>
                     <defaultvalue>1</defaultvalue>
                 </conf>
+                <conf name="defaultPaymentMethod">
+                    <type><![CDATA[string]]></type>
+                </conf>
             </section>
 
             <section name="openItems">
@@ -84,6 +87,19 @@
                             </text>
                             <description>
                                 <locale group="quiqqer/customer" var="customer.settings.setCustomerNoAtOrder.description"/>
+                            </description>
+                        </input>
+
+                        <input conf="customer.defaultPaymentMethod"
+                               data-qui="package/quiqqer/customer/bin/backend/controls/settings/CustomerPaymentSelect"
+                               data-qui-options-max="1"
+                        >
+                            <text>
+                                <locale group="quiqqer/customer" var="customer.settings.defaultPaymentMethod"/>
+                            </text>
+                            <description>
+                                <locale group="quiqqer/customer"
+                                        var="customer.settings.defaultPaymentMethod.description"/>
                             </description>
                         </input>
 

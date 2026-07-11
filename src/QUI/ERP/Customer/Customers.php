@@ -87,6 +87,14 @@ class Customers extends Singleton
 
         $User->setAttribute('customerId', $customerId);
         $User->setAttribute('mainGroup', $this->getCustomerGroupId());
+
+        if (QUI::getPackageManager()->isInstalled('quiqqer/payments')) {
+            $defaultPaymentMethod = QUI::getPackage('quiqqer/customer')
+                ->getConfig()?->getValue('customer', 'defaultPaymentMethod');
+
+            $this->setDefaultPaymentMethod($User, $defaultPaymentMethod);
+        }
+
         $User->save();
 
         if (!empty($address)) {
@@ -146,6 +154,20 @@ class Customers extends Singleton
         $User->save();
 
         return $User;
+    }
+
+    /**
+     * Set the configured default payment method for a newly created customer.
+     */
+    protected function setDefaultPaymentMethod(
+        QUI\Interfaces\Users\User $User,
+        mixed $defaultPaymentMethod
+    ): void {
+        if (empty($defaultPaymentMethod)) {
+            return;
+        }
+
+        $User->setAttribute('quiqqer.erp.standard.payment', $defaultPaymentMethod);
     }
 
     /**
