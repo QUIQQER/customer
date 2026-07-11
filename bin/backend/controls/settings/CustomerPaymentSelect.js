@@ -4,57 +4,77 @@
  * @module package/quiqqer/customer/bin/backend/controls/settings/CustomerPaymentSelect
  */
 define('package/quiqqer/customer/bin/backend/controls/settings/CustomerPaymentSelect', [
-    'qui/QUI',
-    'qui/controls/Control',
+    'qui/controls/elements/Select',
     'Packages',
     'Locale'
-], function (QUI, QUIControl, Packages, QUILocale) {
+], function (QUIElementSelect, Packages, QUILocale) {
     'use strict';
 
     const lg = 'quiqqer/customer';
+    const paymentSelect = 'package/quiqqer/payments/bin/backend/controls/Select';
 
     return new Class({
-        Extends: QUIControl,
+        Extends: QUIElementSelect,
         Type: 'package/quiqqer/customer/bin/backend/controls/settings/CustomerPaymentSelect',
 
         Binds: [
-            '$disableInput',
-            '$onImport'
+            '$onImport',
+            '$renderDisabled',
+            '$renderPaymentSelect'
         ],
 
         initialize: function (options, Input) {
-            this.parent(options);
+            this.parent(options, Input);
 
-            this.$Input = Input;
-
-            this.addEvents({
-                onImport: this.$onImport
-            });
+            this.setAttribute('icon', 'fa fa-credit-card-alt');
         },
 
         $onImport: function () {
+            const Elm = this.getElm();
+
+            if (Elm && Elm.nodeName === 'INPUT') {
+                this.$Input = Elm;
+                this.$Input.disabled = true;
+            }
+
             Packages.isInstalled('quiqqer/payments').then((isInstalled) => {
                 if (!isInstalled) {
-                    this.$disableInput();
+                    this.$renderDisabled();
                     return;
                 }
 
-                this.$Input.set(
-                    'data-qui',
-                    'package/quiqqer/payments/bin/backend/controls/Select'
-                );
-                this.$Input.removeProperty('data-quiid');
-
-                QUI.parse(this.$Input.getParent());
-            }).catch(this.$disableInput);
+                this.$renderPaymentSelect();
+            }).catch(this.$renderDisabled);
         },
 
-        $disableInput: function () {
-            this.$Input.disabled = true;
-            this.$Input.value = QUILocale.get(
-                lg,
-                'customer.settings.defaultPaymentMethod.paymentsMissing'
+        $renderPaymentSelect: function () {
+            require([paymentSelect], (PaymentSelect) => {
+                this.setAttribute(
+                    'child',
+                    'package/quiqqer/payments/bin/backend/controls/SelectItem'
+                );
+                this.setAttribute('Search', PaymentSelect.prototype.paymentSearch.bind(this));
+                this.addEvent(
+                    'onSearchButtonClick',
+                    PaymentSelect.prototype.$onSearchButtonClick.bind(this)
+                );
+
+                if (this.$Input) {
+                    this.$Input.disabled = false;
+                }
+
+                QUIElementSelect.prototype.$onImport.call(this);
+            }, this.$renderDisabled);
+        },
+
+        $renderDisabled: function () {
+            this.setAttribute(
+                'placeholder',
+                QUILocale.get(lg, 'customer.settings.defaultPaymentMethod.paymentsMissing')
             );
+
+            QUIElementSelect.prototype.$onImport.call(this);
+            this.disable();
         }
     });
 });
