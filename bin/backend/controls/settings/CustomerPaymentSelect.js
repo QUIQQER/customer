@@ -64,6 +64,7 @@ define('package/quiqqer/customer/bin/backend/controls/settings/CustomerPaymentSe
                 }
 
                 QUIElementSelect.prototype.$onImport.call(this);
+                this.$applyFlexLayout();
             }, this.$renderDisabled);
         },
 
@@ -74,7 +75,28 @@ define('package/quiqqer/customer/bin/backend/controls/settings/CustomerPaymentSe
             );
 
             QUIElementSelect.prototype.$onImport.call(this);
+            this.$applyFlexLayout();
             this.disable();
+        },
+
+        $applyFlexLayout: function () {
+            this.$Elm.setStyles({
+                alignItems: 'stretch',
+                display: 'flex'
+            });
+            this.$List.setStyles({
+                flex: 1,
+                height: 'auto'
+            });
+            this.$Search.setStyles({
+                flex: 1,
+                height: 'auto'
+            });
+            this.$Icon.setStyles({
+                bottom: 'auto',
+                top: '50%',
+                transform: 'translateY(-50%)'
+            });
         }
     });
 });
