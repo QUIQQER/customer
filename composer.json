@@ -2,7 +2,7 @@
     "name": "quiqqer/customer",
     "type": "quiqqer-module",
     "description": "With the customer administration you extend QUIQQER by a simpler administration of your customers.",
-    "license": "GPL-3.0+",
+    "license": "GPL-3.0-or-later",
     "authors": [
         {
             "name": "Henning Leutz",
@@ -16,8 +16,8 @@
         "url": "https://www.pcsg.de"
     },
     "require": {
-        "php": "^8",
-        "quiqqer/core": "^2",
+        "php": "^8.2",
+        "quiqqer/core": "^2.25",
         "quiqqer/erp": "^3.2 || ^4.0.1",
         "quiqqer/payment-transactions": "^2",
         "quiqqer/backendsearch": "^2.1"
