@@ -2,26 +2,26 @@
 <database>
     <global>
         <table name="users">
-            <field type="VARCHAR(255) NULL">customerId</field>
-            <field type="VARCHAR(255) NULL">mainGroup</field>
-            <field type="text NULL">comments</field>
-            <field type="text NULL">history</field>
+            <field type="string" length="255" nullable="true">customerId</field>
+            <field type="string" length="255" nullable="true">mainGroup</field>
+            <field type="text" nullable="true">comments</field>
+            <field type="text" nullable="true">history</field>
 
             <primary>id</primary>
         </table>
 
         <table name="customer_open_items">
-            <field type="VARCHAR(50) NOT NULL">userId</field>
-            <field type="VARCHAR(255) NULL DEFAULT NULL">customerId</field>
+            <field type="string" length="50">userId</field>
+            <field type="string" length="255" nullable="true" default="null">customerId</field>
 
-            <field type="FLOAT NOT NULL DEFAULT 0">net_sum</field>
-            <field type="FLOAT NOT NULL DEFAULT 0">vat_sum</field>
-            <field type="FLOAT NOT NULL DEFAULT 0">total_sum</field>
-            <field type="FLOAT NOT NULL DEFAULT 0">paid_sum</field>
-            <field type="FLOAT NOT NULL DEFAULT 0">open_sum</field>
+            <field type="float" default="0">net_sum</field>
+            <field type="float" default="0">vat_sum</field>
+            <field type="float" default="0">total_sum</field>
+            <field type="float" default="0">paid_sum</field>
+            <field type="float" default="0">open_sum</field>
 
-            <field type="SMALLINT UNSIGNED NOT NULL DEFAULT 0">open_items_count</field>
-            <field type="VARCHAR(10) NULL DEFAULT NULL">currency</field>
+            <field type="smallint" default="0">open_items_count</field>
+            <field type="string" length="10" nullable="true" default="null">currency</field>
 
             <primary>userId,currency</primary>
         </table>
