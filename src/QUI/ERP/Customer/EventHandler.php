@@ -344,8 +344,8 @@ class EventHandler
         if (!empty($data)) {
             // saving
             try {
-                QUI::getDataBase()->update(
-                    Manager::table(),
+                QUI::getDataBaseConnection()->update(
+                    QUI\Utils\Doctrine::quoteIdentifier(Manager::table()),
                     $data,
                     ['uuid' => $User->getUUID()]
                 );
@@ -604,10 +604,24 @@ class EventHandler
         $Console->writeLn('- Migrate customer open items');
 
         $customerOpenItemsTable = QUI::getDBTableName('customer_open_items');
+        $SchemaManager = QUI::getSchemaManager();
+        $Table = $SchemaManager->introspectTable($customerOpenItemsTable);
 
-        QUI::getDataBaseConnection()->executeStatement(
-            'ALTER TABLE `' . $customerOpenItemsTable . '` CHANGE `userId` `userId` VARCHAR(50) NOT NULL;'
-        );
+        if ($Table->hasColumn('userId')) {
+            $CurrentColumn = $Table->getColumn('userId');
+            $TargetColumn = new \Doctrine\DBAL\Schema\Column(
+                'userId',
+                \Doctrine\DBAL\Types\Type::getType('string'),
+                ['length' => 50, 'notnull' => true]
+            );
+
+            $SchemaManager->alterTable(new \Doctrine\DBAL\Schema\TableDiff(
+                $Table,
+                changedColumns: [
+                    'userId' => new \Doctrine\DBAL\Schema\ColumnDiff($CurrentColumn, $TargetColumn)
+                ]
+            ));
+        }
 
         QUI\Utils\MigrationV1ToV2::migrateUsers(
             $customerOpenItemsTable,
@@ -621,9 +635,12 @@ class EventHandler
         $userTable = QUI::getUsers()->table();
         $tableAddresses = QUI::getUsers()->tableAddress();
 
-        $result = QUI::getDataBase()->fetch([
-            'from' => $userTable
-        ]);
+        $QueryBuilder = QUI::getQueryBuilder();
+        $result = $QueryBuilder
+            ->select('*')
+            ->from(QUI\Utils\Doctrine::quoteIdentifier($userTable))
+            ->executeQuery()
+            ->fetchAllAssociative();
 
         foreach ($result as $entry) {
             $extra = json_decode($entry['extra'], true);
@@ -631,12 +648,18 @@ class EventHandler
             if (!empty($extra['quiqqer.erp.customer.contact.person'])) {
                 if (is_numeric($extra['quiqqer.erp.customer.contact.person'])) {
                     try {
-                        $addressData = QUI::getDataBase()->fetch([
-                            'from' => $tableAddresses,
-                            'where' => [
-                                'id' => $extra['quiqqer.erp.customer.contact.person']
-                            ]
-                        ]);
+                        $QueryBuilder = QUI::getQueryBuilder();
+                        $addressData = $QueryBuilder
+                            ->select('*')
+                            ->from(QUI\Utils\Doctrine::quoteIdentifier($tableAddresses))
+                            ->where($QueryBuilder->expr()->eq(
+                                QUI\Utils\Doctrine::quoteIdentifier('id'),
+                                ':addressId'
+                            ))
+                            ->setParameter('addressId', $extra['quiqqer.erp.customer.contact.person'])
+                            ->setMaxResults(1)
+                            ->executeQuery()
+                            ->fetchAllAssociative();
 
                         if (count($addressData)) {
                             $extra['quiqqer.erp.customer.contact.person'] = $addressData[0]['uuid'];
@@ -649,12 +672,18 @@ class EventHandler
             if (!empty($extra['quiqqer.erp.address'])) {
                 if (is_numeric($extra['quiqqer.erp.address'])) {
                     try {
-                        $addressData = QUI::getDataBase()->fetch([
-                            'from' => $tableAddresses,
-                            'where' => [
-                                'id' => $extra['quiqqer.erp.address']
-                            ]
-                        ]);
+                        $QueryBuilder = QUI::getQueryBuilder();
+                        $addressData = $QueryBuilder
+                            ->select('*')
+                            ->from(QUI\Utils\Doctrine::quoteIdentifier($tableAddresses))
+                            ->where($QueryBuilder->expr()->eq(
+                                QUI\Utils\Doctrine::quoteIdentifier('id'),
+                                ':addressId'
+                            ))
+                            ->setParameter('addressId', $extra['quiqqer.erp.address'])
+                            ->setMaxResults(1)
+                            ->executeQuery()
+                            ->fetchAllAssociative();
 
                         if (count($addressData)) {
                             $extra['quiqqer.erp.address'] = $addressData[0]['uuid'];
@@ -676,8 +705,8 @@ class EventHandler
             }
 
             try {
-                QUI::getDataBase()->update(
-                    $userTable,
+                QUI::getDataBaseConnection()->update(
+                    QUI\Utils\Doctrine::quoteIdentifier($userTable),
                     ['extra' => json_encode($extra)],
                     ['id' => $entry['id']]
                 );

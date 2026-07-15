@@ -55,6 +55,24 @@
             <de><![CDATA[Kundengruppe]]></de>
             <en><![CDATA[Customer group]]></en>
         </locale>
+        <locale name="customer.settings.defaultPaymentMethod">
+            <de><![CDATA[Standard-Zahlungsart für neue Kunden]]></de>
+            <en><![CDATA[Default payment method for new customers]]></en>
+        </locale>
+        <locale name="customer.settings.defaultPaymentMethod.description">
+            <de><![CDATA[
+            Diese Zahlungsart wird bei neuen Kunden vorausgewählt. Bleibt das Feld leer, wird keine
+            Standard-Zahlungsart gesetzt.
+            ]]></de>
+            <en><![CDATA[
+            This payment method is preselected for new customers. If the field is left empty, no default
+            payment method is set.
+            ]]></en>
+        </locale>
+        <locale name="customer.settings.defaultPaymentMethod.paymentsMissing">
+            <de><![CDATA[Das Paket quiqqer/payments ist nicht installiert.]]></de>
+            <en><![CDATA[The quiqqer/payments package is not installed.]]></en>
+        </locale>
         <locale name="customer.group.name">
             <de><![CDATA[Kunden]]></de>
             <en><![CDATA[Customers]]></en>
