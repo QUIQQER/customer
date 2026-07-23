@@ -36,6 +36,7 @@
             <erpOutput src="\QUI\ERP\Customer\OpenItemsList\OutputProvider"/>
             <erp src="\QUI\ERP\Customer\ErpProvider"/>
             <desktopSearch src="\QUI\ERP\Customer\BackendSearchProvider"/>
+            <erpDemoDataProvider src="\QUI\ERP\Customer\DemoData\CustomerDemoDataProvider"/>
         </provider>
     </package>
 </quiqqer>

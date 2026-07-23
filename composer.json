@@ -19,6 +19,7 @@
         "php": "^8.2",
         "quiqqer/core": "^2.25",
         "quiqqer/erp": "^3.2 || ^4.0.1",
+        "quiqqer/erp-demo-data": "dev-feat/demo-data-provider-infrastructure",
         "quiqqer/payment-transactions": "^2",
         "quiqqer/backendsearch": "^2.1"
     },
