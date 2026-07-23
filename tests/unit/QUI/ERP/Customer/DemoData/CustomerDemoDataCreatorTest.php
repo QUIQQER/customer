@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace QUI\ERP\Customer\DemoData;
 
 use PHPUnit\Framework\TestCase;
-use QUI\Exception;
 use QUI\ERP\DemoData\DTO\DemoDataCreationContext;
 use QUI\ERP\DemoData\DTO\DemoDataReferenceCollection;
 use QUI\ERP\Customer\Customers;
@@ -13,7 +12,7 @@ use QUI\Interfaces\Users\User;
 
 final class CustomerDemoDataCreatorTest extends TestCase
 {
-    public function testReturnsStableReferencesForExistingCustomers(): void
+    public function testReturnsReferencesForCreatedCustomers(): void
     {
         $privateCustomer = $this->createMock(User::class);
         $privateCustomer->method('getUUID')->willReturn('private-customer-uuid');
@@ -23,12 +22,8 @@ final class CustomerDemoDataCreatorTest extends TestCase
 
         $customers = $this->createMock(Customers::class);
         $customers->expects($this->exactly(2))
-            ->method('getCustomerByCustomerNo')
-            ->willReturnMap([
-                ['100000', $privateCustomer],
-                ['100001', $businessCustomer]
-            ]);
-        $customers->expects($this->never())->method('createCustomer');
+            ->method('createCustomer')
+            ->willReturnOnConsecutiveCalls($privateCustomer, $businessCustomer);
 
         $creator = new CustomerDemoDataCreator($customers);
         $demoData = $creator->createDemoData(new DemoDataCreationContext(new DemoDataReferenceCollection()));
@@ -39,27 +34,5 @@ final class CustomerDemoDataCreatorTest extends TestCase
         self::assertSame('private_customer', $demoData->all()[0]->referenceKey);
         self::assertSame('business-customer-uuid', $demoData->all()[1]->entityUuid);
         self::assertSame('business_customer', $demoData->all()[1]->referenceKey);
-    }
-
-    public function testCreatesCustomersWhenTheDemoCustomerDoesNotExist(): void
-    {
-        $privateCustomer = $this->createMock(User::class);
-        $privateCustomer->method('getUUID')->willReturn('private-customer-uuid');
-
-        $businessCustomer = $this->createMock(User::class);
-        $businessCustomer->method('getUUID')->willReturn('business-customer-uuid');
-
-        $customers = $this->createMock(Customers::class);
-        $customers->expects($this->exactly(2))
-            ->method('getCustomerByCustomerNo')
-            ->willThrowException(new Exception('Customer not found.', 404));
-        $customers->expects($this->exactly(2))
-            ->method('createCustomer')
-            ->willReturnOnConsecutiveCalls($privateCustomer, $businessCustomer);
-
-        $creator = new CustomerDemoDataCreator($customers);
-        $demoData = $creator->createDemoData(new DemoDataCreationContext(new DemoDataReferenceCollection()));
-
-        self::assertCount(2, $demoData->all());
     }
 }
