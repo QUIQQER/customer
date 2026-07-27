@@ -7,14 +7,13 @@ namespace QUI\ERP\Customer\DemoData;
 use QUI\Exception;
 use QUI\ERP\Customer\Customers;
 use QUI\ERP\DemoData\Contract\DemoDataCreatorInterface;
-use QUI\ERP\DemoData\Contract\DemoDataDeletionCreatorInterface;
 use QUI\ERP\DemoData\DTO\CreatedDemoData;
 use QUI\ERP\DemoData\DTO\CreatedDemoDataCollection;
 use QUI\ERP\DemoData\DTO\DemoDataCreationContext;
 use QUI\ERP\DemoData\DTO\DemoDataReferenceCollection;
 use QUI\Interfaces\Users\User;
 
-final readonly class CustomerDemoDataCreator implements DemoDataCreatorInterface, DemoDataDeletionCreatorInterface
+final readonly class CustomerDemoDataCreator implements DemoDataCreatorInterface
 {
     private const PRIVATE_CUSTOMER_ID = 100000;
     private const BUSINESS_CUSTOMER_ID = 100001;
