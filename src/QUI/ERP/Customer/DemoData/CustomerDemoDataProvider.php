@@ -21,7 +21,7 @@ final class CustomerDemoDataProvider implements DemoDataProviderInterface
     {
         $locale ??= \QUI::getLocale();
 
-        return (string)$locale->get('quiqqer/customer', 'package.title');
+        return (string)$locale->get('quiqqer/customer', 'demo_data.provider.title');
     }
 
     public function getDemoDataCreator(Connection $connection): DemoDataCreatorInterface
