@@ -15,8 +15,9 @@ use QUI\Interfaces\Users\User;
 
 final readonly class CustomerDemoDataCreator implements DemoDataCreatorInterface
 {
-    private const PRIVATE_CUSTOMER_ID = 100000;
-    private const BUSINESS_CUSTOMER_ID = 100001;
+    private const CUSTOMER_NUMBER_MIN = 100000;
+    private const CUSTOMER_NUMBER_MAX = 999999;
+    private const CUSTOMER_NUMBER_ATTEMPTS = 10;
 
     public function __construct(private Customers $customers)
     {
@@ -30,7 +31,6 @@ final readonly class CustomerDemoDataCreator implements DemoDataCreatorInterface
     public function createDemoData(DemoDataCreationContext $context): CreatedDemoDataCollection
     {
         $privateCustomer = $this->createCustomer(
-            self::PRIVATE_CUSTOMER_ID,
             [
                 'salutation' => 'Mr',
                 'firstname' => 'Max',
@@ -43,7 +43,6 @@ final readonly class CustomerDemoDataCreator implements DemoDataCreatorInterface
         );
 
         $businessCustomer = $this->createCustomer(
-            self::BUSINESS_CUSTOMER_ID,
             [
                 'salutation' => 'Ms',
                 'firstname' => 'Erika',
@@ -82,8 +81,22 @@ final readonly class CustomerDemoDataCreator implements DemoDataCreatorInterface
     /**
      * @param array<string, string> $address
      */
-    private function createCustomer(int $customerId, array $address): User
+    private function createCustomer(array $address): User
     {
-        return $this->customers->createCustomer($customerId, $address);
+        for ($attempt = 0; $attempt < self::CUSTOMER_NUMBER_ATTEMPTS; $attempt++) {
+            $customerNumber = random_int(self::CUSTOMER_NUMBER_MIN, self::CUSTOMER_NUMBER_MAX);
+
+            try {
+                $this->customers->getCustomerByCustomerNo((string)$customerNumber);
+            } catch (Exception $exception) {
+                if ($exception->getCode() === 404) {
+                    return $this->customers->createCustomer($customerNumber, $address);
+                }
+
+                throw $exception;
+            }
+        }
+
+        throw new Exception('Could not generate a free demo data customer number.');
     }
 }

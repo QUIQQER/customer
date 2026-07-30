@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace QUI\ERP\Customer\DemoData;
 
 use PHPUnit\Framework\TestCase;
+use QUI\Exception;
 use QUI\ERP\DemoData\DTO\DemoDataCreationContext;
 use QUI\ERP\DemoData\DTO\DemoDataReferenceCollection;
 use QUI\ERP\Customer\Customers;
@@ -22,7 +23,14 @@ final class CustomerDemoDataCreatorTest extends TestCase
 
         $customers = $this->createMock(Customers::class);
         $customers->expects($this->exactly(2))
+            ->method('getCustomerByCustomerNo')
+            ->willThrowException(new Exception('Customer not found.', 404));
+        $customers->expects($this->exactly(2))
             ->method('createCustomer')
+            ->with(
+                $this->callback(static fn (int $customerNumber): bool => $customerNumber >= 100000 && $customerNumber <= 999999),
+                $this->isType('array')
+            )
             ->willReturnOnConsecutiveCalls($privateCustomer, $businessCustomer);
 
         $creator = new CustomerDemoDataCreator($customers);

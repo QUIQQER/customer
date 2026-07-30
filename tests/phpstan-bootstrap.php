@@ -29,3 +29,10 @@ require_once __DIR__ . '/stubs/QUI/ERP/Order/Controls/OrderProcess/CustomerData.
 require_once __DIR__ . '/stubs/QUI/UserDownloads/Exception.php';
 require_once __DIR__ . '/stubs/QUI/UserDownloads/DownloadEntry.php';
 require_once __DIR__ . '/stubs/QUI/UserDownloads/Handler.php';
+require_once __DIR__ . '/stubs/QUI/ERP/DemoData/Contract/DemoDataCreatorInterface.php';
+require_once __DIR__ . '/stubs/QUI/ERP/DemoData/Contract/DemoDataProviderInterface.php';
+require_once __DIR__ . '/stubs/QUI/ERP/DemoData/DTO/CreatedDemoData.php';
+require_once __DIR__ . '/stubs/QUI/ERP/DemoData/DTO/CreatedDemoDataCollection.php';
+require_once __DIR__ . '/stubs/QUI/ERP/DemoData/DTO/DemoDataCreationContext.php';
+require_once __DIR__ . '/stubs/QUI/ERP/DemoData/DTO/DemoDataReference.php';
+require_once __DIR__ . '/stubs/QUI/ERP/DemoData/DTO/DemoDataReferenceCollection.php';
