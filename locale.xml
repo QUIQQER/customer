@@ -6,6 +6,10 @@
             <de><![CDATA[QUIQQER - ERP - Kunden]]></de>
             <en><![CDATA[QUIQQER - ERP - Customer]]></en>
         </locale>
+        <locale name="demo_data.provider.title">
+            <de><![CDATA[Kunden]]></de>
+            <en><![CDATA[Customers]]></en>
+        </locale>
         <locale name="package.description">
             <de><![CDATA[
             Mit dem E-COYN Kunden Modul verwaltest du all deine Kunden an einer zentralen Stelle.
