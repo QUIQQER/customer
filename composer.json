@@ -24,7 +24,7 @@
     },
     "suggest": {
         "quiqqer/user-downloads": "^1",
-        "quiqqer/erp-demo-data": "dev-feat/demo-data-provider-infrastructure"
+        "quiqqer/erp-demo-data": "Create demo customers"
     },
     "autoload": {
         "psr-4": {
