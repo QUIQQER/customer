@@ -22,16 +22,27 @@ final class CustomerDemoDataCreatorTest extends TestCase
         $businessCustomer->method('getUUID')->willReturn('business-customer-uuid');
 
         $customers = $this->createMock(Customers::class);
-        $customers->expects($this->exactly(2))
+        $customers->expects($this->exactly(10))
             ->method('getCustomerByCustomerNo')
             ->willThrowException(new Exception('Customer not found.', 404));
-        $customers->expects($this->exactly(2))
+        $customers->expects($this->exactly(10))
             ->method('createCustomer')
             ->with(
                 $this->callback(static fn (int $customerNumber): bool => $customerNumber >= 100000 && $customerNumber <= 999999),
                 $this->isType('array')
             )
-            ->willReturnOnConsecutiveCalls($privateCustomer, $businessCustomer);
+            ->willReturnOnConsecutiveCalls(
+                $privateCustomer,
+                $businessCustomer,
+                $privateCustomer,
+                $privateCustomer,
+                $privateCustomer,
+                $privateCustomer,
+                $privateCustomer,
+                $privateCustomer,
+                $privateCustomer,
+                $privateCustomer
+            );
 
         $creator = new CustomerDemoDataCreator($customers);
         $demoData = $creator->createDemoData(new DemoDataCreationContext(new DemoDataReferenceCollection()));
@@ -42,5 +53,7 @@ final class CustomerDemoDataCreatorTest extends TestCase
         self::assertSame('private_customer', $demoData->all()[0]->referenceKey);
         self::assertSame('business-customer-uuid', $demoData->all()[1]->entityUuid);
         self::assertSame('business_customer', $demoData->all()[1]->referenceKey);
+        self::assertCount(10, $demoData->all());
+        self::assertSame('customer_10', $demoData->all()[9]->referenceKey);
     }
 }
