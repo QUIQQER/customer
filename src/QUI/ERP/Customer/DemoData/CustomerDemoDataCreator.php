@@ -30,35 +30,30 @@ final readonly class CustomerDemoDataCreator implements DemoDataCreatorInterface
 
     public function createDemoData(DemoDataCreationContext $context): CreatedDemoDataCollection
     {
-        $privateCustomer = $this->createCustomer(
-            [
+        $createdDemoData = [];
+
+        for ($index = 0; $index < 10; $index++) {
+            $isBusinessCustomer = $index % 2 === 1;
+            $customer = $this->createCustomer([
                 'salutation' => 'Mr',
-                'firstname' => 'Max',
-                'lastname' => 'Mustermann',
-                'street_no' => 'Musterstraße 1',
+                'firstname' => $isBusinessCustomer ? 'Erika' : 'Max',
+                'lastname' => 'Demo ' . ($index + 1),
+                'company' => $isBusinessCustomer ? 'Demo Company ' . ($index + 1) : '',
+                'street_no' => 'Demo Street ' . ($index + 1),
                 'zip' => '12345',
-                'city' => 'Musterstadt',
+                'city' => 'Demo City',
                 'country' => 'DE'
-            ]
-        );
+            ]);
+            $referenceKey = match ($index) {
+                0 => 'private_customer',
+                1 => 'business_customer',
+                default => 'customer_' . ($index + 1)
+            };
 
-        $businessCustomer = $this->createCustomer(
-            [
-                'salutation' => 'Ms',
-                'firstname' => 'Erika',
-                'lastname' => 'Musterfrau',
-                'company' => 'Muster GmbH',
-                'street_no' => 'Beispielweg 2',
-                'zip' => '54321',
-                'city' => 'Beispielstadt',
-                'country' => 'DE'
-            ]
-        );
+            $createdDemoData[] = new CreatedDemoData('customer', (string)$customer->getUUID(), $referenceKey);
+        }
 
-        return new CreatedDemoDataCollection([
-            new CreatedDemoData('customer', (string)$privateCustomer->getUUID(), 'private_customer'),
-            new CreatedDemoData('customer', (string)$businessCustomer->getUUID(), 'business_customer')
-        ]);
+        return new CreatedDemoDataCollection($createdDemoData);
     }
 
     public function deleteDemoData(DemoDataReferenceCollection $demoData): void
