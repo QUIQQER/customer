@@ -23,7 +23,8 @@
         "quiqqer/backendsearch": "^2.1"
     },
     "suggest": {
-        "quiqqer/user-downloads": "^1"
+        "quiqqer/user-downloads": "^1",
+        "quiqqer/erp-demo-data": "Create demo customers"
     },
     "autoload": {
         "psr-4": {
