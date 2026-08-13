@@ -262,15 +262,20 @@ final class CustomerLifecycleTest extends TestCase
         EventHandler::onFrontendUserDataMiddle($Collector, $User, $StandardAddress);
         self::assertIsString($Collector->getContent());
 
-        $Order = $this->createMock(QUI\ERP\Order\AbstractOrder::class);
-        $Order->method('getCustomer')->willReturn(QUI\ERP\User::convertUserToErpUser($User));
-        (new ReflectionMethod(EventHandler::class, 'addOrderCustomerToCustomerGroup'))
-            ->invoke(null, $Order);
-        self::assertTrue($User->isInGroup($Customers->getCustomerGroupId()));
+        if (
+            class_exists(QUI\ERP\Order\AbstractOrder::class)
+            && class_exists(QUI\ERP\Order\Controls\OrderProcess\CustomerData::class)
+        ) {
+            $Order = $this->createMock(QUI\ERP\Order\AbstractOrder::class);
+            $Order->method('getCustomer')->willReturn(QUI\ERP\User::convertUserToErpUser($User));
+            (new ReflectionMethod(EventHandler::class, 'addOrderCustomerToCustomerGroup'))
+                ->invoke(null, $Order);
+            self::assertTrue($User->isInGroup($Customers->getCustomerGroupId()));
 
-        $Step = $this->createMock(QUI\ERP\Order\Controls\OrderProcess\CustomerData::class);
-        $Step->method('getOrder')->willReturn($Order);
-        EventHandler::onQuiqqerOrderCustomerDataSaveEnd($Step);
+            $Step = $this->createMock(QUI\ERP\Order\Controls\OrderProcess\CustomerData::class);
+            $Step->method('getOrder')->willReturn($Order);
+            EventHandler::onQuiqqerOrderCustomerDataSaveEnd($Step);
+        }
 
         $customerLogin = !empty(QUI::getPackage('quiqqer/customer')
             ->getConfig()?->getValue('customer', 'customerLogin'));
