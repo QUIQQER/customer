@@ -2,18 +2,20 @@
     "name": "quiqqer/customer",
     "type": "quiqqer-module",
     "description": "With the customer administration you extend QUIQQER by a simpler administration of your customers.",
+    "homepage": "https://www.quiqqer.com",
     "license": "GPL-3.0-or-later",
     "authors": [
         {
-            "name": "Henning Leutz",
-            "email": "leutz@pcsg.de",
-            "homepage": "https://www.pcsg.de",
-            "role": "Developer"
+            "name": "PCSG - Computer & Internet Service OHG",
+            "email": "info@quiqqer.com",
+            "homepage": "https://www.quiqqer.com",
+            "role": "Maintainer"
         }
     ],
     "support": {
-        "email": "support@pcsg.de",
-        "url": "https://www.pcsg.de"
+        "email": "support@quiqqer.com",
+        "source": "https://dev.quiqqer.com/quiqqer/customer",
+        "issues": "https://dev.quiqqer.com/quiqqer/customer/-/issues"
     },
     "require": {
         "php": "^8.2",
@@ -23,7 +25,8 @@
         "quiqqer/backendsearch": "^2.1"
     },
     "suggest": {
-        "quiqqer/user-downloads": "^1"
+        "quiqqer/user-downloads": "^1",
+        "quiqqer/erp-demo-data": "Create demo customers"
     },
     "autoload": {
         "psr-4": {

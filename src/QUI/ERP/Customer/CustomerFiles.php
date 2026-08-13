@@ -75,14 +75,17 @@ class CustomerFiles
                         continue;
                     }
 
-                    if (file_exists($fileUuidDir . $file)) {
-                        unlink($fileUuidDir . $file);
+                    $legacyFile = $fileDir . DIRECTORY_SEPARATOR . $file;
+                    $uuidFile = $fileUuidDir . DIRECTORY_SEPARATOR . $file;
+
+                    if (file_exists($uuidFile)) {
+                        unlink($legacyFile);
                         continue;
                     }
 
                     rename(
-                        $fileDir . $file,
-                        $fileUuidDir . $file
+                        $legacyFile,
+                        $uuidFile
                     );
                 }
 
@@ -499,14 +502,6 @@ class CustomerFiles
         foreach (QUI::availableLanguages() as $lang) {
             $title = $Locale->getByLang($lang, 'quiqqer/customer', 'DownloadEntry.title');
             $description = $Locale->getByLang($lang, 'quiqqer/customer', 'DownloadEntry.description');
-
-            if (!is_string($title)) {
-                $title = '';
-            }
-
-            if (!is_string($description)) {
-                $description = '';
-            }
 
             $DownloadEntry->setTitle($lang, $title);
             $DownloadEntry->setDescription(

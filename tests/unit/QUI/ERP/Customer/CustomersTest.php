@@ -8,6 +8,30 @@ use ReflectionMethod;
 
 class CustomersTest extends TestCase
 {
+    public function testStandardAddressIsCreatedWhenMissing(): void
+    {
+        $Customers = (new ReflectionClass(Customers::class))->newInstanceWithoutConstructor();
+        $Method = new ReflectionMethod(Customers::class, 'getOrCreateStandardAddress');
+        $Address = $this->createMock(\QUI\Users\Address::class);
+        $User = $this->createMock(\QUI\Interfaces\Users\User::class);
+        $User->method('getStandardAddress')->willReturn(null);
+        $User->method('addAddress')->willReturn($Address);
+
+        $this->assertSame($Address, $Method->invoke($Customers, $User));
+    }
+
+    public function testMissingStandardAddressCreationIsRejected(): void
+    {
+        $Customers = (new ReflectionClass(Customers::class))->newInstanceWithoutConstructor();
+        $Method = new ReflectionMethod(Customers::class, 'getOrCreateStandardAddress');
+        $User = $this->createMock(\QUI\Interfaces\Users\User::class);
+        $User->method('getStandardAddress')->willReturn(null);
+        $User->method('addAddress')->willReturn(null);
+
+        $this->expectException(\QUI\Exception::class);
+        $Method->invoke($Customers, $User);
+    }
+
     public function testSetDefaultPaymentMethodSetsConfiguredPayment(): void
     {
         $Customers = (new ReflectionClass(Customers::class))->newInstanceWithoutConstructor();
@@ -89,5 +113,14 @@ class CustomersTest extends TestCase
 
         $this->assertSame([], $Method->invoke($Customers, null));
         $this->assertSame([], $Method->invoke($Customers, 'invalid'));
+    }
+
+    public function testCustomerGroupObjectIsCached(): void
+    {
+        $Customers = Customers::getInstance();
+        $Group = $Customers->getCustomerGroup();
+
+        $this->assertInstanceOf(\QUI\Groups\Group::class, $Group);
+        $this->assertSame($Group, $Customers->getCustomerGroup());
     }
 }

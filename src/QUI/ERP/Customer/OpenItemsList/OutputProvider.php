@@ -183,7 +183,7 @@ class OutputProvider implements OutputProviderInterface
         $ERPUser = self::getEntity($entityId);
         $Locale = $ERPUser->getLocale();
 
-        return QUI::getLocale()->get('quiqqer/customer', 'mail.OpenItemsList.subject', [
+        return $Locale->get('quiqqer/customer', 'mail.OpenItemsList.subject', [
             'date' => $Locale->formatDate(time())
         ]);
     }
@@ -202,7 +202,7 @@ class OutputProvider implements OutputProviderInterface
         $ERPUser = self::getEntity($entityId);
         $Locale = $ERPUser->getLocale();
 
-        return QUI::getLocale()->get('quiqqer/customer', 'mail.OpenItemsList.body', [
+        return $Locale->get('quiqqer/customer', 'mail.OpenItemsList.body', [
             'date' => $Locale->formatDate(time()),
             'customerName' => $ERPUser->getName()
         ]);
