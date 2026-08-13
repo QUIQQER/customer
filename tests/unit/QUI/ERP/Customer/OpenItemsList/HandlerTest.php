@@ -60,6 +60,10 @@ class HandlerTest extends TestCase
 
     public function testTemporaryInvoiceIsConvertedToOpenItem(): void
     {
+        if (!class_exists(InvoiceTemporary::class)) {
+            self::markTestSkipped('The optional invoice package is not installed.');
+        }
+
         $Currency = $this->createMock(Currency::class);
         $Invoice = $this->createMock(InvoiceTemporary::class);
         $Invoice->method('getId')->willReturn(42);
@@ -104,6 +108,10 @@ class HandlerTest extends TestCase
 
     public function testOrderIsConvertedToOpenItem(): void
     {
+        if (!class_exists(Order::class)) {
+            self::markTestSkipped('The optional order package is not installed.');
+        }
+
         $Currency = $this->createMock(Currency::class);
         $Articles = $this->createMock(\QUI\ERP\Accounting\ArticleList::class);
         $Articles->method('getCalculations')->willReturn([

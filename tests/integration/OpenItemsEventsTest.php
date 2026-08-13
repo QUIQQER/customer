@@ -32,6 +32,10 @@ final class OpenItemsEventsTest extends TestCase
 
     public function testInvoiceEventsSynchronizeCustomerOpenItems(): void
     {
+        if (!class_exists(Invoice::class) || !class_exists(InvoiceTemporary::class)) {
+            self::markTestSkipped('The optional invoice package is not installed.');
+        }
+
         $Customer = $this->createErpUser();
         $Invoice = $this->createMock(Invoice::class);
         $Invoice->method('getCustomer')->willReturn($Customer);
@@ -49,6 +53,10 @@ final class OpenItemsEventsTest extends TestCase
 
     public function testOrderEventsSynchronizeCustomerOpenItems(): void
     {
+        if (!class_exists(AbstractOrder::class)) {
+            self::markTestSkipped('The optional order package is not installed.');
+        }
+
         $Customer = $this->createErpUser();
         $Order = $this->createMock(AbstractOrder::class);
         $Order->method('getCustomer')->willReturn($Customer);
@@ -92,6 +100,10 @@ final class OpenItemsEventsTest extends TestCase
 
     public function testEnabledOrderTrackingSynchronizesCreatedAndDeletedOrders(): void
     {
+        if (!class_exists(AbstractOrder::class)) {
+            self::markTestSkipped('The optional order package is not installed.');
+        }
+
         $CustomerConfig = QUI::getPackage('quiqqer/customer')->getConfig();
         $OrderConfig = QUI::getPackage('quiqqer/order')->getConfig();
         self::assertInstanceOf(QUI\Config::class, $CustomerConfig);

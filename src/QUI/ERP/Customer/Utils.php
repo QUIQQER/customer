@@ -43,8 +43,9 @@ class Utils extends QUI\Utils\Singleton
     public function getPaymentTimeForUser(int | string $uid): int
     {
         $defaultPaymentTime = 0;
+        $invoicePackageAvailable = class_exists('QUI\ERP\Accounting\Invoice\Settings');
 
-        if (class_exists('QUI\ERP\Accounting\Invoice\Settings')) {
+        if ($invoicePackageAvailable) {
             $defaultPaymentTime = (int)QUI\ERP\Accounting\Invoice\Settings::getInstance()
                 ->get('invoice', 'time_for_payment');
         }
@@ -56,7 +57,11 @@ class Utils extends QUI\Utils\Singleton
             return $defaultPaymentTime;
         }
 
-        $permission = $User->getPermission('quiqqer.invoice.timeForPayment', 'maxInteger');
+        $permission = $defaultPaymentTime;
+
+        if ($invoicePackageAvailable) {
+            $permission = $User->getPermission('quiqqer.invoice.timeForPayment', 'maxInteger');
+        }
 
         if (empty($permission)) {
             $permission = $defaultPaymentTime;
