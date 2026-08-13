@@ -10,6 +10,7 @@ use QUI\ERP\DemoData\DTO\DemoDataCreationContext;
 use QUI\ERP\DemoData\DTO\DemoDataReferenceCollection;
 use QUI\ERP\DemoData\DTO\DemoDataReference;
 use QUI\ERP\Customer\Customers;
+use QUI\ERP\Customer\NumberRange;
 use QUI\Interfaces\Users\User;
 
 final class CustomerDemoDataCreatorTest extends TestCase
@@ -22,15 +23,22 @@ final class CustomerDemoDataCreatorTest extends TestCase
         $businessCustomer = $this->createMock(User::class);
         $businessCustomer->method('getUUID')->willReturn('business-customer-uuid');
 
+        $customerNumbers = [];
+        $addresses = [];
         $customers = $this->createMock(Customers::class);
-        $customers->expects($this->exactly(10))
-            ->method('getCustomerByCustomerNo')
-            ->willThrowException(new Exception('Customer not found.', 404));
         $customers->expects($this->exactly(10))
             ->method('createCustomer')
             ->with(
-                $this->callback(static fn (int $customerNumber): bool => $customerNumber >= 100000 && $customerNumber <= 999999),
-                $this->isType('array')
+                $this->callback(static function (int|string $customerNumber) use (&$customerNumbers): bool {
+                    $customerNumbers[] = $customerNumber;
+
+                    return true;
+                }),
+                $this->callback(static function (array $address) use (&$addresses): bool {
+                    $addresses[] = $address;
+
+                    return true;
+                })
             )
             ->willReturnOnConsecutiveCalls(
                 $privateCustomer,
@@ -45,9 +53,17 @@ final class CustomerDemoDataCreatorTest extends TestCase
                 $privateCustomer
             );
 
-        $creator = new CustomerDemoDataCreator($customers);
+        $numberRange = $this->createMock(NumberRange::class);
+        $numberRange->expects($this->exactly(10))
+            ->method('getNextCustomerNo')
+            ->willReturnOnConsecutiveCalls(1000, 1001, 1002, 1003, 1004, 1005, 1006, 1007, 1008, 1009);
+
+        $creator = new CustomerDemoDataCreator($customers, $numberRange);
         $demoData = $creator->createDemoData(new DemoDataCreationContext(new DemoDataReferenceCollection()));
 
+        self::assertSame(range(1000, 1009), $customerNumbers);
+        self::assertSame('Mr', $addresses[0]['salutation']);
+        self::assertSame('Mrs.', $addresses[1]['salutation']);
         self::assertSame([], $creator->getDependencies());
         self::assertSame('customer', $demoData->all()[0]->entityType);
         self::assertSame('private-customer-uuid', $demoData->all()[0]->entityUuid);
