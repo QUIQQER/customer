@@ -142,10 +142,6 @@ class Events
     ): void {
         $User = $Order->getCustomer();
 
-        if (!$User instanceof User) {
-            return;
-        }
-
         try {
             self::syncOpenItemsRecord($User);
         } catch (Exception $Exception) {
@@ -168,10 +164,6 @@ class Events
         Transaction $Transaction
     ): void {
         $User = $Order->getCustomer();
-
-        if (!$User instanceof User) {
-            return;
-        }
 
         try {
             self::syncOpenItemsRecord($User);
@@ -290,10 +282,6 @@ class Events
         }
 
         $User = $Order->getCustomer();
-
-        if (!$User instanceof User) {
-            return;
-        }
 
         try {
             self::syncOpenItemsRecord($User);

@@ -517,10 +517,6 @@ class EventHandler
 
         $Customer = $Order->getCustomer();
 
-        if (!$Customer instanceof QUI\ERP\User) {
-            return;
-        }
-
         try {
             $User = QUI::getUsers()->get($Customer->getUUID());
             QUI\ERP\Customer\Customers::getInstance()->addUserToCustomerGroup($User->getUUID());
@@ -867,7 +863,7 @@ class EventHandler
         $groupIds = [];
 
         foreach ($User->getGroups(false) as $groupId) {
-            if (!is_string($groupId) || $groupId === '') {
+            if ($groupId === '') {
                 continue;
             }
 

@@ -516,7 +516,9 @@ class Handler
         }
 
         // Parse open items to db entry
-        foreach ($OpenItemsList->getTotalAmountsByCurrency() as $currency => $values) {
+        $totalsByCurrency = $OpenItemsList->getTotalAmountsByCurrency();
+
+        foreach ($totalsByCurrency as $currency => $values) {
             $data = [
                 'userId' => $User->getUUID(),
                 'customerId' => $customerId,
@@ -534,11 +536,49 @@ class Handler
             ];
             $Connection = QUI::getDataBaseConnection();
             $table = QUI\Utils\Doctrine::quoteIdentifier(self::getTable());
+            $QueryBuilder = QUI::getQueryBuilder();
+            $recordExists = $QueryBuilder
+                ->select('1')
+                ->from($table)
+                ->where($QueryBuilder->expr()->eq(
+                    QUI\Utils\Doctrine::quoteIdentifier('userId'),
+                    ':userId'
+                ))
+                ->andWhere($QueryBuilder->expr()->eq(
+                    QUI\Utils\Doctrine::quoteIdentifier('currency'),
+                    ':currency'
+                ))
+                ->setParameter('userId', $criteria['userId'])
+                ->setParameter('currency', $criteria['currency'])
+                ->setMaxResults(1)
+                ->executeQuery()
+                ->fetchOne() !== false;
 
-            if ($Connection->update($table, $data, $criteria) === 0) {
+            if ($recordExists) {
+                $Connection->update($table, $data, $criteria);
+            } else {
                 $Connection->insert($table, $data);
             }
         }
+
+        $QueryBuilder = QUI::getQueryBuilder();
+        $QueryBuilder
+            ->delete(QUI\Utils\Doctrine::quoteIdentifier(self::getTable()))
+            ->where($QueryBuilder->expr()->eq(
+                QUI\Utils\Doctrine::quoteIdentifier('userId'),
+                ':userId'
+            ))
+            ->andWhere($QueryBuilder->expr()->notIn(
+                QUI\Utils\Doctrine::quoteIdentifier('currency'),
+                ':currencies'
+            ))
+            ->setParameter('userId', $User->getUUID())
+            ->setParameter(
+                'currencies',
+                array_keys($totalsByCurrency),
+                \Doctrine\DBAL\ArrayParameterType::STRING
+            )
+            ->executeStatement();
 
         // Clear cache used in backend administration
         QUI\Cache\Manager::clear('quiqqer/customer/openitems/' . $User->getUUID());

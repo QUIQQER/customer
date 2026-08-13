@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use QUI\Exception;
 use QUI\ERP\DemoData\DTO\DemoDataCreationContext;
 use QUI\ERP\DemoData\DTO\DemoDataReferenceCollection;
+use QUI\ERP\DemoData\DTO\DemoDataReference;
 use QUI\ERP\Customer\Customers;
 use QUI\Interfaces\Users\User;
 
@@ -55,5 +56,18 @@ final class CustomerDemoDataCreatorTest extends TestCase
         self::assertSame('business_customer', $demoData->all()[1]->referenceKey);
         self::assertCount(10, $demoData->all());
         self::assertSame('customer_10', $demoData->all()[9]->referenceKey);
+    }
+
+    public function testDeleteRejectsReferencesOfAnotherEntityType(): void
+    {
+        $creator = new CustomerDemoDataCreator($this->createMock(Customers::class));
+        $references = new DemoDataReferenceCollection([
+            'quiqqer.customer' => [
+                new DemoDataReference('quiqqer.customer', 'invoice', 'uuid', null, [])
+            ]
+        ]);
+
+        $this->expectException(Exception::class);
+        $creator->deleteDemoData($references);
     }
 }
