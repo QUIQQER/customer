@@ -6,21 +6,19 @@ namespace QUI\ERP\Customer\DemoData;
 
 use QUI\Exception;
 use QUI\ERP\Customer\Customers;
+use QUI\ERP\Customer\NumberRange;
 use QUI\ERP\DemoData\Contract\DemoDataCreatorInterface;
 use QUI\ERP\DemoData\DTO\CreatedDemoData;
 use QUI\ERP\DemoData\DTO\CreatedDemoDataCollection;
 use QUI\ERP\DemoData\DTO\DemoDataCreationContext;
 use QUI\ERP\DemoData\DTO\DemoDataReferenceCollection;
-use QUI\Interfaces\Users\User;
 
 final readonly class CustomerDemoDataCreator implements DemoDataCreatorInterface
 {
-    private const CUSTOMER_NUMBER_MIN = 100000;
-    private const CUSTOMER_NUMBER_MAX = 999999;
-    private const CUSTOMER_NUMBER_ATTEMPTS = 10;
-
-    public function __construct(private Customers $customers)
-    {
+    public function __construct(
+        private Customers $customers,
+        private NumberRange $numberRange = new NumberRange()
+    ) {
     }
 
     public function getDependencies(): array
@@ -34,8 +32,8 @@ final readonly class CustomerDemoDataCreator implements DemoDataCreatorInterface
 
         for ($index = 0; $index < 10; $index++) {
             $isBusinessCustomer = $index % 2 === 1;
-            $customer = $this->createCustomer([
-                'salutation' => 'Mr',
+            $customer = $this->customers->createCustomer($this->numberRange->getNextCustomerNo(), [
+                'salutation' => $isBusinessCustomer ? 'Mrs.' : 'Mr',
                 'firstname' => $isBusinessCustomer ? 'Erika' : 'Max',
                 'lastname' => 'Demo ' . ($index + 1),
                 'company' => $isBusinessCustomer ? 'Demo Company ' . ($index + 1) : '',
@@ -71,27 +69,5 @@ final readonly class CustomerDemoDataCreator implements DemoDataCreatorInterface
         foreach (array_keys($customerUuids) as $customerUuid) {
             \QUI::getUsers()->deleteUser($customerUuid);
         }
-    }
-
-    /**
-     * @param array<string, string> $address
-     */
-    private function createCustomer(array $address): User
-    {
-        for ($attempt = 0; $attempt < self::CUSTOMER_NUMBER_ATTEMPTS; $attempt++) {
-            $customerNumber = random_int(self::CUSTOMER_NUMBER_MIN, self::CUSTOMER_NUMBER_MAX);
-
-            try {
-                $this->customers->getCustomerByCustomerNo((string)$customerNumber);
-            } catch (Exception $exception) {
-                if ($exception->getCode() === 404) {
-                    return $this->customers->createCustomer($customerNumber, $address);
-                }
-
-                throw $exception;
-            }
-        }
-
-        throw new Exception('Could not generate a free demo data customer number.');
     }
 }

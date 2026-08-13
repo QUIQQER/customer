@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<quiqqer>
+    <attributes>
+        <attribute encrypt="1">customer.secret</attribute>
+        <attribute>customer.reference</attribute>
+    </attributes>
+</quiqqer>

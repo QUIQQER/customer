@@ -1,52 +1,57 @@
-QUIQQER - Customer
-========
+# QUIQQER Customer
 
 ![QUIQQER Customer](bin/images/Readme.png)
 
-With the customer administration you extend QUIQQER by a simpler administration of your customers.
-You don't have to do the customer processing in the QUIQQER user administration anymore.
+Customer management for QUIQQER. The module provides a dedicated customer group and streamlined tools for creating, finding, and maintaining customer accounts outside the general user administration.
 
-The customer administration brings many fast possibilities 
-- edit users (customers)
-- find users (customers)
-- and create users (customers)
+## Features
 
-In addition, QUIQQER is extended with a customer group with which you can categorize certain groups as customers.  
+- Create and manage customer accounts and addresses
+- Assign users to the configured customer group
+- Search customers by customer number, name, company, address, or contact data
+- Maintain comments and customer history
+- Manage customer files and optional frontend downloads
+- Display and export open-item lists for ERP customers
 
+## Requirements
 
-Features
-------
+- PHP 8.2 or newer
+- QUIQQER Core 2.25 or newer
+- QUIQQER ERP 3.2 or 4.0.1 or newer
+- QUIQQER Payment Transactions 2.x
+- QUIQQER Backend Search 2.1 or newer
 
-- Creates a customer group
-- Determines general customer group
-- Brings many useful management tools with it
+## Installation
 
-Package name:
+```bash
+composer require quiqqer/customer
+```
 
-    quiqqer/customer
+Optional integrations are available for `quiqqer/user-downloads` and `quiqqer/erp-demo-data`.
 
+## Development
 
-Installation
-------------
+Install the PHIVE-managed tools and hooks:
 
-The package name is: quiqqer/customer
+```bash
+composer dev:init
+```
 
-Contribution
-----------
+Run static analysis, coding-style checks, and the PHPUnit suite:
 
-- Issue Tracker: https://dev.quiqqer.com/quiqqer/customer/issues
-- Source Code: https://dev.quiqqer.com/quiqqer/customer/tree/master
+```bash
+composer test
+```
 
+## Contributing
 
-Support
--------
+- [Issue tracker](https://dev.quiqqer.com/quiqqer/customer/-/issues)
+- [Source code](https://dev.quiqqer.com/quiqqer/customer/-/tree/main)
 
-If you found any flaws, have any wishes or suggestions you can send an email
-to [support@pcsg.de](mailto:support@pcsg.de) to inform us about your concerns. 
-We will try to respond to your request and forward it to the responsible developer.
+## Support
 
+For questions, defects, and feature requests, contact [support@quiqqer.com](mailto:support@quiqqer.com).
 
-License
--------
+## License
 
-- GPL-3.0+
+GPL-3.0-or-later. See [LICENSE](LICENSE).

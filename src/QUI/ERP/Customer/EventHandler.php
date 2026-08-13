@@ -515,9 +515,9 @@ class EventHandler
             return;
         }
 
-        $Customer = $Order->getCustomer();
+        $Customer = self::normalizeOrderCustomer($Order->getCustomer());
 
-        if (!$Customer instanceof QUI\ERP\User) {
+        if ($Customer === null) {
             return;
         }
 
@@ -546,6 +546,18 @@ class EventHandler
             } catch (QUI\Exception) {
             }
         }
+    }
+
+    /**
+     * Normalize the getCustomer() contract across supported order versions.
+     */
+    private static function normalizeOrderCustomer(mixed $Customer): ?QUI\ERP\User
+    {
+        if (!$Customer instanceof QUI\ERP\User) {
+            return null;
+        }
+
+        return $Customer;
     }
 
     /**
@@ -867,7 +879,7 @@ class EventHandler
         $groupIds = [];
 
         foreach ($User->getGroups(false) as $groupId) {
-            if (!is_string($groupId) || $groupId === '') {
+            if ($groupId === '') {
                 continue;
             }
 

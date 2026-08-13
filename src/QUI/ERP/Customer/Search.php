@@ -20,6 +20,7 @@ use function explode;
 use function implode;
 use function in_array;
 use function mb_strlen;
+use function mb_stripos;
 use function mb_strtoupper;
 use function mb_substr;
 use function sort;
@@ -436,6 +437,7 @@ class Search extends Singleton
                     'value' => (int)strtotime($value),
                     'type' => PDO::PARAM_INT
                 ];
+                $fc++;
                 continue;
             }
 
@@ -446,6 +448,7 @@ class Search extends Singleton
                     'value' => (int)strtotime($value),
                     'type' => PDO::PARAM_INT
                 ];
+                $fc++;
                 continue;
             }
 
@@ -487,7 +490,7 @@ class Search extends Singleton
         }
 
         $NumberRange = new NumberRange();
-        $prefixLength = mb_strlen($NumberRange->getCustomerNoPrefix());
+        $customerNoPrefix = $NumberRange->getCustomerNoPrefix();
 
         if (!empty($this->search)) {
             $searchWhere = [];
@@ -517,7 +520,7 @@ class Search extends Singleton
             foreach ($searchFilters as $column) {
                 if ($column === 'users.customerId') {
                     $searchWhere[] = $column . ' LIKE :customer_id_no_prefix';
-                    $customerIdNoPrefix = mb_substr($this->search, $prefixLength);
+                    $customerIdNoPrefix = self::removeCustomerNoPrefix($this->search, $customerNoPrefix);
 
                     $binds['customer_id_no_prefix'] = [
                         'value' => '%' . $customerIdNoPrefix . '%',
@@ -618,6 +621,15 @@ class Search extends Singleton
             ",
             'binds' => $binds
         ];
+    }
+
+    protected static function removeCustomerNoPrefix(string $search, string $prefix): string
+    {
+        if ($prefix === '' || mb_stripos($search, $prefix) !== 0) {
+            return $search;
+        }
+
+        return mb_substr($search, mb_strlen($prefix));
     }
 
     /**
@@ -761,6 +773,7 @@ class Search extends Singleton
     public function clearFilter(): void
     {
         $this->filter = [];
+        $this->search = '';
     }
 
     /**

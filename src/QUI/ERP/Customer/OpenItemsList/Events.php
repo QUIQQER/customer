@@ -54,20 +54,23 @@ class Events
      */
     public static function onTransactionCreate(Transaction $Transaction): void
     {
-        // Get invoice by hash
-        try {
-            $Invoice = InvoiceHandler::getInstance()->getInvoiceByHash($Transaction->getHash());
-            $User = $Invoice->getCustomer();
-        } catch (Exception $Exception) {
-            QUI\System\Log::writeDebugException($Exception);
+        $User = null;
 
-            // Get order by hash
+        if (class_exists(InvoiceHandler::class)) {
+            try {
+                $Invoice = InvoiceHandler::getInstance()->getInvoiceByHash($Transaction->getHash());
+                $User = $Invoice->getCustomer();
+            } catch (Exception $Exception) {
+                QUI\System\Log::writeDebugException($Exception);
+            }
+        }
+
+        if (!$User instanceof User && class_exists(OrderHandler::class)) {
             try {
                 $Order = OrderHandler::getInstance()->getOrderByHash($Transaction->getHash());
                 $User = $Order->getCustomer();
             } catch (Exception $Exception) {
                 QUI\System\Log::writeDebugException($Exception);
-                return;
             }
         }
 
@@ -142,10 +145,6 @@ class Events
     ): void {
         $User = $Order->getCustomer();
 
-        if (!$User instanceof User) {
-            return;
-        }
-
         try {
             self::syncOpenItemsRecord($User);
         } catch (Exception $Exception) {
@@ -168,10 +167,6 @@ class Events
         Transaction $Transaction
     ): void {
         $User = $Order->getCustomer();
-
-        if (!$User instanceof User) {
-            return;
-        }
 
         try {
             self::syncOpenItemsRecord($User);
@@ -290,10 +285,6 @@ class Events
         }
 
         $User = $Order->getCustomer();
-
-        if (!$User instanceof User) {
-            return;
-        }
 
         try {
             self::syncOpenItemsRecord($User);
