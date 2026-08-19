@@ -292,7 +292,10 @@ final class CustomerFilesTest extends TestCase
             CustomerFiles::deleteDownloadEntry($this->customerUuid);
         } finally {
             $InstalledProperty->setValue($PackageManager, $previousInstalled);
-            QUI\UserDownloads\Handler::reset();
+
+            if (method_exists(QUI\UserDownloads\Handler::class, 'reset')) {
+                QUI\UserDownloads\Handler::reset();
+            }
         }
     }
 
