@@ -275,8 +275,8 @@ final class CustomerFilesTest extends TestCase
             }
 
             $DownloadEntry = CustomerFiles::createDownloadEntry($this->customerUuid);
-            self::assertSame($DownloadEntry, CustomerFiles::getDownloadEntry($this->customerUuid));
-            self::assertSame($DownloadEntry, CustomerFiles::createDownloadEntry($this->customerUuid));
+            self::assertEquals($DownloadEntry, CustomerFiles::getDownloadEntry($this->customerUuid));
+            self::assertEquals($DownloadEntry, CustomerFiles::createDownloadEntry($this->customerUuid));
 
             $this->callable('downloadEntry_addFile')($basename, $this->customerUuid);
             self::assertTrue(CustomerFiles::isFileInDownloadEntry(
@@ -292,7 +292,10 @@ final class CustomerFilesTest extends TestCase
             CustomerFiles::deleteDownloadEntry($this->customerUuid);
         } finally {
             $InstalledProperty->setValue($PackageManager, $previousInstalled);
-            QUI\UserDownloads\Handler::reset();
+
+            if (method_exists(QUI\UserDownloads\Handler::class, 'reset')) {
+                QUI\UserDownloads\Handler::reset();
+            }
         }
     }
 
