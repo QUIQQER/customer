@@ -8,6 +8,21 @@
             <locale group='quiqqer/customer' var='package.description'/>
         </description>
 
+        <capabilities schemaVersion='1'>
+            <capability id='crm.customer-management'>
+                <title>Customer Management</title>
+                <description>
+                    Creates and manages customer accounts, customer numbers, addresses, files, comments, and history.
+                </description>
+            </capability>
+            <capability id='accounting.open-items'>
+                <title>Open Items</title>
+                <description>
+                    Tracks, searches, displays, and exports customers' outstanding invoice and order balances.
+                </description>
+            </capability>
+        </capabilities>
+
         <image src='URL_OPT_DIR/quiqqer/customer/bin/images/Logo.png'/>
 
         <preview>
