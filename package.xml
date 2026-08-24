@@ -8,6 +8,21 @@
             <locale group='quiqqer/customer' var='package.description'/>
         </description>
 
+        <capabilities schemaVersion='1'>
+            <capability id='crm.customer-management'>
+                <title>Customer Management</title>
+                <description>
+                    Creates and manages customer accounts, customer numbers, addresses, files, comments, and history.
+                </description>
+            </capability>
+            <capability id='accounting.open-items'>
+                <title>Open Items</title>
+                <description>
+                    Tracks, searches, displays, and exports customers' outstanding invoice and order balances.
+                </description>
+            </capability>
+        </capabilities>
+
         <image src='URL_OPT_DIR/quiqqer/customer/bin/images/Logo.png'/>
 
         <preview>
@@ -15,16 +30,16 @@
         </preview>
 
         <support>
-            <email><![CDATA[support@pcsg.de]]></email>
+            <email><![CDATA[support@quiqqer.com]]></email>
             <forum><![CDATA[https://community.quiqqer.com]]></forum>
             <source><![CDATA[https://dev.quiqqer.com/quiqqer/customer]]></source>
-            <issues><![CDATA[https://dev.quiqqer.com/quiqqer/customer/issues]]></issues>
-            <wiki><![CDATA[https://dev.quiqqer.com/quiqqer/customer/wikis/home]]></wiki>
+            <issues><![CDATA[https://dev.quiqqer.com/quiqqer/customer/-/issues]]></issues>
+            <wiki><![CDATA[https://dev.quiqqer.com/quiqqer/customer/-/wikis/home]]></wiki>
         </support>
 
         <copyright>
             <name><![CDATA[PCSG - Computer & Internet Service OHG]]></name>
-            <license><![CDATA[GPL-3.0+]]></license>
+            <license><![CDATA[GPL-3.0-or-later]]></license>
         </copyright>
 
         <languages>
@@ -35,6 +50,7 @@
         <provider>
             <erp src="\QUI\ERP\Customer\ErpProvider"/>
             <desktopSearch src="\QUI\ERP\Customer\BackendSearchProvider"/>
+            <erpDemoDataProvider src="\QUI\ERP\Customer\DemoData\CustomerDemoDataProvider"/>
         </provider>
     </package>
 </quiqqer>

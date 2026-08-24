@@ -20,6 +20,7 @@ use function explode;
 use function implode;
 use function in_array;
 use function mb_strlen;
+use function mb_stripos;
 use function mb_strtoupper;
 use function mb_substr;
 use function sort;
@@ -311,7 +312,9 @@ class Search extends Singleton
      */
     protected function getQuery(bool $count = false): array
     {
-        $table = $this->table();
+        $table = QUI\Utils\Doctrine::quoteIdentifier($this->table());
+        $addressTable = QUI\Utils\Doctrine::quoteIdentifier(QUI::getUsers()->tableAddress());
+        $quote = static fn(string $identifier): string => QUI\Utils\Doctrine::quoteIdentifier($identifier);
         $order = $this->order;
 
         // limit
@@ -319,7 +322,7 @@ class Search extends Singleton
 
         $start = $this->limit[0];
         $end = $this->limit[1];
-        $limit = " LIMIT $start,$end";
+        $limit = " LIMIT $end OFFSET $start";
 
 
         // filter checks
@@ -434,6 +437,7 @@ class Search extends Singleton
                     'value' => (int)strtotime($value),
                     'type' => PDO::PARAM_INT
                 ];
+                $fc++;
                 continue;
             }
 
@@ -444,6 +448,7 @@ class Search extends Singleton
                     'value' => (int)strtotime($value),
                     'type' => PDO::PARAM_INT
                 ];
+                $fc++;
                 continue;
             }
 
@@ -485,7 +490,7 @@ class Search extends Singleton
         }
 
         $NumberRange = new NumberRange();
-        $prefixLength = mb_strlen($NumberRange->getCustomerNoPrefix());
+        $customerNoPrefix = $NumberRange->getCustomerNoPrefix();
 
         if (!empty($this->search)) {
             $searchWhere = [];
@@ -515,7 +520,7 @@ class Search extends Singleton
             foreach ($searchFilters as $column) {
                 if ($column === 'users.customerId') {
                     $searchWhere[] = $column . ' LIKE :customer_id_no_prefix';
-                    $customerIdNoPrefix = mb_substr($this->search, $prefixLength);
+                    $customerIdNoPrefix = self::removeCustomerNoPrefix($this->search, $customerNoPrefix);
 
                     $binds['customer_id_no_prefix'] = [
                         'value' => '%' . $customerIdNoPrefix . '%',
@@ -567,16 +572,22 @@ class Search extends Singleton
         }
 
         if ($count) {
+            $userId = $quote('user_id');
+            $id = $quote('id');
+            $firstname = $quote('firstname');
+            $lastname = $quote('lastname');
+            $email = $quote('email');
+
             return [
                 "query" => "
-                    SELECT COUNT(search_query.`user_id`) AS count
+                    SELECT COUNT(search_query.$userId) AS count
                     FROM (
-                        SELECT users.`id` as user_id,
-                        users.`firstname` as user_firstname,
-                        users.`lastname` as user_lastname,
-                        users.`email` as user_email
+                        SELECT users.$id as user_id,
+                        users.$firstname as user_firstname,
+                        users.$lastname as user_lastname,
+                        users.$email as user_email
                         FROM $table as users
-                             LEFT JOIN users_address AS ad ON users.id = ad.uid 
+                             LEFT JOIN $addressTable AS ad ON users.id = ad.uid
                              AND users.address = ad.uuid
                         {$whereQuery}
                     ) as search_query
@@ -585,18 +596,24 @@ class Search extends Singleton
             ];
         }
 
+        $id = $quote('id');
+        $firstname = $quote('firstname');
+        $lastname = $quote('lastname');
+        $email = $quote('email');
+        $uuid = $quote('uuid');
+
         return [
             "query" => "
-                SELECT 
-                    users.`id` as user_id,
-                    users.`firstname` as user_firstname,
-                    users.`lastname` as user_lastname,
-                    users.`email` as user_email,
-                    users.`uuid` as user_uuid,
-                    users.*, 
+                SELECT
+                    users.$id as user_id,
+                    users.$firstname as user_firstname,
+                    users.$lastname as user_lastname,
+                    users.$email as user_email,
+                    users.$uuid as user_uuid,
+                    users.*,
                     ad.*
                 FROM $table as users
-                     LEFT JOIN users_address AS ad ON users.id = ad.uid 
+                     LEFT JOIN $addressTable AS ad ON users.id = ad.uid
                      AND users.address = ad.uuid
                 {$whereQuery}
                 ORDER BY {$order}
@@ -606,6 +623,15 @@ class Search extends Singleton
         ];
     }
 
+    protected static function removeCustomerNoPrefix(string $search, string $prefix): string
+    {
+        if ($prefix === '' || mb_stripos($search, $prefix) !== 0) {
+            return $search;
+        }
+
+        return mb_substr($search, mb_strlen($prefix));
+    }
+
     /**
      * @param array{query: string, binds: array<string, array{value: mixed, type: int}>} $queryData
      * @return list<array<string, mixed>>
@@ -613,24 +639,18 @@ class Search extends Singleton
      */
     protected function executeQueryParams(array $queryData): array
     {
-        $PDO = QUI::getDataBase()->getPDO();
         $binds = $queryData['binds'];
         $query = $queryData['query'];
-
-        if (!$PDO instanceof PDO) {
-            throw new QUI\Exception('Database connection is not available.');
-        }
-
-        $Statement = $PDO->prepare($query);
+        $parameters = [];
 
         foreach ($binds as $var => $bind) {
-            $Statement->bindValue($var, $bind['value'], $bind['type']);
+            $parameters[$var] = $bind['value'];
         }
 
         try {
-            $Statement->execute();
-
-            return array_values($Statement->fetchAll(PDO::FETCH_ASSOC));
+            return QUI::getDataBaseConnection()
+                ->executeQuery($query, $parameters)
+                ->fetchAllAssociative();
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             QUI\System\Log::writeRecursive($query);
@@ -673,16 +693,18 @@ class Search extends Singleton
             case 'deleted':
             case 'su':
             case 'customerId':
-                $this->order = 'users.`' . $col . '` ' . $direction;
+                $this->order = 'users.' . QUI\Utils\Doctrine::quoteIdentifier($col) . ' ' . $direction;
                 break;
 
             case 'firstname':
             case 'lastname':
-                $this->order = 'users.`' . $col . '` ' . $direction . ', ad.`' . $col . '` ' . $direction;
+                $quotedColumn = QUI\Utils\Doctrine::quoteIdentifier($col);
+                $this->order = 'users.' . $quotedColumn . ' ' . $direction
+                    . ', ad.' . $quotedColumn . ' ' . $direction;
                 break;
 
             case 'company':
-                $this->order = 'ad.`' . $col . '` ' . $direction;
+                $this->order = 'ad.' . QUI\Utils\Doctrine::quoteIdentifier($col) . ' ' . $direction;
                 break;
         }
     }
@@ -751,6 +773,7 @@ class Search extends Singleton
     public function clearFilter(): void
     {
         $this->filter = [];
+        $this->search = '';
     }
 
     /**

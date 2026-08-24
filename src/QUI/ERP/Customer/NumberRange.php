@@ -70,9 +70,13 @@ class NumberRange implements NumberRangeInterface
 
         // Determine from current customer numbers in user table
         try {
-            $tbl = QUI::getUsers()::table();
-            $sql = "SELECT * FROM $tbl WHERE `customerId` REGEXP '.*[0-9]+$' ORDER BY cast(`customerId` as UNSIGNED) DESC LIMIT 1";
-            $result = QUI::getDataBase()->fetchSQL($sql);
+            $QueryBuilder = QUI::getQueryBuilder();
+            $result = $QueryBuilder
+                ->select(QUI\Utils\Doctrine::quoteIdentifier('customerId'))
+                ->from(QUI\Utils\Doctrine::quoteIdentifier(QUI::getUsers()::table()))
+                ->where($QueryBuilder->expr()->isNotNull(QUI\Utils\Doctrine::quoteIdentifier('customerId')))
+                ->executeQuery()
+                ->fetchFirstColumn();
         } catch (\Exception $Exception) {
             QUI\System\Log::writeException($Exception);
             return 1;
@@ -82,8 +86,25 @@ class NumberRange implements NumberRangeInterface
             return 1;
         }
 
-        preg_match_all('#([^\d]*)([0-9]+)#', $result[0]['customerId'], $matches);
-        return (int)$matches[2][0] + 1;
+        return self::determineNextRange($result);
+    }
+
+    /**
+     * @param list<mixed> $customerIds
+     */
+    protected static function determineNextRange(array $customerIds): int
+    {
+        $highestCustomerNo = 0;
+
+        foreach ($customerIds as $customerId) {
+            preg_match_all('#([^\d]*)([0-9]+)$#', (string)$customerId, $matches);
+
+            if (!empty($matches[2][0])) {
+                $highestCustomerNo = max($highestCustomerNo, (int)$matches[2][0]);
+            }
+        }
+
+        return $highestCustomerNo + 1;
     }
 
     /**

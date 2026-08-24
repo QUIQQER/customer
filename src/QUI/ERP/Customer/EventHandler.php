@@ -344,8 +344,8 @@ class EventHandler
         if (!empty($data)) {
             // saving
             try {
-                QUI::getDataBase()->update(
-                    Manager::table(),
+                QUI::getDataBaseConnection()->update(
+                    QUI\Utils\Doctrine::quoteIdentifier(Manager::table()),
                     $data,
                     ['uuid' => $User->getUUID()]
                 );
@@ -515,9 +515,9 @@ class EventHandler
             return;
         }
 
-        $Customer = $Order->getCustomer();
+        $Customer = self::normalizeOrderCustomer($Order->getCustomer());
 
-        if (!$Customer instanceof QUI\ERP\User) {
+        if ($Customer === null) {
             return;
         }
 
@@ -546,6 +546,18 @@ class EventHandler
             } catch (QUI\Exception) {
             }
         }
+    }
+
+    /**
+     * Normalize the getCustomer() contract across supported order versions.
+     */
+    private static function normalizeOrderCustomer(mixed $Customer): ?QUI\ERP\User
+    {
+        if (!$Customer instanceof QUI\ERP\User) {
+            return null;
+        }
+
+        return $Customer;
     }
 
     /**
@@ -607,9 +619,12 @@ class EventHandler
         $userTable = QUI::getUsers()->table();
         $tableAddresses = QUI::getUsers()->tableAddress();
 
-        $result = QUI::getDataBase()->fetch([
-            'from' => $userTable
-        ]);
+        $QueryBuilder = QUI::getQueryBuilder();
+        $result = $QueryBuilder
+            ->select('*')
+            ->from(QUI\Utils\Doctrine::quoteIdentifier($userTable))
+            ->executeQuery()
+            ->fetchAllAssociative();
 
         foreach ($result as $entry) {
             $extra = json_decode($entry['extra'], true);
@@ -617,12 +632,18 @@ class EventHandler
             if (!empty($extra['quiqqer.erp.customer.contact.person'])) {
                 if (is_numeric($extra['quiqqer.erp.customer.contact.person'])) {
                     try {
-                        $addressData = QUI::getDataBase()->fetch([
-                            'from' => $tableAddresses,
-                            'where' => [
-                                'id' => $extra['quiqqer.erp.customer.contact.person']
-                            ]
-                        ]);
+                        $QueryBuilder = QUI::getQueryBuilder();
+                        $addressData = $QueryBuilder
+                            ->select('*')
+                            ->from(QUI\Utils\Doctrine::quoteIdentifier($tableAddresses))
+                            ->where($QueryBuilder->expr()->eq(
+                                QUI\Utils\Doctrine::quoteIdentifier('id'),
+                                ':addressId'
+                            ))
+                            ->setParameter('addressId', $extra['quiqqer.erp.customer.contact.person'])
+                            ->setMaxResults(1)
+                            ->executeQuery()
+                            ->fetchAllAssociative();
 
                         if (count($addressData)) {
                             $extra['quiqqer.erp.customer.contact.person'] = $addressData[0]['uuid'];
@@ -635,12 +656,18 @@ class EventHandler
             if (!empty($extra['quiqqer.erp.address'])) {
                 if (is_numeric($extra['quiqqer.erp.address'])) {
                     try {
-                        $addressData = QUI::getDataBase()->fetch([
-                            'from' => $tableAddresses,
-                            'where' => [
-                                'id' => $extra['quiqqer.erp.address']
-                            ]
-                        ]);
+                        $QueryBuilder = QUI::getQueryBuilder();
+                        $addressData = $QueryBuilder
+                            ->select('*')
+                            ->from(QUI\Utils\Doctrine::quoteIdentifier($tableAddresses))
+                            ->where($QueryBuilder->expr()->eq(
+                                QUI\Utils\Doctrine::quoteIdentifier('id'),
+                                ':addressId'
+                            ))
+                            ->setParameter('addressId', $extra['quiqqer.erp.address'])
+                            ->setMaxResults(1)
+                            ->executeQuery()
+                            ->fetchAllAssociative();
 
                         if (count($addressData)) {
                             $extra['quiqqer.erp.address'] = $addressData[0]['uuid'];
@@ -662,8 +689,8 @@ class EventHandler
             }
 
             try {
-                QUI::getDataBase()->update(
-                    $userTable,
+                QUI::getDataBaseConnection()->update(
+                    QUI\Utils\Doctrine::quoteIdentifier($userTable),
                     ['extra' => json_encode($extra)],
                     ['id' => $entry['id']]
                 );
@@ -824,7 +851,7 @@ class EventHandler
         $groupIds = [];
 
         foreach ($User->getGroups(false) as $groupId) {
-            if (!is_string($groupId) || $groupId === '') {
+            if ($groupId === '') {
                 continue;
             }
 

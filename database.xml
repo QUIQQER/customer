@@ -2,10 +2,10 @@
 <database>
     <global>
         <table name="users">
-            <field type="VARCHAR(255) NULL">customerId</field>
-            <field type="VARCHAR(255) NULL">mainGroup</field>
-            <field type="text NULL">comments</field>
-            <field type="text NULL">history</field>
+            <field type="string" length="255" nullable="true">customerId</field>
+            <field type="string" length="255" nullable="true">mainGroup</field>
+            <field type="text" nullable="true">comments</field>
+            <field type="text" nullable="true">history</field>
 
             <primary>id</primary>
         </table>
