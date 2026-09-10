@@ -1,0 +1,912 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<locales>
+
+    <groups name="quiqqer/customer" datatype="php,js">
+        <locale name="package.title">
+<pl><![CDATA[QUIQQER - ERP - Klienci]]></pl>
+        </locale>
+        <locale name="demo_data.provider.title">
+<pl><![CDATA[Klienci]]></pl>
+        </locale>
+        <locale name="package.description">
+<pl><![CDATA[Moduł klientów E-COYN pozwala zarządzać wszystkimi klientami w jednym miejscu. Przejrzysty interfejs ułatwia ich wyszukiwanie, tworzenie i edycję. Każdy klient ma indywidualne właściwości i funkcje, które można w każdej chwili rozszerzyć za pomocą rozbudowanego interfejsu dla programistów.]]></pl>
+        </locale>
+
+        <locale name="window.erp.title">
+<pl><![CDATA[Sklep]]></pl>
+        </locale>
+        <locale name="window.erp.customer.title">
+<pl><![CDATA[Klienci]]></pl>
+        </locale>
+        <locale name="window.erp.customer.title">
+<pl><![CDATA[Klienci]]></pl>
+        </locale>
+        <locale name="customer.settings.title">
+<pl><![CDATA[Klienci]]></pl>
+        </locale>
+        <locale name="openItems.settings.title">
+<pl><![CDATA[Wpłaty]]></pl>
+        </locale>
+        <locale name="customer.settings.considerOrders">
+<pl><![CDATA[Uwzględniaj zamówienia]]></pl>
+        </locale>
+        <locale name="customer.settings.considerOrders.description">
+<pl><![CDATA[Przy ustalaniu otwartych pozycji uwzględniane są również zamówienia bez przypisanej faktury.]]></pl>
+        </locale>
+        <locale name="customer.settings.groupId">
+<pl><![CDATA[Grupa klientów]]></pl>
+        </locale>
+        <locale name="customer.settings.defaultPaymentMethod">
+<pl><![CDATA[Domyślna metoda płatności dla nowych klientów]]></pl>
+        </locale>
+        <locale name="customer.settings.defaultPaymentMethod.description">
+<pl><![CDATA[Ta metoda płatności jest wstępnie wybierana dla nowych klientów. Jeśli pole pozostanie puste, domyślna metoda płatności nie zostanie ustawiona.]]></pl>
+        </locale>
+        <locale name="customer.settings.defaultPaymentMethod.paymentsMissing">
+<pl><![CDATA[Pakiet quiqqer/payments nie jest zainstalowany.]]></pl>
+        </locale>
+        <locale name="customer.group.name">
+<pl><![CDATA[Klienci]]></pl>
+        </locale>
+        <locale name="erp.panel.accounting.text">
+<pl><![CDATA[Księgowość]]></pl>
+        </locale>
+        <locale name="erp.panel.open_items.text">
+<pl><![CDATA[Wpłaty]]></pl>
+        </locale>
+        <locale name="customer.settings.customerNoPrefix">
+<pl><![CDATA[Prefiks numeru klienta]]></pl>
+        </locale>
+        <locale name="customer.settings.customerNoPrefix.description">
+<pl><![CDATA[Prefiks dodawany na początku wszystkich numerów klientów.]]></pl>
+        </locale>
+
+        <locale name="customer.settings.setCustomerNoAtOrder">
+<pl><![CDATA[Automatyczne przypisywanie numeru klienta przy zamówieniu]]></pl>
+        </locale>
+        <locale name="customer.settings.setCustomerNoAtOrder.description">
+<pl><![CDATA[Ta opcja umożliwia automatyczne dodawanie numeru klienta przy każdym zamówieniu. Wymaga zainstalowania modułu zamówień (quiqqer/order).]]></pl>
+        </locale>
+
+        <locale name="exception.customer.group.not.exists">
+<pl><![CDATA[Grupa klientów nie istnieje.]]></pl>
+        </locale>
+
+        <locale name="customerId">
+<pl><![CDATA[Nr klienta]]></pl>
+        </locale>
+
+        <locale name="message.customer.password.mail.send">
+<pl><![CDATA[Wiadomość e-mail została wysłana do klienta.]]></pl>
+        </locale>
+
+
+        <locale name="permission.quiqqer.customer._header">
+<pl><![CDATA[Klienci]]></pl>
+        </locale>
+        <locale name="permission.quiqqer.customer.fileUpload">
+<pl><![CDATA[Może przesyłać pliki]]></pl>
+        </locale>
+        <locale name="permission.quiqqer.customer.fileView">
+<pl><![CDATA[Może wyświetlać pliki]]></pl>
+        </locale>
+        <locale name="permission.quiqqer.customer.fileEdit">
+<pl><![CDATA[Może edytować pliki]]></pl>
+        </locale>
+        <locale name="permission.quiqqer.customer.editComments">
+<pl><![CDATA[Może edytować komentarze]]></pl>
+        </locale>
+        <locale name="permission.quiqqer.customer.view">
+<pl><![CDATA[Może wyświetlać klientów]]></pl>
+        </locale>
+        <locale name="permission.quiqqer.customer.edit">
+<pl><![CDATA[Może edytować klientów]]></pl>
+        </locale>
+        <locale name="permission.quiqqer.customer.create">
+<pl><![CDATA[Może tworzyć klientów]]></pl>
+        </locale>
+
+<!-- Menu -->
+        <locale name="menu.extras.accounting">
+<pl><![CDATA[Księgowość]]></pl>
+        </locale>
+        <locale name="menu.extras.accounting_openitems">
+<pl><![CDATA[Wpłaty]]></pl>
+        </locale>
+
+        <locale name="backendSearch.group.customers.label">
+<pl><![CDATA[Klienci]]></pl>
+        </locale>
+
+        <locale name="customer.contactPerson">
+<pl><![CDATA[Osoba kontaktowa]]></pl>
+        </locale>
+
+        <locale name="permission.quiqqer.customer.FrontendUsers.contactPerson._header">
+<pl><![CDATA[Osoba kontaktowa]]></pl>
+        </locale>
+        <locale name="permission.quiqqer.customer.FrontendUsers.contactPerson.view">
+<pl><![CDATA[Może wyświetlać osobę kontaktową w profilu we frontendzie]]></pl>
+        </locale>
+        <locale name="permission.quiqqer.customer.FrontendUsers.contactPerson.edit">
+<pl><![CDATA[Może edytować osobę kontaktową w profilu we frontendzie]]></pl>
+        </locale>
+        <locale name="permission.quiqqer.customer.OpenItemsList._header">
+<pl><![CDATA[Wpłaty]]></pl>
+        </locale>
+        <locale name="permission.quiqqer.customer.OpenItemsList.view">
+<pl><![CDATA[Może korzystać z wpłat i otwartych pozycji]]></pl>
+        </locale>
+    </groups>
+
+    <groups name="quiqqer/customer" datatype="php">
+
+        <locale name="backendSearch.fallback_label.customer">
+<pl><![CDATA[Klient]]></pl>
+        </locale>
+
+        <locale name="comment.DownloadEntry.add_file">
+<pl><![CDATA[[editUser] udostępnił(a) plik „[file]” do pobrania w profilu klienta we frontendzie.]]></pl>
+        </locale>
+        <locale name="comment.DownloadEntry.remove_file">
+<pl><![CDATA[[editUser] usunął/usunęła plik „[file]” z plików do pobrania w profilu klienta we frontendzie.]]></pl>
+        </locale>
+
+        <locale name="exception.ajax.backend.general">
+<pl><![CDATA[Podczas obsługi żądania wystąpił nieoczekiwany błąd. Sprawdź dzienniki błędów lub skontaktuj się z administratorem.]]></pl>
+        </locale>
+        <locale name="message.ajax.backend.files.downloadEntry.addFile.success">
+<pl><![CDATA[Klient może teraz pobrać plik „[file]”.]]></pl>
+        </locale>
+        <locale name="message.ajax.backend.files.downloadEntry.removeFile.success">
+<pl><![CDATA[Klient nie może już pobrać pliku „[file]”.]]></pl>
+        </locale>
+
+        <locale name="DownloadEntry.title">
+<pl><![CDATA[Twoje pliki do pobrania]]></pl>
+        </locale>
+        <locale name="DownloadEntry.description">
+<pl><![CDATA[Udostępnione specjalnie dla Ciebie]]></pl>
+        </locale>
+
+        <locale name="exception.customer_no_already_exists">
+<pl><![CDATA[Numer klienta „[customerNo]” już istnieje i nie może zostać przypisany.]]></pl>
+        </locale>
+
+        <locale name="NumberRange.title">
+<pl><![CDATA[Numer klienta]]></pl>
+        </locale>
+
+        <locale name="OpenItemsList.documentType.invoice">
+<pl><![CDATA[Faktura]]></pl>
+        </locale>
+        <locale name="OpenItemsList.documentType.order">
+<pl><![CDATA[Zamówienie]]></pl>
+        </locale>
+
+        <locale name="customer.create.category.details">
+<pl><![CDATA[Dane podstawowe]]></pl>
+        </locale>
+        <locale name="customer.create.category.address">
+<pl><![CDATA[Adres]]></pl>
+        </locale>
+        <locale name="menu.erp.customer.title">
+<pl><![CDATA[Klienci]]></pl>
+        </locale>
+
+        <locale name="customer.settings.customerLogin">
+<pl><![CDATA[Logowanie klientów]]></pl>
+        </locale>
+        <locale name="customer.settings.customerLogin.description">
+<pl><![CDATA[Jeśli ta opcja jest wyłączona, nie można aktywować użytkowników z grupy klientów. Gdy jest włączona, we właściwościach użytkownika każdego klienta można zezwolić mu na logowanie do systemu. Klient zostanie wtedy automatycznie aktywowany podczas zapisywania.]]></pl>
+        </locale>
+        <locale name="message.customer.saved.successfully" html="true">
+<pl><![CDATA[Klient został zapisany.]]></pl>
+        </locale>
+
+<!-- OutputProvider -->
+        <locale name="OutputProvider.entity.title.OpenItemsList">
+<pl><![CDATA[Wpłaty]]></pl>
+        </locale>
+        <locale name="OutputProvider.download_filename">
+<pl><![CDATA[Open_Items_[uid]__[date]]]></pl>
+        </locale>
+
+<!-- OpenItemsList -->
+        <locale name="OpenItemsList.title">
+<pl><![CDATA[Wpłaty]]></pl>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.date">
+<pl><![CDATA[Data]]></pl>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.document_no">
+<pl><![CDATA[Nr dokumentu]]></pl>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.amount_net">
+<pl><![CDATA[Netto]]></pl>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.amount_vat">
+<pl><![CDATA[VAT]]></pl>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.amount_sum">
+<pl><![CDATA[Brutto]]></pl>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.last_payment">
+<pl><![CDATA[Ostatnia płatność]]></pl>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.amount_paid">
+<pl><![CDATA[Kwota zapłacona]]></pl>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.amount_due">
+<pl><![CDATA[Kwota do zapłaty]]></pl>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.days_due">
+<pl><![CDATA[Dni po terminie]]></pl>
+        </locale>
+        <locale name="OpenItemsList.tbl.header.dunning_level">
+<pl><![CDATA[Poziom monitu]]></pl>
+        </locale>
+        <locale name="OpenItemsList.tbl.sums">
+<pl><![CDATA[SUMY]]></pl>
+        </locale>
+        <locale name="OpenItemsList.no_open_items">
+<pl><![CDATA[Na Twoim koncie klienta nie ma obecnie otwartych pozycji.]]></pl>
+        </locale>
+        <locale name="mail.OpenItemsList.subject">
+<pl><![CDATA[Lista otwartych pozycji — stan na [date]]]></pl>
+        </locale>
+        <locale name="mail.OpenItemsList.body">
+<pl><![CDATA[<p>Dzień dobry, [customerName],</p><p>W załączeniu przesyłamy pełną listę nieuregulowanych pozycji z terminem płatności do [date] włącznie.</p><p>W razie pytań chętnie pomożemy.</p><br/><p>Z poważaniem</p>]]></pl>
+        </locale>
+
+        <locale name="exception.empty.mail.not.allowed">
+<pl><![CDATA[Adres e-mail nie może być pusty.]]></pl>
+        </locale>
+        <locale name="exception.customer.login.not.allowed">
+<pl><![CDATA[Nie można aktywować klienta. Logowanie klientów jest wyłączone w tym systemie.]]></pl>
+        </locale>
+        <locale name="customer.history.change">
+<pl><![CDATA[Użytkownik [username] ([userId]) zmienił pole „[field]” z „[old]” na „[new]”.]]></pl>
+        </locale>
+        <locale name="customer.history.value.empty">
+<pl><![CDATA[puste]]></pl>
+        </locale>
+        <locale name="customer.history.field.username">
+<pl><![CDATA[Nazwa użytkownika]]></pl>
+        </locale>
+        <locale name="customer.history.field.firstname">
+<pl><![CDATA[Imię]]></pl>
+        </locale>
+        <locale name="customer.history.field.lastname">
+<pl><![CDATA[Nazwisko]]></pl>
+        </locale>
+        <locale name="customer.history.field.email">
+<pl><![CDATA[E-mail]]></pl>
+        </locale>
+        <locale name="customer.history.field.customerId">
+<pl><![CDATA[Nr klienta]]></pl>
+        </locale>
+        <locale name="customer.history.field.mainGroup">
+<pl><![CDATA[Grupa główna]]></pl>
+        </locale>
+        <locale name="customer.history.field.groups">
+<pl><![CDATA[Grupy]]></pl>
+        </locale>
+        <locale name="customer.history.field.referenceCode">
+<pl><![CDATA[Kod referencyjny]]></pl>
+        </locale>
+        <locale name="customer.history.field.paymentTerm">
+<pl><![CDATA[Termin płatności]]></pl>
+        </locale>
+        <locale name="customer.history.field.contactPerson">
+<pl><![CDATA[Osoba kontaktowa]]></pl>
+        </locale>
+        <locale name="customer.history.field.address.salutation">
+<pl><![CDATA[Forma grzecznościowa]]></pl>
+        </locale>
+        <locale name="customer.history.field.address.firstname">
+<pl><![CDATA[Imię w adresie]]></pl>
+        </locale>
+        <locale name="customer.history.field.address.lastname">
+<pl><![CDATA[Nazwisko w adresie]]></pl>
+        </locale>
+        <locale name="customer.history.field.address.company">
+<pl><![CDATA[Firma]]></pl>
+        </locale>
+        <locale name="customer.history.field.address.street_no">
+<pl><![CDATA[Ulica / nr]]></pl>
+        </locale>
+        <locale name="customer.history.field.address.zip">
+<pl><![CDATA[Kod pocztowy]]></pl>
+        </locale>
+        <locale name="customer.history.field.address.city">
+<pl><![CDATA[Miejscowość]]></pl>
+        </locale>
+        <locale name="customer.history.field.address.country">
+<pl><![CDATA[Kraj]]></pl>
+        </locale>
+        <locale name="customer.history.field.address.suffix">
+<pl><![CDATA[Uzupełnienie adresu]]></pl>
+        </locale>
+        <locale name="customer.history.field.address.phone.tel">
+<pl><![CDATA[Telefon]]></pl>
+        </locale>
+        <locale name="customer.history.field.address.phone.mobile">
+<pl><![CDATA[Telefon komórkowy]]></pl>
+        </locale>
+        <locale name="customer.history.field.address.phone.fax">
+<pl><![CDATA[Faks]]></pl>
+        </locale>
+    </groups>
+
+    <groups name="quiqqer/customer" datatype="js">
+
+        <locale name="controls.userFiles.SelectItem.btn.download.title">
+<pl><![CDATA[Pobierz plik]]></pl>
+        </locale>
+        <locale name="controls.userFiles.SelectItem.btn.attachment.title">
+<pl><![CDATA[Plik jest załącznikiem wiadomości e-mail]]></pl>
+        </locale>
+        <locale name="controls.userFiles.SelectItem.tpl.labelAttachToEmail">
+<pl><![CDATA[jest załącznikiem wiadomości e-mail]]></pl>
+        </locale>
+        <locale name="controls.userFiles.SelectItem.tpl.titleAttachToEmail">
+<pl><![CDATA[Automatycznie dołącz ten plik przy wysyłaniu dokumentu e-mailem.]]></pl>
+        </locale>
+        <locale name="controls.userFiles.SelectItem.delete.title">
+<pl><![CDATA[Odłącz plik]]></pl>
+        </locale>
+        <locale name="controls.userFiles.SelectItem.delete.text">
+<pl><![CDATA[Odłącz plik]]></pl>
+        </locale>
+        <locale name="controls.userFiles.SelectItem.delete.information" html="true">
+<pl><![CDATA[Czy na pewno odłączyć plik <b>„[file]”</b>? Plik pozostanie w plikach klienta. Usunięte zostanie jedynie powiązanie z tym dokumentem.]]></pl>
+        </locale>
+        <locale name="controls.userFiles.SelectItem.delete.submit">
+<pl><![CDATA[Odłącz plik]]></pl>
+        </locale>
+
+        <locale name="controls.userFiles.Select.search_placeholder">
+<pl><![CDATA[Szukaj w plikach klienta...]]></pl>
+        </locale>
+        <locale name="control.userFiles.window.title">
+<pl><![CDATA[Pliki klienta „[user]”]]></pl>
+        </locale>
+        <locale name="control.userFiles.window.btn.select">
+<pl><![CDATA[Wybierz pliki]]></pl>
+        </locale>
+
+<!-- OpenItems -->
+        <locale name="panels.OpenItems.grid.toggle_title">
+<pl><![CDATA[Pokaż wszystkie otwarte pozycje tego klienta]]></pl>
+        </locale>
+        <locale name="panels.OpenItems.title">
+<pl><![CDATA[Wpłaty]]></pl>
+        </locale>
+        <locale name="panel.OpenItems.grid.date">
+<pl><![CDATA[Data]]></pl>
+        </locale>
+        <locale name="panel.OpenItems.grid.details.documentType">
+<pl><![CDATA[Typ dokumentu]]></pl>
+        </locale>
+        <locale name="panel.OpenItems.grid.details.documentNo">
+<pl><![CDATA[Nr dokumentu]]></pl>
+        </locale>
+        <locale name="panel.OpenItems.grid.net">
+<pl><![CDATA[Netto]]></pl>
+        </locale>
+        <locale name="panel.OpenItems.grid.vat">
+<pl><![CDATA[VAT]]></pl>
+        </locale>
+        <locale name="panel.OpenItems.grid.gross">
+<pl><![CDATA[Brutto]]></pl>
+        </locale>
+        <locale name="panel.OpenItems.grid.paid">
+<pl><![CDATA[zapłacone]]></pl>
+        </locale>
+        <locale name="panel.OpenItems.grid.open">
+<pl><![CDATA[otwarte]]></pl>
+        </locale>
+        <locale name="panel.OpenItems.grid.userId">
+<pl><![CDATA[Nr klienta]]></pl>
+        </locale>
+        <locale name="panel.OpenItems.grid.customerName">
+<pl><![CDATA[Klient]]></pl>
+        </locale>
+        <locale name="panels.OpenItems.details.btn.open">
+<pl><![CDATA[Otwórz dokument]]></pl>
+        </locale>
+        <locale name="panels.OpenItems.details.btn.addTransaction">
+<pl><![CDATA[Zaksięguj płatność]]></pl>
+        </locale>
+        <locale name="panel.OpenItems.grid.openItemsCount">
+<pl><![CDATA[Otwarte pozycje]]></pl>
+        </locale>
+        <locale name="panels.OpenItems.btn.showOpenItemsList">
+<pl><![CDATA[Drukuj / wyślij listę otwartych pozycji]]></pl>
+        </locale>
+        <locale name="panels.OpenItems.details.tpl.placeholderSearch">
+<pl><![CDATA[Szukaj dokumentów...]]></pl>
+        </locale>
+        <locale name="panels.OpenItems.search.placeholder">
+<pl><![CDATA[Szukaj klientów...]]></pl>
+        </locale>
+        <locale name="panel.OpenItems.grid.details.daysDue">
+<pl><![CDATA[Dni po terminie]]></pl>
+        </locale>
+        <locale name="panel.OpenItems.grid.details.daysOpen">
+<pl><![CDATA[Dni od otwarcia]]></pl>
+        </locale>
+        <locale name="panel.OpenItems.grid.details.dunningLevel">
+<pl><![CDATA[Poziom monitu]]></pl>
+        </locale>
+        <locale name="panel.OpenItems.grid.openOpenPositions">
+<pl><![CDATA[Pokaż otwarte pozycje]]></pl>
+        </locale>
+        <locale name="panel.OpenItems.grid.openCustomer">
+<pl><![CDATA[Otwórz klienta]]></pl>
+        </locale>
+        <locale name="panel.OpenItems.grid.chooseOption">
+<pl><![CDATA[Wybierz opcję]]></pl>
+        </locale>
+
+        <locale name="window.customer.creation.title">
+<pl><![CDATA[Utwórz nowego klienta]]></pl>
+        </locale>
+        <locale name="customer.window.create.title">
+<pl><![CDATA[Utwórz nowego klienta]]></pl>
+        </locale>
+        <locale name="window.customer.creation.next">
+<pl><![CDATA[Dalej]]></pl>
+        </locale>
+        <locale name="window.customer.creation.prev">
+<pl><![CDATA[Wstecz]]></pl>
+        </locale>
+        <locale name="window.customer.creation.next">
+<pl><![CDATA[Dalej]]></pl>
+        </locale>
+        <locale name="window.customer.creation.submit">
+<pl><![CDATA[Utwórz klienta]]></pl>
+        </locale>
+
+        <locale name="window.customer.upload.title">
+<pl><![CDATA[Prześlij plik]]></pl>
+        </locale>
+        <locale name="window.customer.delete.title">
+<pl><![CDATA[Usuń pliki]]></pl>
+        </locale>
+        <locale name="window.customer.delete.text">
+<pl><![CDATA[Czy na pewno usunąć pliki klienta?]]></pl>
+        </locale>
+        <locale name="window.customer.delete.information">
+<pl><![CDATA[Następujące pliki zostaną trwale usunięte:]]></pl>
+        </locale>
+        <locale name="window.customer.upload.tbl.header.actions">
+<pl><![CDATA[Działania]]></pl>
+        </locale>
+        <locale name="window.customer.upload.tbl.btn.download">
+<pl><![CDATA[Kliknij tutaj, aby pobrać ten plik]]></pl>
+        </locale>
+        <locale name="window.customer.upload.tbl.btn.user_download">
+<pl><![CDATA[Kliknij tutaj, aby udostępnić ten plik do pobrania w profilu użytkownika we frontendzie]]></pl>
+        </locale>
+        <locale name="window.customer.userDownload.add.title">
+<pl><![CDATA[Udostępnij klientowi plik do pobrania]]></pl>
+        </locale>
+        <locale name="window.customer.userDownload.add.text">
+<pl><![CDATA[Czy udostępnić ten plik do pobrania w profilu klienta we frontendzie?]]></pl>
+        </locale>
+        <locale name="window.customer.userDownload.add.information" html="true">
+<pl><![CDATA[Klient będzie mógł pobrać plik <b>[file]</b> w sekcji „Moje pliki do pobrania” w swoim profilu we frontendzie. Wymaga to zalogowania się.]]></pl>
+        </locale>
+        <locale name="window.customer.userDownload.add.btn.submit">
+<pl><![CDATA[Udostępnij plik teraz]]></pl>
+        </locale>
+        <locale name="window.customer.userDownload.remove.title">
+<pl><![CDATA[Odbierz klientowi możliwość pobierania pliku]]></pl>
+        </locale>
+        <locale name="window.customer.userDownload.remove.text">
+<pl><![CDATA[Czy wycofać możliwość pobierania tego pliku w profilu klienta we frontendzie?]]></pl>
+        </locale>
+        <locale name="window.customer.userDownload.remove.information" html="true">
+<pl><![CDATA[Plik <b>[file]</b> nie będzie już dostępny w sekcji „Moje pliki do pobrania” w profilu klienta we frontendzie.]]></pl>
+        </locale>
+        <locale name="window.customer.userDownload.remove.btn.submit">
+<pl><![CDATA[Wycofaj udostępnianie pliku]]></pl>
+        </locale>
+
+        <locale name="window.customer.creation.customerNo.title">
+<pl><![CDATA[Utwórz nowego klienta]]></pl>
+        </locale>
+        <locale name="window.customer.creation.customerNo.inputLabel">
+<pl><![CDATA[Numer klienta]]></pl>
+        </locale>
+        <locale name="window.customer.creation.customerNo.text" html="true">
+<pl><![CDATA[Nadaj numer nowemu klientowi.<br />Możesz go później zmienić.]]></pl>
+        </locale>
+        <locale name="window.customer.creation.customerNo.labelPrefix">
+<pl><![CDATA[Prefiks]]></pl>
+        </locale>
+
+        <locale name="window.customer.creation.dataHeader.title">
+<pl><![CDATA[Dane klienta]]></pl>
+        </locale>
+        <locale name="window.customer.creation.dataHeader.text" html="true">
+<pl><![CDATA[Wszystkie dane klienta można później zmienić.]]></pl>
+        </locale>
+
+        <locale name="window.customer.creation.groups.title">
+<pl><![CDATA[Grupy klientów]]></pl>
+        </locale>
+        <locale name="window.customer.creation.groups.text" html="true">
+<pl><![CDATA[Klientowi można przypisać kilka grup klientów. Klient jest automatycznie dodawany do głównych grup klientów.]]></pl>
+        </locale>
+
+        <locale name="window.customer.creation.next">
+<pl><![CDATA[Dalej]]></pl>
+        </locale>
+        <locale name="window.customer.creation.previous">
+<pl><![CDATA[Wstecz]]></pl>
+        </locale>
+        <locale name="window.customer.creation.create">
+<pl><![CDATA[Utwórz klienta]]></pl>
+        </locale>
+        <locale name="window.customer.creation.group">
+<pl><![CDATA[Grupa klientów]]></pl>
+        </locale>
+        <locale name="window.customer.creation.groups">
+<pl><![CDATA[Grupy użytkowników]]></pl>
+        </locale>
+
+        <locale name="window.customer.select.title">
+<pl><![CDATA[Wybór klientów]]></pl>
+        </locale>
+        <locale name="window.customer.select.button">
+<pl><![CDATA[Wybierz klienta]]></pl>
+        </locale>
+        <locale name="window.customer.edit.button">
+<pl><![CDATA[Edytuj klienta]]></pl>
+        </locale>
+        <locale name="window.customer.address.select.default_prefix">
+<pl><![CDATA[[Domyślny]]]></pl>
+        </locale>
+        <locale name="window.customer.tbl.header.uploadTime">
+<pl><![CDATA[Data przesłania]]></pl>
+        </locale>
+
+
+        <locale name="panel.title">
+<pl><![CDATA[Klienci]]></pl>
+        </locale>
+
+        <locale name="panel.search.placeholder">
+<pl><![CDATA[Szukaj klientów...]]></pl>
+        </locale>
+        <locale name="panel.search.switch.customer.group">
+<pl><![CDATA[Szukaj tylko w grupie klientów]]></pl>
+        </locale>
+
+        <locale name="administration.contextMenu.add.to.customer">
+<pl><![CDATA[Dodaj do grupy klientów]]></pl>
+        </locale>
+        <locale name="administration.contextMenu.remove.from.customer">
+<pl><![CDATA[Usuń z grupy klientów]]></pl>
+        </locale>
+        <locale name="administration.contextMenu.groups">
+<pl><![CDATA[Zarządzaj grupami użytkownika]]></pl>
+        </locale>
+        <locale name="administration.contextMenu.user">
+<pl><![CDATA[Zarządzaj użytkownikiem]]></pl>
+        </locale>
+
+        <locale name="user.group.window.title">
+<pl><![CDATA[Edytuj grupy użytkownika [username]]]></pl>
+        </locale>
+
+        <locale name="customer.panel.title">
+<pl><![CDATA[Klient: [data]]]></pl>
+        </locale>
+        <locale name="customer.panel.information.details">
+<pl><![CDATA[Szczegóły]]></pl>
+        </locale>
+        <locale name="customer.panel.information.address">
+<pl><![CDATA[Adres]]></pl>
+        </locale>
+        <locale name="customer.panel.information.erp.addresses">
+<pl><![CDATA[Adresy ERP]]></pl>
+        </locale>
+        <locale name="customer.panel.information.invoice.address">
+<pl><![CDATA[Adres do faktury]]></pl>
+        </locale>
+        <locale name="customer.panel.information.delivery.address">
+<pl><![CDATA[Adres dostawy]]></pl>
+        </locale>
+        <locale name="customer.panel.information.countryZipCity">
+<pl><![CDATA[Kraj / kod pocztowy / miejscowość]]></pl>
+        </locale>
+        <locale name="customer.panel.information.allocation">
+<pl><![CDATA[Przypisanie]]></pl>
+        </locale>
+        <locale name="customer.panel.information.group">
+<pl><![CDATA[Grupa główna]]></pl>
+        </locale>
+        <locale name="customer.panel.information.groups">
+<pl><![CDATA[Grupy]]></pl>
+        </locale>
+        <locale name="customer.panel.information.communication">
+<pl><![CDATA[Komunikacja]]></pl>
+        </locale>
+        <locale name="customer.panel.information.extra">
+<pl><![CDATA[Pozostałe]]></pl>
+        </locale>
+        <locale name="customer.panel.information.extra.homepage">
+<pl><![CDATA[Strona internetowa]]></pl>
+        </locale>
+        <locale name="customer.panel.information.paymentTerm">
+<pl><![CDATA[Domyślny termin płatności]]></pl>
+        </locale>
+        <locale name="customer.panel.information.shipping">
+<pl><![CDATA[Domyślna metoda wysyłki]]></pl>
+        </locale>
+
+        <locale name="customer.panel.information.commentsAndHistory">
+<pl><![CDATA[Komentarze i historia]]></pl>
+        </locale>
+        <locale name="customer.panel.information.standard.payments">
+<pl><![CDATA[Domyślna metoda płatności]]></pl>
+        </locale>
+        <locale name="customer.panel.information.contactPerson">
+<pl><![CDATA[Osoba kontaktowa]]></pl>
+        </locale>
+        <locale name="customer.panel.information.referenceCode">
+<pl><![CDATA[Referencja klienta / kod referencyjny]]></pl>
+        </locale>
+        <locale name="customer.panel.delivery.address">
+<pl><![CDATA[Adres wysyłki]]></pl>
+        </locale>
+        <locale name="customer.panel.btn.edit_id">
+<pl><![CDATA[Edytuj nr klienta]]></pl>
+        </locale>
+        <locale name="customer.panel.editId.title">
+<pl><![CDATA[Edytuj nr klienta]]></pl>
+        </locale>
+        <locale name="customer.panel.editId.confirm">
+<pl><![CDATA[Zmień nr klienta teraz]]></pl>
+        </locale>
+        <locale name="customer.panel.editId.nextCustomerNo" html="true">
+<pl><![CDATA[Następny nr klienta do przypisania: <b>[nextCustomerNo]</b>]]></pl>
+        </locale>
+        <locale name="checkout.panel.delivery.option.same">
+<pl><![CDATA[Taki sam jak adres do faktury]]></pl>
+        </locale>
+
+        <locale name="address.edit.window.title">
+<pl><![CDATA[Edytuj adres #[id]: [firstname] [lastname]]]></pl>
+        </locale>
+
+        <locale name="customer.window.delete.title">
+<pl><![CDATA[Usuń klienta]]></pl>
+        </locale>
+        <locale name="customer.window.delete.text">
+<pl><![CDATA[Czy na pewno usunąć tego klienta?]]></pl>
+        </locale>
+        <locale name="customer.window.delete.information">
+<pl><![CDATA[Klient / użytkownik zostanie trwale usunięty i nie będzie można go przywrócić.]]></pl>
+        </locale>
+
+        <locale name="quiqqer.customer.panel.general">
+<pl><![CDATA[Ogólne]]></pl>
+        </locale>
+        <locale name="quiqqer.customer.panel.userInformation">
+<pl><![CDATA[Zaawansowane]]></pl>
+        </locale>
+        <locale name="quiqqer.customer.panel.userProperty">
+<pl><![CDATA[Właściwości użytkownika]]></pl>
+        </locale>
+        <locale name="quiqqer.customer.panel.addresses">
+<pl><![CDATA[Adresy i osoby kontaktowe]]></pl>
+        </locale>
+        <locale name="quiqqer.customer.panel.comments">
+<pl><![CDATA[Komentarze]]></pl>
+        </locale>
+        <locale name="quiqqer.customer.panel.history">
+<pl><![CDATA[Historia]]></pl>
+        </locale>
+        <locale name="quiqqer.customer.panel.openUser">
+<pl><![CDATA[Otwórz użytkownika bezpośrednio]]></pl>
+        </locale>
+        <locale name="quiqqer.customer.panel.files">
+<pl><![CDATA[Pliki]]></pl>
+        </locale>
+        <locale name="quiqqer.customer.panel.openItemsListOutput">
+<pl><![CDATA[Lista otwartych pozycji]]></pl>
+        </locale>
+        <locale name="quiqqer.customer.panel.extras.title">
+<pl><![CDATA[Dodatkowe opcje]]></pl>
+        </locale>
+        <locale name="quiqqer.customer.panel.sendMail">
+<pl><![CDATA[Wyślij e-mail do klienta]]></pl>
+        </locale>
+        <locale name="customer.files.upload.button">
+<pl><![CDATA[Prześlij]]></pl>
+        </locale>
+
+        <locale name="customer.address.delete.title">
+<pl><![CDATA[Usuń adres]]></pl>
+        </locale>
+        <locale name="customer.address.delete.text">
+<pl><![CDATA[Usuń adres]]></pl>
+        </locale>
+        <locale name="customer.address.delete.information" html="true">
+<pl><![CDATA[Zostaną usunięte następujące adresy:<br />[addressIds] Adresy zostaną trwale usunięte.]]></pl>
+        </locale>
+
+        <locale name="customer.user.information.title">
+<pl><![CDATA[Informacje o użytkowniku]]></pl>
+        </locale>
+        <locale name="customer.user.information.USt">
+<pl><![CDATA[Numer VAT]]></pl>
+        </locale>
+        <locale name="customer.user.information.textBruttoNetto">
+<pl><![CDATA[Podstawa obliczania cen]]></pl>
+        </locale>
+
+        <locale name="customer.user.window.checkCalculation">
+<pl><![CDATA[Ustal podstawę obliczania cen]]></pl>
+        </locale>
+        <locale name="customer.user.window.isCompany">
+<pl><![CDATA[Klient firmowy]]></pl>
+        </locale>
+        <locale name="customer.user.window.company">
+<pl><![CDATA[Firma]]></pl>
+        </locale>
+        <locale name="customer.user.window.defaultAddress">
+<pl><![CDATA[Domyślny adres]]></pl>
+        </locale>
+        <locale name="customer.user.window.shippingAddress">
+<pl><![CDATA[Adres wysyłki]]></pl>
+        </locale>
+        <locale name="customer.user.window.text" html="true">
+<pl><![CDATA[<p>Podstawa obliczania cen określa sposób uwzględniania użytkownika przy obliczaniu cen.</p><p>Dane pokazują wartości, których QUIQQER użyłby dla użytkownika. Mogą różnić się od jego aktualnych ustawień, ponieważ można je ręcznie dostosować dla każdego użytkownika.</p><p>Kliknij Zastosuj, aby QUIQQER ustalił ustawienia użytkownika, lub Anuluj, aby zachować obecne ustawienia.</p>]]></pl>
+        </locale>
+        <locale name="customer.user.window.button">
+<pl><![CDATA[Zastosuj]]></pl>
+        </locale>
+
+        <locale name="customer.user.information.checkCalculation">
+<pl><![CDATA[Analiza: automatycznie ustal podstawę obliczania cen.]]></pl>
+        </locale>
+        <locale name="customer.user.information.taxInformation">
+<pl><![CDATA[Informacje podatkowe]]></pl>
+        </locale>
+        <locale name="customer.user.information.discount">
+<pl><![CDATA[Domyślny rabat]]></pl>
+        </locale>
+        <locale name="customer.user.information.discount.description">
+<pl><![CDATA[Ten rabat jest stosowany bezpośrednio do pozycji w backendzie podczas tworzenia faktury.]]></pl>
+        </locale>
+
+        <locale name="customer.user.information.general">
+<pl><![CDATA[Ogólne informacje o użytkowniku]]></pl>
+        </locale>
+        <locale name="customer.user.information.textCompanyNo">
+<pl><![CDATA[Numer identyfikacyjny firmy]]></pl>
+        </locale>
+
+        <locale name="customer.user.properties.title">
+<pl><![CDATA[Właściwości użytkownika]]></pl>
+        </locale>
+        <locale name="customer.user.properties.status">
+<pl><![CDATA[Może się logować]]></pl>
+        </locale>
+        <locale name="customer.user.properties.status.description">
+<pl><![CDATA[Klient zostanie aktywowany i będzie mógł logować się do systemu.]]></pl>
+        </locale>
+        <locale name="customer.user.properties.password.title">
+<pl><![CDATA[Hasło]]></pl>
+        </locale>
+        <locale name="customer.user.properties.password.1">
+<pl><![CDATA[Nowe hasło]]></pl>
+        </locale>
+        <locale name="customer.user.properties.password.2">
+<pl><![CDATA[Powtórz hasło]]></pl>
+        </locale>
+        <locale name="customer.user.information.discount.passwordMail">
+<pl><![CDATA[E-mail dotyczący hasła]]></pl>
+        </locale>
+        <locale name="customer.user.information.discount.passwordMail.button">
+<pl><![CDATA[Wyślij klientowi e-mail do resetowania hasła]]></pl>
+        </locale>
+
+        <locale name="password.mail.window.title">
+<pl><![CDATA[E-mail do resetowania hasła]]></pl>
+        </locale>
+        <locale name="password.mail.window.text">
+<pl><![CDATA[E-mail do resetowania hasła]]></pl>
+        </locale>
+        <locale name="password.mail.window.information">
+<pl><![CDATA[Klient otrzyma e-mail umożliwiający zresetowanie hasła i wybranie nowego. Obecne hasło przestanie być ważne.]]></pl>
+        </locale>
+        <locale name="password.mail.window.submit">
+<pl><![CDATA[Wyślij e-mail]]></pl>
+        </locale>
+
+        <locale name="message.customer.cant.log.in" html="true">
+<pl><![CDATA[System jest skonfigurowany tak, aby nie można było aktywować użytkowników z grupy klientów, a tym samym umożliwić im logowania. Dlatego nie można zmienić statusu klienta ani jego hasła logowania.<br /><br />Można to zmienić w sekcji Ustawienia -> Klienci -> Logowanie klientów.]]></pl>
+        </locale>
+
+        <locale name="message.passwords.incorrect">
+<pl><![CDATA[Hasła nie są identyczne. Hasło zostanie zapisane dopiero wtedy, gdy oba będą takie same.]]></pl>
+        </locale>
+
+        <locale name="customer.user.information.info">
+<pl><![CDATA[Informacje systemowe klienta]]></pl>
+        </locale>
+
+        <locale name="window.add.comment.title">
+<pl><![CDATA[Dodaj komentarz]]></pl>
+        </locale>
+        <locale name="window.add.comment.button.text">
+<pl><![CDATA[Dodaj komentarz]]></pl>
+        </locale>
+        <locale name="window.edit.comment.title">
+<pl><![CDATA[Edytuj komentarz]]></pl>
+        </locale>
+        <locale name="window.add.comment.filter.placeholder">
+<pl><![CDATA[Filtruj (wiadomość, typ, ID)...]]></pl>
+        </locale>
+
+        <locale name="control.users.select.search.field.placeholder">
+<pl><![CDATA[Szukaj klientów...]]></pl>
+        </locale>
+
+        <locale name="customer.create.steps">
+<pl><![CDATA[Krok [step] z [max]]]></pl>
+        </locale>
+
+        <locale name="panel.search.editable.button.title">
+<pl><![CDATA[Włącz lub wyłącz tryb edycji]]></pl>
+        </locale>
+
+        <locale name="window.customer.address.select.title">
+<pl><![CDATA[Wybierz adres klienta]]></pl>
+        </locale>
+        <locale name="window.customer.address.select.information">
+<pl><![CDATA[Wybierz adres klienta:]]></pl>
+        </locale>
+        <locale name="customer.password.disabled">
+<pl><![CDATA[Resetowanie hasła jest wyłączone, ponieważ nie można aktywować użytkowników z grupy klientów.]]></pl>
+        </locale>
+        <locale name="customer.window.backToList">
+<pl><![CDATA[Wróć do wyboru klientów]]></pl>
+        </locale>
+        <locale name="panel.search.title">
+<pl><![CDATA[Pola uwzględniane w wyszukiwaniu]]></pl>
+        </locale>
+        <locale name="address.telFaxMobile">
+<pl><![CDATA[Telefon / faks / telefon komórkowy]]></pl>
+        </locale>
+        <locale name="address.email">
+<pl><![CDATA[E-mail]]></pl>
+        </locale>
+        <locale name="address.general">
+<pl><![CDATA[Ogólne]]></pl>
+        </locale>
+        <locale name="address.create.title">
+<pl><![CDATA[Utwórz nowy adres]]></pl>
+        </locale>
+        <locale name="customer.select.button.create">
+<pl><![CDATA[Utwórz nowego klienta]]></pl>
+        </locale>
+        <locale name="customer.select.button.search">
+<pl><![CDATA[Szukaj klientów]]></pl>
+        </locale>
+        <locale name="customer.select.button.replace">
+<pl><![CDATA[Zastąp klienta]]></pl>
+        </locale>
+        <locale name="customer.select.button.edit">
+<pl><![CDATA[Edytuj klienta]]></pl>
+        </locale>
+
+    </groups>
+</locales>
