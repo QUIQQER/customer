@@ -858,7 +858,7 @@ class EventHandler
             return false;
         }
 
-        $standardAddressUuid = $User->getStandardAddress()?->getUUID();
+        $standardAddressUuid = $User->getStandardAddress()->getUUID();
 
         if (empty($standardAddressUuid)) {
             return false;
