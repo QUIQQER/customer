@@ -39,7 +39,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/userFiles/Window'
             autoclose: false,
 
             cancel_button: {
-                text: QUILocale.get('quiqqer/system', 'cancel'),
+                text: QUILocale.get('quiqqer/core', 'cancel'),
                 textimage: 'fa fa-remove'
             },
             ok_button: {
