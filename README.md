@@ -50,6 +50,7 @@ Creation and editing retain the normal Core user permissions
 | `quiqqer_customer_history_list` | Paginated ERP customer history, newest first |
 | `quiqqer_customer_comment_add` | Add a plain-text comment |
 | `quiqqer_customer_comment_update` | Edit a customer-module comment by `commentId` |
+| `quiqqer_customer_open_items` | Live open items and numeric totals per currency; supports currency/document/overdue filters |
 
 The `data` object supports `customerNo`, `address`, `deliveryAddress`, `contactPerson`,
 `paymentTerm` (days), `language`, `website`, `referenceCode`, `vatId`, `taxId`, `chUid`,
@@ -70,6 +71,9 @@ are rejected before writing. Tools expose only customers in the configured custo
 group and never accept arbitrary user attributes or group/permission changes.
 Comment writes require `quiqqer.customer.editComments` and Core user edit rights.
 History is read-only; comments from other ERP modules retain their owning module.
+Open items additionally require `quiqqer.customer.OpenItemsList.view`. Totals cover
+all matching items before pagination. The response reports whether invoice/order
+modules are installed, and respects the package's `considerOrders` setting.
 
 ## Development
 

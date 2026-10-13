@@ -95,7 +95,8 @@ final class McpCustomerTest extends TestCase
             'quiqqer_customer_comments_list',
             'quiqqer_customer_history_list',
             'quiqqer_customer_comment_add',
-            'quiqqer_customer_comment_update'
+            'quiqqer_customer_comment_update',
+            'quiqqer_customer_open_items'
         ], array_keys($tools));
         $customer = $this->createCustomer($tools);
         self::assertSame((string)$this->customerNumber, $customer['customerNo']);
@@ -222,13 +223,14 @@ final class McpCustomerTest extends TestCase
         self::assertFalse($Agent->isSU());
         $this->setActorPermissions($Agent, [Provider::PERMISSION => 1, 'quiqqer.customer.view' => 1]);
         $this->useActor($Agent);
-        self::assertCount(9, $this->tools());
+        self::assertCount(10, $this->tools());
         self::assertSame($customer['uuid'], $tools['quiqqer_customer_get']['handler']($customer['uuid'])['uuid']);
         $this->assertError($tools['quiqqer_customer_create']['handler'](['referenceCode' => 'denied']));
         $this->assertError($tools['quiqqer_customer_update']['handler']($customer['uuid'], ['paymentTerm' => 7]));
         $this->assertError($tools['quiqqer_customer_comment_add']['handler']($customer['uuid'], 'denied'));
         self::assertIsArray($tools['quiqqer_customer_comments_list']['handler']($customer['uuid']));
         self::assertIsArray($tools['quiqqer_customer_history_list']['handler']($customer['uuid']));
+        $this->assertError($tools['quiqqer_customer_open_items']['handler']($customer['uuid']));
 
         $this->setActorPermissions($Agent, [Provider::PERMISSION => 1]);
         $this->assertError($tools['quiqqer_customer_get']['handler']($customer['uuid']));
@@ -295,6 +297,33 @@ final class McpCustomerTest extends TestCase
         $this->assertError($tools['quiqqer_customer_comments_list']['handler']($customer['uuid'], '20'));
         $this->assertError($tools['quiqqer_customer_history_list']['handler']($customer['uuid'], 20, -1));
         self::assertSame(1, $tools['quiqqer_customer_comments_list']['handler']($customer['uuid'])['total']);
+    }
+
+    public function testCustomerOpenItemsReadAndValidation(): void
+    {
+        $tools = $this->tools();
+        $customer = $this->createCustomer($tools);
+        $result = $tools['quiqqer_customer_open_items']['handler']($customer['uuid']);
+        self::assertIsArray($result);
+        self::assertSame(0, $result['total']);
+        self::assertSame([], $result['items']);
+        self::assertSame([], $result['totalsByCurrency']);
+        self::assertSame(20, $result['limit']);
+
+        $invalidArguments = [
+            [$customer['uuid'], null],
+            [$customer['uuid'], 'eur'],
+            [$customer['uuid'], 'BAD-CURRENCY'],
+            [$customer['uuid'], '', []],
+            [$customer['uuid'], '', '', 'false'],
+            [$customer['uuid'], '', '', false, 101],
+            [$customer['uuid'], '', '', false, 20, -1],
+            ['missing-customer']
+        ];
+
+        foreach ($invalidArguments as $arguments) {
+            $this->assertError($tools['quiqqer_customer_open_items']['handler'](...$arguments));
+        }
     }
 
     public function testMasterDataSelectionsAndSemanticValidation(): void

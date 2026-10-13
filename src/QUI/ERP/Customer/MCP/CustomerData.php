@@ -148,6 +148,7 @@ final class CustomerData
                 'null' => $value === null,
                 'string' => is_string($value),
                 'integer' => is_int($value),
+                'boolean' => is_bool($value),
                 'number' => (is_int($value) || is_float($value)) && is_finite((float)$value),
                 'array' => is_array($value) && array_is_list($value),
                 'object' => is_array($value) && ($value === [] || !array_is_list($value)),
