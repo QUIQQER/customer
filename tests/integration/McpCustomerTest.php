@@ -9,6 +9,7 @@ use Mcp\Server\Builder;
 use PHPUnit\Framework\TestCase;
 use QUI;
 use QUI\AI\MCP\Server;
+use QUI\AI\MCP\ToolHelper;
 use QUI\ERP\Customer\MCP\Provider;
 use QUI\ERP\Customer\NumberRange;
 use QUI\Interfaces\Users\User;
@@ -301,6 +302,7 @@ final class McpCustomerTest extends TestCase
      */
     private function createCustomer(array $tools): array
     {
+        $email = 'phpunit-customer-mcp-' . uniqid() . '@example.invalid';
         $customer = $tools['quiqqer_customer_create']['handler']([
             'paymentTerm' => 14,
             'referenceCode' => 'PHPUNIT-MCP',
@@ -311,7 +313,7 @@ final class McpCustomerTest extends TestCase
                 'lastname' => 'Customer',
                 'city' => 'Aachen',
                 'country' => 'DE',
-                'mails' => ['customer@example.invalid'],
+                'mails' => [$email],
                 'phones' => [['type' => 'tel', 'no' => '+49 241 12345']]
             ],
             'contactPerson' => [
@@ -320,7 +322,18 @@ final class McpCustomerTest extends TestCase
                 'mails' => ['contact@example.invalid']
             ]
         ]);
-        self::assertIsArray($customer, var_export($customer, true));
+        $diagnostic = $customer;
+
+        if ($customer instanceof CallToolResult && method_exists(ToolHelper::class, 'getLastException')) {
+            $Exception = ToolHelper::getLastException();
+            $diagnostic = $Exception instanceof \Throwable ? $Exception->getMessage() : 'Unknown MCP error';
+
+            if ($Exception instanceof QUI\Exception) {
+                $diagnostic .= ' Permission: ' . (string)$Exception->getAttribute('permission');
+            }
+        }
+
+        self::assertIsArray($customer, var_export($diagnostic, true));
         $this->createdUsers[] = $customer['uuid'];
 
         return $customer;
