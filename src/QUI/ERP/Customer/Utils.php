@@ -67,8 +67,10 @@ class Utils extends QUI\Utils\Singleton
             $permission = $defaultPaymentTime;
         }
 
-        if ($User->getAttribute('quiqqer.erp.customer.payment.term')) {
-            $permission = $User->getAttribute('quiqqer.erp.customer.payment.term');
+        $paymentTerm = $User->getAttribute('quiqqer.erp.customer.payment.term');
+
+        if (is_int($paymentTerm) || (is_string($paymentTerm) && ctype_digit($paymentTerm))) {
+            $permission = (int)$paymentTerm;
         }
 
         return $permission;

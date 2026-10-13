@@ -22,9 +22,13 @@
         "quiqqer/core": "^2.25",
         "quiqqer/erp": "^3.2 || ^4.0.1",
         "quiqqer/payment-transactions": "^2",
-        "quiqqer/backendsearch": "^2.1"
+        "quiqqer/backendsearch": "^2.1",
+        "quiqqer/countries": "^2.1"
     },
     "suggest": {
+        "quiqqer/ai-mcp": "Expose ERP customer search, creation and master data updates through MCP",
+        "quiqqer/payments": "Select customer default payment methods",
+        "quiqqer/shipping": "Select customer default shipping types",
         "quiqqer/user-downloads": "^1",
         "quiqqer/erp-demo-data": "Create demo customers"
     },

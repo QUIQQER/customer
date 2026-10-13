@@ -498,9 +498,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
             return GetAddress.then(function(addressData) {
                 const titleData = [];
+                const customerId = self.$User.getAttribute('customerId');
 
-                if (self.$User.getAttribute('customerId') !== '') {
-                    titleData.push(self.$customerIdPrefix + self.$User.getAttribute('customerId'));
+                if (customerId !== false && customerId != null && customerId !== '') {
+                    titleData.push(self.$customerIdPrefix + customerId);
                 } else {
                     if (self.$User.getUsername() === self.$User.getName()) {
                         titleData.push(self.$User.getUsername());
@@ -510,8 +511,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                     }
                 }
 
-                if (self.$User.getAttribute('email') && self.$User.getAttribute('email') !== '') {
-                    titleData.push(self.$User.getAttribute('email'));
+                const email = self.$User.getAttribute('email');
+
+                if (email && !titleData.includes(email)) {
+                    titleData.push(email);
                 }
 
                 if (addressData && addressData.text !== ' ; ; ' && addressData.text !== '') {
