@@ -96,6 +96,7 @@ final class CustomerApi
     public function create(mixed $data): array
     {
         CustomerData::validate($data, CustomerData::schema());
+        CustomerData::validateMasterData($data);
 
         if (isset($data['contactPerson']['addressId'])) {
             throw new QUI\Exception('A new customer cannot reference an existing contact address.', 400);
@@ -122,6 +123,7 @@ final class CustomerApi
     {
         $this->validateIdentifier($customerId);
         CustomerData::validate($data, CustomerData::schema());
+        CustomerData::validateMasterData($data);
         $User = $this->getCustomer($customerId);
         Permission::checkPermission('quiqqer.admin.users.edit', Server::getRequestUser());
 

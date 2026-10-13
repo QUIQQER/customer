@@ -41,6 +41,7 @@ Creation and editing retain the normal Core user permissions
 
 | Tool | Operation |
 | --- | --- |
+| `quiqqer_customer_options` | List language/country codes and optional payment/shipping IDs |
 | `quiqqer_customer_search` | Search the configured customer group, with `query`, `limit` and `offset` |
 | `quiqqer_customer_get` | Read by `customerId` (user UUID/ID) or `customerNo` (exact number, optionally prefixed) |
 | `quiqqer_customer_create` | Create a customer with `data`; omit `customerNo` to use the number range |
@@ -48,7 +49,12 @@ Creation and editing retain the normal Core user permissions
 
 The `data` object supports `customerNo`, `address`, `deliveryAddress`, `contactPerson`,
 `paymentTerm` (days), `language`, `website`, `referenceCode`, `vatId`, `taxId`, `chUid`,
-`companyNumber`, `pricingMode` (0=automatic, 1=net, 2=gross) and `discount` (percent).
+`companyNumber`, `pricingMode` (0=automatic, 1=net, 2=gross), `discount` (percent),
+`paymentMethod` and `shippingType` (existing IDs; null clears the selection).
+Payment and shipping selections require their respective optional packages.
+Language and country codes must exist in the installation; websites accept HTTP(S)
+URLs or hostnames without embedded credentials. Use `quiqqer_customer_options` to
+discover available values.
 Addresses support name/company/address fields, `mails` and `phones` (objects with
 `type` = `tel`, `mobile` or `fax`, and `no`). Supplied communication lists replace
 the existing list; omitted fields remain unchanged. `paymentTerm: null` restores

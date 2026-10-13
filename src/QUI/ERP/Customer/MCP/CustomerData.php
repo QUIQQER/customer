@@ -21,7 +21,9 @@ final class CustomerData
         'chUid' => 'quiqqer.erp.chUID',
         'companyNumber' => 'quiqqer.erp.company.identification.number',
         'pricingMode' => 'quiqqer.erp.isNettoUser',
-        'discount' => 'quiqqer.erp.discount'
+        'discount' => 'quiqqer.erp.discount',
+        'paymentMethod' => 'quiqqer.erp.standard.payment',
+        'shippingType' => 'quiqqer.erp.standard.shippingType'
     ];
 
     public const ADDRESS_FIELDS = [
@@ -63,6 +65,14 @@ final class CustomerData
             'description' => '0=automatic, 1=net prices, 2=gross prices.'
         ];
         $properties['discount'] = ['type' => 'number', 'minimum' => 0, 'maximum' => 100];
+        foreach (['paymentMethod', 'shippingType'] as $field) {
+            $properties[$field] = [
+                'type' => ['integer', 'null'],
+                'minimum' => 1,
+                'maximum' => 2147483647,
+                'description' => 'Existing ID from quiqqer_customer_options. Null clears the default.'
+            ];
+        }
         $properties['address'] = self::addressSchema();
         $properties['deliveryAddress'] = self::addressSchema();
         $contactSchema = self::addressSchema();
@@ -212,5 +222,38 @@ final class CustomerData
         foreach ($value as $index => $entry) {
             self::validate($entry, $schema['items'], $path . '.' . $index);
         }
+    }
+
+    /** @param array<string, mixed> $data */
+    public static function validateMasterData(array $data): void
+    {
+        if (isset($data['language']) && !in_array($data['language'], QUI\Translator::getAvailableLanguages() ?? [], true)) {
+            throw new QUI\Exception('Select an available language from quiqqer_customer_options.', 400);
+        }
+
+        if (isset($data['website']) && $data['website'] !== '') {
+            $website = $data['website'];
+            $url = str_contains($website, '://') ? $website : 'https://' . $website;
+            $scheme = strtolower((string)parse_url($url, PHP_URL_SCHEME));
+
+            if (
+                !in_array($scheme, ['http', 'https'], true)
+                || filter_var($url, FILTER_VALIDATE_URL) === false
+                || parse_url($url, PHP_URL_USER) !== null
+                || parse_url($url, PHP_URL_PASS) !== null
+            ) {
+                throw new QUI\Exception('Website must be an HTTP(S) URL or hostname without credentials.', 400);
+            }
+        }
+
+        foreach (['address', 'deliveryAddress', 'contactPerson'] as $field) {
+            $country = $data[$field]['country'] ?? '';
+
+            if ($country !== '' && !QUI\Countries\Manager::existsCountryCode($country)) {
+                throw new QUI\Exception('Select a valid country code from quiqqer_customer_options.', 400);
+            }
+        }
+
+        SelectionOptions::validateSelections($data);
     }
 }

@@ -87,6 +87,7 @@ final class McpCustomerTest extends TestCase
     {
         $tools = $this->tools();
         self::assertSame([
+            'quiqqer_customer_options',
             'quiqqer_customer_search',
             'quiqqer_customer_get',
             'quiqqer_customer_create',
@@ -217,7 +218,7 @@ final class McpCustomerTest extends TestCase
         self::assertFalse($Agent->isSU());
         $this->setActorPermissions($Agent, [Provider::PERMISSION => 1, 'quiqqer.customer.view' => 1]);
         $this->useActor($Agent);
-        self::assertCount(4, $this->tools());
+        self::assertCount(5, $this->tools());
         self::assertSame($customer['uuid'], $tools['quiqqer_customer_get']['handler']($customer['uuid'])['uuid']);
         $this->assertError($tools['quiqqer_customer_create']['handler'](['referenceCode' => 'denied']));
         $this->assertError($tools['quiqqer_customer_update']['handler']($customer['uuid'], ['paymentTerm' => 7]));
@@ -256,6 +257,56 @@ final class McpCustomerTest extends TestCase
         $this->assertError($tools['quiqqer_customer_search']['handler']());
         $this->assertError($tools['quiqqer_customer_create']['handler'](['paymentTerm' => 14]));
         self::assertSame($this->customerNumber, (new NumberRange())->getNextCustomerNo());
+    }
+
+    public function testMasterDataSelectionsAndSemanticValidation(): void
+    {
+        $tools = $this->tools();
+        $customer = $this->createCustomer($tools);
+        $options = $tools['quiqqer_customer_options']['handler']();
+        self::assertIsArray($options);
+        self::assertContains('DE', $options['countries']);
+        self::assertContains('en', $options['languages']);
+        $updated = $tools['quiqqer_customer_update']['handler']($customer['uuid'], [
+            'language' => 'en',
+            'website' => 'https://example.invalid/customer',
+            'paymentMethod' => null,
+            'shippingType' => null
+        ]);
+        self::assertSame('en', $updated['language']);
+        self::assertSame('', $updated['paymentMethod']);
+        self::assertSame('', $updated['shippingType']);
+
+        $invalidData = [
+            ['language' => 'invalid-language'],
+            ['website' => 'javascript:alert(1)'],
+            ['website' => 'https://user:password@example.invalid'],
+            ['website' => 'not a website'],
+            ['address' => ['country' => 'NOT-A-COUNTRY']],
+            ['deliveryAddress' => ['country' => 'INVALID']],
+            ['contactPerson' => ['country' => 'INVALID']],
+            ['paymentMethod' => 2147483647],
+            ['shippingType' => 2147483647]
+        ];
+
+        foreach ($invalidData as $data) {
+            $this->assertError($tools['quiqqer_customer_update']['handler']($customer['uuid'], $data));
+            $this->assertError($tools['quiqqer_customer_create']['handler']($data));
+        }
+
+        self::assertSame($updated, $tools['quiqqer_customer_get']['handler']($customer['uuid']));
+
+        if ($options['paymentMethods'] !== []) {
+            $paymentId = (int)$options['paymentMethods'][0]['id'];
+            $selected = $tools['quiqqer_customer_update']['handler']($customer['uuid'], ['paymentMethod' => $paymentId]);
+            self::assertSame($paymentId, $selected['paymentMethod']);
+        }
+
+        if ($options['shippingTypes'] !== []) {
+            $shippingId = (int)$options['shippingTypes'][0]['id'];
+            $selected = $tools['quiqqer_customer_update']['handler']($customer['uuid'], ['shippingType' => $shippingId]);
+            self::assertSame($shippingId, $selected['shippingType']);
+        }
     }
 
     public function testFailedWriteRollsBackAndRefreshesCachedCustomerData(): void

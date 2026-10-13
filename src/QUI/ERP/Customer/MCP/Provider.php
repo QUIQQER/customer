@@ -25,6 +25,12 @@ final class Provider implements ProviderInterface
         }
 
         $Api = new CustomerApi();
+        $serverBuilder->addTool(
+            fn(): array | CallToolResult => $this->execute('view', fn(): array => (new SelectionOptions())->get()),
+            name: 'quiqqer_customer_options',
+            description: 'Lists valid language and country codes and optional payment/shipping IDs for customer data.',
+            inputSchema: ['type' => 'object', 'additionalProperties' => false, 'properties' => new \stdClass()]
+        );
         $identifierSchema = [
             'type' => 'string',
             'minLength' => 1,
