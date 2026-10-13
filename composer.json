@@ -25,6 +25,7 @@
         "quiqqer/backendsearch": "^2.1"
     },
     "suggest": {
+        "quiqqer/ai-mcp": "Expose ERP customer search, creation and master data updates through MCP",
         "quiqqer/user-downloads": "^1",
         "quiqqer/erp-demo-data": "Create demo customers"
     },

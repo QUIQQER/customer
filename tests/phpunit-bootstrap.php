@@ -9,6 +9,7 @@ if (!defined('QUIQQER_AJAX')) {
 }
 
 require_once __DIR__ . '/../../../../bootstrap.php';
+require_once __DIR__ . '/mcp-bootstrap.php';
 require_once __DIR__ . '/stubs/QUI/ERP/DemoData/Contract/DemoDataCreatorInterface.php';
 require_once __DIR__ . '/stubs/QUI/ERP/DemoData/Contract/DemoDataProviderInterface.php';
 require_once __DIR__ . '/stubs/QUI/ERP/DemoData/DTO/CreatedDemoData.php';

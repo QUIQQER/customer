@@ -29,6 +29,36 @@ composer require quiqqer/customer
 
 Optional integrations are available for `quiqqer/user-downloads` and `quiqqer/erp-demo-data`.
 
+## MCP
+
+Install `quiqqer/ai-mcp` to expose the customer tools and run QUIQQER setup after
+installing or updating this package. See the [MCP developer documentation](https://www.quiqqer.com/docs/ai/developers).
+
+Grant the dedicated `quiqqer.customer.mcp` permission to the AI account. Tools also
+check the corresponding `quiqqer.customer.view`, `.create` or `.edit` permission.
+Creation and editing retain the normal Core user permissions
+(`quiqqer.admin.users.create` and `quiqqer.admin.users.edit`).
+
+| Tool | Operation |
+| --- | --- |
+| `quiqqer_customer_search` | Search the configured customer group, with `query`, `limit` and `offset` |
+| `quiqqer_customer_get` | Read by `customerId` (user UUID/ID) or `customerNo` (exact number, optionally prefixed) |
+| `quiqqer_customer_create` | Create a customer with `data`; omit `customerNo` to use the number range |
+| `quiqqer_customer_update` | Patch a customer by `customerId` and `data` |
+
+The `data` object supports `customerNo`, `address`, `deliveryAddress`, `contactPerson`,
+`paymentTerm` (days), `language`, `website`, `referenceCode`, `vatId`, `taxId`, `chUid`,
+`companyNumber`, `pricingMode` (0=automatic, 1=net, 2=gross) and `discount` (percent).
+Addresses support name/company/address fields, `mails` and `phones` (objects with
+`type` = `tel`, `mobile` or `fax`, and `no`). Supplied communication lists replace
+the existing list; omitted fields remain unchanged. `paymentTerm: null` restores
+the ERP default. `contactPerson: null` clears the assignment. A contact's `addressId`
+must belong to the customer; without it, the current contact is updated or created.
+
+Unknown fields, incorrect types, invalid email addresses and out-of-range values
+are rejected before writing. Tools expose only customers in the configured customer
+group and never accept arbitrary user attributes or group/permission changes.
+
 ## Development
 
 Install the PHIVE-managed tools and hooks:

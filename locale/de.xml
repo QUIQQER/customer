@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<quiqqer xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="https://www.quiqqer.com/docs/schemas/2.x/locale.xsd">
 <locales>
 
     <groups name="quiqqer/customer" datatype="php,js">
@@ -93,6 +95,9 @@
         </locale>
 
 
+        <locale name="permission.quiqqer.customer.mcp">
+<de><![CDATA[Darf die Kundenverwaltung über MCP nutzen]]></de>
+        </locale>
         <locale name="permission.quiqqer.customer._header">
 <de><![CDATA[Kunden]]></de>
         </locale>
@@ -969,3 +974,4 @@ Beste Grüße
 
     </groups>
 </locales>
+</quiqqer>
