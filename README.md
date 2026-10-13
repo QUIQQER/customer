@@ -51,6 +51,11 @@ Creation and editing retain the normal Core user permissions
 | `quiqqer_customer_comment_add` | Add a plain-text comment |
 | `quiqqer_customer_comment_update` | Edit a customer-module comment by `commentId` |
 | `quiqqer_customer_open_items` | Live open items and numeric totals per currency; supports currency/document/overdue filters |
+| `quiqqer_customer_addresses_list` | All customer addresses with standard/ERP/delivery/contact assignments |
+| `quiqqer_customer_files_list` | Paginated customer file metadata with hashes |
+| `quiqqer_customer_file_download` | Base64 download chunks up to 1 MiB, by file hash |
+| `quiqqer_customer_file_upload` | Create a new file from base64 content, up to 5 MiB |
+| `quiqqer_customer_file_delete` | Delete one file by hash |
 
 The `data` object supports `customerNo`, `address`, `deliveryAddress`, `contactPerson`,
 `paymentTerm` (days), `language`, `website`, `referenceCode`, `vatId`, `taxId`, `chUid`,
@@ -74,6 +79,10 @@ History is read-only; comments from other ERP modules retain their owning module
 Open items additionally require `quiqqer.customer.OpenItemsList.view`. Totals cover
 all matching items before pagination. The response reports whether invoice/order
 modules are installed, and respects the package's `considerOrders` setting.
+File tools require the dedicated `fileView`, `fileUpload` or `fileEdit` customer
+permission. They never return internal paths. Uploads reject existing filenames,
+paths, executable filenames and malformed base64. Downloads return `nextOffset`
+until `complete` is true. Symbolic links are excluded from file access.
 
 ## Development
 

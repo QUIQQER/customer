@@ -110,6 +110,8 @@ final class Provider implements ProviderInterface
 
         (new NotesTools($this, $Api))->register($serverBuilder);
         (new OpenItemsTools($this, $Api))->register($serverBuilder);
+        (new AddressTools($this, $Api))->register($serverBuilder);
+        (new FileTools($this, $Api))->register($serverBuilder);
     }
 
     /**

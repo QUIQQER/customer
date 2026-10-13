@@ -367,7 +367,7 @@ final class CustomerApi
     }
 
     /** @return array<string, mixed>|null */
-    private function parseAddress(?Address $Address): ?array
+    public function parseAddress(?Address $Address): ?array
     {
         if ($Address === null) {
             return null;

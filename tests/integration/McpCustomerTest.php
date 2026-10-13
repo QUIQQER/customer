@@ -57,6 +57,16 @@ final class McpCustomerTest extends TestCase
             $this->useActor(QUI::getUsers()->getSystemUser());
 
             foreach (array_reverse($this->createdUsers) as $uuid) {
+                $folder = QUI::getPackage('quiqqer/customer')->getVarDir() . $uuid;
+
+                if (is_dir($folder)) {
+                    foreach (QUI\Utils\System\File::readDir($folder) as $filename) {
+                        unlink($folder . DIRECTORY_SEPARATOR . $filename);
+                    }
+
+                    rmdir($folder);
+                }
+
                 QUI::getDataBaseConnection()->delete(QUI\Permissions\Manager::table() . '2users', [
                     'user_id' => $uuid
                 ]);
@@ -96,7 +106,12 @@ final class McpCustomerTest extends TestCase
             'quiqqer_customer_history_list',
             'quiqqer_customer_comment_add',
             'quiqqer_customer_comment_update',
-            'quiqqer_customer_open_items'
+            'quiqqer_customer_open_items',
+            'quiqqer_customer_addresses_list',
+            'quiqqer_customer_files_list',
+            'quiqqer_customer_file_download',
+            'quiqqer_customer_file_upload',
+            'quiqqer_customer_file_delete'
         ], array_keys($tools));
         $customer = $this->createCustomer($tools);
         self::assertSame((string)$this->customerNumber, $customer['customerNo']);
@@ -223,7 +238,7 @@ final class McpCustomerTest extends TestCase
         self::assertFalse($Agent->isSU());
         $this->setActorPermissions($Agent, [Provider::PERMISSION => 1, 'quiqqer.customer.view' => 1]);
         $this->useActor($Agent);
-        self::assertCount(10, $this->tools());
+        self::assertCount(15, $this->tools());
         self::assertSame($customer['uuid'], $tools['quiqqer_customer_get']['handler']($customer['uuid'])['uuid']);
         $this->assertError($tools['quiqqer_customer_create']['handler'](['referenceCode' => 'denied']));
         $this->assertError($tools['quiqqer_customer_update']['handler']($customer['uuid'], ['paymentTerm' => 7]));
@@ -231,6 +246,11 @@ final class McpCustomerTest extends TestCase
         self::assertIsArray($tools['quiqqer_customer_comments_list']['handler']($customer['uuid']));
         self::assertIsArray($tools['quiqqer_customer_history_list']['handler']($customer['uuid']));
         $this->assertError($tools['quiqqer_customer_open_items']['handler']($customer['uuid']));
+        $this->assertError($tools['quiqqer_customer_files_list']['handler']($customer['uuid']));
+        $this->assertError($tools['quiqqer_customer_file_download']['handler']($customer['uuid'], str_repeat('a', 64)));
+        $this->assertError($tools['quiqqer_customer_file_upload']['handler']($customer['uuid'], 'denied.txt', ''));
+        $this->assertError($tools['quiqqer_customer_file_delete']['handler']($customer['uuid'], str_repeat('a', 64)));
+        self::assertIsArray($tools['quiqqer_customer_addresses_list']['handler']($customer['uuid']));
 
         $this->setActorPermissions($Agent, [Provider::PERMISSION => 1]);
         $this->assertError($tools['quiqqer_customer_get']['handler']($customer['uuid']));
@@ -250,6 +270,22 @@ final class McpCustomerTest extends TestCase
         $updated = $tools['quiqqer_customer_update']['handler']($createdByAgent['uuid'], ['paymentTerm' => 7]);
         self::assertIsArray($updated);
         self::assertSame(7, $updated['effectivePaymentTerm']);
+
+        $this->setActorPermissions($Agent, [
+            Provider::PERMISSION => 1,
+            'quiqqer.customer.editComments' => 1,
+            'quiqqer.admin.users.edit' => 1
+        ]);
+        self::assertIsArray($tools['quiqqer_customer_comment_add']['handler']($createdByAgent['uuid'], 'Agent comment'));
+        $this->setActorPermissions($Agent, [Provider::PERMISSION => 1, 'quiqqer.customer.fileUpload' => 1]);
+        $file = $tools['quiqqer_customer_file_upload']['handler']($createdByAgent['uuid'], 'agent.txt', base64_encode('agent'));
+        self::assertIsArray($file);
+        $this->assertError($tools['quiqqer_customer_file_download']['handler']($createdByAgent['uuid'], $file['hash']));
+        $this->setActorPermissions($Agent, [Provider::PERMISSION => 1, 'quiqqer.customer.fileView' => 1]);
+        self::assertIsArray($tools['quiqqer_customer_file_download']['handler']($createdByAgent['uuid'], $file['hash']));
+        $this->assertError($tools['quiqqer_customer_file_delete']['handler']($createdByAgent['uuid'], $file['hash']));
+        $this->setActorPermissions($Agent, [Provider::PERMISSION => 1, 'quiqqer.customer.fileEdit' => 1]);
+        self::assertTrue($tools['quiqqer_customer_file_delete']['handler']($createdByAgent['uuid'], $file['hash'])['deleted']);
 
         $this->useActor(new QUI\Users\Nobody());
         self::assertSame([], $this->tools());
@@ -324,6 +360,80 @@ final class McpCustomerTest extends TestCase
         foreach ($invalidArguments as $arguments) {
             $this->assertError($tools['quiqqer_customer_open_items']['handler'](...$arguments));
         }
+    }
+
+    public function testCustomerAddressListIncludesAssignmentsAndPagination(): void
+    {
+        $tools = $this->tools();
+        $customer = $this->createCustomer($tools);
+        $result = $tools['quiqqer_customer_addresses_list']['handler']($customer['uuid']);
+        self::assertSame(2, $result['total']);
+        $byId = array_column($result['addresses'], null, 'addressId');
+        self::assertTrue($byId[$customer['address']['addressId']]['standard']);
+        self::assertTrue($byId[$customer['contactPerson']['addressId']]['contactPerson']);
+        $page = $tools['quiqqer_customer_addresses_list']['handler']($customer['uuid'], 1, 1);
+        self::assertCount(1, $page['addresses']);
+        self::assertSame(2, $page['total']);
+        $this->assertError($tools['quiqqer_customer_addresses_list']['handler']($customer['uuid'], '20'));
+        $this->assertError($tools['quiqqer_customer_addresses_list']['handler']('missing-customer'));
+    }
+
+    public function testCustomerFilesCanBeUploadedPagedDownloadedAndDeleted(): void
+    {
+        $tools = $this->tools();
+        $customer = $this->createCustomer($tools);
+        $content = "PHPUnit customer file\0binary";
+        $file = $tools['quiqqer_customer_file_upload']['handler']($customer['uuid'], 'fixture.txt', base64_encode($content));
+        self::assertIsArray($file);
+        self::assertSame('fixture.txt', $file['filename']);
+        self::assertSame(strlen($content), $file['size']);
+        self::assertArrayNotHasKey('path', $file);
+        $list = $tools['quiqqer_customer_files_list']['handler']($customer['uuid']);
+        self::assertSame(1, $list['total']);
+        self::assertSame($file, $list['files'][0]);
+        $first = $tools['quiqqer_customer_file_download']['handler']($customer['uuid'], $file['hash'], 0, 10);
+        self::assertFalse($first['complete']);
+        self::assertSame(10, $first['nextOffset']);
+        $last = $tools['quiqqer_customer_file_download']['handler']($customer['uuid'], $file['hash'], $first['nextOffset']);
+        self::assertTrue($last['complete']);
+        self::assertNull($last['nextOffset']);
+        self::assertSame($content, base64_decode($first['contentBase64']) . base64_decode($last['contentBase64']));
+        $this->assertError($tools['quiqqer_customer_file_upload']['handler']($customer['uuid'], 'fixture.txt', ''));
+        $this->assertError($tools['quiqqer_customer_file_download']['handler']($customer['uuid'], $file['hash'], 1000));
+        self::assertSame([], $tools['quiqqer_customer_files_list']['handler']($customer['uuid'], 1, 1)['files']);
+
+        foreach (['../escape.txt', 'path/file.txt', 'path\\file.txt', '.htaccess', 'code.php8', '<img>.txt', "bad\n.txt"] as $name) {
+            $this->assertError($tools['quiqqer_customer_file_upload']['handler']($customer['uuid'], $name, ''));
+        }
+
+        foreach ([null, [], 'not-base64!', 'Y Q=='] as $contentBase64) {
+            $this->assertError($tools['quiqqer_customer_file_upload']['handler']($customer['uuid'], 'invalid.txt', $contentBase64));
+        }
+
+        $this->assertError($tools['quiqqer_customer_file_upload']['handler'](
+            $customer['uuid'],
+            'huge.txt',
+            base64_encode(str_repeat('x', 5_242_881))
+        ));
+        $this->assertError($tools['quiqqer_customer_file_download']['handler']($customer['uuid'], '../path'));
+        $this->assertError($tools['quiqqer_customer_file_delete']['handler']($customer['uuid'], null));
+
+        $folder = \QUI\ERP\Customer\CustomerFiles::getFolderPath(QUI::getUsers()->get($customer['uuid']));
+        symlink($folder . '/fixture.txt', $folder . '/link.txt');
+        self::assertSame(1, $tools['quiqqer_customer_files_list']['handler']($customer['uuid'])['total']);
+        $this->assertError($tools['quiqqer_customer_file_download']['handler']($customer['uuid'], hash('sha256', 'link.txt')));
+        unlink($folder . '/link.txt');
+        $otherCustomer = $this->createCustomer($tools);
+        $this->assertError($tools['quiqqer_customer_file_download']['handler']($otherCustomer['uuid'], $file['hash']));
+        $this->assertError($tools['quiqqer_customer_file_delete']['handler']($otherCustomer['uuid'], $file['hash']));
+        $deleted = $tools['quiqqer_customer_file_delete']['handler']($customer['uuid'], $file['hash']);
+        self::assertTrue($deleted['deleted']);
+        self::assertSame(0, $tools['quiqqer_customer_files_list']['handler']($customer['uuid'])['total']);
+        $this->assertError($tools['quiqqer_customer_file_download']['handler']($customer['uuid'], $file['hash']));
+        $empty = $tools['quiqqer_customer_file_upload']['handler']($customer['uuid'], 'empty.txt', '');
+        $emptyDownload = $tools['quiqqer_customer_file_download']['handler']($customer['uuid'], $empty['hash']);
+        self::assertTrue($emptyDownload['complete']);
+        self::assertSame('', $emptyDownload['contentBase64']);
     }
 
     public function testMasterDataSelectionsAndSemanticValidation(): void
