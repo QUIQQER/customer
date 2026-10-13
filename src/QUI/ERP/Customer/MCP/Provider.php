@@ -107,13 +107,15 @@ final class Provider implements ProviderInterface
                 ]
             ]
         );
+
+        (new NotesTools($this, $Api))->register($serverBuilder);
     }
 
     /**
      * @param callable(): array<string, mixed> $Callback
      * @return array<string, mixed>|CallToolResult
      */
-    private function execute(string $action, callable $Callback): array | CallToolResult
+    public function execute(string $action, callable $Callback): array | CallToolResult
     {
         try {
             $User = Server::getRequestUser();

@@ -172,12 +172,14 @@ final class CustomerApi
         }
     }
 
-    private function getCustomer(string $customerId): User
+    public function getCustomer(mixed $customerId): QUI\Users\User
     {
+        $this->validateIdentifier($customerId);
         $User = QUI::getUsers()->get($customerId);
 
         if (
-            !$User->isInGroup(Customers::getInstance()->getCustomerGroupId())
+            !$User instanceof QUI\Users\User
+            || !$User->isInGroup(Customers::getInstance()->getCustomerGroupId())
             || $User->getAttribute('deleted')
         ) {
             throw new QUI\Exception('Customer not found.', 404);

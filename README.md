@@ -46,6 +46,10 @@ Creation and editing retain the normal Core user permissions
 | `quiqqer_customer_get` | Read by `customerId` (user UUID/ID) or `customerNo` (exact number, optionally prefixed) |
 | `quiqqer_customer_create` | Create a customer with `data`; omit `customerNo` to use the number range |
 | `quiqqer_customer_update` | Patch a customer by `customerId` and `data` |
+| `quiqqer_customer_comments_list` | Paginated ERP comments, newest first, as plain text |
+| `quiqqer_customer_history_list` | Paginated ERP customer history, newest first |
+| `quiqqer_customer_comment_add` | Add a plain-text comment |
+| `quiqqer_customer_comment_update` | Edit a customer-module comment by `commentId` |
 
 The `data` object supports `customerNo`, `address`, `deliveryAddress`, `contactPerson`,
 `paymentTerm` (days), `language`, `website`, `referenceCode`, `vatId`, `taxId`, `chUid`,
@@ -64,6 +68,8 @@ must belong to the customer; without it, the current contact is updated or creat
 Unknown fields, incorrect types, invalid email addresses and out-of-range values
 are rejected before writing. Tools expose only customers in the configured customer
 group and never accept arbitrary user attributes or group/permission changes.
+Comment writes require `quiqqer.customer.editComments` and Core user edit rights.
+History is read-only; comments from other ERP modules retain their owning module.
 
 ## Development
 

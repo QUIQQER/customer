@@ -91,7 +91,11 @@ final class McpCustomerTest extends TestCase
             'quiqqer_customer_search',
             'quiqqer_customer_get',
             'quiqqer_customer_create',
-            'quiqqer_customer_update'
+            'quiqqer_customer_update',
+            'quiqqer_customer_comments_list',
+            'quiqqer_customer_history_list',
+            'quiqqer_customer_comment_add',
+            'quiqqer_customer_comment_update'
         ], array_keys($tools));
         $customer = $this->createCustomer($tools);
         self::assertSame((string)$this->customerNumber, $customer['customerNo']);
@@ -218,10 +222,13 @@ final class McpCustomerTest extends TestCase
         self::assertFalse($Agent->isSU());
         $this->setActorPermissions($Agent, [Provider::PERMISSION => 1, 'quiqqer.customer.view' => 1]);
         $this->useActor($Agent);
-        self::assertCount(5, $this->tools());
+        self::assertCount(9, $this->tools());
         self::assertSame($customer['uuid'], $tools['quiqqer_customer_get']['handler']($customer['uuid'])['uuid']);
         $this->assertError($tools['quiqqer_customer_create']['handler'](['referenceCode' => 'denied']));
         $this->assertError($tools['quiqqer_customer_update']['handler']($customer['uuid'], ['paymentTerm' => 7]));
+        $this->assertError($tools['quiqqer_customer_comment_add']['handler']($customer['uuid'], 'denied'));
+        self::assertIsArray($tools['quiqqer_customer_comments_list']['handler']($customer['uuid']));
+        self::assertIsArray($tools['quiqqer_customer_history_list']['handler']($customer['uuid']));
 
         $this->setActorPermissions($Agent, [Provider::PERMISSION => 1]);
         $this->assertError($tools['quiqqer_customer_get']['handler']($customer['uuid']));
@@ -257,6 +264,37 @@ final class McpCustomerTest extends TestCase
         $this->assertError($tools['quiqqer_customer_search']['handler']());
         $this->assertError($tools['quiqqer_customer_create']['handler'](['paymentTerm' => 14]));
         self::assertSame($this->customerNumber, (new NumberRange())->getNextCustomerNo());
+    }
+
+    public function testCustomerCommentsAndHistory(): void
+    {
+        $tools = $this->tools();
+        $customer = $this->createCustomer($tools);
+        $message = '<img src=x onerror=alert(1)> & plain text';
+        $comment = $tools['quiqqer_customer_comment_add']['handler']($customer['uuid'], $message);
+        self::assertIsArray($comment);
+        self::assertSame($message, $comment['message']);
+        $User = QUI::getUsers()->get($customer['uuid']);
+        self::assertStringNotContainsString('<img', (string)$User->getAttribute('comments'));
+        $updated = $tools['quiqqer_customer_comment_update']['handler']($customer['uuid'], $comment['id'], 'Changed');
+        self::assertSame('Changed', $updated['message']);
+        $comments = $tools['quiqqer_customer_comments_list']['handler']($customer['uuid'], 1, 0);
+        self::assertSame('Changed', $comments['comments'][0]['message']);
+        self::assertSame(1, $comments['total']);
+        self::assertSame([], $tools['quiqqer_customer_comments_list']['handler']($customer['uuid'], 1, 1)['comments']);
+        \QUI\ERP\Customer\Customers::getInstance()->addHistoryToUser($User, 'PHPUNIT MCP history');
+        $history = $tools['quiqqer_customer_history_list']['handler']($customer['uuid']);
+        self::assertContains('PHPUNIT MCP history', array_column($history['history'], 'message'));
+
+        foreach ([null, [], true, ''] as $value) {
+            $this->assertError($tools['quiqqer_customer_comment_add']['handler']($customer['uuid'], $value));
+            $this->assertError($tools['quiqqer_customer_comment_update']['handler']($customer['uuid'], $value, 'Denied'));
+        }
+
+        $this->assertError($tools['quiqqer_customer_comment_update']['handler']($customer['uuid'], 'missing', 'Denied'));
+        $this->assertError($tools['quiqqer_customer_comments_list']['handler']($customer['uuid'], '20'));
+        $this->assertError($tools['quiqqer_customer_history_list']['handler']($customer['uuid'], 20, -1));
+        self::assertSame(1, $tools['quiqqer_customer_comments_list']['handler']($customer['uuid'])['total']);
     }
 
     public function testMasterDataSelectionsAndSemanticValidation(): void
