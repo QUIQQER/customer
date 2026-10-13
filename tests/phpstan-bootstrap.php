@@ -18,6 +18,7 @@ require_once __DIR__ . '/stubs/QUI/ERP/Accounting/Dunning/Handler.php';
 require_once __DIR__ . '/stubs/QUI/ERP/Accounting/Invoice/Invoice.php';
 require_once __DIR__ . '/stubs/QUI/ERP/Accounting/Invoice/InvoiceTemporary.php';
 require_once __DIR__ . '/stubs/QUI/ERP/Accounting/Invoice/Handler.php';
+require_once __DIR__ . '/stubs/QUI/ERP/Accounting/Invoice/Settings.php';
 require_once __DIR__ . '/stubs/QUI/ERP/Accounting/Invoice/Utils/Invoice.php';
 require_once __DIR__ . '/stubs/QUI/ERP/Order/AbstractOrder.php';
 require_once __DIR__ . '/stubs/QUI/ERP/Order/Order.php';
