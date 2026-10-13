@@ -29,6 +29,61 @@ composer require quiqqer/customer
 
 Optional integrations are available for `quiqqer/user-downloads` and `quiqqer/erp-demo-data`.
 
+## MCP
+
+Install `quiqqer/ai-mcp` to expose the customer tools and run QUIQQER setup after
+installing or updating this package. See the [MCP developer documentation](https://www.quiqqer.com/docs/ai/developers).
+
+Grant the dedicated `quiqqer.customer.mcp` permission to the AI account. Tools also
+check the corresponding `quiqqer.customer.view`, `.create` or `.edit` permission.
+Creation and editing retain the normal Core user permissions
+(`quiqqer.admin.users.create` and `quiqqer.admin.users.edit`).
+
+| Tool | Operation |
+| --- | --- |
+| `quiqqer_customer_options` | List language/country codes and optional payment/shipping IDs |
+| `quiqqer_customer_search` | Search the configured customer group, with `query`, `limit` and `offset` |
+| `quiqqer_customer_get` | Read by `customerId` (user UUID/ID) or `customerNo` (exact number, optionally prefixed) |
+| `quiqqer_customer_create` | Create a customer with `data`; omit `customerNo` to use the number range |
+| `quiqqer_customer_update` | Patch a customer by `customerId` and `data` |
+| `quiqqer_customer_comments_list` | Paginated ERP comments, newest first, as plain text |
+| `quiqqer_customer_history_list` | Paginated ERP customer history, newest first |
+| `quiqqer_customer_comment_add` | Add a plain-text comment |
+| `quiqqer_customer_comment_update` | Edit a customer-module comment by `commentId` |
+| `quiqqer_customer_open_items` | Live open items and numeric totals per currency; supports currency/document/overdue filters |
+| `quiqqer_customer_addresses_list` | All customer addresses with standard/ERP/delivery/contact assignments |
+| `quiqqer_customer_files_list` | Paginated customer file metadata with hashes |
+| `quiqqer_customer_file_download` | Base64 download chunks up to 1 MiB, by file hash |
+| `quiqqer_customer_file_upload` | Create a new file from base64 content, up to 5 MiB |
+| `quiqqer_customer_file_delete` | Delete one file by hash |
+
+The `data` object supports `customerNo`, `address`, `deliveryAddress`, `contactPerson`,
+`paymentTerm` (days), `language`, `website`, `referenceCode`, `vatId`, `taxId`, `chUid`,
+`companyNumber`, `pricingMode` (0=automatic, 1=net, 2=gross), `discount` (percent),
+`paymentMethod` and `shippingType` (existing IDs; null clears the selection).
+Payment and shipping selections require their respective optional packages.
+Language and country codes must exist in the installation; websites accept HTTP(S)
+URLs or hostnames without embedded credentials. Use `quiqqer_customer_options` to
+discover available values.
+Addresses support name/company/address fields, `mails` and `phones` (objects with
+`type` = `tel`, `mobile` or `fax`, and `no`). Supplied communication lists replace
+the existing list; omitted fields remain unchanged. `paymentTerm: null` restores
+the ERP default. `contactPerson: null` clears the assignment. A contact's `addressId`
+must belong to the customer; without it, the current contact is updated or created.
+
+Unknown fields, incorrect types, invalid email addresses and out-of-range values
+are rejected before writing. Tools expose only customers in the configured customer
+group and never accept arbitrary user attributes or group/permission changes.
+Comment writes require `quiqqer.customer.editComments` and Core user edit rights.
+History is read-only; comments from other ERP modules retain their owning module.
+Open items additionally require `quiqqer.customer.OpenItemsList.view`. Totals cover
+all matching items before pagination. The response reports whether invoice/order
+modules are installed, and respects the package's `considerOrders` setting.
+File tools require the dedicated `fileView`, `fileUpload` or `fileEdit` customer
+permission. They never return internal paths. Uploads reject existing filenames,
+paths, executable filenames and malformed base64. Downloads return `nextOffset`
+until `complete` is true. Symbolic links are excluded from file access.
+
 ## Development
 
 Install the PHIVE-managed tools and hooks:
