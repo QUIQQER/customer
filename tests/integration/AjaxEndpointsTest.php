@@ -329,6 +329,8 @@ final class AjaxEndpointsTest extends TestCase
         ]));
         self::assertArrayHasKey('grid', $grid);
         self::assertArrayHasKey('totals', $grid);
+        self::assertSame(1, $grid['totals']['open_items_count']);
+        self::assertSame($Currency->format(100), $grid['totals']['display_net']);
     }
 
     private function openItem(

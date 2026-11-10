@@ -385,6 +385,12 @@
         <locale name="panels.OpenItems.grid.toggle_title">
 <fr><![CDATA[Afficher tous les postes ouverts de ce client]]></fr>
         </locale>
+        <locale name="panels.OpenItems.totals.title" context="administration">
+<fr><![CDATA[Totaux des encaissements filtrés]]></fr>
+        </locale>
+        <locale name="panels.OpenItems.totals.customers" context="administration">
+<fr><![CDATA[Clients]]></fr>
+        </locale>
         <locale name="panels.OpenItems.title">
 <fr><![CDATA[Encaissements]]></fr>
         </locale>
@@ -433,8 +439,8 @@
         <locale name="panels.OpenItems.details.tpl.placeholderSearch">
 <fr><![CDATA[Rechercher un document...]]></fr>
         </locale>
-        <locale name="panels.OpenItems.search.placeholder">
-<fr><![CDATA[Rechercher un client...]]></fr>
+        <locale name="panels.OpenItems.search.placeholder" context="administration">
+<fr><![CDATA[Rechercher des clients …]]></fr>
         </locale>
         <locale name="panel.OpenItems.grid.details.daysDue">
 <fr><![CDATA[Jours de retard]]></fr>
@@ -801,11 +807,26 @@
         <locale name="customer.user.properties.title">
 <fr><![CDATA[Propriétés de l'utilisateur]]></fr>
         </locale>
-        <locale name="customer.user.properties.status">
-<fr><![CDATA[Peut se connecter]]></fr>
+        <locale name="customer.user.properties.status" context="administration">
+<fr><![CDATA[Accès au compte]]></fr>
         </locale>
-        <locale name="customer.user.properties.status.description">
-<fr><![CDATA[Le client sera activé et pourra se connecter au système.]]></fr>
+        <locale name="customer.user.properties.status.description" context="administration">
+<fr><![CDATA[Active l’accès du client à la prochaine sauvegarde. Vous pouvez annuler l’activation en attente avant de sauvegarder. Si aucun mot de passe n’existe, un mot de passe aléatoire est attribué ; le client peut choisir le sien via l’e-mail de réinitialisation. Les comptes déjà activés peuvent être désactivés dans la gestion des utilisateurs.]]></fr>
+        </locale>
+        <locale name="customer.user.properties.status.action" context="administration">
+<fr><![CDATA[Préparer l’activation]]></fr>
+        </locale>
+        <locale name="customer.user.properties.status.active" context="administration">
+<fr><![CDATA[Déjà activé]]></fr>
+        </locale>
+        <locale name="customer.user.properties.status.inactive" context="administration">
+<fr><![CDATA[Non activé]]></fr>
+        </locale>
+        <locale name="customer.user.properties.status.cancel" context="administration">
+<fr><![CDATA[Annuler l’activation en attente]]></fr>
+        </locale>
+        <locale name="customer.user.properties.status.pending" context="administration">
+<fr><![CDATA[Activation en attente – veuillez sauvegarder]]></fr>
         </locale>
         <locale name="customer.user.properties.password.title">
 <fr><![CDATA[Mot de passe]]></fr>

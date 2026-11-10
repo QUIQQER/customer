@@ -416,6 +416,12 @@ Beste Grüße
         <locale name="panels.OpenItems.grid.toggle_title">
 <de><![CDATA[Zeige alle offenen Posten dieses Kunden]]></de>
         </locale>
+        <locale name="panels.OpenItems.totals.title" context="administration">
+<de><![CDATA[Summen der gefilterten Zahlungseingänge]]></de>
+        </locale>
+        <locale name="panels.OpenItems.totals.customers" context="administration">
+<de><![CDATA[Kunden]]></de>
+        </locale>
         <locale name="panels.OpenItems.title">
 <de><![CDATA[Zahlungseingänge]]></de>
         </locale>
@@ -464,8 +470,8 @@ Beste Grüße
         <locale name="panels.OpenItems.details.tpl.placeholderSearch">
 <de><![CDATA[Beleg-Suche...]]></de>
         </locale>
-        <locale name="panels.OpenItems.search.placeholder">
-<de><![CDATA[Kunden-Suche...]]></de>
+        <locale name="panels.OpenItems.search.placeholder" context="administration">
+<de><![CDATA[Kunden durchsuchen …]]></de>
         </locale>
         <locale name="panel.OpenItems.grid.details.daysDue">
 <de><![CDATA[Tage fällig]]></de>
@@ -854,11 +860,26 @@ Beste Grüße
         <locale name="customer.user.properties.title">
 <de><![CDATA[Benutzereigenschaften]]></de>
         </locale>
-        <locale name="customer.user.properties.status">
-<de><![CDATA[Kann sich anmelden]]></de>
+        <locale name="customer.user.properties.status" context="administration">
+<de><![CDATA[Login-Zugang]]></de>
         </locale>
-        <locale name="customer.user.properties.status.description">
-<de><![CDATA[Der Kunde wird aktiviert und kann sich somit am System anmelden.]]></de>
+        <locale name="customer.user.properties.status.description" context="administration">
+<de><![CDATA[Aktiviert den Login-Zugang des Kunden beim nächsten Speichern. Bis dahin können Sie die Vormerkung zurücknehmen. Fehlt ein Passwort, wird ein zufälliges vergeben; über „Passwort-E-Mail“ kann der Kunde ein eigenes festlegen. Bereits aktivierte Konten können Sie in der Benutzerverwaltung deaktivieren.]]></de>
+        </locale>
+        <locale name="customer.user.properties.status.action" context="administration">
+<de><![CDATA[Aktivierung vormerken]]></de>
+        </locale>
+        <locale name="customer.user.properties.status.active" context="administration">
+<de><![CDATA[Bereits aktiviert]]></de>
+        </locale>
+        <locale name="customer.user.properties.status.inactive" context="administration">
+<de><![CDATA[Nicht aktiviert]]></de>
+        </locale>
+        <locale name="customer.user.properties.status.cancel" context="administration">
+<de><![CDATA[Vormerkung zurücknehmen]]></de>
+        </locale>
+        <locale name="customer.user.properties.status.pending" context="administration">
+<de><![CDATA[Vorgemerkt – bitte speichern]]></de>
         </locale>
         <locale name="customer.user.properties.password.title">
 <de><![CDATA[Passwort]]></de>

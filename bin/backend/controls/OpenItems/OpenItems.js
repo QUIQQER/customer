@@ -37,9 +37,6 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
         Binds: [
             'refresh',
-            'toggleTotal',
-            'showTotal',
-            'closeTotal',
             '$onCreate',
             '$onDestroy',
             '$onResize',
@@ -83,6 +80,8 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             this.$UserRecordsSearch = null;
             this.$currentUserRecordsSearch = '';
             this.$refreshTotalsOnly = false;
+            this.$refreshId = 0;
+            this.$destroyed = false;
 
             this.addEvents({
                 onCreate: this.$onCreate,
@@ -96,59 +95,47 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          * Refresh the grid
          */
         refresh: function() {
-            var self = this;
-
-            this.Loader.show();
-
-            if (!this.$Grid) {
-                return;
+            if (!this.$Grid || this.$destroyed) {
+                return Promise.resolve();
             }
 
-            this.$currentSearch = this.$Search.value;
+            const refreshId = ++this.$refreshId;
+            const totalsOnly = this.$refreshTotalsOnly;
+            this.$refreshTotalsOnly = false;
+            this.$currentSearch = this.$Search.value.trim();
+            this.Loader.show();
+            this.$Total.setAttribute('aria-busy', 'true');
 
-            var sortOn = this.$Grid.options.sortOn;
-
-            this.showTotal();
-
-            this.$search({
+            return this.$search({
                 perPage: this.$Grid.options.perPage,
                 page: this.$Grid.options.page,
                 sortBy: this.$Grid.options.sortBy,
-                sortOn: sortOn,
+                sortOn: this.$Grid.options.sortOn,
                 search: this.$currentSearch,
                 currency: this.$Currency.getAttribute('value')
-            }).then(function(result) {
-                if (!this.$refreshTotalsOnly) {
-                    result.grid.data = result.grid.data.map(function(entry) {
-                        return self.$parseGridRow(entry);
-                    });
-
-                    this.$Grid.setData(result.grid);
-                    this.$refreshButtonStatus();
+            }).then((result) => {
+                if (this.$destroyed || refreshId !== this.$refreshId) {
+                    return;
                 }
 
-                this.$Total.set(
-                    'html',
-                    Mustache.render(templateTotal, Object.merge({}, result.totals, {
-                        headerNet: QUILocale.get(lg, 'panel.OpenItems.grid.net'),
-                        headerVat: QUILocale.get(lg, 'panel.OpenItems.grid.vat'),
-                        headerGross: QUILocale.get(lg, 'panel.OpenItems.grid.gross'),
-                        headerPaid: QUILocale.get(lg, 'panel.OpenItems.grid.paid'),
-                        headerOpen: QUILocale.get(lg, 'panel.OpenItems.grid.open')
-                    }))
-                );
-
-                if (!this.$refreshTotalsOnly) {
+                if (!totalsOnly) {
+                    result.grid.data = result.grid.data.map((entry) => this.$parseGridRow(entry));
+                    this.$Grid.setData(result.grid);
+                    this.$refreshButtonStatus();
                     this.$currentRecordsUserId = null;
                 }
 
-                this.$refreshTotalsOnly = false;
+                this.$renderTotals(result.totals, result.grid.total);
+                this.Loader.hide();
+            }).catch((err) => {
+                if (this.$destroyed || refreshId !== this.$refreshId) {
+                    return;
+                }
 
-                this.Loader.hide();
-            }.bind(this)).catch(function(err) {
                 console.error(err);
+                this.$Total.removeAttribute('aria-busy');
                 this.Loader.hide();
-            }.bind(this));
+            });
         },
 
         /**
@@ -158,33 +145,44 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          * @return {Promise}
          */
         $refreshUserEntry: function(userId) {
-            var self = this;
+            if (!this.$Grid || this.$destroyed) {
+                return Promise.resolve();
+            }
+
+            const refreshId = this.$refreshId;
 
             return this.$search({
-                userId: userId
-            }).then(function(result) {
-                var entries = self.$Grid.getData();
+                userId: userId,
+                currency: this.$Currency.getAttribute('value')
+            }).then((result) => {
+                if (this.$destroyed || refreshId !== this.$refreshId) {
+                    return;
+                }
 
-                for (var i = 0, len = entries.length; i < len; i++) {
-                    var Entry = entries[i];
+                const entries = this.$Grid.getData();
 
-                    if (Entry.userId === userId) {
-                        if (!result.grid.data.length) {
-                            self.$Grid.deleteRow(i);
-                        } else {
-                            self.$Grid.setDataByRow(i, self.$parseGridRow(result.grid.data[0]));
-                        }
-
-                        break;
+                for (let i = 0; i < entries.length; ++i) {
+                    if (entries[i].userId !== userId) {
+                        continue;
                     }
+
+                    if (!result.grid.data.length) {
+                        this.$Grid.deleteRow(i);
+                    } else {
+                        this.$Grid.setDataByRow(i, this.$parseGridRow(result.grid.data[0]));
+                    }
+
+                    break;
                 }
 
                 this.$refreshTotalsOnly = true;
-                this.refresh();
-            }.bind(this)).catch(function(err) {
-                console.error(err);
-                this.Loader.hide();
-            }.bind(this));
+                return this.refresh();
+            }).catch((err) => {
+                if (!this.$destroyed && refreshId === this.$refreshId) {
+                    console.error(err);
+                    this.Loader.hide();
+                }
+            });
         },
 
         /**
@@ -216,12 +214,27 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          */
         $onCreate: function() {
             var self = this;
+            this.Loader.show();
+            const Body = this.getContent();
+            Body.style.padding = '0';
+
+            this.$Total = document.createElement('section');
+            this.$Total.className = 'quiqqer-customer-openitems-totals';
+            this.$Total.setAttribute('aria-label', QUILocale.get(lg, 'panels.OpenItems.totals.title'));
+            this.$Total.setAttribute('aria-live', 'polite');
+            this.$Total.setAttribute('aria-busy', 'true');
+            Body.appendChild(this.$Total);
+
+            this.$createSearchControl();
 
             // currency
             this.$Currency = new QUIButton({
                 name: 'currency',
                 disabled: true,
                 showIcons: false,
+                styles: {
+                    'float': 'right'
+                },
                 events: {
                     onChange: function(Menu, Item) {
                         self.$Currency.setAttribute('value', Item.getAttribute('value'));
@@ -233,42 +246,20 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
             this.addButton(this.$Currency);
 
-            this.$Search = new Element('input', {
-                type: 'search',
-                name: 'search-value',
-                placeholder: QUILocale.get(lg, 'panels.OpenItems.search.placeholder'),
-                styles: {
-                    'float': 'right',
-                    margin: '10px 0 0 0',
-                    width: 200
-                },
-                events: {
-                    keyup: this.$onSearchKeyUp,
-                    search: this.$onSearchKeyUp,
-                    click: this.$onSearchKeyUp
-                }
-            });
+            const CurrencyButton = this.$Currency.getElm();
+            CurrencyButton.classList.add('quiqqer-customer-openitems-currency-button');
+            CurrencyButton.tabIndex = 0;
+            CurrencyButton.style.removeProperty('outline');
+            CurrencyButton.setAttribute('aria-label', QUILocale.get('quiqqer/currency', 'currency.title'));
 
-            this.addButton({
-                name: 'search',
-                icon: 'fa fa-search',
-                styles: {
-                    'float': 'right'
-                },
-                events: {
-                    onClick: this.refresh
-                }
-            });
+            this.$renderTotals();
 
-            this.addButton(this.$Search);
+            const GridContainer = document.createElement('div');
+            GridContainer.className = 'quiqqer-customer-openitems-grid-container';
+            Body.appendChild(GridContainer);
 
-            // Grid
-            this.getContent().setStyles({
-                padding: 10,
-                position: 'relative'
-            });
-
-            var Container = new Element('div').inject(this.getContent());
+            const Container = document.createElement('div');
+            GridContainer.appendChild(Container);
 
             this.$Grid = new Grid(Container, {
                 pagination: true,
@@ -364,9 +355,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 }
             });
 
-            this.$Total = new Element('div', {
-                'class': 'openItems-total'
-            }).inject(this.getContent());
+            this.$onResize();
         },
 
         /**
@@ -452,20 +441,19 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          * event : on resize
          */
         $onResize: function() {
-            if (!this.$Grid) {
+            const Body = this.getContent();
+
+            if (!this.$Grid || !Body) {
                 return;
             }
 
-            var Body = this.getContent();
+            const size = Body.getSize();
+            const totalsHeight = this.$Total.offsetHeight;
 
-            if (!Body) {
-                return;
-            }
-
-            var size = Body.getSize();
-
-            this.$Grid.setHeight(size.y - 110);
-            this.$Grid.setWidth(size.x - 20);
+            return Promise.all([
+                this.$Grid.setHeight(Math.max(100, size.y - 20 - totalsHeight)),
+                this.$Grid.setWidth(size.x - 20)
+            ]);
         },
 
         /**
@@ -473,6 +461,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          */
         $onInject: function() {
             var self = this;
+            this.Loader.show();
 
             this.$loaded = true;
 
@@ -480,9 +469,14 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 'package_quiqqer_currency_ajax_getAllowedCurrencies',
                 'package_quiqqer_currency_ajax_getDefault'
             ], function(currencies, currency) {
+                if (self.$destroyed) {
+                    return;
+                }
+
                 var i, len, entry, text;
 
                 if (!currencies.length) {
+                    self.$Currency.setAttribute('value', currency.code);
                     self.refresh();
                     self.$Currency.hide();
                     return;
@@ -509,12 +503,25 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
 
                 self.refresh();
             }, {
-                'package': 'quiqqer/currency'
+                'package': 'quiqqer/currency',
+                onError: (err) => {
+                    if (!this.$destroyed) {
+                        console.error(err);
+                        this.$Total.removeAttribute('aria-busy');
+                        this.Loader.hide();
+                    }
+                }
             });
 
             this.$Currency.getContextMenu(function(ContextMenu) {
                 ContextMenu.setAttribute('showIcons', false);
             });
+        },
+
+        $onDestroy: function() {
+            this.$destroyed = true;
+            ++this.$refreshId;
+            clearTimeout(this.$searchDelay);
         },
 
         //region Buttons events
@@ -676,38 +683,62 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          * @param {DOMEvent} event
          */
         $onSearchKeyUp: function(event) {
-            if (event.key === 'up' ||
-                event.key === 'down' ||
-                event.key === 'left' ||
-                event.key === 'right') {
+            clearTimeout(this.$searchDelay);
+
+            if (this.$currentSearch === this.$Search.value.trim()) {
                 return;
             }
 
-            if (this.$searchDelay) {
-                clearTimeout(this.$searchDelay);
+            if (event.key === 'Enter' || event.type === 'search' || !this.$Search.value) {
+                this.$searchDelay = setTimeout(() => this.$submitSearch(), 150);
+            }
+        },
+
+        $submitSearch: function() {
+            clearTimeout(this.$searchDelay);
+
+            if (this.$Grid) {
+                this.$Grid.options.page = 1;
             }
 
-            if (event.type === 'click') {
-                // workaround, cancel needs time to clear
-                (function() {
-                    if (this.$currentSearch !== this.$Search.value) {
-                        this.$searchDelay = (function() {
-                            this.refresh();
-                        }).delay(250, this);
-                    }
-                }).delay(100, this);
-            }
+            return this.refresh();
+        },
 
-            if (this.$currentSearch === this.$Search.value) {
-                return;
-            }
+        $createSearchControl: function() {
+            const label = QUILocale.get(lg, 'panels.OpenItems.search.placeholder');
+            const SearchGroup = document.createElement('div');
+            SearchGroup.className = 'quiqqer-customer-openitems-search';
+            SearchGroup.setAttribute('role', 'search');
 
-            if (event.key === 'enter') {
-                this.$searchDelay = (function() {
-                    this.refresh();
-                }).delay(250, this);
-                return;
-            }
+            this.$Search = document.createElement('input');
+            this.$Search.type = 'search';
+            this.$Search.placeholder = label;
+            this.$Search.maxLength = 200;
+            this.$Search.dataset.name = 'openitems-search';
+            this.$Search.setAttribute('aria-label', label);
+
+            ['keyup', 'search', 'input'].forEach((event) => {
+                this.$Search.addEventListener(event, this.$onSearchKeyUp);
+            });
+
+            SearchGroup.appendChild(this.$Search);
+
+            const SearchButton = new QUIButton({
+                name: 'search',
+                icon: 'fa fa-search',
+                events: {
+                    onClick: () => this.$submitSearch()
+                }
+            });
+            this.addButton(SearchButton);
+
+            const ButtonElm = SearchButton.getElm();
+            ButtonElm.tabIndex = 0;
+            ButtonElm.style.removeProperty('outline');
+            ButtonElm.firstElementChild?.setAttribute('aria-hidden', 'true');
+            ButtonElm.setAttribute('aria-label', label);
+            ButtonElm.before(SearchGroup);
+            SearchGroup.appendChild(ButtonElm);
         },
 
         /**
@@ -1236,25 +1267,35 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
         // region Totals
 
         /**
-         * Show the total display
+         * Render the permanent totals bar above the grid.
          */
-        showTotal: function() {
-            this.getContent().setStyle('overflow', 'hidden');
+        $renderTotals: function(total = null, count = null) {
+            const metrics = [
+                {type: 'items', label: 'openItemsCount', value: total?.open_items_count ?? '—'},
+                {type: 'net', label: 'net', value: total?.display_net ?? '—'},
+                {type: 'vat', label: 'vat', value: total?.display_vat ?? '—'},
+                {type: 'gross', label: 'gross', value: total?.display_gross ?? '—'},
+                {type: 'paid', label: 'paid', value: total?.display_paid ?? '—'},
+                {type: 'open', label: 'open', value: total?.display_open ?? '—'}
+            ].map((metric) => ({
+                ...metric,
+                label: QUILocale.get(lg, 'panel.OpenItems.grid.' + metric.label)
+            }));
 
-            return new Promise(function(resolve) {
-                this.$Total.setStyles({
-                    display: 'inline-block',
-                    opacity: 0
-                });
+            this.$Total.innerHTML = Mustache.render(templateTotal, {
+                title: QUILocale.get(lg, 'panels.OpenItems.totals.title'),
+                countLabel: QUILocale.get(lg, 'panels.OpenItems.totals.customers'),
+                count: count ?? '—',
+                currency: this.$Currency.getAttribute('value') || '',
+                metrics: metrics.slice(0, 4),
+                settlementMetrics: metrics.slice(4)
+            });
 
-                moofx(this.$Total).animate({
-                    bottom: 1,
-                    opacity: 1
-                }, {
-                    duration: 200,
-                    callback: resolve
-                });
-            }.bind(this));
+            if (total !== null) {
+                this.$Total.removeAttribute('aria-busy');
+            }
+
+            return this.$onResize();
         }
 
         // endregion

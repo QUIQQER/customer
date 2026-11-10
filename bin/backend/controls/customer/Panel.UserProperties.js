@@ -48,10 +48,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
         create: function() {
             this.$Elm = this.parent();
 
-            this.$Elm.set('html', Mustache.render(template, {
+            this.$Elm.innerHTML = Mustache.render(template, {
                 title: QUILocale.get(lg, 'customer.user.properties.title'),
                 textStatus: QUILocale.get(lg, 'customer.user.properties.status'),
                 textStatusDescription: QUILocale.get(lg, 'customer.user.properties.status.description'),
+                activationDescriptionId: this.getId() + '-activation-description',
+                userId: this.getAttribute('userId'),
 
                 titlePassword: QUILocale.get(lg, 'customer.user.properties.password.title'),
                 textPassword1: QUILocale.get(lg, 'customer.user.properties.password.1'),
@@ -64,7 +66,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
                 userCreated: QUILocale.get('quiqqer/core', 'c_date'),
                 userEdited: QUILocale.get('quiqqer/core', 'e_date'),
                 lastLogin: QUILocale.get('quiqqer/core', 'user.panel.lastLogin')
-            }));
+            });
 
             return this.$Elm;
         },
@@ -74,9 +76,12 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
          */
         $onInject: function() {
             var self = this;
+            const User = Users.get(this.getAttribute('userId'));
+            const Activation = this.$Elm.querySelector('[data-name="customer-activation"]');
 
             QUIAjax.get('package_quiqqer_customer_ajax_backend_customer_getCustomerLoginFlag', function(login) {
                 var Form = self.$Elm.getElement('form');
+                Activation.setAttribute('data-qui-options-allowed', login ? '1' : '0');
 
                 if (!login) {
                     new Element('div', {
@@ -92,13 +97,10 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
                         Form.elements.passwordMail.title = QUILocale.get(lg, 'customer.password.disabled');
                     }
 
-                    self.fireEvent('load', [self]);
+                    QUI.parse(self.$Elm).then(() => self.fireEvent('load', [self]));
                     return;
                 }
 
-                var User = Users.get(self.getAttribute('userId'));
-
-                Form.elements.status.set('disabled', false);
                 Form.elements.password1.set('disabled', false);
                 Form.elements.password2.set('disabled', false);
 
@@ -163,7 +165,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel.UserPropert
                     self.passwordResetMail();
                 });
 
-                self.fireEvent('load', [self]);
+                QUI.parse(self.$Elm).then(() => self.fireEvent('load', [self]));
             }, {
                 'package': 'quiqqer/customer'
             });

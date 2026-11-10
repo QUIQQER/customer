@@ -385,6 +385,12 @@
         <locale name="panels.OpenItems.grid.toggle_title">
 <es><![CDATA[Mostrar todas las partidas pendientes de este cliente]]></es>
         </locale>
+        <locale name="panels.OpenItems.totals.title" context="administration">
+<es><![CDATA[Totales de los cobros filtrados]]></es>
+        </locale>
+        <locale name="panels.OpenItems.totals.customers" context="administration">
+<es><![CDATA[Clientes]]></es>
+        </locale>
         <locale name="panels.OpenItems.title">
 <es><![CDATA[Cobros]]></es>
         </locale>
@@ -433,8 +439,8 @@
         <locale name="panels.OpenItems.details.tpl.placeholderSearch">
 <es><![CDATA[Buscar documentos...]]></es>
         </locale>
-        <locale name="panels.OpenItems.search.placeholder">
-<es><![CDATA[Buscar clientes...]]></es>
+        <locale name="panels.OpenItems.search.placeholder" context="administration">
+<es><![CDATA[Buscar clientes …]]></es>
         </locale>
         <locale name="panel.OpenItems.grid.details.daysDue">
 <es><![CDATA[Días vencidos]]></es>
@@ -801,11 +807,26 @@
         <locale name="customer.user.properties.title">
 <es><![CDATA[Propiedades del usuario]]></es>
         </locale>
-        <locale name="customer.user.properties.status">
-<es><![CDATA[Puede iniciar sesión]]></es>
+        <locale name="customer.user.properties.status" context="administration">
+<es><![CDATA[Acceso al sistema]]></es>
         </locale>
-        <locale name="customer.user.properties.status.description">
-<es><![CDATA[El cliente se activará y podrá iniciar sesión en el sistema.]]></es>
+        <locale name="customer.user.properties.status.description" context="administration">
+<es><![CDATA[Activa el acceso del cliente al guardar. Puede cancelar la activación pendiente antes de guardar. Si no existe una contraseña, se asigna una aleatoria; el cliente puede elegir la suya mediante el correo de restablecimiento. Las cuentas ya activadas se pueden desactivar en la gestión de usuarios.]]></es>
+        </locale>
+        <locale name="customer.user.properties.status.action" context="administration">
+<es><![CDATA[Preparar activación]]></es>
+        </locale>
+        <locale name="customer.user.properties.status.active" context="administration">
+<es><![CDATA[Ya activado]]></es>
+        </locale>
+        <locale name="customer.user.properties.status.inactive" context="administration">
+<es><![CDATA[No activado]]></es>
+        </locale>
+        <locale name="customer.user.properties.status.cancel" context="administration">
+<es><![CDATA[Cancelar activación pendiente]]></es>
+        </locale>
+        <locale name="customer.user.properties.status.pending" context="administration">
+<es><![CDATA[Activación pendiente – guarde los cambios]]></es>
         </locale>
         <locale name="customer.user.properties.password.title">
 <es><![CDATA[Contraseña]]></es>

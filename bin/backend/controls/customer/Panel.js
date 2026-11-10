@@ -26,7 +26,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
 
     'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.Information.html',
     'text!package/quiqqer/customer/bin/backend/controls/customer/Panel.EditId.html',
-    'css!package/quiqqer/customer/bin/backend/controls/customer/Panel.css'
+    'css!package/quiqqer/customer/bin/backend/controls/customer/Panel.css',
+    'css!controls/desktop/panels/XML.css'
 
 ], function(QUI, QUIPanel, QUIButton, QUIButtonMultiple, QUILoader, QUIConfirm, Countries, AddressEditWindow, Handler,
     FormUtils, Users, QUILocale, QUIAjax, Packages, Mustache, templateInformation, templateEditId
@@ -185,7 +186,7 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Panel', [
                 this.Loader = new QUILoader();
             }
 
-            this.getElm().addClass('quiqqer-customer-panel');
+            this.getElm().classList.add('quiqqer-customer-panel', 'quiqqer-xml-panel');
 
             // buttons
             this.addButton({
