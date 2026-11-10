@@ -385,6 +385,12 @@
         <locale name="panels.OpenItems.grid.toggle_title">
 <pl><![CDATA[Pokaż wszystkie otwarte pozycje tego klienta]]></pl>
         </locale>
+        <locale name="panels.OpenItems.totals.title" context="administration">
+<pl><![CDATA[Sumy przefiltrowanych płatności przychodzących]]></pl>
+        </locale>
+        <locale name="panels.OpenItems.totals.customers" context="administration">
+<pl><![CDATA[Klienci]]></pl>
+        </locale>
         <locale name="panels.OpenItems.title">
 <pl><![CDATA[Wpłaty]]></pl>
         </locale>
@@ -433,8 +439,8 @@
         <locale name="panels.OpenItems.details.tpl.placeholderSearch">
 <pl><![CDATA[Szukaj dokumentów...]]></pl>
         </locale>
-        <locale name="panels.OpenItems.search.placeholder">
-<pl><![CDATA[Szukaj klientów...]]></pl>
+        <locale name="panels.OpenItems.search.placeholder" context="administration">
+<pl><![CDATA[Szukaj klientów …]]></pl>
         </locale>
         <locale name="panel.OpenItems.grid.details.daysDue">
 <pl><![CDATA[Dni po terminie]]></pl>

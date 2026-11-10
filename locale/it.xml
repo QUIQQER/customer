@@ -385,6 +385,12 @@
         <locale name="panels.OpenItems.grid.toggle_title">
 <it><![CDATA[Mostra tutte le partite aperte di questo cliente]]></it>
         </locale>
+        <locale name="panels.OpenItems.totals.title" context="administration">
+<it><![CDATA[Totali degli incassi filtrati]]></it>
+        </locale>
+        <locale name="panels.OpenItems.totals.customers" context="administration">
+<it><![CDATA[Clienti]]></it>
+        </locale>
         <locale name="panels.OpenItems.title">
 <it><![CDATA[Incassi]]></it>
         </locale>
@@ -433,8 +439,8 @@
         <locale name="panels.OpenItems.details.tpl.placeholderSearch">
 <it><![CDATA[Cerca documenti...]]></it>
         </locale>
-        <locale name="panels.OpenItems.search.placeholder">
-<it><![CDATA[Cerca clienti...]]></it>
+        <locale name="panels.OpenItems.search.placeholder" context="administration">
+<it><![CDATA[Cerca clienti …]]></it>
         </locale>
         <locale name="panel.OpenItems.grid.details.daysDue">
 <it><![CDATA[Giorni di ritardo]]></it>

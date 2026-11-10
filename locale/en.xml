@@ -418,6 +418,12 @@ Best regards
         <locale name="panels.OpenItems.grid.toggle_title">
 <en><![CDATA[Show all open items of this customer]]></en>
         </locale>
+        <locale name="panels.OpenItems.totals.title" context="administration">
+<en><![CDATA[Totals of filtered incoming payments]]></en>
+        </locale>
+        <locale name="panels.OpenItems.totals.customers" context="administration">
+<en><![CDATA[Customers]]></en>
+        </locale>
         <locale name="panels.OpenItems.title">
 <en><![CDATA[Incoming payments]]></en>
         </locale>
@@ -466,8 +472,8 @@ Best regards
         <locale name="panels.OpenItems.details.tpl.placeholderSearch">
 <en><![CDATA[Document search...]]></en>
         </locale>
-        <locale name="panels.OpenItems.search.placeholder">
-<en><![CDATA[Customer search...]]></en>
+        <locale name="panels.OpenItems.search.placeholder" context="administration">
+<en><![CDATA[Search customers …]]></en>
         </locale>
         <locale name="panel.OpenItems.grid.details.daysDue">
 <en><![CDATA[Days due]]></en>

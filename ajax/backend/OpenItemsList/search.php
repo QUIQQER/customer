@@ -17,6 +17,17 @@ QUI::getAjax()->registerFunction(
         try {
             $searchParams = Orthos::clearArray(json_decode($searchParams, true));
 
+            if (!empty($searchParams['currency'])) {
+                $Currency = \QUI\ERP\Currency\Handler::getCurrency($searchParams['currency']);
+            } else {
+                $Currency = \QUI\ERP\Currency\Handler::getDefaultCurrency();
+            }
+
+            if (!$Currency instanceof \QUI\ERP\Currency\Currency) {
+                throw new QUI\Exception('Could not determine currency.');
+            }
+
+            $searchParams['currency'] = $Currency->getCode();
             $result = Handler::searchOpenItems($searchParams);
 
             if (!is_array($result)) {
@@ -34,19 +45,9 @@ QUI::getAjax()->registerFunction(
 
             $Grid = new Grid($searchParams);
 
-            if (!empty($searchParams['currency'])) {
-                $Currency = \QUI\ERP\Currency\Handler::getCurrency($searchParams['currency']);
-            } else {
-                $Currency = \QUI\ERP\Currency\Handler::getDefaultCurrency();
-            }
-
-            if (!$Currency instanceof \QUI\ERP\Currency\Currency) {
-                throw new QUI\Exception('Could not determine currency.');
-            }
-
             return [
                 'grid' => $Grid->parseResult($result, $count),
-                'totals' => Handler::getTotals($result, $Currency)
+                'totals' => Handler::getTotalsForSearch($searchParams, $Currency)
             ];
         } catch (Exception $Exception) {
             QUI\System\Log::writeException($Exception);
@@ -58,7 +59,8 @@ QUI::getAjax()->registerFunction(
                     'display_vat' => 0,
                     'display_gross' => 0,
                     'display_paid' => 0,
-                    'display_open' => 0
+                    'display_open' => 0,
+                    'open_items_count' => 0
                 ]
             ];
         }
