@@ -10,15 +10,25 @@
         <tbody>
         <tr>
             <td>
-                <label class="field-container">
+                <div class="field-container">
                     <span class="field-container-item">
                         {{textStatus}}
                     </span>
                     <span class="field-container-field">
-                        <input type="checkbox" name="status" disabled/>
-                        {{textStatusDescription}}
+                        <input type="hidden"
+                               name="status"
+                               value="0"
+                               data-name="customer-activation"
+                               data-qui="package/quiqqer/customer/bin/backend/controls/customer/Activation"
+                               data-qui-options-userid="{{userId}}"
+                               data-qui-options-allowed="0"
+                               aria-describedby="{{activationDescriptionId}}"
+                        />
                     </span>
-                </label>
+                </div>
+                <div id="{{activationDescriptionId}}" class="field-container-item-desc">
+                    {{textStatusDescription}}
+                </div>
             </td>
         </tr>
         </tbody>

@@ -807,11 +807,26 @@
         <locale name="customer.user.properties.title">
 <it><![CDATA[Proprietà utente]]></it>
         </locale>
-        <locale name="customer.user.properties.status">
-<it><![CDATA[Può accedere]]></it>
+        <locale name="customer.user.properties.status" context="administration">
+<it><![CDATA[Accesso al sistema]]></it>
         </locale>
-        <locale name="customer.user.properties.status.description">
-<it><![CDATA[Il cliente verrà attivato e potrà accedere al sistema.]]></it>
+        <locale name="customer.user.properties.status.description" context="administration">
+<it><![CDATA[Attiva l’accesso del cliente al prossimo salvataggio. È possibile annullare l’attivazione in sospeso prima di salvare. Se non esiste una password, ne viene assegnata una casuale; il cliente può sceglierne una propria tramite l’e-mail di reimpostazione. Gli account già attivati possono essere disattivati nella gestione utenti.]]></it>
+        </locale>
+        <locale name="customer.user.properties.status.action" context="administration">
+<it><![CDATA[Prepara attivazione]]></it>
+        </locale>
+        <locale name="customer.user.properties.status.active" context="administration">
+<it><![CDATA[Già attivato]]></it>
+        </locale>
+        <locale name="customer.user.properties.status.inactive" context="administration">
+<it><![CDATA[Non attivato]]></it>
+        </locale>
+        <locale name="customer.user.properties.status.cancel" context="administration">
+<it><![CDATA[Annulla attivazione in sospeso]]></it>
+        </locale>
+        <locale name="customer.user.properties.status.pending" context="administration">
+<it><![CDATA[Attivazione in sospeso – salvare le modifiche]]></it>
         </locale>
         <locale name="customer.user.properties.password.title">
 <it><![CDATA[Password]]></it>

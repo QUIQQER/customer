@@ -807,11 +807,26 @@
         <locale name="customer.user.properties.title">
 <pt><![CDATA[Propriedades do utilizador]]></pt>
         </locale>
-        <locale name="customer.user.properties.status">
-<pt><![CDATA[Pode iniciar sessão]]></pt>
+        <locale name="customer.user.properties.status" context="administration">
+<pt><![CDATA[Acesso ao sistema]]></pt>
         </locale>
-        <locale name="customer.user.properties.status.description">
-<pt><![CDATA[O cliente será ativado e poderá iniciar sessão no sistema.]]></pt>
+        <locale name="customer.user.properties.status.description" context="administration">
+<pt><![CDATA[Ativa o acesso do cliente ao guardar. Pode cancelar a ativação pendente antes de guardar. Se não existir uma palavra-passe, é atribuída uma aleatória; o cliente pode escolher a sua através do e-mail de reposição. As contas já ativadas podem ser desativadas na gestão de utilizadores.]]></pt>
+        </locale>
+        <locale name="customer.user.properties.status.action" context="administration">
+<pt><![CDATA[Preparar ativação]]></pt>
+        </locale>
+        <locale name="customer.user.properties.status.active" context="administration">
+<pt><![CDATA[Já ativado]]></pt>
+        </locale>
+        <locale name="customer.user.properties.status.inactive" context="administration">
+<pt><![CDATA[Não ativado]]></pt>
+        </locale>
+        <locale name="customer.user.properties.status.cancel" context="administration">
+<pt><![CDATA[Cancelar ativação pendente]]></pt>
+        </locale>
+        <locale name="customer.user.properties.status.pending" context="administration">
+<pt><![CDATA[Ativação pendente – guarde as alterações]]></pt>
         </locale>
         <locale name="customer.user.properties.password.title">
 <pt><![CDATA[Palavra-passe]]></pt>

@@ -863,11 +863,26 @@ Best regards
         <locale name="customer.user.properties.title">
 <en><![CDATA[User properties]]></en>
         </locale>
-        <locale name="customer.user.properties.status">
-<en><![CDATA[Can log in]]></en>
+        <locale name="customer.user.properties.status" context="administration">
+<en><![CDATA[Login access]]></en>
         </locale>
-        <locale name="customer.user.properties.status.description">
-<en><![CDATA[The customer will be activated and can log in to the system.]]></en>
+        <locale name="customer.user.properties.status.description" context="administration">
+<en><![CDATA[Activates the customer’s login access when you next save. You can cancel the pending activation before saving. If no password exists, a random one is assigned; the customer can choose their own using the password reset email. Already activated accounts can be deactivated in user management.]]></en>
+        </locale>
+        <locale name="customer.user.properties.status.action" context="administration">
+<en><![CDATA[Request activation]]></en>
+        </locale>
+        <locale name="customer.user.properties.status.active" context="administration">
+<en><![CDATA[Already activated]]></en>
+        </locale>
+        <locale name="customer.user.properties.status.inactive" context="administration">
+<en><![CDATA[Not activated]]></en>
+        </locale>
+        <locale name="customer.user.properties.status.cancel" context="administration">
+<en><![CDATA[Cancel activation request]]></en>
+        </locale>
+        <locale name="customer.user.properties.status.pending" context="administration">
+<en><![CDATA[Activation pending – please save]]></en>
         </locale>
         <locale name="customer.user.properties.password.title">
 <en><![CDATA[Password]]></en>
