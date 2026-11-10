@@ -1,40 +1,27 @@
-<table class="quiqqer-customer-openitems-totals-tbl">
-    <thead>
-    <tr>
-        <th>
-            {{headerNet}}
-        </th>
-        <th>
-            {{headerVat}}
-        </th>
-        <th>
-            {{headerGross}}
-        </th>
-        <th>
-            {{headerPaid}}
-        </th>
-        <th>
-            {{headerOpen}}
-        </th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td>
-            {{display_net}}
-        </td>
-        <td>
-            {{display_vat}}
-        </td>
-        <td>
-            {{display_gross}}
-        </td>
-        <td>
-            {{display_paid}}
-        </td>
-        <td>
-            {{display_open}}
-        </td>
-    </tr>
-    </tbody>
-</table>
+<div class="quiqqer-customer-openitems-totals-row">
+    <div class="quiqqer-customer-openitems-totals-context">
+        <p class="quiqqer-customer-openitems-totals-title">{{title}}</p>
+        <div class="quiqqer-customer-openitems-totals-meta">
+            {{#currency}}<span class="quiqqer-customer-openitems-totals-currency">{{currency}}</span>{{/currency}}
+            <span>{{countLabel}}: {{count}}</span>
+        </div>
+    </div>
+    <div class="quiqqer-customer-openitems-totals-values">
+        <dl class="quiqqer-customer-openitems-totals-amounts">
+            {{#metrics}}
+            <div class="quiqqer-customer-openitems-totals-metric quiqqer-customer-openitems-totals-metric--{{type}}">
+                <dt>{{label}}</dt>
+                <dd>{{value}}</dd>
+            </div>
+            {{/metrics}}
+        </dl>
+        <dl class="quiqqer-customer-openitems-totals-settlement">
+            {{#settlementMetrics}}
+            <div class="quiqqer-customer-openitems-totals-metric quiqqer-customer-openitems-totals-metric--{{type}}">
+                <dt>{{label}}</dt>
+                <dd>{{value}}</dd>
+            </div>
+            {{/settlementMetrics}}
+        </dl>
+    </div>
+</div>

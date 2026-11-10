@@ -3,6 +3,7 @@
 namespace QUI\ERP\Customer\OpenItemsList;
 
 use DateTime;
+use Doctrine\DBAL\Query\QueryBuilder;
 use Exception;
 use QUI;
 use QUI\ERP\Accounting\Dunning\Handler as DunningsHandler;
@@ -595,33 +596,13 @@ class Handler
         $Grid = new Grid($searchParams);
         $gridParams = $Grid->parseDBParams($searchParams);
         $countOnly = !empty($searchParams['count']);
-        $QueryBuilder = QUI::getQueryBuilder();
+        $QueryBuilder = self::createOpenItemsQueryBuilder($searchParams);
         $quote = static fn(string $column): string => QUI\Utils\Doctrine::quoteIdentifier($column);
 
         if ($countOnly) {
             $QueryBuilder->select('COUNT(*)');
         } else {
             $QueryBuilder->select('*');
-        }
-
-        $QueryBuilder->from($quote(self::getTable()));
-
-        if (!empty($searchParams['search'])) {
-            $QueryBuilder->andWhere($QueryBuilder->expr()->or(
-                $QueryBuilder->expr()->like($quote('customerId'), ':search'),
-                $QueryBuilder->expr()->like($quote('userId'), ':search')
-            ));
-            $QueryBuilder->setParameter('search', '%' . $searchParams['search'] . '%');
-        }
-
-        if (!empty($searchParams['currency'])) {
-            $QueryBuilder->andWhere($QueryBuilder->expr()->eq($quote('currency'), ':currency'));
-            $QueryBuilder->setParameter('currency', $searchParams['currency']);
-        }
-
-        if (!empty($searchParams['userId'])) {
-            $QueryBuilder->andWhere($QueryBuilder->expr()->eq($quote('userId'), ':userId'));
-            $QueryBuilder->setParameter('userId', $searchParams['userId']);
         }
 
         $sort = self::resolveOpenItemsSort($searchParams);
@@ -657,6 +638,36 @@ class Handler
         }
 
         return $Result->fetchAllAssociative();
+    }
+
+    /**
+     * @param array<string, mixed> $searchParams
+     */
+    private static function createOpenItemsQueryBuilder(array $searchParams): QueryBuilder
+    {
+        $QueryBuilder = QUI::getQueryBuilder();
+        $quote = static fn(string $column): string => QUI\Utils\Doctrine::quoteIdentifier($column);
+        $QueryBuilder->from($quote(self::getTable()));
+
+        if (!empty($searchParams['search'])) {
+            $QueryBuilder->andWhere($QueryBuilder->expr()->or(
+                $QueryBuilder->expr()->like($quote('customerId'), ':search'),
+                $QueryBuilder->expr()->like($quote('userId'), ':search')
+            ));
+            $QueryBuilder->setParameter('search', '%' . $searchParams['search'] . '%');
+        }
+
+        if (!empty($searchParams['currency'])) {
+            $QueryBuilder->andWhere($QueryBuilder->expr()->eq($quote('currency'), ':currency'));
+            $QueryBuilder->setParameter('currency', $searchParams['currency']);
+        }
+
+        if (!empty($searchParams['userId'])) {
+            $QueryBuilder->andWhere($QueryBuilder->expr()->eq($quote('userId'), ':userId'));
+            $QueryBuilder->setParameter('userId', $searchParams['userId']);
+        }
+
+        return $QueryBuilder;
     }
 
     /**
@@ -730,6 +741,34 @@ class Handler
             'display_paid' => $Currency->format($paid),
             'display_open' => $Currency->format($open)
         ];
+    }
+
+    /**
+     * Sum all filtered open items without loading or paginating customer rows.
+     *
+     * @param array<string, mixed> $searchParams
+     * @return array<string, string|int>
+     */
+    public static function getTotalsForSearch(array $searchParams, QUI\ERP\Currency\Currency $Currency): array
+    {
+        $QueryBuilder = self::createOpenItemsQueryBuilder($searchParams);
+        $columns = ['net_sum', 'vat_sum', 'total_sum', 'paid_sum', 'open_sum', 'open_items_count'];
+        $expressions = [];
+
+        foreach ($columns as $column) {
+            $quotedColumn = QUI\Utils\Doctrine::quoteIdentifier($column);
+            $expressions[] = 'COALESCE(SUM(' . $quotedColumn . '), 0) AS ' . $quotedColumn;
+        }
+
+        $row = $QueryBuilder->select(...$expressions)->executeQuery()->fetchAssociative();
+
+        if ($row === false) {
+            throw new QUI\Exception('Could not calculate open items totals.');
+        }
+
+        return array_merge(self::getTotals([$row], $Currency), [
+            'open_items_count' => (int)$row['open_items_count']
+        ]);
     }
 
     /**

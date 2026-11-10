@@ -125,6 +125,71 @@ final class OpenItemsHandlerDatabaseTest extends TestCase
         ]));
     }
 
+    public function testFilteredTotalsIncludeEveryPageAndCountOpenItemsInOneCurrency(): void
+    {
+        $otherUserUuid = $this->userUuid . '-other';
+        $User = $this->createMock(User::class);
+        $User->method('getUUID')->willReturn($this->userUuid);
+        $User->method('getAttribute')->willReturn($this->userUuid . '-A');
+        $OtherUser = $this->createMock(User::class);
+        $OtherUser->method('getUUID')->willReturn($otherUserUuid);
+        $OtherUser->method('getAttribute')->willReturn($this->userUuid . '-B');
+        $Currency = $this->createMock(Currency::class);
+        $Currency->method('format')
+            ->willReturnCallback(static fn (float|int $amount): string => 'formatted:' . $amount);
+
+        try {
+            Handler::syncOpenItemsRecord($User, $this->createOpenItemsList(['EUR', 'USD']));
+            Handler::syncOpenItemsRecord($OtherUser, $this->createOpenItemsList(['EUR']));
+            $params = [
+                'search' => $this->userUuid,
+                'currency' => 'EUR',
+                'sortOn' => 'userId',
+                'sortBy' => 'ASC',
+                'page' => 1,
+                'perPage' => 1
+            ];
+            $firstPage = Handler::searchOpenItems($params);
+            $firstTotals = Handler::getTotalsForSearch($params, $Currency);
+            $params['page'] = 2;
+            $secondPage = Handler::searchOpenItems($params);
+            $secondTotals = Handler::getTotalsForSearch($params, $Currency);
+
+            self::assertCount(1, $firstPage);
+            self::assertCount(1, $secondPage);
+            self::assertNotSame($firstPage[0]['userId'], $secondPage[0]['userId']);
+            self::assertSame($firstTotals, $secondTotals);
+            self::assertSame([
+                'display_net' => 'formatted:200',
+                'display_vat' => 'formatted:38',
+                'display_gross' => 'formatted:238',
+                'display_paid' => 'formatted:40',
+                'display_open' => 'formatted:198',
+                'open_items_count' => 2
+            ], $firstTotals);
+
+            $params['userId'] = $this->userUuid;
+            $singleCustomer = Handler::getTotalsForSearch($params, $Currency);
+            self::assertSame(1, $singleCustomer['open_items_count']);
+            self::assertSame('formatted:100', $singleCustomer['display_net']);
+
+            $params['currency'] = 'USD';
+            self::assertSame($singleCustomer, Handler::getTotalsForSearch($params, $Currency));
+
+            $params['search'] = 'no-match-' . $this->userUuid;
+            self::assertSame([
+                'display_net' => 'formatted:0',
+                'display_vat' => 'formatted:0',
+                'display_gross' => 'formatted:0',
+                'display_paid' => 'formatted:0',
+                'display_open' => 'formatted:0',
+                'open_items_count' => 0
+            ], Handler::getTotalsForSearch($params, $Currency));
+        } finally {
+            QUI::getDataBaseConnection()->delete(Handler::getTable(), ['userId' => $otherUserUuid]);
+        }
+    }
+
     /**
      * @param list<string> $currencyCodes
      */
