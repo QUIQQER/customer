@@ -214,6 +214,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
          */
         $onCreate: function() {
             var self = this;
+            this.getElm().classList.add('quiqqer-customer-openitems-panel');
             this.Loader.show();
             const Body = this.getContent();
             Body.style.padding = '0';
@@ -232,9 +233,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                 name: 'currency',
                 disabled: true,
                 showIcons: false,
-                styles: {
-                    'float': 'right'
-                },
+                dropDownIcon: false,
                 events: {
                     onChange: function(Menu, Item) {
                         self.$Currency.setAttribute('value', Item.getAttribute('value'));
@@ -251,6 +250,11 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
             CurrencyButton.tabIndex = 0;
             CurrencyButton.style.removeProperty('outline');
             CurrencyButton.setAttribute('aria-label', QUILocale.get('quiqqer/currency', 'currency.title'));
+
+            const CurrencyArrow = document.createElement('span');
+            CurrencyArrow.className = 'quiqqer-customer-openitems-currency-arrow fa fa-chevron-down';
+            CurrencyArrow.setAttribute('aria-hidden', 'true');
+            CurrencyButton.appendChild(CurrencyArrow);
 
             this.$renderTotals();
 
@@ -290,7 +294,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                         header: '&nbsp;',
                         dataIndex: 'opener',
                         dataType: 'int',
-                        width: 30,
+                        width: 44,
                         showNotInExport: true,
                         export: false
                     }, {
