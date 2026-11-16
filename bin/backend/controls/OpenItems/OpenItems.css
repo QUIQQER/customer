@@ -133,10 +133,24 @@
 /** Total Display
  ================================================= */
 
+.quiqqer-customer-openitems-panel {
+    --_toolbar-hover-color: var(--quiqqer-customer-openitems-toolbar-hover-color, color-mix(in srgb, var(--qui-colors-primary) 65%, var(--qui-colors-success)));
+    --_toolbar-hover-text: color-mix(in srgb, var(--_toolbar-hover-color) 75%, var(--qui-colors-black));
+    --_toolbar-hover-shadow: inset 0 0 0 1px var(--_toolbar-hover-color), 0 0 7px color-mix(in srgb, var(--_toolbar-hover-color) 45%, transparent);
+}
+
+.quiqqer-customer-openitems-panel .qui-panel-buttons button:not(:disabled):hover,
+.quiqqer-customer-openitems-search:hover {
+    background: var(--qui-colors-white);
+    border-color: var(--_toolbar-hover-color);
+    box-shadow: var(--_toolbar-hover-shadow);
+    color: var(--_toolbar-hover-text);
+}
+
 .quiqqer-customer-openitems-search {
     --_surface: var(--quiqqer-customer-openitems-search-surface, var(--qui-colors-primary--accent));
     --_border: var(--quiqqer-customer-openitems-search-border, var(--qui-colors-gray-200));
-    --_focus: var(--quiqqer-customer-openitems-search-focus, var(--qui-colors-primary-700));
+    --_focus: var(--quiqqer-customer-openitems-search-focus, var(--qui-colors-danger));
     display: flex;
     align-items: center;
     float: left;
@@ -173,22 +187,39 @@
 }
 
 .quiqqer-customer-openitems-search:focus-within {
-    outline: 2px solid var(--_focus);
-    outline-offset: 1px;
+    box-shadow: 0 0 3px 1px var(--_focus);
+}
+
+.quiqqer-customer-openitems-search input:focus,
+.quiqqer-customer-openitems-search button:focus-visible {
+    outline: none;
+    box-shadow: none;
 }
 
 .qui-panel-buttons .quiqqer-customer-openitems-currency-button {
     --_surface: var(--quiqqer-customer-openitems-currency-surface, var(--qui-colors-primary--accent));
     --_border: var(--quiqqer-customer-openitems-currency-border, var(--qui-colors-gray-200));
     --_focus: var(--quiqqer-customer-openitems-currency-focus, var(--qui-colors-primary-700));
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
     height: 34px;
-    min-width: 85px;
-    margin: 8px 10px;
+    margin: 8px 0;
     padding: 0 10px;
     border: 1px solid var(--_border);
     border-radius: 5px;
     background: var(--_surface);
-    line-height: 32px;
+    color: var(--qui-colors-gray-800);
+    font-weight: 400;
+    line-height: 1;
+}
+
+.quiqqer-customer-openitems-currency-button .qui-button-text {
+    margin: 0;
+}
+
+.quiqqer-customer-openitems-currency-arrow {
+    font-size: 10px;
 }
 
 .quiqqer-customer-openitems-currency-button:focus-visible {
