@@ -294,7 +294,7 @@ define('package/quiqqer/customer/bin/backend/controls/OpenItems/OpenItems', [
                         header: '&nbsp;',
                         dataIndex: 'opener',
                         dataType: 'int',
-                        width: 30,
+                        width: 44,
                         showNotInExport: true,
                         export: false
                     }, {
