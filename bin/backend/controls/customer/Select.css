@@ -45,6 +45,33 @@
     border: none;
 }
 
+.quiqqer-customer-select > .qui-button {
+    align-items: center;
+    display: flex;
+    height: 30px;
+    justify-content: center;
+    line-height: normal;
+}
+
+.quiqqer-customer-select > .qui-elements-select-list-search {
+    height: 30px;
+}
+
+.quiqqer-customer-select.qui-elements-select-single > .qui-button,
+.quiqqer-customer-select.qui-elements-select-single > .qui-elements-select-list-search {
+    height: 100%;
+}
+
+.quiqqer-customer-select:focus-within {
+    outline: 2px solid var(--qui-colors-primary);
+    outline-offset: -1px;
+}
+
+.quiqqer-customer-select > .qui-elements-select-list-search:focus,
+.quiqqer-customer-select > .qui-button:focus-visible {
+    outline: none;
+}
+
 /** DropDown
  ======================================================= */
 

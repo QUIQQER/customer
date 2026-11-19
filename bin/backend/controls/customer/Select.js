@@ -66,6 +66,8 @@ define('package/quiqqer/customer/bin/backend/controls/customer/Select', [
             this.getElm().addClass('quiqqer-customer-select');
             this.getElm().set('data-qui', 'package/quiqqer/customer/bin/backend/controls/customer/Select');
 
+            this.$Search.setAttribute('autocomplete', 'off');
+
             this.$SearchButton.setAttribute('menuCorner', 'topRight');
 
             this.$SearchButton.appendChild({
